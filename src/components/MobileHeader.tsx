@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Menu, Wrench, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { tools, categoryLabels, type ToolCategory } from "@/lib/tools-data";
 
 const categories: ToolCategory[] = ["image", "video", "audio", "document"];
@@ -19,9 +20,12 @@ export function MobileHeader() {
             </div>
             <span className="font-bold text-foreground whitespace-nowrap">תמיר לי</span>
           </Link>
-          <Button variant="ghost" size="icon" onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </Button>
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <Button variant="ghost" size="icon" onClick={() => setMenuOpen(!menuOpen)}>
+              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </Button>
+          </div>
         </div>
       </header>
 

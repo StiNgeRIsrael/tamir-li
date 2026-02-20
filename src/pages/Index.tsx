@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import { getPopularTools, tools, categoryLabels, categoryIcons, type ToolCategory, getToolsByCategory } from "@/lib/tools-data";
 import { AppLayout } from "@/components/AppLayout";
 import { AdSlot } from "@/components/AdSlot";
-import { PremiumBanner, UsageLimitNotice } from "@/components/PremiumComponents";
-import { ArrowLeft, Crown, Sparkles, Wrench } from "lucide-react";
+import { PremiumBanner } from "@/components/PremiumComponents";
+import { ArrowLeft, Crown, Sparkles } from "lucide-react";
+import { SEOHead } from "@/components/SEOHead";
 
 const categories: ToolCategory[] = ["image", "video", "audio", "document"];
 const categoryColors: Record<ToolCategory, string> = {
@@ -18,6 +19,10 @@ const Index = () => {
 
   return (
     <AppLayout>
+      <SEOHead
+        title="תמיר לי — אתר המרות הקבצים של ישראל"
+        description="המרה מהירה וחינמית בין פורמטים של תמונות, וידאו, אודיו ומסמכים. גרור קבצים, בחר פורמט, וסיימת. ללא הורדת תוכנה."
+      />
       <div className="max-w-4xl mx-auto px-4 py-8 lg:py-12 space-y-10">
         {/* Hero */}
         <section className="text-center space-y-4 animate-fade-in">
@@ -28,8 +33,9 @@ const Index = () => {
           <h1 className="text-4xl lg:text-5xl font-extrabold text-foreground leading-tight">
             תמיר לי
           </h1>
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            המרה מהירה בין פורמטים של תמונות, וידאו, אודיו ומסמכים. 
+          <p className="text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
+            אתר המרות הקבצים של ישראל.<br />
+            המרה מהירה בין פורמטים של תמונות, וידאו, אודיו ומסמכים.
             גרור קבצים, בחר פורמט, וסיימת.
           </p>
         </section>
@@ -106,12 +112,46 @@ const Index = () => {
         {/* Premium Banner */}
         <PremiumBanner />
 
-        {/* Usage */}
-        <UsageLimitNotice used={3} max={5} />
+        {/* Rich Content for SEO */}
+        <section className="space-y-4 text-sm text-muted-foreground">
+          <h2 className="text-lg font-bold text-foreground">למה לבחור בתמיר לי?</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <article className="bg-card border border-border rounded-xl p-4 space-y-2">
+              <h3 className="font-semibold text-foreground">🚀 המרה מהירה</h3>
+              <p>ממירים את הקבצים שלכם תוך שניות, ישירות בדפדפן, ללא צורך בהורדת תוכנה.</p>
+            </article>
+            <article className="bg-card border border-border rounded-xl p-4 space-y-2">
+              <h3 className="font-semibold text-foreground">🔒 פרטיות מלאה</h3>
+              <p>הקבצים שלכם לא נשמרים בשרתים שלנו. העיבוד מתבצע באופן מאובטח ונמחק מיד.</p>
+            </article>
+            <article className="bg-card border border-border rounded-xl p-4 space-y-2">
+              <h3 className="font-semibold text-foreground">💯 חינם לשימוש יומי</h3>
+              <p>עד 5 המרות בחינם ביום. צריכים יותר? שדרגו לפרימיום ב-₪4.90 בלבד לחודש.</p>
+            </article>
+          </div>
+        </section>
+
+        {/* FAQ for SEO */}
+        <section className="space-y-3">
+          <h2 className="text-lg font-bold text-foreground">שאלות נפוצות</h2>
+          <div className="space-y-2">
+            {[
+              { q: "איך ממירים קובץ?", a: "גררו את הקובץ לאזור ההעלאה, בחרו את הפורמט הרצוי, ולחצו 'התחל המרה'. תוך שניות הקובץ יהיה מוכן להורדה." },
+              { q: "האם השירות באמת חינמי?", a: "כן! ניתן לבצע עד 5 המרות בחינם ביום. למנויי פרימיום (₪4.90/חודש) — המרות ללא הגבלה וללא מודעות." },
+              { q: "אילו פורמטים נתמכים?", a: "אנו תומכים במגוון רחב של פורמטים: תמונות (JPG, PNG, WEBP, GIF, BMP, TIFF, SVG), וידאו (MP4, AVI, MOV, MKV, WEBM), אודיו (MP3, WAV, AAC, OGG, FLAC), ומסמכים (PDF, DOCX, TXT)." },
+              { q: "האם הקבצים שלי מאובטחים?", a: "בהחלט. הקבצים מעובדים באופן מאובטח ונמחקים מיד לאחר ההמרה. אנו לא שומרים עותקים של הקבצים שלכם." },
+            ].map((faq, i) => (
+              <details key={i} className="bg-card border border-border rounded-xl">
+                <summary className="p-4 cursor-pointer font-medium text-foreground text-sm">{faq.q}</summary>
+                <p className="px-4 pb-4 text-sm text-muted-foreground">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
 
         {/* Footer */}
         <footer className="text-center text-sm text-muted-foreground py-6 border-t border-border">
-          <p>© 2026 תמיר לי • כל הזכויות שמורות</p>
+          <p>© 2026 תמיר לי • אתר המרות הקבצים של ישראל • כל הזכויות שמורות</p>
         </footer>
       </div>
     </AppLayout>
