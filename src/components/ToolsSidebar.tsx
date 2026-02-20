@@ -1,0 +1,94 @@
+import { Link, useLocation } from "react-router-dom";
+import { tools, categoryLabels, categoryIcons, type ToolCategory } from "@/lib/tools-data";
+import { Home, Crown, ChevronDown, Wrench } from "lucide-react";
+import { useState } from "react";
+
+const categories: ToolCategory[] = ["image", "video", "audio", "document"];
+
+export function ToolsSidebar() {
+  const location = useLocation();
+  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({
+    image: true,
+    video: true,
+    audio: true,
+    document: true,
+  });
+
+  const toggleCategory = (cat: string) =>
+    setOpenCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
+
+  return (
+    <aside className="w-64 bg-card border-l border-border h-screen sticky top-0 overflow-y-auto hidden lg:block">
+      <div className="p-4 border-b border-border">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+            <Wrench className="w-4 h-4 text-primary-foreground" />
+          </div>
+          <span className="text-lg font-bold text-foreground">תמיר לי</span>
+        </Link>
+      </div>
+
+      <nav className="p-3 space-y-1">
+        <Link
+          to="/"
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            location.pathname === "/"
+              ? "bg-primary/10 text-primary"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          }`}
+        >
+          <Home className="w-4 h-4" />
+          דף הבית
+        </Link>
+
+        {categories.map((cat) => {
+          const Icon = categoryIcons[cat];
+          const catTools = tools.filter((t) => t.category === cat);
+          const isOpen = openCategories[cat];
+
+          return (
+            <div key={cat}>
+              <button
+                onClick={() => toggleCategory(cat)}
+                className="flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <Icon className="w-4 h-4" />
+                  {categoryLabels[cat]}
+                </div>
+                <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? "" : "-rotate-90"}`} />
+              </button>
+
+              {isOpen && (
+                <div className="mr-4 space-y-0.5 mt-0.5">
+                  {catTools.map((tool) => (
+                    <Link
+                      key={tool.id}
+                      to={`/tool/${tool.id}`}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors ${
+                        location.pathname === `/tool/${tool.id}`
+                          ? "bg-primary/10 text-primary font-medium"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }`}
+                    >
+                      {tool.premium && <Crown className="w-3 h-3 text-premium" />}
+                      <span className="truncate">{tool.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </nav>
+
+      <div className="p-3 mt-4">
+        <div className="premium-banner p-3 text-center">
+          <Crown className="w-5 h-5 mx-auto mb-1" />
+          <p className="text-xs font-bold">שדרג לפרימיום</p>
+          <p className="text-[10px] opacity-80 mt-0.5">ללא מודעות • ללא הגבלה</p>
+        </div>
+      </div>
+    </aside>
+  );
+}
