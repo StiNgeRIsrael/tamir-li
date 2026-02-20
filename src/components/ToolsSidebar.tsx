@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { tools, categoryLabels, categoryIcons, type ToolCategory } from "@/lib/tools-data";
 import { Home, Crown, ChevronDown, Wrench } from "lucide-react";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const categories: ToolCategory[] = ["image", "video", "audio", "document"];
 
@@ -18,17 +19,21 @@ export function ToolsSidebar() {
     setOpenCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
 
   return (
-    <aside className="w-64 bg-card border-l border-border h-screen sticky top-0 overflow-y-auto hidden lg:block">
-      <div className="p-4 border-b border-border">
+    <aside className="w-64 bg-card border-s border-border h-screen sticky top-0 overflow-y-auto hidden lg:flex flex-col">
+      <div className="p-4 border-b border-border flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <Wrench className="w-4 h-4 text-primary-foreground" />
           </div>
-          <span className="text-lg font-bold text-foreground">תמיר לי</span>
+          <div className="flex flex-col">
+            <span className="text-lg font-bold text-foreground leading-tight">תמיר לי</span>
+            <span className="text-[10px] text-muted-foreground leading-tight">אתר המרות הקבצים של ישראל</span>
+          </div>
         </Link>
+        <ThemeToggle />
       </div>
 
-      <nav className="p-3 space-y-1">
+      <nav className="p-3 space-y-1 flex-1 overflow-y-auto">
         <Link
           to="/"
           className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -82,7 +87,7 @@ export function ToolsSidebar() {
         })}
       </nav>
 
-      <div className="p-3 mt-4">
+      <div className="p-3 border-t border-border">
         <div className="premium-banner p-3 text-center">
           <Crown className="w-5 h-5 mx-auto mb-1" />
           <p className="text-xs font-bold">שדרג לפרימיום</p>

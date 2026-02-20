@@ -3,12 +3,12 @@ import { getToolById, categoryLabels } from "@/lib/tools-data";
 import { AppLayout } from "@/components/AppLayout";
 import { FileDropZone } from "@/components/FileDropZone";
 import { AdSlot } from "@/components/AdSlot";
-import { PremiumBanner, PremiumLock, UsageLimitNotice } from "@/components/PremiumComponents";
+import { PremiumBanner, PremiumLock, ConversionSuccessUsage } from "@/components/PremiumComponents";
 import { triggerInterstitial } from "@/components/AdSlot";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
-import { ArrowRight, Download, Loader2, CheckCircle2, Crown } from "lucide-react";
+import { ArrowLeft, Download, Loader2, CheckCircle2, Crown } from "lucide-react";
 
 export default function ToolPage() {
   const { toolId } = useParams();
@@ -17,6 +17,8 @@ export default function ToolPage() {
   const [outputFormat, setOutputFormat] = useState("");
   const [converting, setConverting] = useState(false);
   const [done, setDone] = useState(false);
+  const [usedToday] = useState(3);
+  const maxDaily = 5;
 
   if (!tool) {
     return (
@@ -35,12 +37,12 @@ export default function ToolPage() {
 
   const handleConvert = () => {
     if (files.length === 0 || !outputFormat) return;
+    triggerInterstitial(); // Trigger vignette before conversion starts
     setConverting(true);
-    // Simulate conversion
     setTimeout(() => {
       setConverting(false);
       setDone(true);
-      triggerInterstitial(); // Trigger ad after conversion
+      triggerInterstitial(); // Trigger vignette after conversion completes
     }, 2500);
   };
 
@@ -54,22 +56,22 @@ export default function ToolPage() {
     <AppLayout>
       <div className="max-w-3xl mx-auto px-4 py-8 lg:py-12 space-y-8">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <nav aria-label="breadcrumb" className="flex items-center gap-2 text-sm text-muted-foreground">
           <Link to="/" className="hover:text-foreground transition-colors">דף הבית</Link>
           <span>/</span>
           <span>{categoryLabels[tool.category]}</span>
           <span>/</span>
           <span className="text-foreground font-medium">{tool.name}</span>
-        </div>
+        </nav>
 
         {/* Header */}
-        <div className="space-y-2 animate-fade-in">
+        <header className="space-y-2 animate-fade-in">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-extrabold text-foreground">{tool.name}</h1>
             {tool.premium && <Crown className="w-5 h-5 text-premium" />}
           </div>
           <p className="text-muted-foreground">{tool.description}</p>
-        </div>
+        </header>
 
         {tool.premium ? (
           <PremiumLock />
@@ -90,6 +92,9 @@ export default function ToolPage() {
                 המרה נוספת
               </Button>
             </div>
+
+            {/* Show remaining conversions after success */}
+            <ConversionSuccessUsage used={usedToday + 1} max={maxDaily} />
 
             <AdSlot type="inline" className="mt-8" />
           </div>
@@ -130,7 +135,7 @@ export default function ToolPage() {
                     </>
                   ) : (
                     <>
-                      <ArrowRight className="w-5 h-5 ml-2" />
+                      <ArrowLeft className="w-5 h-5 ml-2" />
                       התחל המרה
                     </>
                   )}
@@ -142,8 +147,7 @@ export default function ToolPage() {
           </div>
         )}
 
-        {/* Usage & Premium */}
-        <UsageLimitNotice used={3} max={5} />
+        {/* Premium Banner */}
         <PremiumBanner />
       </div>
     </AppLayout>
