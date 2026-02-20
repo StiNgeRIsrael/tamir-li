@@ -1,13 +1,15 @@
 import { Link, useLocation } from "react-router-dom";
 import { tools, categoryLabels, categoryIcons, type ToolCategory } from "@/lib/tools-data";
-import { Home, Crown, ChevronDown, Wrench } from "lucide-react";
+import { Home, Crown, ChevronDown, Wrench, PanelRight, PanelRightClose } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Button } from "@/components/ui/button";
 
 const categories: ToolCategory[] = ["image", "video", "audio", "document"];
 
 export function ToolsSidebar() {
   const location = useLocation();
+  const [collapsed, setCollapsed] = useState(true);
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({
     image: true,
     video: true,
@@ -18,11 +20,26 @@ export function ToolsSidebar() {
   const toggleCategory = (cat: string) =>
     setOpenCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
 
+  if (collapsed) {
+    return (
+      <aside className="w-14 bg-card border-s border-border h-screen sticky top-0 hidden lg:flex flex-col items-center py-3 gap-2 shrink-0">
+        <Button variant="ghost" size="icon" className="h-8 w-8 mb-1" onClick={() => setCollapsed(false)}>
+          <PanelRight className="w-4 h-4" />
+        </Button>
+        <Link to="/" className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
+          <Wrench className="w-4 h-4 text-primary-foreground" />
+        </Link>
+        <div className="flex-1" />
+        <ThemeToggle />
+      </aside>
+    );
+  }
+
   return (
-    <aside className="w-64 bg-card border-s border-border h-screen sticky top-0 overflow-y-auto hidden lg:flex flex-col">
+    <aside className="w-64 bg-card border-s border-border h-screen sticky top-0 overflow-y-auto hidden lg:flex flex-col shrink-0">
       <div className="p-4 border-b border-border flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
             <Wrench className="w-4 h-4 text-primary-foreground" />
           </div>
           <div className="flex flex-col">
@@ -30,7 +47,12 @@ export function ToolsSidebar() {
             <span className="text-[10px] text-muted-foreground leading-tight">אתר המרות הקבצים של ישראל</span>
           </div>
         </Link>
-        <ThemeToggle />
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCollapsed(true)}>
+            <PanelRightClose className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
       <nav className="p-3 space-y-1 flex-1 overflow-y-auto">

@@ -6,7 +6,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen w-full">
       <MobileHeader />
-      <div className="flex flex-row-reverse">
+      <div className="flex">
         <ToolsSidebar />
         <main className="flex-1 min-h-screen">
           {children}
