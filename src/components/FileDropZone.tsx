@@ -1,5 +1,5 @@
 import { useCallback, useState, type DragEvent } from "react";
-import { Upload, FileUp, X, Loader2 } from "lucide-react";
+import { Upload, FileUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface FileDropZoneProps {
@@ -18,7 +18,6 @@ export function FileDropZone({
   maxSizeMB = 50,
 }: FileDropZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const [files, setFiles] = useState<File[]>([]);
 
   const handleDragOver = useCallback((e: DragEvent) => {
     e.preventDefault();
@@ -35,7 +34,6 @@ export function FileDropZone({
       e.preventDefault();
       setIsDragging(false);
       const droppedFiles = Array.from(e.dataTransfer.files).slice(0, maxFiles);
-      setFiles(droppedFiles);
       onFilesSelected(droppedFiles);
     },
     [maxFiles, onFilesSelected]
@@ -45,23 +43,17 @@ export function FileDropZone({
     (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {
         const selectedFiles = Array.from(e.target.files).slice(0, maxFiles);
-        setFiles(selectedFiles);
         onFilesSelected(selectedFiles);
+        e.target.value = "";
       }
     },
     [maxFiles, onFilesSelected]
   );
 
-  const removeFile = (index: number) => {
-    const newFiles = files.filter((_, i) => i !== index);
-    setFiles(newFiles);
-    onFilesSelected(newFiles);
-  };
-
   const formatAccept = acceptedFormats.map((f) => `.${f.toLowerCase()}`).join(",");
 
   return (
-    <div className="space-y-4">
+    <div>
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -84,41 +76,15 @@ export function FileDropZone({
           <FileUp className="w-4 h-4 ml-2" />
           בחר קבצים
         </Button>
-        <input
-          id="file-input"
-          type="file"
-          accept={formatAccept}
-          multiple={multiple}
-          onChange={handleFileInput}
-          className="hidden"
-        />
       </div>
-
-      {files.length > 0 && (
-        <div className="space-y-2 animate-fade-in">
-          {files.map((file, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between bg-card border border-border rounded-lg p-3"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center">
-                  <FileUp className="w-4 h-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium truncate max-w-[200px]">{file.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                </div>
-              </div>
-              <Button variant="ghost" size="icon" onClick={() => removeFile(index)} className="h-8 w-8">
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
-      )}
+      <input
+        id="file-input"
+        type="file"
+        accept={formatAccept}
+        multiple={multiple}
+        onChange={handleFileInput}
+        className="hidden"
+      />
     </div>
   );
 }
