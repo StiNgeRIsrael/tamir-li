@@ -7,12 +7,29 @@ import { PremiumBanner, PremiumLock, ConversionSuccessUsage } from "@/components
 import { triggerInterstitial } from "@/components/AdSlot";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState } from "react";
-import { ArrowLeft, Download, Loader2, CheckCircle2, Crown, X, FileUp, RefreshCw, Plus } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, Download, Loader2, CheckCircle2, Crown, X, FileUp, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio } from "lucide-react";
 
 interface FileWithFormat {
   file: File;
   outputFormat: string;
+  thumbnail?: string;
+  progress: number; // 0-100
+  status: "pending" | "converting" | "done" | "error";
+}
+
+function getFileIcon(file: File) {
+  const type = file.type;
+  if (type.startsWith("image/")) return ImageIcon;
+  if (type.startsWith("video/")) return FileVideo;
+  if (type.startsWith("audio/")) return FileAudio;
+  return FileText;
+}
+
+function formatFileSize(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 }
 
 export default function ToolPage() {
@@ -20,28 +37,37 @@ export default function ToolPage() {
   const tool = getToolById(toolId || "");
   const [fileItems, setFileItems] = useState<FileWithFormat[]>([]);
   const [converting, setConverting] = useState(false);
-  const [done, setDone] = useState(false);
+  const [allDone, setAllDone] = useState(false);
   const [usedToday] = useState(3);
   const maxDaily = 5;
   const [globalFormat, setGlobalFormat] = useState("");
 
-  if (!tool) {
-    return (
-      <AppLayout>
-        <div className="flex items-center justify-center min-h-[60vh] text-center">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">כלי לא נמצא</h1>
-            <Link to="/" className="text-primary hover:underline">חזור לדף הבית</Link>
-          </div>
-        </div>
-      </AppLayout>
-    );
-  }
+  // Generate thumbnails for image files
+  const generateThumbnail = useCallback((file: File): Promise<string | undefined> => {
+    return new Promise((resolve) => {
+      if (!file.type.startsWith("image/")) {
+        resolve(undefined);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target?.result as string);
+      reader.onerror = () => resolve(undefined);
+      reader.readAsDataURL(file);
+    });
+  }, []);
 
-  const handleFilesSelected = (files: File[]) => {
-    const newItems = files.map((file) => ({ file, outputFormat: globalFormat }));
+  const handleFilesSelected = useCallback(async (files: File[]) => {
+    const newItems: FileWithFormat[] = await Promise.all(
+      files.map(async (file) => ({
+        file,
+        outputFormat: globalFormat,
+        thumbnail: await generateThumbnail(file),
+        progress: 0,
+        status: "pending" as const,
+      }))
+    );
     setFileItems((prev) => [...prev, ...newItems]);
-  };
+  }, [globalFormat, generateThumbnail]);
 
   const removeFile = (index: number) => {
     setFileItems((prev) => prev.filter((_, i) => i !== index));
@@ -64,24 +90,69 @@ export default function ToolPage() {
     if (!allHaveFormat) return;
     triggerInterstitial();
     setConverting(true);
+
+    // Animate each file sequentially with staggered progress
+    fileItems.forEach((_, index) => {
+      const startDelay = index * 400;
+
+      setTimeout(() => {
+        setFileItems((prev) =>
+          prev.map((item, i) => (i === index ? { ...item, status: "converting", progress: 0 } : item))
+        );
+
+        // Animate progress
+        const steps = 20;
+        const stepDuration = (1500 + Math.random() * 1000) / steps;
+        for (let step = 1; step <= steps; step++) {
+          setTimeout(() => {
+            setFileItems((prev) =>
+              prev.map((item, i) =>
+                i === index
+                  ? { ...item, progress: Math.min(Math.round((step / steps) * 100), 100) }
+                  : item
+              )
+            );
+
+            // Mark done on last step
+            if (step === steps) {
+              setFileItems((prev) =>
+                prev.map((item, i) =>
+                  i === index ? { ...item, status: "done", progress: 100 } : item
+                )
+              );
+            }
+          }, step * stepDuration);
+        }
+      }, startDelay);
+    });
+
+    // All done after all files finish
+    const totalTime = fileItems.length * 400 + 2500;
     setTimeout(() => {
       setConverting(false);
-      setDone(true);
+      setAllDone(true);
       triggerInterstitial();
-    }, 2500);
+    }, totalTime);
   };
 
   const handleReset = () => {
     setFileItems([]);
     setGlobalFormat("");
-    setDone(false);
+    setAllDone(false);
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
-  };
+  if (!tool) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center min-h-[60vh] text-center">
+          <div>
+            <h1 className="text-2xl font-bold mb-2">כלי לא נמצא</h1>
+            <Link to="/" className="text-primary hover:underline">חזור לדף הבית</Link>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -105,8 +176,7 @@ export default function ToolPage() {
               </div>
               <p className="text-muted-foreground mt-1">{tool.description}</p>
             </div>
-            {/* Global format selector in header */}
-            {tool.toFormats.length > 1 && (
+            {tool.toFormats.length > 1 && !allDone && (
               <div className="flex items-center gap-2 shrink-0 bg-card border border-border rounded-xl px-4 py-2.5">
                 <span className="text-sm text-muted-foreground whitespace-nowrap">המר ל</span>
                 <Select value={globalFormat} onValueChange={applyGlobalFormat}>
@@ -126,30 +196,71 @@ export default function ToolPage() {
 
         {tool.premium ? (
           <PremiumLock />
-        ) : done ? (
-          /* Success State */
-          <div className="text-center py-12 space-y-4 animate-fade-in">
-            <CheckCircle2 className="w-16 h-16 text-success mx-auto" />
-            <h2 className="text-2xl font-bold">ההמרה הושלמה!</h2>
-            <p className="text-muted-foreground">
-              {fileItems.length} {fileItems.length === 1 ? "קובץ" : "קבצים"} הומרו בהצלחה
-            </p>
-            <div className="flex items-center justify-center gap-3">
-              <Button className="bg-success text-success-foreground hover:bg-success/90">
-                <Download className="w-4 h-4 ml-2" />
-                הורד קבצים
-              </Button>
+        ) : allDone ? (
+          /* All Done - show results */
+          <div className="space-y-3 animate-fade-in">
+            <div className="flex items-center gap-3 mb-4">
+              <CheckCircle2 className="w-6 h-6 text-success" />
+              <h2 className="text-xl font-bold">ההמרה הושלמה!</h2>
+            </div>
+
+            {fileItems.map((item, index) => {
+              const Icon = getFileIcon(item.file);
+              return (
+                <div
+                  key={index}
+                  className="flex items-center gap-4 bg-card border border-success/30 rounded-xl px-4 py-3 animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  {/* Thumbnail or icon */}
+                  {item.thumbnail ? (
+                    <img
+                      src={item.thumbnail}
+                      alt={item.file.name}
+                      className="w-12 h-12 rounded-lg object-cover border border-border"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center shrink-0">
+                      <Icon className="w-5 h-5 text-success" />
+                    </div>
+                  )}
+
+                  {/* File info */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">
+                      {item.file.name.replace(/\.[^.]+$/, '')}.{item.outputFormat.toLowerCase()}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{formatFileSize(item.file.size)} → {item.outputFormat}</p>
+                  </div>
+
+                  {/* Status */}
+                  <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
+
+                  {/* Download button */}
+                  <Button size="sm" variant="outline" className="shrink-0 text-success border-success/30 hover:bg-success/10">
+                    <Download className="w-3.5 h-3.5 ml-1" />
+                    הורד
+                  </Button>
+                </div>
+              );
+            })}
+
+            <div className="flex items-center justify-between pt-3">
               <Button variant="outline" onClick={handleReset}>
                 המרה נוספת
               </Button>
+              <Button className="bg-success text-success-foreground hover:bg-success/90">
+                <Download className="w-4 h-4 ml-2" />
+                הורד הכל
+              </Button>
             </div>
-            <ConversionSuccessUsage used={usedToday + 1} max={maxDaily} />
-            <AdSlot type="inline" className="mt-8" />
+
+            <ConversionSuccessUsage used={usedToday + fileItems.length} max={maxDaily} />
+            <AdSlot type="inline" className="mt-4" />
           </div>
         ) : (
           /* Upload & Convert */
           <div className="space-y-5">
-            {/* Drop zone - show when no files yet or always for adding more */}
             {fileItems.length === 0 && (
               <FileDropZone
                 acceptedFormats={tool.fromFormats}
@@ -160,82 +271,133 @@ export default function ToolPage() {
             {/* File rows */}
             {fileItems.length > 0 && (
               <div className="space-y-2 animate-fade-in">
-                {fileItems.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3 group"
-                  >
-                    {/* File icon + info */}
-                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                      <FileUp className="w-4 h-4 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{item.file.name}</p>
-                      <p className="text-xs text-muted-foreground">{formatFileSize(item.file.size)}</p>
-                    </div>
-
-                    {/* Convert to indicator */}
-                    <div className="flex items-center gap-2 shrink-0">
-                      <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground hidden sm:inline">המר ל</span>
-                      <Select
-                        value={item.outputFormat}
-                        onValueChange={(val) => setFileFormat(index, val)}
-                      >
-                        <SelectTrigger className="w-24 h-7 text-xs border-0 bg-muted">
-                          <SelectValue placeholder="..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {tool.toFormats.map((fmt) => (
-                            <SelectItem key={fmt} value={fmt}>{fmt}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Remove */}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 shrink-0 opacity-50 hover:opacity-100"
-                      onClick={() => removeFile(index)}
+                {fileItems.map((item, index) => {
+                  const Icon = getFileIcon(item.file);
+                  return (
+                    <div
+                      key={index}
+                      className={`bg-card border rounded-xl px-4 py-3 transition-all duration-300 ${
+                        item.status === "done"
+                          ? "border-success/40"
+                          : item.status === "converting"
+                          ? "border-primary/40"
+                          : "border-border"
+                      }`}
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <div className="flex items-center gap-3">
+                        {/* Thumbnail or icon */}
+                        {item.thumbnail ? (
+                          <img
+                            src={item.thumbnail}
+                            alt={item.file.name}
+                            className="w-10 h-10 rounded-lg object-cover border border-border shrink-0"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                            <Icon className="w-5 h-5 text-primary" />
+                          </div>
+                        )}
+
+                        {/* File info */}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{item.file.name}</p>
+                          <p className="text-xs text-muted-foreground">{formatFileSize(item.file.size)}</p>
+                        </div>
+
+                        {/* Status indicator */}
+                        {item.status === "converting" && (
+                          <Loader2 className="w-4 h-4 text-primary animate-spin shrink-0" />
+                        )}
+                        {item.status === "done" && (
+                          <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
+                        )}
+
+                        {/* Convert to */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
+                          <Select
+                            value={item.outputFormat}
+                            onValueChange={(val) => setFileFormat(index, val)}
+                            disabled={converting}
+                          >
+                            <SelectTrigger className="w-24 h-7 text-xs border-0 bg-muted">
+                              <SelectValue placeholder="..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {tool.toFormats.map((fmt) => (
+                                <SelectItem key={fmt} value={fmt}>{fmt}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* Remove */}
+                        {!converting && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 shrink-0 opacity-50 hover:opacity-100"
+                            onClick={() => removeFile(index)}
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </Button>
+                        )}
+                      </div>
+
+                      {/* Progress bar */}
+                      {(item.status === "converting" || item.status === "done") && (
+                        <div className="mt-2.5">
+                          <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all duration-300 ease-out ${
+                                item.status === "done" ? "bg-success" : "bg-primary"
+                              }`}
+                              style={{ width: `${item.progress}%` }}
+                            />
+                          </div>
+                          <div className="flex items-center justify-between mt-1">
+                            <span className="text-[10px] text-muted-foreground">
+                              {item.status === "converting" ? "ממיר..." : "הושלם"}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground">{item.progress}%</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Actions row */}
+                {!converting && (
+                  <div className="flex items-center justify-between pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-sm"
+                      onClick={() => document.getElementById("file-input")?.click()}
+                    >
+                      <Plus className="w-4 h-4 ml-1" />
+                      הוסף קבצים
+                    </Button>
+
+                    <Button
+                      onClick={handleConvert}
+                      disabled={!allHaveFormat || converting}
+                      className="h-10 px-8 font-bold bg-accent text-accent-foreground hover:bg-accent/90 animate-pulse-glow"
+                      size="lg"
+                    >
+                      <RefreshCw className="w-4 h-4 ml-2" />
+                      המר {fileItems.length > 1 ? `${fileItems.length} קבצים` : ""}
                     </Button>
                   </div>
-                ))}
+                )}
 
-                {/* Add more files + Convert row */}
-                <div className="flex items-center justify-between pt-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-sm"
-                    onClick={() => document.getElementById("file-input")?.click()}
-                  >
-                    <Plus className="w-4 h-4 ml-1" />
-                    הוסף קבצים
-                  </Button>
-
-                  <Button
-                    onClick={handleConvert}
-                    disabled={!allHaveFormat || converting}
-                    className="h-10 px-8 font-bold bg-accent text-accent-foreground hover:bg-accent/90"
-                    size="lg"
-                  >
-                    {converting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                        ממיר...
-                      </>
-                    ) : (
-                      <>
-                        <RefreshCw className="w-4 h-4 ml-2" />
-                        המר
-                      </>
-                    )}
-                  </Button>
-                </div>
+                {converting && (
+                  <div className="text-center py-2 text-sm text-muted-foreground animate-fade-in">
+                    <Loader2 className="w-5 h-5 mx-auto animate-spin mb-2 text-primary" />
+                    ממיר קבצים... אנא המתן
+                  </div>
+                )}
               </div>
             )}
 
