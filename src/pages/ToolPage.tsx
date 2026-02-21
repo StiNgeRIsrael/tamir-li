@@ -266,7 +266,7 @@ export default function ToolPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+              <Arrow className="w-5 h-5 text-muted-foreground" />
               <div className="flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-2.5">
                 <span className="text-muted-foreground text-sm font-medium">{tt.to}</span>
                 <Select value={activeTo} onValueChange={changeTo}>
