@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { categoryLabels, categoryIcons, getToolsByCategory, getDefaultSlug, type ToolCategory } from "@/lib/tools-data";
 
-const categories: ToolCategory[] = ["image", "video", "audio", "document"];
+const categories: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
 
 export function TopNavbar() {
   const location = useLocation();
