@@ -1,0 +1,228 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Crown, Sparkles, Loader2, Download, RefreshCw, ImageIcon, Zap, Lock } from "lucide-react";
+import { CreditsDisplay, CreditPackages } from "@/components/PremiumCredits";
+
+type GenerationState = "idle" | "generating" | "done";
+
+interface GeneratedImage {
+  prompt: string;
+  url: string;
+  timestamp: number;
+}
+
+export function AiImageGeneratorTool() {
+  const [prompt, setPrompt] = useState("");
+  const [style, setStyle] = useState("realistic");
+  const [aspectRatio, setAspectRatio] = useState("1:1");
+  const [state, setState] = useState<GenerationState>("idle");
+  const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
+  const [showPackages, setShowPackages] = useState(false);
+
+  // Mock premium state — UI only
+  const isPremium = false;
+  const credits = 0;
+
+  const handleGenerate = () => {
+    if (!prompt.trim()) return;
+    if (!isPremium) return;
+
+    setState("generating");
+    // Simulate generation
+    setTimeout(() => {
+      setGeneratedImages((prev) => [
+        {
+          prompt: prompt.trim(),
+          url: "", // placeholder
+          timestamp: Date.now(),
+        },
+        ...prev,
+      ]);
+      setState("done");
+    }, 3000);
+  };
+
+  const styles = [
+    { value: "realistic", label: "ריאליסטי" },
+    { value: "artistic", label: "אמנותי" },
+    { value: "cartoon", label: "קריקטורה" },
+    { value: "3d", label: "תלת מימד" },
+    { value: "pixel", label: "פיקסל ארט" },
+    { value: "watercolor", label: "צבעי מים" },
+  ];
+
+  const ratios = [
+    { value: "1:1", label: "1:1 ריבוע" },
+    { value: "16:9", label: "16:9 רחב" },
+    { value: "9:16", label: "9:16 אורך" },
+    { value: "4:3", label: "4:3 קלאסי" },
+  ];
+
+  if (!isPremium) {
+    return (
+      <div className="space-y-6">
+        {/* Premium-only gate */}
+        <div className="text-center py-10 px-4 bg-muted/50 rounded-2xl border border-border space-y-5">
+          <div className="w-16 h-16 rounded-2xl bg-premium/10 flex items-center justify-center mx-auto">
+            <Sparkles className="w-8 h-8 text-premium" />
+          </div>
+          <h3 className="font-extrabold text-xl text-foreground">יצירת תמונות עם AI</h3>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+            צרו תמונות מדהימות מטקסט באמצעות בינה מלאכותית. 
+            הכלי זמין למנויי פרימיום בלבד ועובד על בסיס קרדיטים.
+          </p>
+
+          <div className="bg-card border border-border rounded-xl p-4 max-w-sm mx-auto space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">מנוי פרימיום</span>
+              <span className="text-lg font-extrabold text-premium">₪4.90/חודש</span>
+            </div>
+            <ul className="text-xs text-muted-foreground space-y-1.5 text-start">
+              <li className="flex items-center gap-2">
+                <Sparkles className="w-3 h-3 text-premium shrink-0" />
+                6 יצירות תמונה בחודש כלולות
+              </li>
+              <li className="flex items-center gap-2">
+                <Zap className="w-3 h-3 text-premium shrink-0" />
+                המרות ללא הגבלה
+              </li>
+              <li className="flex items-center gap-2">
+                <Lock className="w-3 h-3 text-premium shrink-0" />
+                ללא מודעות
+              </li>
+            </ul>
+            <Button className="w-full bg-premium text-premium-foreground hover:bg-premium/90 font-bold">
+              <Crown className="w-4 h-4 ml-1" />
+              שדרג לפרימיום
+            </Button>
+          </div>
+
+          <p className="text-xs text-muted-foreground">ניתן לרכוש חבילות קרדיטים נוספות בנפרד</p>
+          <Button variant="link" className="text-primary text-sm" onClick={() => setShowPackages(true)}>
+            צפה בחבילות קרדיטים →
+          </Button>
+        </div>
+
+        {showPackages && (
+          <CreditPackages onClose={() => setShowPackages(false)} />
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* Credits display */}
+      <CreditsDisplay credits={credits} isPremium={isPremium} />
+
+      {/* Prompt area */}
+      <div className="bg-card border border-border rounded-2xl p-4 space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">תארו את התמונה שאתם רוצים ליצור</label>
+          <Textarea
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="לדוגמה: חתול כתום יושב על אדן חלון, אור שקיעה חם, סגנון ציור שמן..."
+            className="min-h-[100px] resize-none text-sm"
+            dir="rtl"
+          />
+        </div>
+
+        {/* Options row */}
+        <div className="flex flex-wrap gap-3">
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">סגנון</label>
+            <Select value={style} onValueChange={setStyle}>
+              <SelectTrigger className="w-32 h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {styles.map((s) => (
+                  <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">יחס תמונה</label>
+            <Select value={aspectRatio} onValueChange={setAspectRatio}>
+              <SelectTrigger className="w-32 h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ratios.map((r) => (
+                  <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Generate button */}
+        <Button
+          onClick={handleGenerate}
+          disabled={!prompt.trim() || state === "generating" || credits <= 0}
+          className="w-full h-11 font-bold bg-premium text-premium-foreground hover:bg-premium/90"
+          size="lg"
+        >
+          {state === "generating" ? (
+            <>
+              <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+              יוצר תמונה...
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4 ml-2" />
+              צור תמונה (1 קרדיט)
+            </>
+          )}
+        </Button>
+      </div>
+
+      {/* Generated results */}
+      {state === "generating" && (
+        <div className="bg-card border border-border rounded-2xl p-8 text-center space-y-4 animate-fade-in">
+          <div className="w-20 h-20 rounded-2xl bg-premium/10 flex items-center justify-center mx-auto animate-pulse">
+            <Sparkles className="w-10 h-10 text-premium" />
+          </div>
+          <p className="text-sm text-muted-foreground">ה-AI יוצר את התמונה שלכם... בדרך כלל לוקח 10-20 שניות</p>
+          <div className="h-1.5 bg-muted rounded-full overflow-hidden max-w-xs mx-auto">
+            <div className="h-full bg-premium rounded-full animate-pulse w-2/3" />
+          </div>
+        </div>
+      )}
+
+      {generatedImages.length > 0 && state !== "generating" && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-bold text-foreground">תמונות שנוצרו</h3>
+          {generatedImages.map((img, index) => (
+            <div key={img.timestamp} className="bg-card border border-border rounded-2xl overflow-hidden animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
+              {/* Placeholder for generated image */}
+              <div className="aspect-square max-h-[400px] bg-muted flex items-center justify-center">
+                <div className="text-center space-y-2">
+                  <ImageIcon className="w-12 h-12 text-muted-foreground/30 mx-auto" />
+                  <p className="text-xs text-muted-foreground">תמונה שנוצרה תוצג כאן</p>
+                </div>
+              </div>
+              <div className="p-3 space-y-2">
+                <p className="text-xs text-muted-foreground truncate">"{img.prompt}"</p>
+                <div className="flex items-center gap-2">
+                  <Button size="sm" className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90">
+                    <Download className="w-3.5 h-3.5 ml-1" />
+                    הורד תמונה
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => { setPrompt(img.prompt); setState("idle"); }}>
+                    <RefreshCw className="w-3.5 h-3.5 ml-1" />
+                    צור מחדש
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

@@ -6,12 +6,13 @@ import { PremiumBanner } from "@/components/PremiumComponents";
 import { ArrowLeft, Crown, Sparkles, Shield, Zap, Globe, CheckCircle2, Image, FileVideo, FileAudio, FileText, Users, Star } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";
 
-const categories: ToolCategory[] = ["image", "video", "audio", "document"];
+const categories: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
 const categoryColors: Record<ToolCategory, string> = {
   image: "bg-tool-image/10 text-tool-image border-tool-image/20",
   video: "bg-tool-video/10 text-tool-video border-tool-video/20",
   audio: "bg-tool-audio/10 text-tool-audio border-tool-audio/20",
   document: "bg-tool-document/10 text-tool-document border-tool-document/20",
+  ai: "bg-premium/10 text-premium border-premium/20",
 };
 
 const categoryBg: Record<ToolCategory, string> = {
@@ -19,6 +20,7 @@ const categoryBg: Record<ToolCategory, string> = {
   video: "from-tool-video/5 to-transparent",
   audio: "from-tool-audio/5 to-transparent",
   document: "from-tool-document/5 to-transparent",
+  ai: "from-premium/5 to-transparent",
 };
 
 const stats = [

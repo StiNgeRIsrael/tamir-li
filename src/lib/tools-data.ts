@@ -1,4 +1,4 @@
-import { Image, FileVideo, FileAudio, FileText, ArrowLeftRight, Minimize2, Hash, Palette, Type, FileArchive } from "lucide-react";
+import { Image, FileVideo, FileAudio, FileText, ArrowLeftRight, Minimize2, Hash, Palette, Type, FileArchive, Sparkles, Wand2 } from "lucide-react";
 
 export interface Tool {
   id: string;
@@ -15,13 +15,14 @@ export interface Tool {
   customComponent?: string;
 }
 
-export type ToolCategory = "image" | "video" | "audio" | "document";
+export type ToolCategory = "image" | "video" | "audio" | "document" | "ai";
 
 export const categoryLabels: Record<ToolCategory, string> = {
   image: "תמונות",
   video: "וידאו",
   audio: "אודיו",
   document: "מסמכים",
+  ai: "יצירה עם AI",
 };
 
 export const categoryIcons: Record<ToolCategory, React.ComponentType<{ className?: string }>> = {
@@ -29,6 +30,7 @@ export const categoryIcons: Record<ToolCategory, React.ComponentType<{ className
   video: FileVideo,
   audio: FileAudio,
   document: FileText,
+  ai: Sparkles,
 };
 
 export const tools: Tool[] = [
@@ -172,6 +174,20 @@ export const tools: Tool[] = [
     icon: Type,
     keywords: ["כלי טקסט", "Markdown ל-HTML", "HTML ל-Markdown", "ספירת מילים"],
     customComponent: "text-tools",
+  },
+  {
+    id: "ai-image-generator",
+    name: "יצירת תמונות AI",
+    description: "צרו תמונות מדהימות מטקסט באמצעות בינה מלאכותית",
+    longDescription: "כלי יצירת תמונות מתקדם עם בינה מלאכותית. תארו את התמונה שאתם רוצים בטקסט חופשי, בחרו סגנון ויחס תמונה, וה-AI ייצור תמונה מקורית תוך שניות. זמין למנויי פרימיום בלבד.",
+    category: "ai",
+    fromFormats: [],
+    toFormats: [],
+    icon: Wand2,
+    popular: true,
+    premium: true,
+    keywords: ["יצירת תמונות", "AI", "בינה מלאכותית", "תמונה מטקסט", "text to image"],
+    customComponent: "ai-image-generator",
   },
 ];
 
