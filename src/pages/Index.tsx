@@ -58,7 +58,7 @@ const Index = () => {
         title="תמיר לי — אתר המרות הקבצים של ישראל"
         description="המרה מהירה וחינמית בין פורמטים של תמונות, וידאו, אודיו ומסמכים. גרור קבצים, בחר פורמט, וסיימת. ללא הורדת תוכנה."
       />
-      <div className="max-w-5xl mx-auto px-4 py-6 lg:py-10 space-y-8">
+      <div className="max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-12 space-y-8 lg:space-y-10">
 
         {/* Hero — compact */}
         <section className="text-center space-y-3 animate-fade-in">
@@ -66,11 +66,11 @@ const Index = () => {
             <Sparkles className="w-3.5 h-3.5" />
             כלים חינמיים להמרת קבצים
           </div>
-          <h1 className="text-3xl lg:text-5xl font-extrabold text-foreground leading-tight">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-foreground leading-tight">
             המרו כל קובץ,{" "}
             <span className="text-primary">תוך שניות</span>
           </h1>
-          <p className="text-sm lg:text-base text-muted-foreground max-w-lg mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-muted-foreground max-w-lg lg:max-w-2xl mx-auto leading-relaxed">
             תמונות, וידאו, אודיו ומסמכים — גררו, בחרו פורמט, וסיימתם.
             <br className="hidden sm:block" />
             ללא הורדת תוכנה. ללא רישום. חינם.
@@ -80,10 +80,10 @@ const Index = () => {
         {/* Stats bar */}
         <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {stats.map((s, i) => (
-            <div key={i} className="bg-card border border-border rounded-xl p-3 text-center space-y-1">
+            <div key={i} className="bg-card border border-border rounded-xl p-3 lg:p-4 text-center space-y-1">
               <s.icon className="w-4 h-4 mx-auto text-primary" />
-              <p className="text-lg font-extrabold text-foreground">{s.value}</p>
-              <p className="text-xs text-muted-foreground">{s.label}</p>
+              <p className="text-lg lg:text-2xl font-extrabold text-foreground">{s.value}</p>
+              <p className="text-xs lg:text-sm text-muted-foreground">{s.label}</p>
             </div>
           ))}
         </section>
@@ -95,22 +95,22 @@ const Index = () => {
           const Icon = categoryIcons[cat];
           const catTools = getToolsByCategory(cat);
           return (
-            <section key={cat} className={`rounded-2xl border border-border bg-gradient-to-br ${categoryBg[cat]} p-4 space-y-3`}>
-              <h2 className="text-base font-bold flex items-center gap-2">
+            <section key={cat} className={`rounded-2xl border border-border bg-gradient-to-br ${categoryBg[cat]} p-4 lg:p-6 space-y-3 lg:space-y-4`}>
+              <h2 className="text-base lg:text-lg font-bold flex items-center gap-2">
                 <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${categoryColors[cat]}`}>
                   <Icon className="w-4 h-4" />
                 </div>
                 {categoryLabels[cat]}
                 <span className="text-xs font-normal text-muted-foreground">({catTools.length} כלים)</span>
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 lg:gap-3">
                 {catTools.map((tool) => {
                   const TIcon = tool.icon;
                   return (
                     <Link
                       key={tool.id}
                       to={`/${getDefaultSlug(tool)}`}
-                      className="flex items-center gap-3 bg-card/80 hover:bg-card border border-border/50 hover:border-primary/30 rounded-xl p-3 transition-all duration-200 hover:shadow-md group"
+                      className="flex items-center gap-3 bg-card/80 hover:bg-card border border-border/50 hover:border-primary/30 rounded-xl p-3 lg:p-4 transition-all duration-200 hover:shadow-md group"
                     >
                       <TIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary shrink-0 transition-colors" />
                       <div className="flex-1 min-w-0">
@@ -134,15 +134,15 @@ const Index = () => {
 
         {/* Features grid */}
         <section className="space-y-4">
-          <h2 className="text-lg font-bold text-foreground text-center">למה 1.2 מיליון ישראלים בוחרים בתמיר לי?</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <h2 className="text-lg lg:text-xl font-bold text-foreground text-center">למה 1.2 מיליון ישראלים בוחרים בתמיר לי?</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
             {features.map((f, i) => (
-              <article key={i} className="bg-card border border-border rounded-xl p-4 text-center space-y-2">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                  <f.icon className="w-5 h-5 text-primary" />
+              <article key={i} className="bg-card border border-border rounded-xl p-4 lg:p-5 text-center space-y-2 lg:space-y-3">
+                <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                  <f.icon className="w-5 h-5 lg:w-6 lg:h-6 text-primary" />
                 </div>
-                <h3 className="font-semibold text-sm text-foreground">{f.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
+                <h3 className="font-semibold text-sm lg:text-base text-foreground">{f.title}</h3>
+                <p className="text-xs lg:text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
               </article>
             ))}
           </div>
@@ -152,13 +152,13 @@ const Index = () => {
 
         {/* Supported formats table */}
         <section className="space-y-3">
-          <h2 className="text-lg font-bold text-foreground">פורמטים נתמכים</h2>
+          <h2 className="text-lg lg:text-xl font-bold text-foreground">פורמטים נתמכים</h2>
           <div className="bg-card border border-border rounded-xl divide-y divide-border overflow-hidden">
             {supportedFormats.map((f, i) => (
-              <div key={i} className="flex items-center gap-3 p-3">
-                <f.icon className="w-4 h-4 text-primary shrink-0" />
-                <span className="font-medium text-sm text-foreground w-16 shrink-0">{f.cat}</span>
-                <p className="text-xs text-muted-foreground font-mono">{f.formats}</p>
+              <div key={i} className="flex items-center gap-3 lg:gap-4 p-3 lg:p-4">
+                <f.icon className="w-4 h-4 lg:w-5 lg:h-5 text-primary shrink-0" />
+                <span className="font-medium text-sm lg:text-base text-foreground w-16 lg:w-20 shrink-0">{f.cat}</span>
+                <p className="text-xs lg:text-sm text-muted-foreground font-mono">{f.formats}</p>
               </div>
             ))}
           </div>
@@ -166,19 +166,19 @@ const Index = () => {
 
         {/* How it works */}
         <section className="space-y-4">
-          <h2 className="text-lg font-bold text-foreground text-center">איך זה עובד?</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <h2 className="text-lg lg:text-xl font-bold text-foreground text-center">איך זה עובד?</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4">
             {[
               { step: "1", title: "העלו קובץ", desc: "גררו או בחרו את הקבצים שלכם" },
               { step: "2", title: "בחרו פורמט", desc: "בחרו את הפורמט הרצוי מהרשימה" },
               { step: "3", title: "הורידו", desc: "הקובץ המומר מוכן להורדה תוך שניות" },
             ].map((s, i) => (
-              <div key={i} className="bg-card border border-border rounded-xl p-4 text-center space-y-2 relative">
-                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold text-sm flex items-center justify-center mx-auto">
+              <div key={i} className="bg-card border border-border rounded-xl p-4 lg:p-6 text-center space-y-2 lg:space-y-3 relative">
+                <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-primary text-primary-foreground font-bold text-sm lg:text-base flex items-center justify-center mx-auto">
                   {s.step}
                 </div>
-                <h3 className="font-semibold text-sm text-foreground">{s.title}</h3>
-                <p className="text-xs text-muted-foreground">{s.desc}</p>
+                <h3 className="font-semibold text-sm lg:text-base text-foreground">{s.title}</h3>
+                <p className="text-xs lg:text-sm text-muted-foreground">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -186,14 +186,14 @@ const Index = () => {
 
         {/* Testimonials */}
         <section className="space-y-3">
-          <h2 className="text-lg font-bold text-foreground text-center">מה אומרים המשתמשים שלנו</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <h2 className="text-lg lg:text-xl font-bold text-foreground text-center">מה אומרים המשתמשים שלנו</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4">
             {[
               { name: "רוני מ.", text: "הכי נוח ומהיר שיש! ממיר תמונות כל יום בלי בעיה.", stars: 5 },
               { name: "שרה כ.", text: "סוף סוף אתר בעברית שעובד כמו שצריך. ממליצה בחום!", stars: 5 },
               { name: "אורי ד.", text: "עובד מעולה מהנייד. גם PDF ל-Word יוצא מצוין.", stars: 5 },
             ].map((t, i) => (
-              <article key={i} className="bg-card border border-border rounded-xl p-4 space-y-2">
+              <article key={i} className="bg-card border border-border rounded-xl p-4 lg:p-5 space-y-2">
                 <div className="flex gap-0.5">
                   {Array.from({ length: t.stars }).map((_, j) => (
                     <Star key={j} className="w-3.5 h-3.5 text-premium fill-premium" />
@@ -208,16 +208,16 @@ const Index = () => {
 
         {/* FAQ for SEO */}
         <section className="space-y-3" itemScope itemType="https://schema.org/FAQPage">
-          <h2 className="text-lg font-bold text-foreground">שאלות נפוצות</h2>
-          <div className="space-y-2">
+          <h2 className="text-lg lg:text-xl font-bold text-foreground">שאלות נפוצות</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-3">
             {faqs.map((faq, i) => (
               <details key={i} className="bg-card border border-border rounded-xl group" itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
-                <summary className="p-3 cursor-pointer font-medium text-foreground text-sm flex items-center justify-between" itemProp="name">
+                <summary className="p-3 lg:p-4 cursor-pointer font-medium text-foreground text-sm lg:text-base flex items-center justify-between" itemProp="name">
                   {faq.q}
                   <ArrowLeft className="w-4 h-4 text-muted-foreground transition-transform group-open:-rotate-90 shrink-0" />
                 </summary>
                 <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
-                  <p className="px-3 pb-3 text-sm text-muted-foreground" itemProp="text">{faq.a}</p>
+                  <p className="px-3 lg:px-4 pb-3 lg:pb-4 text-sm text-muted-foreground" itemProp="text">{faq.a}</p>
                 </div>
               </details>
             ))}
@@ -225,7 +225,7 @@ const Index = () => {
         </section>
 
         {/* SEO rich text */}
-        <section className="bg-card border border-border rounded-xl p-5 space-y-3">
+        <section className="bg-card border border-border rounded-xl p-5 lg:p-8 space-y-3">
           <h2 className="text-base font-bold text-foreground">תמיר לי — אתר המרות הקבצים המוביל בישראל</h2>
           <div className="text-sm text-muted-foreground space-y-2 leading-relaxed">
             <p>

@@ -171,7 +171,7 @@ export default function ToolPage() {
           "inLanguage": "he"
         }}
       />
-      <div className="max-w-3xl mx-auto px-4 py-6 lg:py-10 space-y-6">
+      <div className="max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10 space-y-6 lg:space-y-8">
         {/* Breadcrumb */}
         <nav aria-label="breadcrumb" className="flex items-center gap-2 text-sm text-muted-foreground">
           <Link to="/" className="hover:text-foreground transition-colors">דף הבית</Link>
