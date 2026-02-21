@@ -12,6 +12,7 @@ export interface Tool {
   popular?: boolean;
   premium?: boolean;
   keywords: string[];
+  customComponent?: string;
 }
 
 export type ToolCategory = "image" | "video" | "audio" | "document";
@@ -150,25 +151,27 @@ export const tools: Tool[] = [
   },
   {
     id: "merge-pdf",
-    name: "מיזוג PDF",
-    description: "חבר מספר קבצי PDF לקובץ אחד",
-    longDescription: "חברו מספר קבצי PDF לקובץ אחד בסדר שתבחרו.",
+    name: "מנהל PDF",
+    description: "מזג, סדר מחדש, סובב והורד קבצי PDF",
+    longDescription: "מנהל PDF מתקדם — העלו מספר קבצי PDF, סדרו את העמודים מחדש בגרירה, סובבו עמודים בודדים, ומזגו הכל לקובץ PDF אחד מסודר. מושלם לחוזים, דוחות וחשבוניות.",
     category: "document",
     fromFormats: ["PDF"],
     toFormats: ["PDF"],
     icon: FileArchive,
-    keywords: ["מיזוג PDF", "חיבור PDF", "איחוד PDF"],
+    keywords: ["מיזוג PDF", "סידור עמודים", "סיבוב PDF", "מנהל PDF"],
+    customComponent: "pdf-manager",
   },
   {
     id: "text-tools",
     name: "כלי טקסט",
-    description: "המרת אותיות, ספירת מילים, ועוד",
-    longDescription: "כלי טקסט שימושיים הכוללים המרת אותיות, ספירת מילים ותווים, ועוד.",
+    description: "המרה בין טקסט, Markdown ו-HTML, ספירת מילים ועוד",
+    longDescription: "כלי טקסט מתקדם: המירו בין פורמט טקסט רגיל, Markdown ו-HTML. כולל ספירת מילים ותווים, המרת אותיות, ניקוי רווחים ועוד.",
     category: "document",
-    fromFormats: ["TXT"],
-    toFormats: ["TXT"],
+    fromFormats: ["TXT", "MD", "HTML"],
+    toFormats: ["TXT", "MD", "HTML"],
     icon: Type,
-    keywords: ["כלי טקסט", "ספירת מילים", "המרת אותיות"],
+    keywords: ["כלי טקסט", "Markdown ל-HTML", "HTML ל-Markdown", "ספירת מילים"],
+    customComponent: "text-tools",
   },
 ];
 
@@ -200,8 +203,9 @@ export function getToolByFormatSlug(slug: string): { tool: Tool; from: string; t
   return { tool, from: parsed.from, to: parsed.to };
 }
 
-/** Get default slug for a tool (first from → first to that's different) */
+/** Get default slug for a tool (custom tools use their ID, conversion tools use from-to format) */
 export function getDefaultSlug(tool: Tool): string {
+  if (tool.customComponent) return tool.id;
   const from = tool.fromFormats[0];
   const to = tool.toFormats.find((f) => f !== from) || tool.toFormats[0];
   return buildFormatSlug(from, to);

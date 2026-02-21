@@ -8,6 +8,8 @@ import { triggerInterstitial } from "@/components/AdSlot";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SEOHead } from "@/components/SEOHead";
+import { PdfManagerTool } from "@/components/tools/PdfManagerTool";
+import { TextToolsComponent } from "@/components/tools/TextToolsComponent";
 import { useState, useCallback } from "react";
 import { ArrowLeft, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe } from "lucide-react";
 
@@ -232,7 +234,11 @@ export default function ToolPage() {
           </div>
         </header>
 
-        {tool.premium && !premiumUnlocked ? (
+        {tool.customComponent === "pdf-manager" ? (
+          <PdfManagerTool />
+        ) : tool.customComponent === "text-tools" ? (
+          <TextToolsComponent />
+        ) : tool.premium && !premiumUnlocked ? (
           <PremiumLock onUnlock={() => setPremiumUnlocked(true)} />
         ) : allDone ? (
           <div className="space-y-3 animate-fade-in">
