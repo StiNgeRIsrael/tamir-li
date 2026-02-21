@@ -50,6 +50,7 @@ export default function ToolPage() {
   const [allDone, setAllDone] = useState(false);
   const [usedToday] = useState(3);
   const maxDaily = 5;
+  const [premiumUnlocked, setPremiumUnlocked] = useState(false);
 
   // Navigate to new slug when format changes
   const changeFrom = (from: string) => {
@@ -231,8 +232,8 @@ export default function ToolPage() {
           </div>
         </header>
 
-        {tool.premium ? (
-          <PremiumLock />
+        {tool.premium && !premiumUnlocked ? (
+          <PremiumLock onUnlock={() => setPremiumUnlocked(true)} />
         ) : allDone ? (
           <div className="space-y-3 animate-fade-in">
             <div className="flex items-center gap-3 mb-4">
