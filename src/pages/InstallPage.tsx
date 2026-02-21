@@ -15,7 +15,7 @@ const benefitIcons = [Zap, WifiOff, Shield, Bell, HardDrive, Globe];
 
 export default function InstallPage() {
   const { locale, t } = useLocale();
-  const inst = t.install;
+  const inst = t.install || {};
   const ip = t.installPage || {};
   const benefits = ip.benefits || [];
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
