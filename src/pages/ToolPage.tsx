@@ -243,7 +243,7 @@ export default function ToolPage() {
           <TextToolsComponent />
         ) : tool.customComponent === "ai-image-generator" ? (
           <AiImageGeneratorTool />
-        ) : tool.premium && !premiumUnlocked ? (
+        ) : tool.premium && !["image-compressor", "image-resizer", "video-compressor"].includes(tool.customComponent || "") && !premiumUnlocked ? (
           <PremiumLock onUnlock={() => setPremiumUnlocked(true)} />
         ) : allDone ? (
           <div className="space-y-3 animate-fade-in">

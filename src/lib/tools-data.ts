@@ -57,6 +57,7 @@ export const tools: Tool[] = [
     icon: Minimize2,
     popular: true,
     keywords: ["דחיסת תמונות", "הקטנת תמונה", "כיווץ תמונה"],
+    customComponent: "image-compressor",
   },
   {
     id: "image-resizer",
@@ -68,6 +69,7 @@ export const tools: Tool[] = [
     toFormats: ["JPG", "PNG", "WEBP"],
     icon: Hash,
     keywords: ["שינוי גודל תמונה", "שינוי רזולוציה"],
+    customComponent: "image-resizer",
   },
   {
     id: "png-to-ico",
@@ -115,6 +117,7 @@ export const tools: Tool[] = [
     icon: Minimize2,
     premium: true,
     keywords: ["דחיסת וידאו", "הקטנת סרטון"],
+    customComponent: "video-compressor",
   },
   {
     id: "audio-converter",
