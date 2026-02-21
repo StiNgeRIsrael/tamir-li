@@ -1,14 +1,8 @@
 import { Crown, Sparkles, Zap, Package, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useT } from "@/lib/i18n";
 
-interface CreditPackage {
-  id: string;
-  amount: number;
-  price: number;
-  pricePerImage: number;
-  popular?: boolean;
-  savings?: string;
-}
+interface CreditPackage { id: string; amount: number; price: number; pricePerImage: number; popular?: boolean; savings?: string; }
 
 const packages: CreditPackage[] = [
   { id: "small", amount: 10, price: 8, pricePerImage: 0.80 },
@@ -18,6 +12,8 @@ const packages: CreditPackage[] = [
 ];
 
 export function CreditsDisplay({ credits, isPremium }: { credits: number; isPremium: boolean }) {
+  const t = useT();
+  const p = t.premium || {};
   return (
     <div className="bg-card border border-border rounded-xl p-4 flex items-center justify-between">
       <div className="flex items-center gap-3">
@@ -27,95 +23,64 @@ export function CreditsDisplay({ credits, isPremium }: { credits: number; isPrem
         <div>
           <div className="flex items-center gap-2">
             <span className="text-2xl font-extrabold text-foreground">{credits}</span>
-            <span className="text-sm text-muted-foreground">קרדיטים</span>
+            <span className="text-sm text-muted-foreground">{p.credits}</span>
           </div>
           {isPremium && (
             <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <Crown className="w-3 h-3 text-premium" />
-              מנוי פרימיום — 6 קרדיטים חודשיים
+              <Crown className="w-3 h-3 text-premium" />{p.premiumSub}
             </p>
           )}
         </div>
       </div>
       <Button variant="outline" size="sm" className="font-medium border-premium/30 text-premium hover:bg-premium/5">
-        <Package className="w-3.5 h-3.5 ml-1" />
-        קנה קרדיטים
+        <Package className="w-3.5 h-3.5 me-1" />{p.buyCredits}
       </Button>
     </div>
   );
 }
 
 export function CreditPackages({ onClose }: { onClose?: () => void }) {
+  const t = useT();
+  const p = t.premium || {};
   return (
     <div className="bg-card border border-border rounded-2xl p-5 space-y-4 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-bold text-lg text-foreground">חבילות קרדיטים</h3>
-          <p className="text-xs text-muted-foreground">כל קרדיט = יצירת תמונה אחת עם AI</p>
+          <h3 className="font-bold text-lg text-foreground">{p.creditPackages}</h3>
+          <p className="text-xs text-muted-foreground">{p.creditPerImage}</p>
         </div>
         {onClose && (
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}>
-            <X className="w-4 h-4" />
-          </Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}><X className="w-4 h-4" /></Button>
         )}
       </div>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {packages.map((pkg) => (
-          <div
-            key={pkg.id}
-            className={`relative border rounded-xl p-4 space-y-3 transition-all hover:shadow-md ${
-              pkg.popular
-                ? "border-premium bg-premium/5 shadow-sm"
-                : "border-border bg-card"
-            }`}
-          >
+          <div key={pkg.id} className={`relative border rounded-xl p-4 space-y-3 transition-all hover:shadow-md ${pkg.popular ? "border-premium bg-premium/5 shadow-sm" : "border-border bg-card"}`}>
             {pkg.popular && (
-              <div className="absolute -top-2.5 right-3 bg-premium text-premium-foreground text-[10px] font-bold px-2.5 py-0.5 rounded-full">
-                הכי פופולרי
-              </div>
+              <div className="absolute -top-2.5 end-3 bg-premium text-premium-foreground text-[10px] font-bold px-2.5 py-0.5 rounded-full">{p.mostPopular}</div>
             )}
-
             <div className="flex items-baseline justify-between">
               <div className="flex items-baseline gap-1.5">
                 <span className="text-2xl font-extrabold text-foreground">{pkg.amount}</span>
-                <span className="text-sm text-muted-foreground">תמונות</span>
+                <span className="text-sm text-muted-foreground">{p.images}</span>
               </div>
               {pkg.savings && (
-                <span className="text-xs font-bold text-success bg-success/10 px-2 py-0.5 rounded-full">
-                  חיסכון {pkg.savings}
-                </span>
+                <span className="text-xs font-bold text-success bg-success/10 px-2 py-0.5 rounded-full">{p.saving(pkg.savings)}</span>
               )}
             </div>
-
             <div className="space-y-1">
-              <div className="flex items-baseline gap-1">
-                <span className="text-xl font-extrabold text-foreground">₪{pkg.price}</span>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                ₪{pkg.pricePerImage.toFixed(2)} לתמונה
-              </p>
+              <span className="text-xl font-extrabold text-foreground">₪{pkg.price}</span>
+              <p className="text-xs text-muted-foreground">{p.perImage(`₪${pkg.pricePerImage.toFixed(2)}`)}</p>
             </div>
-
-            <Button
-              className={`w-full font-bold ${
-                pkg.popular
-                  ? "bg-premium text-premium-foreground hover:bg-premium/90"
-                  : "bg-primary text-primary-foreground hover:bg-primary/90"
-              }`}
-              size="sm"
-            >
-              <Zap className="w-3.5 h-3.5 ml-1" />
-              רכוש חבילה
+            <Button className={`w-full font-bold ${pkg.popular ? "bg-premium text-premium-foreground hover:bg-premium/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}`} size="sm">
+              <Zap className="w-3.5 h-3.5 me-1" />{p.purchasePackage}
             </Button>
           </div>
         ))}
       </div>
-
       <div className="bg-muted/50 rounded-lg p-3 text-center space-y-1">
         <p className="text-xs text-muted-foreground">
-          <Crown className="w-3 h-3 inline ml-1 text-premium" />
-          מנויי פרימיום (₪4.90/חודש) מקבלים 6 קרדיטים בחודש + המרות ללא הגבלה
+          <Crown className="w-3 h-3 inline me-1 text-premium" />{p.premiumNote(p.price)}
         </p>
       </div>
     </div>
