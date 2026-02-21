@@ -9,6 +9,7 @@ import { LocaleProvider } from "@/lib/i18n";
 import Index from "./pages/Index";
 import ToolPage from "./pages/ToolPage";
 import InstallPage from "./pages/InstallPage";
+import PremiumPage from "./pages/PremiumPage";
 import BlogIndex from "./pages/BlogIndex";
 import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
@@ -21,6 +22,7 @@ function LocaleRoutes() {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/install" element={<InstallPage />} />
+        <Route path="/premium" element={<PremiumPage />} />
         <Route path="/blog" element={<BlogIndex />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
         <Route path="/:slug" element={<ToolPage />} />

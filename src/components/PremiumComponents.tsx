@@ -1,10 +1,11 @@
 import { Crown, Zap, Play, Eye, CheckCircle2, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { useT } from "@/lib/i18n";
+import { useLocale, localePath } from "@/lib/i18n";
+import { Link } from "react-router-dom";
 
 export function PremiumBanner() {
-  const t = useT();
+  const { locale, t } = useLocale();
   const p = t.premium || {};
   return (
     <div className="premium-banner flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -17,16 +18,18 @@ export function PremiumBanner() {
           <p className="text-sm opacity-90">{p.unlimitedNoAds}</p>
         </div>
       </div>
-      <Button className="bg-[hsl(var(--premium-foreground))] text-[hsl(var(--premium))] hover:bg-[hsl(var(--premium-foreground)/0.9)] font-bold whitespace-nowrap">
-        <Zap className="w-4 h-4 me-1" />
-        {p.price}
+      <Button asChild className="bg-[hsl(var(--premium-foreground))] text-[hsl(var(--premium))] hover:bg-[hsl(var(--premium-foreground)/0.9)] font-bold whitespace-nowrap">
+        <Link to={localePath("/premium", locale)}>
+          <Zap className="w-4 h-4 me-1" />
+          {p.price}
+        </Link>
       </Button>
     </div>
   );
 }
 
 export function PremiumLock({ onUnlock }: { onUnlock?: () => void }) {
-  const t = useT();
+  const { locale, t } = useLocale();
   const p = t.premium || {};
   const [adState, setAdState] = useState<"idle" | "watching" | "done">("idle");
   const [countdown, setCountdown] = useState(15);
@@ -78,8 +81,10 @@ export function PremiumLock({ onUnlock }: { onUnlock?: () => void }) {
           <Eye className="w-4 h-4 me-2" />{p.watchAd}
         </Button>
         <span className="text-xs text-muted-foreground">{p.or}</span>
-        <Button className="bg-premium text-premium-foreground hover:bg-premium/90 font-bold" size="lg">
-          <Zap className="w-4 h-4 me-1" />{p.upgradeBtn(p.price)}
+        <Button asChild className="bg-premium text-premium-foreground hover:bg-premium/90 font-bold" size="lg">
+          <Link to={localePath("/premium", locale)}>
+            <Zap className="w-4 h-4 me-1" />{p.upgradeBtn(p.price)}
+          </Link>
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">{p.adDuration}</p>
@@ -88,7 +93,7 @@ export function PremiumLock({ onUnlock }: { onUnlock?: () => void }) {
 }
 
 export function UsageLimitNotice({ used, max }: { used: number; max: number }) {
-  const t = useT();
+  const { locale, t } = useLocale();
   const p = t.premium || {};
   const remaining = max - used;
   return (
@@ -110,15 +115,17 @@ export function UsageLimitNotice({ used, max }: { used: number; max: number }) {
 }
 
 export function ConversionSuccessUsage({ used, max }: { used: number; max: number }) {
-  const t = useT();
+  const { locale, t } = useLocale();
   const p = t.premium || {};
   const remaining = max - used;
   return (
     <div className="bg-muted/50 border border-border rounded-xl p-4 text-center space-y-2 animate-fade-in">
       <p className="text-sm text-muted-foreground">{p.remainingToday(remaining)}</p>
       {remaining <= 2 ? (
-        <Button className="bg-premium text-premium-foreground hover:bg-premium/90 font-bold text-sm">
-          <Zap className="w-3.5 h-3.5 me-1" />{p.upgradeNow(p.price)}
+        <Button asChild className="bg-premium text-premium-foreground hover:bg-premium/90 font-bold text-sm">
+          <Link to={localePath("/premium", locale)}>
+            <Zap className="w-3.5 h-3.5 me-1" />{p.upgradeNow(p.price)}
+          </Link>
         </Button>
       ) : (
         <p className="text-xs text-muted-foreground">{p.upgradeForUnlimited}</p>
