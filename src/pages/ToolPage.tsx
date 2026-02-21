@@ -60,12 +60,12 @@ export default function ToolPage() {
   // Navigate to new slug when format changes
   const changeFrom = (from: string) => {
     const to = from === activeTo ? (tool?.toFormats.find(f => f !== from) || activeTo) : activeTo;
-    navigate(`/${buildFormatSlug(from, to)}`, { replace: true });
+    navigate(`/${buildFormatSlug(from, to)}`, { replace: true, preventScrollReset: true });
   };
 
   const changeTo = (to: string) => {
     const from = to === activeFrom ? (tool?.fromFormats.find(f => f !== to) || activeFrom) : activeFrom;
-    navigate(`/${buildFormatSlug(from, to)}`, { replace: true });
+    navigate(`/${buildFormatSlug(from, to)}`, { replace: true, preventScrollReset: true });
   };
 
   const generateThumbnail = useCallback((file: File): Promise<string | undefined> => {
