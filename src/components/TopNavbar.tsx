@@ -40,7 +40,7 @@ export function TopNavbar() {
   return (
     <>
       <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 xl:px-12">
           <div className="flex items-center justify-between h-14">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 shrink-0">

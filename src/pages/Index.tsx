@@ -60,7 +60,7 @@ const Index = () => {
         title="תמיר לי — אתר המרות הקבצים של ישראל"
         description="המרה מהירה וחינמית בין פורמטים של תמונות, וידאו, אודיו ומסמכים. גרור קבצים, בחר פורמט, וסיימת. ללא הורדת תוכנה."
       />
-      <div className="max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-12 space-y-8 lg:space-y-10">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-6 lg:py-12 space-y-8 lg:space-y-10">
 
         {/* Hero — compact */}
         <section className="text-center space-y-3 animate-fade-in">

@@ -3,7 +3,7 @@ import { Wrench } from "lucide-react";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border pt-8 pb-6 space-y-8 max-w-6xl xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="border-t border-border pt-8 pb-6 space-y-8 max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8">
         <div className="space-y-3">
           <h4 className="font-bold text-sm text-foreground">כלים פופולריים</h4>
