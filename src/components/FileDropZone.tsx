@@ -58,7 +58,7 @@ export function FileDropZone({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`drop-zone flex flex-col items-center justify-center gap-4 p-10 text-center cursor-pointer min-h-[220px] ${
+        className={`drop-zone flex flex-col items-center justify-center gap-4 p-10 lg:p-14 text-center cursor-pointer min-h-[220px] lg:min-h-[300px] ${
           isDragging ? "drop-zone-active" : ""
         }`}
         onClick={() => document.getElementById("file-input")?.click()}
