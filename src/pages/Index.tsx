@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { tools, categoryLabels, categoryIcons, type ToolCategory, getToolsByCategory } from "@/lib/tools-data";
+import { tools, categoryLabels, categoryIcons, getDefaultSlug, type ToolCategory, getToolsByCategory } from "@/lib/tools-data";
 import { AppLayout } from "@/components/AppLayout";
 import { AdSlot } from "@/components/AdSlot";
 import { PremiumBanner } from "@/components/PremiumComponents";
@@ -109,7 +109,7 @@ const Index = () => {
                   return (
                     <Link
                       key={tool.id}
-                      to={`/tool/${tool.id}`}
+                      to={`/${getDefaultSlug(tool)}`}
                       className="flex items-center gap-3 bg-card/80 hover:bg-card border border-border/50 hover:border-primary/30 rounded-xl p-3 transition-all duration-200 hover:shadow-md group"
                     >
                       <TIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary shrink-0 transition-colors" />

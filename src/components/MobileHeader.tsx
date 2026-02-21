@@ -3,7 +3,7 @@ import { Menu, Wrench, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { tools, categoryLabels, type ToolCategory } from "@/lib/tools-data";
+import { tools, categoryLabels, getDefaultSlug, type ToolCategory } from "@/lib/tools-data";
 
 const categories: ToolCategory[] = ["image", "video", "audio", "document"];
 
@@ -40,7 +40,7 @@ export function MobileHeader() {
                   .map((tool) => (
                     <Link
                       key={tool.id}
-                      to={`/tool/${tool.id}`}
+                      to={`/${getDefaultSlug(tool)}`}
                       onClick={() => setMenuOpen(false)}
                       className="tool-card p-3 text-sm font-medium"
                     >

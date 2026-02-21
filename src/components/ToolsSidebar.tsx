@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { tools, categoryLabels, categoryIcons, type ToolCategory } from "@/lib/tools-data";
+import { tools, categoryLabels, categoryIcons, getDefaultSlug, type ToolCategory } from "@/lib/tools-data";
 import { Home, Crown, ChevronDown, Wrench, PanelRight, PanelRightClose } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -88,12 +88,14 @@ export function ToolsSidebar() {
 
               {isOpen && (
                 <div className="mr-4 space-y-0.5 mt-0.5">
-                  {catTools.map((tool) => (
+                  {catTools.map((tool) => {
+                    const toolSlug = getDefaultSlug(tool);
+                    return (
                     <Link
                       key={tool.id}
-                      to={`/tool/${tool.id}`}
+                      to={`/${toolSlug}`}
                       className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors ${
-                        location.pathname === `/tool/${tool.id}`
+                        location.pathname === `/${toolSlug}`
                           ? "bg-primary/10 text-primary font-medium"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       }`}
@@ -101,7 +103,8 @@ export function ToolsSidebar() {
                       {tool.premium && <Crown className="w-3 h-3 text-premium" />}
                       <span className="truncate">{tool.name}</span>
                     </Link>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
