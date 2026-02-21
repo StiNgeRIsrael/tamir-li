@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useLocale, localePath } from "@/lib/i18n";
 import {
   Crown, Zap, Check, Star, Shield, Sparkles,
-  ImageIcon, Gauge, FileStack, Headphones, ChevronDown
+  ImageIcon, Gauge, FileStack, Headphones, ChevronDown, ShieldCheck
 } from "lucide-react";
 import { useState } from "react";
 
@@ -19,7 +19,15 @@ export default function PremiumPage() {
   const headers = u.comparisonHeaders || {};
   const testimonials = u.testimonials || [];
   const faqs = u.faqs || [];
+  const guaranteeItems = u.guaranteeItems || [];
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [isYearly, setIsYearly] = useState(false);
+
+  const displayPrice = isYearly ? u.priceYearlyPerMonth : u.priceMonthly;
+  const displayPeriod = u.periodMonthly;
+  const billedNote = isYearly ? u.billedYearly : u.billedMonthly;
+  const totalPrice = isYearly ? u.priceYearly : u.priceMonthly;
+  const totalPeriod = isYearly ? u.periodYearly : u.periodMonthly;
 
   return (
     <AppLayout>
@@ -39,19 +47,42 @@ export default function PremiumPage() {
             {u.subheadline}
           </p>
 
+          {/* Billing toggle */}
+          <div className="flex items-center justify-center gap-3">
+            <span className={`text-sm font-medium ${!isYearly ? "text-foreground" : "text-muted-foreground"}`}>
+              {u.monthlyLabel}
+            </span>
+            <button
+              onClick={() => setIsYearly(!isYearly)}
+              className={`relative w-14 h-7 rounded-full transition-colors ${isYearly ? "bg-premium" : "bg-muted"}`}
+            >
+              <div className={`absolute top-0.5 w-6 h-6 rounded-full bg-white shadow-md transition-all ${isYearly ? "start-7" : "start-0.5"}`} />
+            </button>
+            <span className={`text-sm font-medium ${isYearly ? "text-foreground" : "text-muted-foreground"}`}>
+              {u.yearlyLabel}
+            </span>
+            {isYearly && (
+              <span className="text-xs font-bold text-success bg-success/10 px-2 py-0.5 rounded-full animate-fade-in">
+                {u.yearlySave}
+              </span>
+            )}
+          </div>
+
           {/* Price card */}
           <div className="max-w-sm mx-auto bg-card border-2 border-premium rounded-2xl p-6 shadow-lg shadow-premium/10 space-y-4">
             <div className="flex items-baseline justify-center gap-1">
-              <span className="text-5xl font-black text-foreground">{u.price}</span>
-              <span className="text-lg text-muted-foreground font-medium">{u.period}</span>
+              <span className="text-5xl font-black text-foreground">{displayPrice}</span>
+              <span className="text-lg text-muted-foreground font-medium">{displayPeriod}</span>
             </div>
-            <p className="text-xs text-muted-foreground">{u.billedNote}</p>
+            {isYearly && (
+              <p className="text-xs text-muted-foreground">
+                {totalPrice}{totalPeriod}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">{billedNote}</p>
             <Button size="lg" className="w-full bg-premium text-premium-foreground hover:bg-premium/90 font-bold text-base py-6 rounded-xl shadow-md">
               <Zap className="w-5 h-5 me-2" />
               {u.ctaMain}
-            </Button>
-            <Button variant="outline" size="lg" className="w-full font-semibold border-premium/30 text-premium hover:bg-premium/5 rounded-xl">
-              {u.ctaSecondary}
             </Button>
             <p className="text-xs text-muted-foreground flex items-center justify-center gap-1.5">
               <Shield className="w-3.5 h-3.5" />
@@ -92,13 +123,32 @@ export default function PremiumPage() {
                 <div className="p-4 font-medium text-foreground">{row.feature}</div>
                 <div className="p-4 text-center text-muted-foreground">{row.free}</div>
                 <div className="p-4 text-center font-semibold text-premium bg-premium/5">
-                  {row.premium === "Unlimited" || row.premium === "None" || row.premium === "Priority" || row.premium === "Priority Email" || row.premium === "200MB"
+                  {typeof row.premium === "string" && row.premium !== "—"
                     ? <span className="inline-flex items-center gap-1"><Check className="w-4 h-4" />{row.premium}</span>
                     : row.premium}
                 </div>
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Money-Back Guarantee */}
+        <section className="bg-card border border-border rounded-2xl p-6 lg:p-8 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center">
+              <ShieldCheck className="w-6 h-6 text-success" />
+            </div>
+            <h2 className="text-xl font-bold text-foreground">{u.guaranteeTitle}</h2>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">{u.guaranteeDesc}</p>
+          <ul className="space-y-2">
+            {guaranteeItems.map((item: string, i: number) => (
+              <li key={i} className="flex items-center gap-2 text-sm text-foreground">
+                <Check className="w-4 h-4 text-success flex-shrink-0" />
+                {item}
+              </li>
+            ))}
+          </ul>
         </section>
 
         {/* Testimonials */}
@@ -156,7 +206,7 @@ export default function PremiumPage() {
           <div className="flex flex-col items-center gap-3">
             <Button size="lg" className="bg-premium text-premium-foreground hover:bg-premium/90 font-bold px-10 py-6 text-base rounded-xl shadow-md">
               <Zap className="w-5 h-5 me-2" />
-              {u.ctaMain} — {u.price}{u.period}
+              {u.ctaMain} — {displayPrice}{displayPeriod}
             </Button>
             <p className="text-xs text-muted-foreground">
               <Link to={localePath("/", locale)} className="text-primary hover:underline">{u.orGoHome}</Link>
