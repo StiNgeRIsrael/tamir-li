@@ -63,7 +63,7 @@ export function TopNavbar() {
                       onClick={() => setOpenCat(isOpen ? null : cat)}
                       onMouseEnter={() => setOpenCat(cat)}
                       className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        isOpen ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                        isOpen ? "bg-primary/10 text-primary" : "text-muted-foreground dark:text-foreground/80 hover:text-foreground hover:bg-muted"
                       }`}
                     >
                       <Icon className="w-4 h-4" />
