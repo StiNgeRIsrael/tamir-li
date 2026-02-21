@@ -3,7 +3,7 @@ import { tools, categoryLabels, categoryIcons, getDefaultSlug, type ToolCategory
 import { AppLayout } from "@/components/AppLayout";
 import { AdSlot } from "@/components/AdSlot";
 import { PremiumBanner } from "@/components/PremiumComponents";
-import { ArrowLeft, Crown, Sparkles, Shield, Zap, Globe, CheckCircle2, Image, FileVideo, FileAudio, FileText, Users, Star } from "lucide-react";
+import { ArrowLeft, Crown, Sparkles, Shield, Zap, Globe, CheckCircle2, Image, FileVideo, FileAudio, FileText, Star } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";
 
 const categories: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
@@ -62,82 +62,86 @@ const Index = () => {
       />
       <div className="w-full">
 
-        {/* Hero — full-width with generous vertical spacing */}
-        <section className="text-center py-10 lg:py-16 xl:py-20 px-4 animate-fade-in">
-          <div className="max-w-4xl mx-auto space-y-4 lg:space-y-6">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs lg:text-sm font-semibold px-4 py-1.5 rounded-full">
-              <Sparkles className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-              כלים חינמיים להמרת קבצים
-            </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold text-foreground leading-tight">
-            המירו כל קובץ,{" "}
-            <span className="text-primary">תוך שניות</span>
-          </h1>
-            <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              תמונות, וידאו, אודיו ומסמכים — גררו, בחרו פורמט, וסיימתם.
-              <br className="hidden sm:block" />
-              ללא הורדת תוכנה. ללא רישום. חינם.
-            </p>
-          </div>
-        </section>
-
-        {/* Stats bar — full-width background */}
-        <section className="bg-card/50 border-y border-border py-6 lg:py-8 xl:py-10">
-          <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-              {stats.map((s, i) => (
-                <div key={i} className="flex items-center gap-3 lg:gap-4 lg:justify-center">
-                  <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <s.icon className="w-5 h-5 lg:w-6 lg:h-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xl lg:text-2xl xl:text-3xl font-extrabold text-foreground">{s.value}</p>
-                    <p className="text-xs lg:text-sm text-muted-foreground">{s.label}</p>
-                  </div>
+        {/* Hero + Stats combined — less vertical space */}
+        <section className="py-8 lg:py-12 xl:py-14 px-4 animate-fade-in">
+          <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
+            {/* Desktop: hero left + stats right; Mobile: stacked */}
+            <div className="flex flex-col xl:flex-row xl:items-center xl:gap-12">
+              {/* Hero text */}
+              <div className="xl:flex-1 text-center xl:text-right space-y-3 lg:space-y-4">
+                <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs lg:text-sm font-semibold px-4 py-1.5 rounded-full">
+                  <Sparkles className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+                  כלים חינמיים להמרת קבצים
                 </div>
-              ))}
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-foreground leading-tight">
+                  המירו כל קובץ,{" "}
+                  <span className="text-primary">תוך שניות</span>
+                </h1>
+                <p className="text-sm sm:text-base lg:text-lg text-muted-foreground max-w-2xl xl:max-w-none leading-relaxed mx-auto xl:mx-0">
+                  תמונות, וידאו, אודיו ומסמכים — גררו, בחרו פורמט, וסיימתם.
+                  <br className="hidden sm:block" />
+                  ללא הורדת תוכנה. ללא רישום. חינם.
+                </p>
+              </div>
+
+              {/* Stats — on desktop: 2x2 grid on the left side */}
+              <div className="mt-6 xl:mt-0 xl:w-[380px] shrink-0">
+                <div className="grid grid-cols-2 gap-3">
+                  {stats.map((s, i) => (
+                    <div key={i} className="bg-card border border-border rounded-xl p-3 lg:p-4 flex items-center gap-3">
+                      <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <s.icon className="w-4 h-4 lg:w-5 lg:h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-lg lg:text-xl font-extrabold text-foreground leading-none">{s.value}</p>
+                        <p className="text-[11px] lg:text-xs text-muted-foreground mt-0.5">{s.label}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Main content area */}
-        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-8 lg:py-12 space-y-10 lg:space-y-14">
+        {/* Main content area — tighter desktop spacing */}
+        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 pb-8 lg:pb-12 space-y-6 lg:space-y-8">
 
           <AdSlot type="banner" />
 
-          {/* All tools by category */}
+          {/* Tools by category — on desktop show 2 categories per row for smaller ones */}
           {categories.map((cat) => {
             const Icon = categoryIcons[cat];
             const catTools = getToolsByCategory(cat);
             return (
-              <section key={cat} className={`rounded-2xl border border-border bg-gradient-to-br ${categoryBg[cat]} p-5 lg:p-8 space-y-4 lg:space-y-6`}>
-                <h2 className="text-lg lg:text-xl font-bold flex items-center gap-2.5">
-                  <div className={`w-8 h-8 lg:w-9 lg:h-9 rounded-lg flex items-center justify-center ${categoryColors[cat]}`}>
-                    <Icon className="w-4 h-4 lg:w-5 lg:h-5" />
+              <section key={cat} className={`rounded-2xl border border-border bg-gradient-to-br ${categoryBg[cat]} p-4 lg:p-6 space-y-3 lg:space-y-4`}>
+                <h2 className="text-base lg:text-lg font-bold flex items-center gap-2">
+                  <div className={`w-7 h-7 lg:w-8 lg:h-8 rounded-lg flex items-center justify-center ${categoryColors[cat]}`}>
+                    <Icon className="w-4 h-4" />
                   </div>
                   {categoryLabels[cat]}
                   <span className="text-xs font-normal text-muted-foreground">({catTools.length} כלים)</span>
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 lg:gap-3">
                   {catTools.map((tool) => {
                     const TIcon = tool.icon;
                     return (
                       <Link
                         key={tool.id}
                         to={`/${getDefaultSlug(tool)}`}
-                        className="flex items-center gap-3 bg-card/80 hover:bg-card border border-border/50 hover:border-primary/30 rounded-xl p-3.5 lg:p-4 xl:p-5 transition-all duration-200 hover:shadow-md group"
+                        className="flex items-center gap-2.5 bg-card/80 hover:bg-card border border-border/50 hover:border-primary/30 rounded-xl p-3 lg:p-3.5 transition-all duration-200 hover:shadow-md group"
                       >
-                        <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-lg bg-primary/5 group-hover:bg-primary/10 flex items-center justify-center shrink-0 transition-colors">
-                          <TIcon className="w-4 h-4 lg:w-5 lg:h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                        <div className="w-8 h-8 rounded-lg bg-primary/5 group-hover:bg-primary/10 flex items-center justify-center shrink-0 transition-colors">
+                          <TIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <span className="font-medium text-sm lg:text-base text-foreground">{tool.name}</span>
+                            <span className="font-medium text-sm text-foreground">{tool.name}</span>
                             {tool.premium && <Crown className="w-3 h-3 text-premium" />}
                           </div>
-                          <p className="text-xs lg:text-sm text-muted-foreground truncate">{tool.description}</p>
+                          <p className="text-xs text-muted-foreground truncate">{tool.description}</p>
                         </div>
-                        <ArrowLeft className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary shrink-0 transition-colors" />
+                        <ArrowLeft className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-primary shrink-0 transition-colors" />
                       </Link>
                     );
                   })}
@@ -149,37 +153,33 @@ const Index = () => {
           {/* Premium Banner */}
           <PremiumBanner />
 
-          {/* Features + Formats — side by side on desktop */}
-          <section className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-10">
-            {/* Features */}
-            <div className="space-y-5">
-              <h2 className="text-lg lg:text-xl xl:text-2xl font-bold text-foreground">למה 1.2 מיליון ישראלים בוחרים בתמיר לי?</h2>
-              <div className="grid grid-cols-2 gap-3 lg:gap-4">
+          {/* Features (inline row on desktop) + How it works — combined in one block */}
+          <section className="grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-6 xl:gap-8 items-start">
+            {/* Features as horizontal strip */}
+            <div className="space-y-4">
+              <h2 className="text-lg lg:text-xl font-bold text-foreground">למה 1.2 מיליון ישראלים בוחרים בתמיר לי?</h2>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 {features.map((f, i) => (
-                  <article key={i} className="bg-card border border-border rounded-xl p-4 lg:p-6 text-center space-y-2 lg:space-y-3">
-                    <div className="w-10 h-10 lg:w-14 lg:h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                      <f.icon className="w-5 h-5 lg:w-7 lg:h-7 text-primary" />
+                  <article key={i} className="bg-card border border-border rounded-xl p-3.5 lg:p-4 text-center space-y-2">
+                    <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                      <f.icon className="w-4 h-4 lg:w-5 lg:h-5 text-primary" />
                     </div>
-                    <h3 className="font-semibold text-sm lg:text-base text-foreground">{f.title}</h3>
-                    <p className="text-xs lg:text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+                    <h3 className="font-semibold text-xs lg:text-sm text-foreground">{f.title}</h3>
+                    <p className="text-[11px] lg:text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
                   </article>
                 ))}
               </div>
             </div>
 
-            {/* Supported formats */}
-            <div className="space-y-5">
-              <h2 className="text-lg lg:text-xl xl:text-2xl font-bold text-foreground">פורמטים נתמכים</h2>
+            {/* Supported formats — compact sidebar on desktop */}
+            <div className="xl:w-[320px] space-y-4">
+              <h2 className="text-lg lg:text-xl font-bold text-foreground">פורמטים נתמכים</h2>
               <div className="bg-card border border-border rounded-xl divide-y divide-border overflow-hidden">
                 {supportedFormats.map((f, i) => (
-                  <div key={i} className="flex items-center gap-4 p-4 lg:p-5">
-                    <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                      <f.icon className="w-4 h-4 lg:w-5 lg:h-5 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <span className="font-medium text-sm lg:text-base text-foreground block">{f.cat}</span>
-                      <p className="text-xs lg:text-sm text-muted-foreground font-mono mt-0.5">{f.formats}</p>
-                    </div>
+                  <div key={i} className="flex items-center gap-3 p-3 lg:p-3.5">
+                    <f.icon className="w-4 h-4 text-primary shrink-0" />
+                    <span className="font-medium text-sm text-foreground w-14 shrink-0">{f.cat}</span>
+                    <p className="text-[11px] lg:text-xs text-muted-foreground font-mono">{f.formats}</p>
                   </div>
                 ))}
               </div>
@@ -188,82 +188,89 @@ const Index = () => {
 
           <AdSlot type="inline" />
 
-          {/* How it works */}
-          <section className="space-y-5 lg:space-y-6">
-            <h2 className="text-lg lg:text-xl xl:text-2xl font-bold text-foreground text-center">איך זה עובד?</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
-              {[
-                { step: "1", title: "העלו קובץ", desc: "גררו או בחרו את הקבצים שלכם" },
-                { step: "2", title: "בחרו פורמט", desc: "בחרו את הפורמט הרצוי מהרשימה" },
-                { step: "3", title: "הורידו", desc: "הקובץ המומר מוכן להורדה תוך שניות" },
-              ].map((s, i) => (
-                <div key={i} className="bg-card border border-border rounded-xl p-5 lg:p-8 text-center space-y-3 lg:space-y-4 relative">
-                  <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary text-primary-foreground font-bold text-base lg:text-lg flex items-center justify-center mx-auto">
-                    {s.step}
+          {/* How it works + Testimonials — side by side on desktop */}
+          <section className="grid grid-cols-1 xl:grid-cols-2 gap-6 xl:gap-8">
+            {/* How it works */}
+            <div className="space-y-4">
+              <h2 className="text-lg lg:text-xl font-bold text-foreground">איך זה עובד?</h2>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { step: "1", title: "העלו קובץ", desc: "גררו או בחרו קבצים" },
+                  { step: "2", title: "בחרו פורמט", desc: "בחרו פורמט מהרשימה" },
+                  { step: "3", title: "הורידו", desc: "מוכן תוך שניות" },
+                ].map((s, i) => (
+                  <div key={i} className="bg-card border border-border rounded-xl p-3.5 lg:p-4 text-center space-y-2">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold text-sm flex items-center justify-center mx-auto">
+                      {s.step}
+                    </div>
+                    <h3 className="font-semibold text-xs lg:text-sm text-foreground">{s.title}</h3>
+                    <p className="text-[11px] lg:text-xs text-muted-foreground">{s.desc}</p>
                   </div>
-                  <h3 className="font-semibold text-sm lg:text-lg text-foreground">{s.title}</h3>
-                  <p className="text-xs lg:text-sm text-muted-foreground">{s.desc}</p>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Testimonials */}
+            <div className="space-y-4">
+              <h2 className="text-lg lg:text-xl font-bold text-foreground">מה אומרים המשתמשים שלנו</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 gap-3">
+                {[
+                  { name: "רוני מ.", text: "הכי נוח ומהיר שיש! ממיר תמונות כל יום בלי בעיה.", stars: 5 },
+                  { name: "שרה כ.", text: "סוף סוף אתר בעברית שעובד כמו שצריך. ממליצה בחום!", stars: 5 },
+                  { name: "אורי ד.", text: "עובד מעולה מהנייד. גם PDF ל-Word יוצא מצוין.", stars: 5 },
+                ].map((t, i) => (
+                  <article key={i} className="bg-card border border-border rounded-xl p-3.5 lg:p-4 flex items-start gap-3">
+                    <div className="flex gap-0.5 shrink-0 mt-0.5">
+                      {Array.from({ length: t.stars }).map((_, j) => (
+                        <Star key={j} className="w-3 h-3 text-premium fill-premium" />
+                      ))}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-foreground leading-relaxed">"{t.text}"</p>
+                      <p className="text-xs text-muted-foreground font-medium mt-1">{t.name}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </div>
           </section>
 
-          {/* Testimonials */}
-          <section className="space-y-4 lg:space-y-6">
-            <h2 className="text-lg lg:text-xl xl:text-2xl font-bold text-foreground text-center">מה אומרים המשתמשים שלנו</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
-              {[
-                { name: "רוני מ.", text: "הכי נוח ומהיר שיש! ממיר תמונות כל יום בלי בעיה.", stars: 5 },
-                { name: "שרה כ.", text: "סוף סוף אתר בעברית שעובד כמו שצריך. ממליצה בחום!", stars: 5 },
-                { name: "אורי ד.", text: "עובד מעולה מהנייד. גם PDF ל-Word יוצא מצוין.", stars: 5 },
-              ].map((t, i) => (
-                <article key={i} className="bg-card border border-border rounded-xl p-5 lg:p-6 space-y-3">
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: t.stars }).map((_, j) => (
-                      <Star key={j} className="w-4 h-4 text-premium fill-premium" />
-                    ))}
-                  </div>
-                  <p className="text-sm lg:text-base text-foreground leading-relaxed">"{t.text}"</p>
-                  <p className="text-xs lg:text-sm text-muted-foreground font-medium">{t.name}</p>
-                </article>
-              ))}
+          {/* FAQ + SEO text — side by side on desktop */}
+          <section className="grid grid-cols-1 xl:grid-cols-[1fr_1fr] gap-6 xl:gap-8" itemScope itemType="https://schema.org/FAQPage">
+            {/* FAQ */}
+            <div className="space-y-3">
+              <h2 className="text-lg lg:text-xl font-bold text-foreground">שאלות נפוצות</h2>
+              <div className="space-y-2">
+                {faqs.map((faq, i) => (
+                  <details key={i} className="bg-card border border-border rounded-xl group" itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
+                    <summary className="p-3 lg:p-3.5 cursor-pointer font-medium text-foreground text-sm flex items-center justify-between" itemProp="name">
+                      {faq.q}
+                      <ArrowLeft className="w-3.5 h-3.5 text-muted-foreground transition-transform group-open:-rotate-90 shrink-0" />
+                    </summary>
+                    <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
+                      <p className="px-3 lg:px-3.5 pb-3 lg:pb-3.5 text-sm text-muted-foreground leading-relaxed" itemProp="text">{faq.a}</p>
+                    </div>
+                  </details>
+                ))}
+              </div>
             </div>
-          </section>
 
-          {/* FAQ for SEO */}
-          <section className="space-y-4" itemScope itemType="https://schema.org/FAQPage">
-            <h2 className="text-lg lg:text-xl xl:text-2xl font-bold text-foreground">שאלות נפוצות</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4">
-              {faqs.map((faq, i) => (
-                <details key={i} className="bg-card border border-border rounded-xl group" itemScope itemProp="mainEntity" itemType="https://schema.org/Question">
-                  <summary className="p-4 lg:p-5 cursor-pointer font-medium text-foreground text-sm lg:text-base flex items-center justify-between" itemProp="name">
-                    {faq.q}
-                    <ArrowLeft className="w-4 h-4 text-muted-foreground transition-transform group-open:-rotate-90 shrink-0" />
-                  </summary>
-                  <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
-                    <p className="px-4 lg:px-5 pb-4 lg:pb-5 text-sm lg:text-base text-muted-foreground leading-relaxed" itemProp="text">{faq.a}</p>
-                  </div>
-                </details>
-              ))}
-            </div>
-          </section>
-
-          {/* SEO rich text */}
-          <section className="bg-card border border-border rounded-xl p-6 lg:p-10 space-y-4">
-            <h2 className="text-base lg:text-lg font-bold text-foreground">תמיר לי — אתר המרות הקבצים המוביל בישראל</h2>
-            <div className="text-sm lg:text-base text-muted-foreground space-y-3 leading-relaxed">
-              <p>
-                תמיר לי הוא אתר ההמרות המוביל בישראל, המאפשר המרה מהירה וחינמית בין פורמטים שונים של קבצים.
-                בין אם אתם צריכים להמיר תמונה מ-PNG ל-JPG, לדחוס סרטון לשליחה ב-WhatsApp, להמיר שיר מ-WAV ל-MP3, או להפוך מסמך PDF ל-Word לעריכה — תמיר לי עושה את זה תוך שניות.
-              </p>
-              <p>
-                האתר תומך במגוון רחב של פורמטים: תמונות (JPG, PNG, WEBP, GIF, BMP, TIFF, SVG, ICO), וידאו (MP4, AVI, MOV, MKV, WEBM), אודיו (MP3, WAV, AAC, OGG, FLAC), ומסמכים (PDF, DOCX, DOC, TXT).
-                כל ההמרות מתבצעות באופן מאובטח — הקבצים אינם נשמרים על השרתים שלנו ונמחקים מיד לאחר העיבוד.
-              </p>
-              <p>
-                תמיר לי זמין בחינם עם עד 5 המרות ביום. למשתמשים שצריכים יותר, מנוי פרימיום ב-₪4.90 לחודש מציע המרות ללא הגבלה, ללא מודעות, ועיבוד מהיר יותר.
-                האתר עובד ישירות מהדפדפן, ללא צורך בהורדת תוכנה, ומותאם לכל מכשיר — מחשב, טאבלט ונייד.
-              </p>
+            {/* SEO rich text */}
+            <div className="bg-card border border-border rounded-xl p-5 lg:p-6 space-y-3 h-fit">
+              <h2 className="text-base lg:text-lg font-bold text-foreground">תמיר לי — אתר המרות הקבצים המוביל בישראל</h2>
+              <div className="text-sm text-muted-foreground space-y-2 leading-relaxed">
+                <p>
+                  תמיר לי הוא אתר ההמרות המוביל בישראל, המאפשר המרה מהירה וחינמית בין פורמטים שונים של קבצים.
+                  בין אם אתם צריכים להמיר תמונה מ-PNG ל-JPG, לדחוס סרטון לשליחה ב-WhatsApp, להמיר שיר מ-WAV ל-MP3, או להפוך מסמך PDF ל-Word לעריכה — תמיר לי עושה את זה תוך שניות.
+                </p>
+                <p>
+                  האתר תומך במגוון רחב של פורמטים: תמונות (JPG, PNG, WEBP, GIF, BMP, TIFF, SVG, ICO), וידאו (MP4, AVI, MOV, MKV, WEBM), אודיו (MP3, WAV, AAC, OGG, FLAC), ומסמכים (PDF, DOCX, DOC, TXT).
+                  כל ההמרות מתבצעות באופן מאובטח — הקבצים אינם נשמרים על השרתים שלנו ונמחקים מיד לאחר העיבוד.
+                </p>
+                <p>
+                  תמיר לי זמין בחינם עם עד 5 המרות ביום. למשתמשים שצריכים יותר, מנוי פרימיום ב-₪4.90 לחודש מציע המרות ללא הגבלה, ללא מודעות, ועיבוד מהיר יותר.
+                </p>
+              </div>
             </div>
           </section>
         </div>
