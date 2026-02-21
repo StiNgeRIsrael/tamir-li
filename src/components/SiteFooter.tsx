@@ -50,6 +50,22 @@ export function SiteFooter() {
         </div>
       </div>
 
+      {/* SEO text */}
+      <div className="text-sm text-muted-foreground space-y-2 leading-relaxed pt-6 border-t border-border">
+        <h2 className="text-base font-bold text-foreground">תמיר לי — אתר המרות הקבצים המוביל בישראל</h2>
+        <p>
+          תמיר לי הוא אתר ההמרות המוביל בישראל, המאפשר המרה מהירה וחינמית בין פורמטים שונים של קבצים.
+          בין אם אתם צריכים להמיר תמונה מ-PNG ל-JPG, לדחוס סרטון לשליחה ב-WhatsApp, להמיר שיר מ-WAV ל-MP3, או להפוך מסמך PDF ל-Word לעריכה — תמיר לי עושה את זה תוך שניות.
+        </p>
+        <p>
+          האתר תומך במגוון רחב של פורמטים: תמונות (JPG, PNG, WEBP, GIF, BMP, TIFF, SVG, ICO), וידאו (MP4, AVI, MOV, MKV, WEBM), אודיו (MP3, WAV, AAC, OGG, FLAC), ומסמכים (PDF, DOCX, DOC, TXT).
+          כל ההמרות מתבצעות באופן מאובטח — הקבצים אינם נשמרים על השרתים שלנו ונמחקים מיד לאחר העיבוד.
+        </p>
+        <p>
+          תמיר לי זמין בחינם עם עד 5 המרות ביום. למשתמשים שצריכים יותר, מנוי פרימיום ב-₪4.90 לחודש מציע המרות ללא הגבלה, ללא מודעות, ועיבוד מהיר יותר.
+        </p>
+      </div>
+
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-border">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-md bg-primary flex items-center justify-center">
