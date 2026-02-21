@@ -11,6 +11,8 @@ import { SEOHead } from "@/components/SEOHead";
 import { PdfManagerTool } from "@/components/tools/PdfManagerTool";
 import { TextToolsComponent } from "@/components/tools/TextToolsComponent";
 import { AiImageGeneratorTool } from "@/components/tools/AiImageGeneratorTool";
+import { ImageResizerTool } from "@/components/tools/ImageResizerTool";
+import { ImageCompressorTool } from "@/components/tools/ImageCompressorTool";
 import { useState, useCallback } from "react";
 import { ArrowLeft, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe } from "lucide-react";
 
@@ -243,7 +245,11 @@ export default function ToolPage() {
           <TextToolsComponent />
         ) : tool.customComponent === "ai-image-generator" ? (
           <AiImageGeneratorTool />
-        ) : tool.premium && !["image-compressor", "image-resizer", "video-compressor"].includes(tool.customComponent || "") && !premiumUnlocked ? (
+        ) : tool.customComponent === "image-resizer" ? (
+          <ImageResizerTool />
+        ) : tool.customComponent === "image-compressor" ? (
+          <ImageCompressorTool />
+        ) : tool.premium && !premiumUnlocked ? (
           <PremiumLock onUnlock={() => setPremiumUnlocked(true)} />
         ) : allDone ? (
           <div className="space-y-3 animate-fade-in">
