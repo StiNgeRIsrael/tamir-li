@@ -69,10 +69,10 @@ const Index = () => {
               <Sparkles className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
               כלים חינמיים להמרת קבצים
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold text-foreground leading-tight">
-              המרו כל קובץ,{" "}
-              <span className="text-primary">תוך שניות</span>
-            </h1>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-extrabold text-foreground leading-tight">
+            המירו כל קובץ,{" "}
+            <span className="text-primary">תוך שניות</span>
+          </h1>
             <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               תמונות, וידאו, אודיו ומסמכים — גררו, בחרו פורמט, וסיימתם.
               <br className="hidden sm:block" />
