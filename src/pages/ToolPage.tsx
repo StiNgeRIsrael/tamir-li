@@ -189,42 +189,44 @@ export default function ToolPage() {
         <header className="space-y-3 animate-fade-in">
           <div className="flex items-center gap-2">
             <h1 className="text-2xl lg:text-3xl font-extrabold text-foreground">
-              המרת {activeFrom} ל-{activeTo}
+              {tool.customComponent ? tool.name : `המרת ${activeFrom} ל-${activeTo}`}
             </h1>
             {tool.premium && <Crown className="w-5 h-5 text-premium" />}
           </div>
           <p className="text-sm text-muted-foreground">{tool.longDescription || tool.description}</p>
 
-          {/* Format selector badges */}
-          <div className="flex flex-wrap items-center gap-2 text-sm">
-            <div className="flex items-center gap-1.5 bg-card border border-border rounded-lg px-3 py-1.5">
-              <span className="text-muted-foreground text-xs">מ:</span>
-              <Select value={activeFrom} onValueChange={changeFrom}>
-                <SelectTrigger className="w-20 h-7 text-xs border-0 bg-muted font-semibold">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {tool.fromFormats.map((fmt) => (
-                    <SelectItem key={fmt} value={fmt}>{fmt}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          {/* Format selector badges — only for conversion tools */}
+          {!tool.customComponent && (
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <div className="flex items-center gap-1.5 bg-card border border-border rounded-lg px-3 py-1.5">
+                <span className="text-muted-foreground text-xs">מ:</span>
+                <Select value={activeFrom} onValueChange={changeFrom}>
+                  <SelectTrigger className="w-20 h-7 text-xs border-0 bg-muted font-semibold">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tool.fromFormats.map((fmt) => (
+                      <SelectItem key={fmt} value={fmt}>{fmt}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <ArrowLeft className="w-4 h-4 text-muted-foreground" />
+              <div className="flex items-center gap-1.5 bg-card border border-border rounded-lg px-3 py-1.5">
+                <span className="text-muted-foreground text-xs">ל:</span>
+                <Select value={activeTo} onValueChange={changeTo}>
+                  <SelectTrigger className="w-20 h-7 text-xs border-0 bg-primary/10 font-semibold text-primary">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tool.toFormats.filter(f => f !== activeFrom).map((fmt) => (
+                      <SelectItem key={fmt} value={fmt}>{fmt}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <ArrowLeft className="w-4 h-4 text-muted-foreground" />
-            <div className="flex items-center gap-1.5 bg-card border border-border rounded-lg px-3 py-1.5">
-              <span className="text-muted-foreground text-xs">ל:</span>
-              <Select value={activeTo} onValueChange={changeTo}>
-                <SelectTrigger className="w-20 h-7 text-xs border-0 bg-primary/10 font-semibold text-primary">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {tool.toFormats.filter(f => f !== activeFrom).map((fmt) => (
-                    <SelectItem key={fmt} value={fmt}>{fmt}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          )}
 
           {/* Trust badges */}
           <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
