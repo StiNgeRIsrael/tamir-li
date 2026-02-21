@@ -243,11 +243,11 @@ export default function ToolPage() {
 
           {/* Format selector badges — only for conversion tools */}
           {!tool.customComponent && (
-            <div className="flex flex-wrap items-center gap-2 text-sm">
-              <div className="flex items-center gap-1.5 bg-card border border-border rounded-lg px-3 py-1.5">
-                <span className="text-muted-foreground text-xs">מ:</span>
+            <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
+              <div className="flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-2.5">
+                <span className="text-muted-foreground text-sm font-medium">מ:</span>
                 <Select value={activeFrom} onValueChange={changeFrom}>
-                  <SelectTrigger className="w-20 h-7 text-xs border-0 bg-muted font-semibold">
+                  <SelectTrigger className="w-24 h-9 text-sm border-0 bg-muted font-bold">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -257,11 +257,11 @@ export default function ToolPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <ArrowLeft className="w-4 h-4 text-muted-foreground" />
-              <div className="flex items-center gap-1.5 bg-card border border-border rounded-lg px-3 py-1.5">
-                <span className="text-muted-foreground text-xs">ל:</span>
+              <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+              <div className="flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-2.5">
+                <span className="text-muted-foreground text-sm font-medium">ל:</span>
                 <Select value={activeTo} onValueChange={changeTo}>
-                  <SelectTrigger className="w-20 h-7 text-xs border-0 bg-primary/10 font-semibold text-primary">
+                  <SelectTrigger className="w-24 h-9 text-sm border-0 bg-primary/10 font-bold text-primary">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -284,7 +284,14 @@ export default function ToolPage() {
         </header>
 
         {/* Main content: tool + desktop sidebar */}
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-6 xl:gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-[300px_1fr] gap-6 xl:gap-8">
+          {/* Desktop sidebar — right side (appears first in RTL grid) */}
+          <aside className="hidden xl:block">
+            <div className="sticky top-20">
+              <SidebarContent />
+            </div>
+          </aside>
+
           {/* Main tool area */}
           <div className="min-w-0">
             {tool.customComponent === "pdf-manager" ? (
@@ -367,10 +374,10 @@ export default function ToolPage() {
                               <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
                               <Select value={item.outputFormat} onValueChange={(val) => setFileFormat(index, val)} disabled={converting}>
                                 <SelectTrigger className="w-24 h-7 text-xs border-0 bg-muted">
-                                  <SelectValue placeholder="..." />
+                                  <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {tool.toFormats.map((fmt) => (
+                                  {tool.toFormats.filter(f => f !== activeFrom).map((fmt) => (
                                     <SelectItem key={fmt} value={fmt}>{fmt}</SelectItem>
                                   ))}
                                 </SelectContent>
@@ -420,13 +427,6 @@ export default function ToolPage() {
               </div>
             )}
           </div>
-
-          {/* Desktop sidebar */}
-          <aside className="hidden xl:block">
-            <div className="sticky top-20">
-              <SidebarContent />
-            </div>
-          </aside>
         </div>
 
         {/* Mobile: related conversions (shown below tool on small screens) */}
