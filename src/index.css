@@ -132,3 +132,15 @@
     @apply bg-gradient-to-l from-[hsl(var(--premium))] to-[hsl(25,95%,55%)] text-[hsl(var(--premium-foreground))] rounded-xl p-4;
   }
 }
+
+/* Prevent Radix scroll-lock from hiding scrollbar and shifting layout */
+body[data-scroll-locked] {
+  overflow: hidden !important;
+  margin-right: 0 !important;
+  padding-right: 0 !important;
+}
+
+html.with-scroll-bars-hidden {
+  overflow: visible !important;
+  padding-right: 0 !important;
+}
