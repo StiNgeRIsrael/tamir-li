@@ -374,6 +374,8 @@ export default function ToolPage() {
           </div>
         </section>
 
+        <AdSlot type="inline" />
+
         {/* SEO: Related conversions */}
         {related.length > 0 && (
           <section className="space-y-3">
@@ -398,6 +400,8 @@ export default function ToolPage() {
           </section>
         )}
 
+        <AdSlot type="banner" />
+
         {/* SEO rich text */}
         <section className="bg-card border border-border rounded-xl p-5 space-y-2 text-sm text-muted-foreground leading-relaxed">
           <h2 className="text-base font-bold text-foreground">המרת {activeFrom} ל-{activeTo} אונליין</h2>
@@ -411,6 +415,8 @@ export default function ToolPage() {
             ניתן לבצע עד 5 המרות בחינם ביום. צריכים יותר? שדרגו לפרימיום ב-₪4.90 בלבד לחודש.
           </p>
         </section>
+
+        <AdSlot type="inline" />
       </div>
     </AppLayout>
   );
