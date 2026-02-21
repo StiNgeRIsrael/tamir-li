@@ -162,6 +162,8 @@ export default function ToolPage() {
   }
 
   const toolName = toolNames[tool.id] || tool.name;
+  const toolLongDescs = t.toolLongDescriptions as Record<string, string>;
+  const toolLongDesc = toolLongDescs?.[tool.id] || tool.longDescription;
   const isCustom = !!tool.customComponent;
   const pageTitle = isCustom
     ? `${toolName} — ${t.brandName}`
@@ -247,7 +249,7 @@ export default function ToolPage() {
             </h1>
             {tool.premium && <Crown className="w-5 h-5 text-premium" />}
           </div>
-          <p className="text-sm lg:text-base text-muted-foreground max-w-3xl">{tool.longDescription || tool.description}</p>
+          <p className="text-sm lg:text-base text-muted-foreground max-w-3xl">{toolLongDesc}</p>
 
           {!isCustom && (
             <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
