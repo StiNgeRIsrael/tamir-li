@@ -42,6 +42,7 @@ export function SiteFooter() {
           <h4 className="font-bold text-sm text-foreground">תמיר לי</h4>
           <ul className="space-y-2 text-xs text-muted-foreground">
             <li><Link to="/install" className="hover:text-foreground transition-colors">התקן כאפליקציה</Link></li>
+            <li><Link to="/blog" className="hover:text-foreground transition-colors">בלוג ומדריכים</Link></li>
             <li><span className="cursor-default">תנאי שימוש</span></li>
             <li><span className="cursor-default">מדיניות פרטיות</span></li>
             <li><span className="cursor-default">צור קשר</span></li>
