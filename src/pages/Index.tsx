@@ -38,8 +38,8 @@ const Index = () => {
   return (
     <AppLayout>
       <SEOHead
-        title={t.seo.homeTitle}
-        description={t.seo.homeDesc}
+        title={t.seo?.homeTitle ?? ""}
+        description={t.seo?.homeDesc ?? ""}
       />
       <div className="w-full">
 
