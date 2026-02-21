@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { getToolByFormatSlug, getToolById, getDefaultSlug, buildFormatSlug, getRelatedTools, categoryLabels, type Tool } from "@/lib/tools-data";
+import { getToolByFormatSlug, getToolById, getDefaultSlug, buildFormatSlug, getRelatedTools, type Tool } from "@/lib/tools-data";
 import { AppLayout } from "@/components/AppLayout";
 import { FileDropZone } from "@/components/FileDropZone";
 import { AdSlot } from "@/components/AdSlot";
@@ -14,7 +14,8 @@ import { AiImageGeneratorTool } from "@/components/tools/AiImageGeneratorTool";
 import { ImageResizerTool } from "@/components/tools/ImageResizerTool";
 import { ImageCompressorTool } from "@/components/tools/ImageCompressorTool";
 import { useState, useCallback } from "react";
-import { ArrowLeft, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe } from "lucide-react";
+import { ArrowLeft, ArrowRight, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe } from "lucide-react";
+import { useLocale, localePath } from "@/lib/i18n";
 
 interface FileWithFormat {
   file: File;
@@ -41,6 +42,12 @@ function formatFileSize(bytes: number) {
 export default function ToolPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { locale, t, dir } = useLocale();
+  const isRtl = dir === "rtl";
+  const Arrow = isRtl ? ArrowLeft : ArrowRight;
+  const tt = t.tool;
+  const toolNames = t.toolNames as Record<string, string>;
+  const catLabels = t.categories as Record<string, string>;
 
   const formatMatch = slug ? getToolByFormatSlug(slug) : null;
   const legacyTool = slug ? getToolById(slug) : null;
@@ -58,12 +65,12 @@ export default function ToolPage() {
 
   const changeFrom = (from: string) => {
     const to = from === activeTo ? (tool?.toFormats.find(f => f !== from) || activeTo) : activeTo;
-    navigate(`/${buildFormatSlug(from, to)}`, { replace: true, preventScrollReset: true });
+    navigate(localePath(`/${buildFormatSlug(from, to)}`, locale), { replace: true, preventScrollReset: true });
   };
 
   const changeTo = (to: string) => {
     const from = to === activeFrom ? (tool?.fromFormats.find(f => f !== to) || activeFrom) : activeFrom;
-    navigate(`/${buildFormatSlug(from, to)}`, { replace: true, preventScrollReset: true });
+    navigate(localePath(`/${buildFormatSlug(from, to)}`, locale), { replace: true, preventScrollReset: true });
   };
 
   const generateThumbnail = useCallback((file: File): Promise<string | undefined> => {
@@ -146,44 +153,45 @@ export default function ToolPage() {
       <AppLayout>
         <div className="flex items-center justify-center min-h-[60vh] text-center">
           <div>
-            <h1 className="text-2xl font-bold mb-2">כלי לא נמצא</h1>
-            <Link to="/" className="text-primary hover:underline">חזור לדף הבית</Link>
+            <h1 className="text-2xl font-bold mb-2">{tt.notFound}</h1>
+            <Link to={localePath("/", locale)} className="text-primary hover:underline">{tt.backHome}</Link>
           </div>
         </div>
       </AppLayout>
     );
   }
 
-  const pageTitle = `המרת ${activeFrom} ל-${activeTo} — תמיר לי`;
-  const pageDesc = `המירו קבצי ${activeFrom} ל-${activeTo} בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל.`;
+  const toolName = toolNames[tool.id] || tool.name;
+  const isCustom = !!tool.customComponent;
+  const pageTitle = isCustom
+    ? `${toolName} — ${t.brandName}`
+    : `${tt.convertTitle(activeFrom, activeTo)} — ${t.brandName}`;
+  const pageDesc = tt.convertDesc(activeFrom, activeTo);
   const related = getRelatedTools(tool);
 
-  // Desktop sidebar content
   const SidebarContent = () => (
     <div className="space-y-5">
-      {/* Trust badges - vertical on desktop */}
       <div className="bg-card border border-border rounded-xl p-5 space-y-3">
-        <h3 className="text-sm font-bold text-foreground">למה תמיר לי?</h3>
+        <h3 className="text-sm font-bold text-foreground">{tt.whyUs}</h3>
         <div className="space-y-2.5">
-          <span className="flex items-center gap-2 text-sm text-muted-foreground"><Shield className="w-4 h-4 text-success shrink-0" /> מאובטח — הקבצים לא נשמרים</span>
-          <span className="flex items-center gap-2 text-sm text-muted-foreground"><Zap className="w-4 h-4 text-accent shrink-0" /> מהיר — עיבוד תוך שניות</span>
-          <span className="flex items-center gap-2 text-sm text-muted-foreground"><Globe className="w-4 h-4 text-primary shrink-0" /> אונליין — ללא הורדת תוכנה</span>
-          <span className="flex items-center gap-2 text-sm text-muted-foreground"><CheckCircle2 className="w-4 h-4 text-success shrink-0" /> חינם — עד 5 המרות ביום</span>
+          <span className="flex items-center gap-2 text-sm text-muted-foreground"><Shield className="w-4 h-4 text-success shrink-0" /> {tt.secure}</span>
+          <span className="flex items-center gap-2 text-sm text-muted-foreground"><Zap className="w-4 h-4 text-accent shrink-0" /> {tt.fast}</span>
+          <span className="flex items-center gap-2 text-sm text-muted-foreground"><Globe className="w-4 h-4 text-primary shrink-0" /> {tt.online}</span>
+          <span className="flex items-center gap-2 text-sm text-muted-foreground"><CheckCircle2 className="w-4 h-4 text-success shrink-0" /> {tt.free}</span>
         </div>
       </div>
 
       <AdSlot type="inline" />
 
-      {/* Related conversions */}
       {related.length > 0 && (
         <div className="bg-card border border-border rounded-xl p-5 space-y-3">
-          <h3 className="text-sm font-bold text-foreground">המרות נוספות</h3>
+          <h3 className="text-sm font-bold text-foreground">{tt.moreConversions}</h3>
           <div className="flex flex-wrap gap-1.5">
             {tool.fromFormats.flatMap(from =>
               tool.toFormats.filter(to => to !== from).map(to => (
                 <Link
                   key={`${from}-${to}`}
-                  to={`/${buildFormatSlug(from, to)}`}
+                  to={localePath(`/${buildFormatSlug(from, to)}`, locale)}
                   className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                     from === activeFrom && to === activeTo
                       ? "bg-primary text-primary-foreground border-primary"
@@ -212,22 +220,22 @@ export default function ToolPage() {
           "@type": "WebApplication",
           "name": pageTitle,
           "description": pageDesc,
-          "url": `https://tamirli.co.il/${buildFormatSlug(activeFrom, activeTo)}`,
+          "url": `https://tamirli.co.il${localePath(`/${buildFormatSlug(activeFrom, activeTo)}`, locale)}`,
           "applicationCategory": "UtilityApplication",
           "operatingSystem": "Any",
-          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "ILS" },
-          "inLanguage": "he"
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+          "inLanguage": locale,
         }}
       />
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-6 lg:py-10 space-y-6 lg:space-y-8">
         {/* Breadcrumb */}
         <nav aria-label="breadcrumb" className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Link to="/" className="hover:text-foreground transition-colors">דף הבית</Link>
+          <Link to={localePath("/", locale)} className="hover:text-foreground transition-colors">{tt.breadcrumbHome}</Link>
           <span>/</span>
-          <span>{categoryLabels[tool.category]}</span>
+          <span>{catLabels[tool.category]}</span>
           <span>/</span>
           <span className="text-foreground font-medium">
-            {tool.customComponent ? tool.name : `המרת ${activeFrom} ל-${activeTo}`}
+            {isCustom ? toolName : tt.convertTitle(activeFrom, activeTo)}
           </span>
         </nav>
 
@@ -235,17 +243,16 @@ export default function ToolPage() {
         <header className="space-y-3 animate-fade-in">
           <div className="flex items-center gap-2">
             <h1 className="text-2xl lg:text-3xl xl:text-4xl font-extrabold text-foreground">
-              {tool.customComponent ? tool.name : `המרת ${activeFrom} ל-${activeTo}`}
+              {isCustom ? toolName : tt.convertTitle(activeFrom, activeTo)}
             </h1>
             {tool.premium && <Crown className="w-5 h-5 text-premium" />}
           </div>
           <p className="text-sm lg:text-base text-muted-foreground max-w-3xl">{tool.longDescription || tool.description}</p>
 
-          {/* Format selector badges — only for conversion tools */}
-          {!tool.customComponent && (
+          {!isCustom && (
             <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
               <div className="flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-2.5">
-                <span className="text-muted-foreground text-sm font-medium">מ:</span>
+                <span className="text-muted-foreground text-sm font-medium">{tt.from}</span>
                 <Select value={activeFrom} onValueChange={changeFrom}>
                   <SelectTrigger className="w-24 h-9 text-sm border-0 bg-muted font-bold">
                     <SelectValue />
@@ -259,7 +266,7 @@ export default function ToolPage() {
               </div>
               <ArrowLeft className="w-5 h-5 text-muted-foreground" />
               <div className="flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-2.5">
-                <span className="text-muted-foreground text-sm font-medium">ל:</span>
+                <span className="text-muted-foreground text-sm font-medium">{tt.to}</span>
                 <Select value={activeTo} onValueChange={changeTo}>
                   <SelectTrigger className="w-24 h-9 text-sm border-0 bg-primary/10 font-bold text-primary">
                     <SelectValue />
@@ -274,25 +281,23 @@ export default function ToolPage() {
             </div>
           )}
 
-          {/* Trust badges — mobile only, on desktop they're in sidebar */}
+          {/* Trust badges — mobile only */}
           <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground xl:hidden">
-            <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5 text-success" /> מאובטח</span>
-            <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-accent" /> מהיר</span>
-            <span className="flex items-center gap-1"><Globe className="w-3.5 h-3.5 text-primary" /> אונליין</span>
-            <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-success" /> חינם</span>
+            <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5 text-success" /> {tt.secureBadge}</span>
+            <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-accent" /> {tt.fastBadge}</span>
+            <span className="flex items-center gap-1"><Globe className="w-3.5 h-3.5 text-primary" /> {tt.onlineBadge}</span>
+            <span className="flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-success" /> {tt.freeBadge}</span>
           </div>
         </header>
 
         {/* Main content: tool + desktop sidebar */}
-        <div className="grid grid-cols-1 xl:grid-cols-[300px_1fr] gap-6 xl:gap-8">
-          {/* Desktop sidebar — right side (appears first in RTL grid) */}
+        <div className={`grid grid-cols-1 xl:grid-cols-[300px_1fr] gap-6 xl:gap-8`}>
           <aside className="hidden xl:block">
             <div className="sticky top-20">
               <SidebarContent />
             </div>
           </aside>
 
-          {/* Main tool area */}
           <div className="min-w-0">
             {tool.customComponent === "pdf-manager" ? (
               <PdfManagerTool />
@@ -310,7 +315,7 @@ export default function ToolPage() {
               <div className="space-y-3 animate-fade-in">
                 <div className="flex items-center gap-3 mb-4">
                   <CheckCircle2 className="w-6 h-6 text-success" />
-                  <h2 className="text-xl font-bold">ההמרה הושלמה!</h2>
+                  <h2 className="text-xl font-bold">{tt.conversionDone}</h2>
                 </div>
                 {fileItems.map((item, index) => {
                   const Icon = getFileIcon(item.file);
@@ -330,16 +335,16 @@ export default function ToolPage() {
                       <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
                       <Button size="sm" variant="outline" className="shrink-0 text-success border-success/30 hover:bg-success/10">
                         <Download className="w-3.5 h-3.5 ml-1" />
-                        הורד
+                        {tt.download}
                       </Button>
                     </div>
                   );
                 })}
                 <div className="flex items-center justify-between pt-3">
-                  <Button variant="outline" onClick={handleReset}>המרה נוספת</Button>
+                  <Button variant="outline" onClick={handleReset}>{tt.moreConversion}</Button>
                   <Button className="bg-success text-success-foreground hover:bg-success/90">
                     <Download className="w-4 h-4 ml-2" />
-                    הורד הכל
+                    {tt.downloadAll}
                   </Button>
                 </div>
                 <ConversionSuccessUsage used={usedToday + fileItems.length} max={maxDaily} />
@@ -395,7 +400,7 @@ export default function ToolPage() {
                                 <div className={`h-full rounded-full transition-all duration-300 ease-out ${item.status === "done" ? "bg-success" : "bg-primary"}`} style={{ width: `${item.progress}%` }} />
                               </div>
                               <div className="flex items-center justify-between mt-1">
-                                <span className="text-[10px] text-muted-foreground">{item.status === "converting" ? "ממיר..." : "הושלם"}</span>
+                                <span className="text-[10px] text-muted-foreground">{item.status === "converting" ? tt.converting : tt.done}</span>
                                 <span className="text-[10px] text-muted-foreground">{item.progress}%</span>
                               </div>
                             </div>
@@ -407,18 +412,18 @@ export default function ToolPage() {
                       <div className="flex items-center justify-between pt-2">
                         <Button variant="outline" size="sm" className="text-sm" onClick={() => document.getElementById("file-input")?.click()}>
                           <Plus className="w-4 h-4 ml-1" />
-                          הוסף קבצים
+                          {tt.addFiles}
                         </Button>
                         <Button onClick={handleConvert} disabled={!allHaveFormat || converting} className="h-10 px-8 font-bold bg-accent text-accent-foreground hover:bg-accent/90" size="lg">
                           <RefreshCw className="w-4 h-4 ml-2" />
-                          המר {fileItems.length > 1 ? `${fileItems.length} קבצים` : ""}
+                          {tt.convertN(fileItems.length)}
                         </Button>
                       </div>
                     )}
                     {converting && (
                       <div className="text-center py-2 text-sm text-muted-foreground animate-fade-in">
                         <Loader2 className="w-5 h-5 mx-auto animate-spin mb-2 text-primary" />
-                        ממיר קבצים... אנא המתן
+                        {tt.convertingWait}
                       </div>
                     )}
                   </div>
@@ -429,17 +434,17 @@ export default function ToolPage() {
           </div>
         </div>
 
-        {/* Mobile: related conversions (shown below tool on small screens) */}
+        {/* Mobile: related conversions */}
         <div className="xl:hidden space-y-6">
           {related.length > 0 && (
             <section className="space-y-3">
-              <h2 className="text-base font-bold text-foreground">המרות נוספות</h2>
+              <h2 className="text-base font-bold text-foreground">{tt.moreConversions}</h2>
               <div className="flex flex-wrap gap-2">
                 {tool.fromFormats.flatMap(from =>
                   tool.toFormats.filter(to => to !== from).map(to => (
                     <Link
                       key={`${from}-${to}`}
-                      to={`/${buildFormatSlug(from, to)}`}
+                      to={localePath(`/${buildFormatSlug(from, to)}`, locale)}
                       className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                         from === activeFrom && to === activeTo
                           ? "bg-primary text-primary-foreground border-primary"
@@ -460,14 +465,10 @@ export default function ToolPage() {
         {/* SEO: How it works */}
         <section className="space-y-4">
           <h2 className="text-lg lg:text-xl font-bold text-foreground">
-            {tool.customComponent ? `איך להשתמש ב${tool.name}?` : `איך להמיר ${activeFrom} ל-${activeTo}?`}
+            {tt.howToTitle(toolName, activeFrom, activeTo, isCustom)}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
-            {[
-              { step: "1", title: tool.customComponent ? "העלו קובץ" : `העלו קובץ ${activeFrom}`, desc: "גררו או בחרו את הקבצים שלכם" },
-              { step: "2", title: tool.customComponent ? "הגדירו אפשרויות" : `בחרו ${activeTo}`, desc: tool.customComponent ? "בחרו את ההגדרות הרצויות" : "הפורמט כבר מוגדר — אפשר לשנות" },
-              { step: "3", title: "הורידו את התוצאה", desc: "הקובץ מוכן תוך שניות" },
-            ].map((s, i) => (
+            {tt.howToSteps(toolName, activeFrom, activeTo, isCustom).map((s: any, i: number) => (
               <div key={i} className="bg-card border border-border rounded-xl p-5 lg:p-6 text-center space-y-2 lg:space-y-3">
                 <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-primary text-primary-foreground font-bold text-sm lg:text-base flex items-center justify-center mx-auto">{s.step}</div>
                 <h3 className="font-semibold text-sm lg:text-base text-foreground">{s.title}</h3>
@@ -482,19 +483,10 @@ export default function ToolPage() {
         {/* SEO rich text */}
         <section className="bg-card border border-border rounded-xl p-5 lg:p-8 space-y-3 text-sm lg:text-base text-muted-foreground leading-relaxed">
           <h2 className="text-base lg:text-lg font-bold text-foreground">
-            {tool.customComponent ? tool.name : `המרת ${activeFrom} ל-${activeTo} אונליין`}
+            {tt.seoTitle(toolName, activeFrom, activeTo, isCustom)}
           </h2>
-          <p>
-            תמיר לי מאפשר לכם {tool.customComponent ? `להשתמש ב${tool.name}` : `להמיר קבצי ${activeFrom} ל-${activeTo}`} בחינם, ישירות בדפדפן.
-            אין צורך להוריד תוכנה או להירשם — פשוט העלו את הקובץ, {tool.customComponent ? "הגדירו את האפשרויות הרצויות" : "בחרו את הפורמט הרצוי"}, ולחצו "המר".
-            הקבצים שלכם מעובדים באופן מאובטח ואינם נשמרים על השרתים שלנו.
-          </p>
-          {!tool.customComponent && (
-            <p>
-              הכלי תומך בהמרה בין כל הפורמטים: {tool.fromFormats.join(", ")} → {tool.toFormats.join(", ")}.
-              ניתן לבצע עד 5 המרות בחינם ביום. צריכים יותר? שדרגו לפרימיום ב-₪4.90 בלבד לחודש.
-            </p>
-          )}
+          <p>{tt.seoText(toolName, activeFrom, activeTo, isCustom)}</p>
+          {!isCustom && <p>{tt.seoFormats(tool.fromFormats, tool.toFormats)}</p>}
         </section>
 
         <AdSlot type="inline" />
