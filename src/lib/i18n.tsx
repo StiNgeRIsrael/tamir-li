@@ -1,0 +1,99 @@
+import { createContext, useContext, ReactNode, useEffect } from "react";
+import { useParams } from "react-router-dom";
+
+export type Locale = "he" | "en" | "es" | "ru" | "de" | "fr" | "it";
+
+export const LOCALES: Locale[] = ["he", "en", "es", "ru", "de", "fr", "it"];
+export const NON_HE_LOCALES: Locale[] = ["en", "es", "ru", "de", "fr", "it"];
+
+export const localeNames: Record<Locale, string> = {
+  he: "עברית",
+  en: "English",
+  es: "Español",
+  ru: "Русский",
+  de: "Deutsch",
+  fr: "Français",
+  it: "Italiano",
+};
+
+export const localeFlags: Record<Locale, string> = {
+  he: "🇮🇱",
+  en: "🇬🇧",
+  es: "🇪🇸",
+  ru: "🇷🇺",
+  de: "🇩🇪",
+  fr: "🇫🇷",
+  it: "🇮🇹",
+};
+
+export function isRTL(locale: Locale): boolean {
+  return locale === "he";
+}
+
+export function isValidLocale(s: string): s is Locale {
+  return LOCALES.includes(s as Locale);
+}
+
+/** Prefix a path with locale. Hebrew = no prefix. */
+export function localePath(path: string, locale: Locale): string {
+  const clean = path.startsWith("/") ? path : `/${path}`;
+  if (locale === "he") return clean;
+  return `/${locale}${clean === "/" ? "" : clean}`;
+}
+
+interface LocaleContextValue {
+  locale: Locale;
+  t: Record<string, any>;
+  dir: "rtl" | "ltr";
+}
+
+const LocaleContext = createContext<LocaleContextValue>({
+  locale: "he",
+  t: {},
+  dir: "rtl",
+});
+
+export function useLocale() {
+  return useContext(LocaleContext);
+}
+
+export function useT() {
+  return useContext(LocaleContext).t;
+}
+
+// Lazy-loaded translations
+import { heTranslations } from "@/lib/translations/he";
+import { enTranslations } from "@/lib/translations/en";
+import { esTranslations } from "@/lib/translations/es";
+import { ruTranslations } from "@/lib/translations/ru";
+import { deTranslations } from "@/lib/translations/de";
+import { frTranslations } from "@/lib/translations/fr";
+import { itTranslations } from "@/lib/translations/it";
+
+const translationMap: Record<Locale, Record<string, any>> = {
+  he: heTranslations,
+  en: enTranslations,
+  es: esTranslations,
+  ru: ruTranslations,
+  de: deTranslations,
+  fr: frTranslations,
+  it: itTranslations,
+};
+
+export function LocaleProvider({ children }: { children: ReactNode }) {
+  const { locale: localeParam } = useParams<{ locale?: string }>();
+  const locale: Locale = localeParam && isValidLocale(localeParam) ? localeParam : "he";
+  const dir = isRTL(locale) ? "rtl" : "ltr";
+  const t = translationMap[locale] || translationMap.he;
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    document.documentElement.dir = dir;
+  }, [locale, dir]);
+
+  return (
+    <LocaleContext.Provider value={{ locale, t, dir }}>
+      {children}
+    </LocaleContext.Provider>
+  );
+}
