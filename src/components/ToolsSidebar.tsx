@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 
-const categories: ToolCategory[] = ["image", "video", "audio", "document"];
+const categories: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
 
 export function ToolsSidebar() {
   const location = useLocation();

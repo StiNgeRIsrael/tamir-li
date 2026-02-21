@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { SEOHead } from "@/components/SEOHead";
 import { PdfManagerTool } from "@/components/tools/PdfManagerTool";
 import { TextToolsComponent } from "@/components/tools/TextToolsComponent";
+import { AiImageGeneratorTool } from "@/components/tools/AiImageGeneratorTool";
 import { useState, useCallback } from "react";
 import { ArrowLeft, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe } from "lucide-react";
 
@@ -238,6 +239,8 @@ export default function ToolPage() {
           <PdfManagerTool />
         ) : tool.customComponent === "text-tools" ? (
           <TextToolsComponent />
+        ) : tool.customComponent === "ai-image-generator" ? (
+          <AiImageGeneratorTool />
         ) : tool.premium && !premiumUnlocked ? (
           <PremiumLock onUnlock={() => setPremiumUnlocked(true)} />
         ) : allDone ? (
