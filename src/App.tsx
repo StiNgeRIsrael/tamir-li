@@ -20,8 +20,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/tool/:toolId" element={<ToolPage />} />
             <Route path="/install" element={<InstallPage />} />
+            <Route path="/:slug" element={<ToolPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
