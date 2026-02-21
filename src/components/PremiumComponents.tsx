@@ -1,5 +1,6 @@
-import { Crown, Zap } from "lucide-react";
+import { Crown, Zap, Play, Eye, CheckCircle2, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 
 export function PremiumBanner() {
   return (
@@ -21,18 +22,86 @@ export function PremiumBanner() {
   );
 }
 
-export function PremiumLock() {
+export function PremiumLock({ onUnlock }: { onUnlock?: () => void }) {
+  const [adState, setAdState] = useState<"idle" | "watching" | "done">("idle");
+  const [countdown, setCountdown] = useState(15);
+
+  useEffect(() => {
+    if (adState !== "watching") return;
+    if (countdown <= 0) {
+      setAdState("done");
+      onUnlock?.();
+      return;
+    }
+    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [adState, countdown, onUnlock]);
+
+  const startAd = () => {
+    setAdState("watching");
+    setCountdown(15);
+    // In production: trigger rewarded ad via Google AdMob / AdSense
+    console.log("Trigger rewarded video ad");
+  };
+
+  if (adState === "done") {
+    return (
+      <div className="text-center py-6 px-4 bg-success/5 rounded-xl border border-success/30 animate-fade-in space-y-3">
+        <CheckCircle2 className="w-10 h-10 text-success mx-auto" />
+        <h3 className="font-bold text-lg text-foreground">הכלי נפתח!</h3>
+        <p className="text-sm text-muted-foreground">קיבלת המרת וידאו אחת בחינם. העלה קובץ כדי להתחיל.</p>
+      </div>
+    );
+  }
+
+  if (adState === "watching") {
+    return (
+      <div className="text-center py-8 px-4 bg-card rounded-xl border border-border animate-fade-in space-y-4">
+        {/* Simulated ad placeholder */}
+        <div className="bg-muted rounded-xl aspect-video max-w-md mx-auto flex flex-col items-center justify-center gap-3 border border-border">
+          <Play className="w-10 h-10 text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">פרסומת מוצגת כעת...</p>
+        </div>
+        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <Timer className="w-4 h-4" />
+          <span>ניתן לסגור בעוד <span className="font-bold text-foreground">{countdown}</span> שניות</span>
+        </div>
+        <div className="h-1.5 bg-muted rounded-full overflow-hidden max-w-xs mx-auto">
+          <div
+            className="h-full bg-primary rounded-full transition-all duration-1000 ease-linear"
+            style={{ width: `${((15 - countdown) / 15) * 100}%` }}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="text-center py-6 px-4 bg-muted/50 rounded-xl border border-border">
-      <Crown className="w-10 h-10 text-premium mx-auto mb-3" />
-      <h3 className="font-bold text-lg mb-1">כלי פרימיום</h3>
-      <p className="text-sm text-muted-foreground mb-4">
-        כלי זה זמין למנויי פרימיום בלבד. שדרג כדי ליהנות מכל הכלים ללא הגבלה.
+    <div className="text-center py-6 px-4 bg-muted/50 rounded-xl border border-border space-y-5">
+      <Crown className="w-10 h-10 text-premium mx-auto" />
+      <h3 className="font-bold text-lg text-foreground">כלי פרימיום — המרת וידאו</h3>
+      <p className="text-sm text-muted-foreground max-w-md mx-auto">
+        המרת וידאו זמינה למנויי פרימיום. אבל אפשר לנסות המרה אחת בחינם — פשוט צפו בפרסומת קצרה.
       </p>
-      <Button className="bg-premium text-premium-foreground hover:bg-premium/90 font-bold">
-        <Zap className="w-4 h-4 ml-1" />
-        שדרג עכשיו — ₪4.90/חודש
-      </Button>
+
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <Button
+          onClick={startAd}
+          variant="outline"
+          className="font-bold border-primary/30 hover:bg-primary/5"
+          size="lg"
+        >
+          <Eye className="w-4 h-4 ml-2" />
+          צפה בפרסומת — קבל המרה חינם
+        </Button>
+        <span className="text-xs text-muted-foreground">או</span>
+        <Button className="bg-premium text-premium-foreground hover:bg-premium/90 font-bold" size="lg">
+          <Zap className="w-4 h-4 ml-1" />
+          שדרג — ₪4.90/חודש
+        </Button>
+      </div>
+
+      <p className="text-xs text-muted-foreground">🎬 15 שניות פרסומת = המרת וידאו אחת בחינם</p>
     </div>
   );
 }
