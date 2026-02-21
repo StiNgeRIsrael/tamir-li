@@ -1,9 +1,12 @@
+import { useLocale } from "@/lib/i18n";
+
 interface AdSlotProps {
   type: "banner" | "sidebar" | "inline";
   className?: string;
 }
 
 export function AdSlot({ type, className = "" }: AdSlotProps) {
+  const { t } = useLocale();
   const sizes: Record<string, string> = {
     banner: "w-full min-h-[90px]",
     sidebar: "w-full min-h-[250px]",
@@ -12,7 +15,7 @@ export function AdSlot({ type, className = "" }: AdSlotProps) {
 
   return (
     <div className={`ad-slot ${sizes[type]} ${className}`}>
-      <span className="text-xs">מודעה • Google Ads</span>
+      <span className="text-xs">{t.adLabel || "Ad • Google Ads"}</span>
     </div>
   );
 }
