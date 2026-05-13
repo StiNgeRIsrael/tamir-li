@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
 import { tools, categoryIcons, getDefaultSlug, type ToolCategory, getToolsByCategory } from "@/lib/tools-data";
+import { useToolConfig } from "@/contexts/ToolConfigContext";
 import { AppLayout } from "@/components/AppLayout";
 import { AdSlot } from "@/components/AdSlot";
 import { PremiumBanner } from "@/components/PremiumComponents";
-import { ArrowLeft, ArrowRight, Crown, Sparkles, Shield, Zap, Globe, CheckCircle2, Image, FileVideo, FileAudio, FileText, Star } from "lucide-react";
+import { ArrowLeft, ArrowRight, Crown, Sparkles, Shield, Zap, Globe, CheckCircle2, Image, FileVideo, FileAudio, FileText, LayoutGrid, FileType2, Layers, Gift } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";
+import { HeroMediaCollage } from "@/components/HeroMediaCollage";
 import { useLocale, localePath } from "@/lib/i18n";
+import { getDerivedHomeStatsFromTools } from "@/lib/public-stats";
 
 const categories: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
 const categoryColors: Record<ToolCategory, string> = {
@@ -16,24 +19,50 @@ const categoryColors: Record<ToolCategory, string> = {
   ai: "bg-premium/10 text-premium border-premium/20",
 };
 const categoryBg: Record<ToolCategory, string> = {
-  image: "from-tool-image/5 to-transparent",
-  video: "from-tool-video/5 to-transparent",
-  audio: "from-tool-audio/5 to-transparent",
-  document: "from-tool-document/5 to-transparent",
-  ai: "from-premium/5 to-transparent",
+  image: "from-tool-image/15 via-tool-image/5 to-transparent",
+  video: "from-tool-video/15 via-tool-video/5 to-transparent",
+  audio: "from-tool-audio/15 via-tool-audio/5 to-transparent",
+  document: "from-tool-document/15 via-tool-document/5 to-transparent",
+  ai: "from-premium/15 via-amber-500/10 to-transparent",
 };
 
-const iconMap = [Zap, Globe, Star, Shield];
+const categoryAccentBorder: Record<ToolCategory, string> = {
+  image: "border-s-tool-image/50",
+  video: "border-s-tool-video/50",
+  audio: "border-s-tool-audio/50",
+  document: "border-s-tool-document/50",
+  ai: "border-s-premium/50",
+};
+
+const statIconStyles = [
+  "bg-gradient-to-br from-tool-image/30 to-primary/10 text-tool-image",
+  "bg-gradient-to-br from-tool-video/30 to-tool-video/5 text-tool-video",
+  "bg-gradient-to-br from-premium/35 to-amber-500/10 text-amber-600 dark:text-premium",
+  "bg-gradient-to-br from-success/25 to-emerald-600/10 text-success",
+];
+
+const iconMap = [LayoutGrid, FileType2, Layers, Gift];
 const formatIcons = [Image, FileVideo, FileAudio, FileText];
 
 const Index = () => {
   const { locale, t, dir } = useLocale();
+  const { filterTools } = useToolConfig();
   const isRtl = dir === "rtl";
   const Arrow = isRtl ? ArrowLeft : ArrowRight;
 
   const catLabels = t.categories as Record<ToolCategory, string>;
   const toolNames = t.toolNames as Record<string, string>;
   const toolDescs = t.toolDescriptions as Record<string, string>;
+  const visibleTools = filterTools(tools);
+  const derived = getDerivedHomeStatsFromTools(visibleTools);
+  const statLabels = t.homeStatLabels as { tools: string; formats: string; categories: string; freeDaily: string };
+  const statValues = t.homeStatValues as { freeDaily: string };
+  const homeStats = [
+    { value: String(derived.toolCount), label: statLabels.tools },
+    { value: String(derived.formatCount), label: statLabels.formats },
+    { value: String(derived.categoryCount), label: statLabels.categories },
+    { value: statValues.freeDaily, label: statLabels.freeDaily },
+  ];
 
   return (
     <AppLayout>
@@ -43,38 +72,46 @@ const Index = () => {
       />
       <div className="w-full">
 
-        {/* Hero + Stats */}
-        <section className="py-8 lg:py-12 xl:py-14 px-4 animate-fade-in">
-          <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
-            <div className="flex flex-col xl:flex-row xl:items-center xl:gap-12">
+        {/* Hero + collage + stats */}
+        <section className="relative overflow-hidden py-8 lg:py-12 xl:py-16 px-4 animate-fade-in">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--primary)/0.18),transparent)] dark:bg-[radial-gradient(ellipse_70%_45%_at_50%_-10%,hsl(var(--tool-image)/0.2),transparent)]" />
+          <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto relative">
+            <div className="flex flex-col xl:flex-row xl:items-center xl:gap-10 2xl:gap-14">
               <div className={`xl:flex-1 text-center ${isRtl ? "xl:text-right" : "xl:text-left"} space-y-3 lg:space-y-4`}>
-                <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs lg:text-sm font-semibold px-4 py-1.5 rounded-full">
-                  <Sparkles className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+                <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-gradient-to-l from-primary/15 via-tool-video/10 to-transparent px-4 py-1.5 text-xs font-semibold text-primary shadow-sm shadow-primary/10 lg:text-sm dark:from-primary/25">
+                  <Sparkles className="h-3.5 w-3.5 shrink-0 text-accent lg:h-4 lg:w-4" />
                   {t.hero.badge}
                 </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-foreground leading-tight">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight text-foreground">
                   {t.hero.title}{" "}
-                  <span className="text-primary">{t.hero.titleHighlight}</span>
+                  <span className="hero-gradient-text">{t.hero.titleHighlight}</span>
                 </h1>
-                <p className="text-sm sm:text-base lg:text-lg text-muted-foreground max-w-2xl xl:max-w-none leading-relaxed mx-auto xl:mx-0">
+                <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base lg:text-lg xl:mx-0 xl:max-w-none">
                   {t.hero.subtitle}
                   <br className="hidden sm:block" />
                   {t.hero.subtitleLine2}
                 </p>
               </div>
 
-              <div className="mt-6 xl:mt-0 xl:w-[380px] shrink-0">
+              <HeroMediaCollage className="my-4 shrink-0 xl:my-0 xl:w-[min(100%,340px)] 2xl:w-[380px]" />
+
+              <div className="mt-2 shrink-0 xl:mt-0 xl:w-[300px] 2xl:w-[340px]">
                 <div className="grid grid-cols-2 gap-3">
-                  {(t.stats as { value: string; label: string }[]).map((s, i) => {
+                  {homeStats.map((s, i) => {
                     const SIcon = iconMap[i];
                     return (
-                      <div key={i} className="bg-card border border-border rounded-xl p-3 lg:p-4 flex items-center gap-3">
-                        <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                          <SIcon className="w-4 h-4 lg:w-5 lg:h-5 text-primary" />
+                      <div
+                        key={i}
+                        className="media-card-shine flex items-center gap-3 rounded-xl border border-border/80 bg-card/80 p-3 shadow-md shadow-black/5 backdrop-blur-sm dark:bg-card/60 dark:shadow-black/20"
+                      >
+                        <div
+                          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg lg:h-10 lg:w-10 ${statIconStyles[i % statIconStyles.length]}`}
+                        >
+                          <SIcon className="h-4 w-4 lg:h-5 lg:w-5" />
                         </div>
                         <div>
-                          <p className="text-lg lg:text-xl font-extrabold text-foreground leading-none">{s.value}</p>
-                          <p className="text-[11px] lg:text-xs text-muted-foreground mt-0.5">{s.label}</p>
+                          <p className="text-lg font-extrabold leading-none text-foreground lg:text-xl">{s.value}</p>
+                          <p className="mt-0.5 text-[11px] text-muted-foreground lg:text-xs">{s.label}</p>
                         </div>
                       </div>
                     );
@@ -88,14 +125,18 @@ const Index = () => {
         {/* Main content */}
         <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 pb-8 lg:pb-12 space-y-6 lg:space-y-8">
 
-          <AdSlot type="banner" />
+          <AdSlot type="banner" slotId="home-top-banner" />
 
           {/* Tools by category */}
           {categories.map((cat) => {
             const Icon = categoryIcons[cat];
-            const catTools = getToolsByCategory(cat);
+            const catTools = filterTools(getToolsByCategory(cat));
+            if (catTools.length === 0) return null;
             return (
-              <section key={cat} className={`rounded-2xl border border-border bg-gradient-to-br ${categoryBg[cat]} p-4 lg:p-6 space-y-3 lg:space-y-4`}>
+              <section
+                key={cat}
+                className={`space-y-3 lg:space-y-4 rounded-2xl border border-border/80 bg-gradient-to-br ${categoryBg[cat]} p-4 lg:p-6 shadow-lg shadow-black/[0.03] backdrop-blur-[1px] dark:shadow-black/25 border-s-4 ${categoryAccentBorder[cat]}`}
+              >
                 <h2 className="text-base lg:text-lg font-bold flex items-center gap-2">
                   <div className={`w-7 h-7 lg:w-8 lg:h-8 rounded-lg flex items-center justify-center ${categoryColors[cat]}`}>
                     <Icon className="w-4 h-4" />
@@ -110,7 +151,7 @@ const Index = () => {
                       <Link
                         key={tool.id}
                         to={localePath(`/${getDefaultSlug(tool)}`, locale)}
-                        className="flex items-center gap-2.5 bg-card/80 hover:bg-card border border-border/50 hover:border-primary/30 rounded-xl p-3 lg:p-3.5 transition-all duration-200 hover:shadow-md group"
+                        className="media-card-shine group flex items-center gap-2.5 rounded-xl border border-border/60 bg-card/90 p-3 shadow-sm transition-all duration-200 hover:border-primary/35 hover:bg-card hover:shadow-lg hover:shadow-primary/5 lg:p-3.5 dark:bg-card/70"
                       >
                         <div className="w-8 h-8 rounded-lg bg-primary/5 group-hover:bg-primary/10 flex items-center justify-center shrink-0 transition-colors">
                           <TIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
@@ -186,27 +227,7 @@ const Index = () => {
             </div>
           </section>
 
-          <AdSlot type="inline" />
-
-          {/* Testimonials */}
-          <section className="space-y-4">
-            <h2 className="text-lg lg:text-xl font-bold text-foreground">{t.testimonials.title}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {(t.testimonials.items as { name: string; text: string }[]).map((item, i) => (
-                <article key={i} className="bg-card border border-border rounded-xl p-3.5 lg:p-4 flex items-start gap-3">
-                  <div className="flex gap-0.5 shrink-0 mt-0.5">
-                    {Array.from({ length: 5 }).map((_, j) => (
-                      <Star key={j} className="w-3 h-3 text-premium fill-premium" />
-                    ))}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground leading-relaxed">"{item.text}"</p>
-                    <p className="text-xs text-muted-foreground font-medium mt-1">{item.name}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
+          <AdSlot type="inline" slotId="home-mid-inline" />
 
           {/* FAQ */}
           <section className="space-y-3" itemScope itemType="https://schema.org/FAQPage">

@@ -35,8 +35,11 @@ export function FileDropZone({ acceptedFormats, onFilesSelected, multiple = true
         className={`drop-zone flex flex-col items-center justify-center gap-4 p-10 lg:p-14 text-center cursor-pointer min-h-[220px] lg:min-h-[300px] ${isDragging ? "drop-zone-active" : ""}`}
         onClick={() => document.getElementById("file-input")?.click()}
       >
-        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-          <Upload className="w-8 h-8 text-primary" />
+        <div className="relative flex h-20 w-20 items-center justify-center">
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-tool-image/40 via-tool-video/30 to-tool-document/35 opacity-80 blur-md" />
+          <div className="relative flex h-16 w-16 items-center justify-center rounded-full border-2 border-primary/25 bg-gradient-to-br from-card to-primary/10 shadow-inner">
+            <Upload className="h-8 w-8 text-primary" />
+          </div>
         </div>
         <div>
           <p className="text-lg font-semibold text-foreground">{fdz.dragHere}</p>

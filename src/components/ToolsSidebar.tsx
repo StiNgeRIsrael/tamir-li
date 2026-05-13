@@ -1,16 +1,19 @@
 import { Link, useLocation } from "react-router-dom";
-import { tools, categoryIcons, getDefaultSlug, getToolsByCategory, type ToolCategory } from "@/lib/tools-data";
-import { Home, Crown, ChevronDown, Wrench, PanelRight, PanelRightClose } from "lucide-react";
+import { categoryIcons, getDefaultSlug, getToolsByCategory, type ToolCategory } from "@/lib/tools-data";
+import { useToolConfig } from "@/contexts/ToolConfigContext";
+import { Home, Crown, ChevronDown, PanelRight, PanelRightClose } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { useLocale, localePath } from "@/lib/i18n";
+import { BrandWordmark } from "@/components/BrandWordmark";
 
 const categories: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
 
 export function ToolsSidebar() {
   const location = useLocation();
   const { locale, t } = useLocale();
+  const { filterTools } = useToolConfig();
   const catLabels = t.categories as Record<ToolCategory, string>;
   const toolNames = t.toolNames as Record<string, string>;
   const [collapsed, setCollapsed] = useState(true);
@@ -27,8 +30,12 @@ export function ToolsSidebar() {
         <Button variant="ghost" size="icon" className="h-8 w-8 mb-1" onClick={() => setCollapsed(false)}>
           <PanelRight className="w-4 h-4" />
         </Button>
-        <Link to={localePath("/", locale)} className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-          <Wrench className="w-4 h-4 text-primary-foreground" />
+        <Link
+          to={localePath("/", locale)}
+          className="flex w-9 flex-col items-center justify-center rounded-lg border border-border/80 bg-card px-1 py-1.5 shadow-sm"
+          title={t.brandName}
+        >
+          <BrandWordmark locale={locale} size="sm" className="scale-[0.72] leading-none" />
         </Link>
         <div className="flex-1" />
         <ThemeToggle />
@@ -39,14 +46,9 @@ export function ToolsSidebar() {
   return (
     <aside className="w-64 bg-card border-s border-border h-screen sticky top-0 overflow-y-auto hidden lg:flex flex-col shrink-0">
       <div className="p-4 border-b border-border flex items-center justify-between">
-        <Link to={localePath("/", locale)} className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
-            <Wrench className="w-4 h-4 text-primary-foreground" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-bold text-foreground leading-tight">{t.brandName}</span>
-            <span className="text-[10px] text-muted-foreground leading-tight">{t.brandTagline}</span>
-          </div>
+        <Link to={localePath("/", locale)} className="flex min-w-0 flex-col gap-0.5">
+          <BrandWordmark locale={locale} size="sm" className="leading-none" />
+          <span className="text-[10px] leading-tight text-muted-foreground">{t.brandTagline}</span>
         </Link>
         <div className="flex items-center gap-1">
           <ThemeToggle />
@@ -71,8 +73,10 @@ export function ToolsSidebar() {
 
         {categories.map((cat) => {
           const Icon = categoryIcons[cat];
-          const catTools = getToolsByCategory(cat);
+          const catTools = filterTools(getToolsByCategory(cat));
           const isOpen = openCategories[cat];
+
+          if (catTools.length === 0) return null;
 
           return (
             <div key={cat}>

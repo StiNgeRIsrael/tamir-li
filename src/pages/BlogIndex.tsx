@@ -22,7 +22,7 @@ export default function BlogIndex() {
           <p className="text-sm lg:text-base text-muted-foreground max-w-2xl">{b.subtitle}</p>
         </header>
 
-        <AdSlot type="banner" />
+        <AdSlot type="banner" slotId="blog-index-top" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
           {blogArticles.map((article, i) => (
@@ -41,12 +41,12 @@ export default function BlogIndex() {
                 <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{article.date}</span>
                 <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{b.readTime(article.readTime)}</span>
               </div>
-              {i === 5 && <AdSlot type="inline" className="col-span-full" />}
+              {i === 5 && <AdSlot type="inline" slotId="blog-index-mid" className="col-span-full" />}
             </Link>
           ))}
         </div>
 
-        <AdSlot type="banner" />
+        <AdSlot type="banner" slotId="blog-index-bottom" />
       </div>
     </AppLayout>
   );

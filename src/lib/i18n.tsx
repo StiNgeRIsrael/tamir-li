@@ -30,6 +30,11 @@ export function isRTL(locale: Locale): boolean {
   return locale === "he";
 }
 
+/** BCP 47 language tag for `<html lang>` (Israel-first Hebrew). */
+export function htmlLangTag(locale: Locale): string {
+  return locale === "he" ? "he-IL" : locale;
+}
+
 export function isValidLocale(s: string): s is Locale {
   return LOCALES.includes(s as Locale);
 }
@@ -80,14 +85,15 @@ const translationMap: Record<Locale, Record<string, any>> = {
   it: itTranslations,
 };
 
-export function LocaleProvider({ children }: { children: ReactNode }) {
+export function LocaleProvider({ children, explicitLocale }: { children: ReactNode, explicitLocale?: Locale }) {
   const { locale: localeParam } = useParams<{ locale?: string }>();
-  const locale: Locale = localeParam && isValidLocale(localeParam) ? localeParam : "he";
+  const computedParam = localeParam && isValidLocale(localeParam) ? localeParam : "he";
+  const locale: Locale = explicitLocale || computedParam;
   const dir = isRTL(locale) ? "rtl" : "ltr";
   const t = translationMap[locale] || translationMap.he;
 
   useEffect(() => {
-    document.documentElement.lang = locale;
+    document.documentElement.lang = htmlLangTag(locale);
     document.documentElement.dir = dir;
   }, [locale, dir]);
 

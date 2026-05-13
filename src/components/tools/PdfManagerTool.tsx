@@ -89,7 +89,7 @@ export function PdfManagerTool() {
           <Button variant="outline" onClick={handleReset}>{pm.startOver}</Button>
         </div>
       </div>
-      <AdSlot type="inline" />
+      <AdSlot type="inline" slotId="tool-pdf-inline" />
     </div>
   );
 
@@ -137,7 +137,7 @@ export function PdfManagerTool() {
         </div>
       )}
       <canvas ref={canvasRef} className="hidden" />
-      <AdSlot type="banner" />
+      <AdSlot type="banner" slotId="tool-pdf-banner" />
     </div>
   );
 }

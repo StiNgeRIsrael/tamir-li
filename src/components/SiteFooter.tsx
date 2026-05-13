@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Wrench } from "lucide-react";
+import { BrandWordmark } from "@/components/BrandWordmark";
 import { useLocale, localePath } from "@/lib/i18n";
 
 export function SiteFooter() {
@@ -7,7 +7,8 @@ export function SiteFooter() {
   const f = t.footer;
 
   return (
-    <footer className="border-t border-border pt-8 pb-6 space-y-8 max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+    <footer className="relative border-t border-transparent bg-gradient-to-b from-transparent to-muted/30 pt-10 pb-8 space-y-8 max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 dark:to-muted/10">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" aria-hidden />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8">
         <div className="space-y-3">
           <h4 className="font-bold text-sm text-foreground">{f.popularTools}</h4>
@@ -64,11 +65,8 @@ export function SiteFooter() {
       </div>
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-border">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-primary flex items-center justify-center">
-            <Wrench className="w-3 h-3 text-primary-foreground" />
-          </div>
-          <span className="font-bold text-sm text-foreground">{t.brandName}</span>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <BrandWordmark locale={locale} size="sm" />
           <span className="text-xs text-muted-foreground">— {t.brandTagline}</span>
         </div>
         <p className="text-[11px] text-muted-foreground">{f.copyright(new Date().getFullYear())}</p>

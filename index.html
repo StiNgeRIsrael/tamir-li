@@ -1,27 +1,37 @@
 <!doctype html>
-<html lang="he" dir="rtl" id="html-root">
+<html lang="he-IL" dir="rtl" id="html-root">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-    <title>תמיר לי — אתר המרות הקבצים של ישראל</title>
-    <meta name="description" content="המרה מהירה וחינמית בין פורמטים של תמונות, וידאו, אודיו ומסמכים. גרור קבצים, בחר פורמט, וסיימת. ללא הורדת תוכנה." />
+    <title>תמיר לי | Tamir.li — המרת קבצים חינם בישראל</title>
+    <meta name="description" content="תמיר לי (Tamir.li) — המרה מהירה וחינמית של תמונות, וידאו, אודיו ומסמכים. גרור קבצים, בחר פורמט, וסיימת. ללא תוכנה. מותאם לישראל." />
     <meta name="author" content="תמיר לי" />
-    <meta name="keywords" content="המרת קבצים, המרת תמונות, המרת וידאו, המרת אודיו, PDF לוורד, JPG ל-PNG, ממיר קבצים חינמי, תמיר לי" />
-    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="תמיר לי, Tamir.li, המרת קבצים, המרת תמונות, המרת וידאו, ממיר קבצים חינמי, ישראל" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="theme-color" content="#1e293b" />
-    <link rel="canonical" href="https://tamirli.co.il/" />
+    <meta name="geo.region" content="IL" />
+    <meta name="geo.placename" content="Israel" />
+    <meta name="ICBM" content="31.7683, 35.2137" />
+    <meta http-equiv="content-language" content="he-IL" />
+    <link rel="canonical" href="https://tamir.li/" />
 
     <!-- Open Graph -->
-    <meta property="og:title" content="תמיר לי — אתר המרות הקבצים של ישראל" />
-    <meta property="og:description" content="המרה מהירה וחינמית בין פורמטים של תמונות, וידאו, אודיו ומסמכים" />
+    <meta property="og:title" content="תמיר לי | Tamir.li — המרת קבצים חינם בישראל" />
+    <meta property="og:description" content="המרה מהירה וחינמית בין פורמטים של תמונות, וידאו, אודיו ומסמכים. פשוט, מאובטח, בעברית." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://tamirli.co.il/" />
+    <meta property="og:url" content="https://tamir.li/" />
     <meta property="og:locale" content="he_IL" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="es_ES" />
+    <meta property="og:locale:alternate" content="ru_RU" />
+    <meta property="og:locale:alternate" content="de_DE" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:locale:alternate" content="it_IT" />
     <meta property="og:site_name" content="תמיר לי" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="תמיר לי — אתר המרות הקבצים של ישראל" />
+    <meta name="twitter:title" content="תמיר לי | Tamir.li — המרת קבצים חינם בישראל" />
     <meta name="twitter:description" content="המרה מהירה וחינמית בין פורמטים של תמונות, וידאו, אודיו ומסמכים" />
 
     <!-- PWA -->
@@ -33,28 +43,51 @@
     <meta name="apple-mobile-web-app-title" content="תמיר לי" />
     <meta name="mobile-web-app-capable" content="yes" />
 
-    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://tamir.li/#organization",
+      "name": "תמיר לי",
+      "alternateName": ["Tamir.li", "Tamir Li"],
+      "url": "https://tamir.li",
+      "logo": "https://tamir.li/pwa-512x512.png",
+      "address": { "@type": "PostalAddress", "addressCountry": "IL" },
+      "areaServed": { "@type": "Country", "name": "Israel" }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://tamir.li/#website",
+      "name": "תמיר לי",
+      "alternateName": "Tamir.li",
+      "url": "https://tamir.li",
+      "inLanguage": "he-IL",
+      "publisher": { "@id": "https://tamir.li/#organization" }
+    }
+    </script>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "תמיר לי",
-      "description": "אתר המרות הקבצים של ישראל - המרה מהירה בין פורמטים של תמונות, וידאו, אודיו ומסמכים",
-      "url": "https://tamirli.co.il",
+      "alternateName": "Tamir.li",
+      "description": "אתר המרות קבצים בעברית — תמונות, וידאו, אודיו ומסמכים. מיועד למשתמשים בישראל.",
+      "url": "https://tamir.li",
       "applicationCategory": "UtilityApplication",
       "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript. Modern HTML5 browser.",
       "offers": {
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "ILS",
-        "description": "עד 5 המרות חינם ביום"
+        "description": "שימוש יומי חינמי עם מגבלות; פרימיום זמין"
       },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "ratingCount": "1250"
-      },
-      "inLanguage": "he"
+      "inLanguage": "he-IL",
+      "availableLanguage": ["he-IL", "en", "es", "ru", "de", "fr", "it"],
+      "spatialCoverage": { "@type": "Country", "name": "Israel" }
     }
     </script>
     <script type="application/ld+json">

@@ -79,7 +79,7 @@ export function ImageResizerTool() {
     { value: "stretch" as const, label: r.stretch, desc: r.stretchDesc, icon: RectangleHorizontal },
   ];
 
-  if (!file) return (<div className="space-y-5"><FileDropZone acceptedFormats={["JPG", "PNG", "WEBP"]} onFilesSelected={handleFile} /><AdSlot type="banner" /></div>);
+  if (!file) return (<div className="space-y-5"><FileDropZone acceptedFormats={["JPG", "PNG", "WEBP"]} onFilesSelected={handleFile} /><AdSlot type="banner" slotId="tool-resizer-empty" /></div>);
 
   return (
     <div className="space-y-5">
@@ -145,7 +145,7 @@ export function ImageResizerTool() {
           </Button>
         )}
       </div>
-      <AdSlot type="banner" />
+      <AdSlot type="banner" slotId="tool-resizer-foot" />
     </div>
   );
 }

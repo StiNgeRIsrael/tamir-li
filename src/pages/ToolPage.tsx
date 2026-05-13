@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { getToolByFormatSlug, getToolById, getDefaultSlug, buildFormatSlug, getRelatedTools, type Tool } from "@/lib/tools-data";
+import { getToolByFormatSlug, getToolById, getDefaultSlug, buildFormatSlug, getRelatedTools, type Tool, type ToolCategory } from "@/lib/tools-data";
 import { AppLayout } from "@/components/AppLayout";
 import { FileDropZone } from "@/components/FileDropZone";
 import { AdSlot } from "@/components/AdSlot";
@@ -13,9 +13,23 @@ import { TextToolsComponent } from "@/components/tools/TextToolsComponent";
 import { AiImageGeneratorTool } from "@/components/tools/AiImageGeneratorTool";
 import { ImageResizerTool } from "@/components/tools/ImageResizerTool";
 import { ImageCompressorTool } from "@/components/tools/ImageCompressorTool";
+import { HebOcrTool } from "@/components/tools/HebOcrTool";
 import { useState, useCallback } from "react";
 import { ArrowLeft, ArrowRight, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe } from "lucide-react";
-import { useLocale, localePath } from "@/lib/i18n";
+import { useLocale, localePath, htmlLangTag } from "@/lib/i18n";
+import { siteUrl } from "@/lib/site";
+import { allowMockFileConversion } from "@/lib/feature-flags";
+import { getApiBaseUrl } from "@/lib/api/client";
+import { useToolConfig } from "@/contexts/ToolConfigContext";
+import { toast } from "sonner";
+
+const toolHeaderTint: Record<ToolCategory, string> = {
+  image: "from-tool-image/10 via-card to-card dark:from-tool-image/18",
+  video: "from-tool-video/10 via-card to-card dark:from-tool-video/18",
+  audio: "from-tool-audio/10 via-card to-card dark:from-tool-audio/18",
+  document: "from-tool-document/10 via-card to-card dark:from-tool-document/18",
+  ai: "from-premium/12 via-card to-card dark:from-premium/18",
+};
 
 interface FileWithFormat {
   file: File;
@@ -43,6 +57,8 @@ export default function ToolPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { locale, t, dir } = useLocale();
+  const { isToolEnabled, loading: toolCfgLoading, filterTools } = useToolConfig();
+  const apiBase = getApiBaseUrl();
   const isRtl = dir === "rtl";
   const Arrow = isRtl ? ArrowLeft : ArrowRight;
   const tt = t.tool;
@@ -53,13 +69,14 @@ export default function ToolPage() {
   const legacyTool = slug ? getToolById(slug) : null;
 
   const tool = formatMatch?.tool || legacyTool || null;
+  const disabledByAdmin = !!(tool && apiBase && !toolCfgLoading && !isToolEnabled(tool.id));
   const activeFrom = formatMatch?.from || tool?.fromFormats[0] || "";
   const activeTo = formatMatch?.to || tool?.toFormats[0] || "";
 
   const [fileItems, setFileItems] = useState<FileWithFormat[]>([]);
   const [converting, setConverting] = useState(false);
   const [allDone, setAllDone] = useState(false);
-  const [usedToday] = useState(3);
+  const [usedToday] = useState(0);
   const maxDaily = 5;
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
 
@@ -108,8 +125,7 @@ export default function ToolPage() {
 
   const allHaveFormat = fileItems.length > 0 && fileItems.every((f) => f.outputFormat);
 
-  const handleConvert = () => {
-    if (!allHaveFormat) return;
+  const runMockConversion = () => {
     triggerInterstitial();
     setConverting(true);
 
@@ -143,12 +159,55 @@ export default function ToolPage() {
     }, totalTime);
   };
 
+  const handleConvert = async () => {
+    if (!allHaveFormat || !tool) return;
+
+    if (allowMockFileConversion()) {
+      runMockConversion();
+      return;
+    }
+
+    const api = getApiBaseUrl();
+    if (!api) {
+      toast.error(tt.conversionNoApi);
+      return;
+    }
+
+    triggerInterstitial();
+    setConverting(true);
+    try {
+      const fd = new FormData();
+      fd.append("toolId", tool.id);
+      fd.append("fromFormat", activeFrom);
+      fd.append("toFormat", activeTo);
+      fileItems.forEach((item) => fd.append("files", item.file));
+
+      const res = await fetch(`${api}/api/conversions`, { method: "POST", body: fd, credentials: "include" });
+
+      if (res.status === 501) {
+        toast.error(tt.conversionNotReady);
+        return;
+      }
+      if (!res.ok) {
+        toast.error(tt.conversionApiError);
+        return;
+      }
+
+      setAllDone(true);
+      toast.success(tt.conversionDone);
+    } catch {
+      toast.error(tt.conversionApiError);
+    } finally {
+      setConverting(false);
+    }
+  };
+
   const handleReset = () => {
     setFileItems([]);
     setAllDone(false);
   };
 
-  if (!tool) {
+  if (!tool || disabledByAdmin) {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-[60vh] text-center">
@@ -169,7 +228,7 @@ export default function ToolPage() {
     ? `${toolName} — ${t.brandName}`
     : `${tt.convertTitle(activeFrom, activeTo)} — ${t.brandName}`;
   const pageDesc = tt.convertDesc(activeFrom, activeTo);
-  const related = getRelatedTools(tool);
+  const related = filterTools(getRelatedTools(tool)).slice(0, 3);
 
   const SidebarContent = () => (
     <div className="space-y-5">
@@ -183,7 +242,7 @@ export default function ToolPage() {
         </div>
       </div>
 
-      <AdSlot type="inline" />
+      <AdSlot type="inline" slotId="tool-sidebar-inline" />
 
       {related.length > 0 && (
         <div className="bg-card border border-border rounded-xl p-5 space-y-3">
@@ -194,11 +253,10 @@ export default function ToolPage() {
                 <Link
                   key={`${from}-${to}`}
                   to={localePath(`/${buildFormatSlug(from, to)}`, locale)}
-                  className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                    from === activeFrom && to === activeTo
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-card border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
-                  }`}
+                  className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${from === activeFrom && to === activeTo
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
+                    }`}
                 >
                   {from} → {to}
                 </Link>
@@ -208,7 +266,7 @@ export default function ToolPage() {
         </div>
       )}
 
-      <AdSlot type="banner" />
+      <AdSlot type="banner" slotId="tool-sidebar-banner" />
     </div>
   );
 
@@ -222,11 +280,11 @@ export default function ToolPage() {
           "@type": "WebApplication",
           "name": pageTitle,
           "description": pageDesc,
-          "url": `https://tamirli.co.il${localePath(`/${buildFormatSlug(activeFrom, activeTo)}`, locale)}`,
+          "url": siteUrl(localePath(`/${buildFormatSlug(activeFrom, activeTo)}`, locale)),
           "applicationCategory": "UtilityApplication",
           "operatingSystem": "Any",
-          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-          "inLanguage": locale,
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "ILS" },
+          "inLanguage": htmlLangTag(locale),
         }}
       />
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-6 lg:py-10 space-y-6 lg:space-y-8">
@@ -242,9 +300,11 @@ export default function ToolPage() {
         </nav>
 
         {/* Header */}
-        <header className="space-y-3 animate-fade-in">
+        <header
+          className={`space-y-3 animate-fade-in rounded-2xl border border-border/70 bg-gradient-to-br ${toolHeaderTint[tool.category]} p-5 shadow-md shadow-black/[0.04] backdrop-blur-sm lg:p-6 dark:shadow-black/20`}
+        >
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl lg:text-3xl xl:text-4xl font-extrabold text-foreground">
+            <h1 className="bg-gradient-to-l from-foreground to-foreground/80 bg-clip-text text-2xl font-extrabold text-transparent lg:text-3xl xl:text-4xl dark:from-white dark:to-white/85">
               {isCustom ? toolName : tt.convertTitle(activeFrom, activeTo)}
             </h1>
             {tool.premium && <Crown className="w-5 h-5 text-premium" />}
@@ -311,6 +371,8 @@ export default function ToolPage() {
               <ImageResizerTool />
             ) : tool.customComponent === "image-compressor" ? (
               <ImageCompressorTool />
+            ) : tool.customComponent === "heb-ocr" ? (
+              <HebOcrTool />
             ) : tool.premium && !premiumUnlocked ? (
               <PremiumLock onUnlock={() => setPremiumUnlocked(true)} />
             ) : allDone ? (
@@ -350,7 +412,7 @@ export default function ToolPage() {
                   </Button>
                 </div>
                 <ConversionSuccessUsage used={usedToday + fileItems.length} max={maxDaily} />
-                <AdSlot type="inline" className="mt-4" />
+                <AdSlot type="inline" slotId="tool-after-success" className="mt-4" />
               </div>
             ) : (
               <div className="space-y-5">
@@ -430,7 +492,7 @@ export default function ToolPage() {
                     )}
                   </div>
                 )}
-                <AdSlot type="banner" className="xl:hidden" />
+                <AdSlot type="banner" slotId="tool-mobile-banner" className="xl:hidden" />
               </div>
             )}
           </div>
@@ -447,11 +509,10 @@ export default function ToolPage() {
                     <Link
                       key={`${from}-${to}`}
                       to={localePath(`/${buildFormatSlug(from, to)}`, locale)}
-                      className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                        from === activeFrom && to === activeTo
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "bg-card border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
-                      }`}
+                      className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${from === activeFrom && to === activeTo
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-card border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
+                        }`}
                     >
                       {from} → {to}
                     </Link>
@@ -470,7 +531,7 @@ export default function ToolPage() {
             {tt.howToTitle(toolName, activeFrom, activeTo, isCustom)}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
-            {tt.howToSteps(toolName, activeFrom, activeTo, isCustom).map((s: any, i: number) => (
+            {(tt.howToSteps(toolName, activeFrom, activeTo, isCustom) as { step: string; title: string; desc: string }[]).map((s, i) => (
               <div key={i} className="bg-card border border-border rounded-xl p-5 lg:p-6 text-center space-y-2 lg:space-y-3">
                 <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-primary text-primary-foreground font-bold text-sm lg:text-base flex items-center justify-center mx-auto">{s.step}</div>
                 <h3 className="font-semibold text-sm lg:text-base text-foreground">{s.title}</h3>
@@ -480,7 +541,7 @@ export default function ToolPage() {
           </div>
         </section>
 
-        <AdSlot type="inline" />
+        <AdSlot type="inline" slotId="tool-mid-page" />
 
         {/* SEO rich text */}
         <section className="bg-card border border-border rounded-xl p-5 lg:p-8 space-y-3 text-sm lg:text-base text-muted-foreground leading-relaxed">
@@ -491,7 +552,7 @@ export default function ToolPage() {
           {!isCustom && <p>{tt.seoFormats(tool.fromFormats, tool.toFormats)}</p>}
         </section>
 
-        <AdSlot type="inline" />
+        <AdSlot type="inline" slotId="tool-bottom" />
       </div>
     </AppLayout>
   );

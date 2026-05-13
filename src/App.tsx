@@ -2,10 +2,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { ScrollToTop } from "@/components/ScrollToTop";
-import { LocaleProvider } from "@/lib/i18n";
+import { LocaleProvider, NON_HE_LOCALES, type Locale } from "@/lib/i18n";
 import Index from "./pages/Index";
 import ToolPage from "./pages/ToolPage";
 import InstallPage from "./pages/InstallPage";
@@ -13,24 +13,47 @@ import PremiumPage from "./pages/PremiumPage";
 import BlogIndex from "./pages/BlogIndex";
 import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ToolConfigProvider } from "@/contexts/ToolConfigContext";
+import { AdminGuard } from "@/components/admin/AdminGuard";
+import { AdminLayout } from "@/components/admin/AdminLayout";
+import AdminOverview from "@/pages/admin/AdminOverview";
+import AdminUsers from "@/pages/admin/AdminUsers";
+import AdminTools from "@/pages/admin/AdminTools";
 
 const queryClient = new QueryClient();
 
-function LocaleRoutes() {
+function LocaleLayout({ explicitLocale }: { explicitLocale?: Locale }) {
   return (
-    <LocaleProvider>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/install" element={<InstallPage />} />
-        <Route path="/premium" element={<PremiumPage />} />
-        <Route path="/blog" element={<BlogIndex />} />
-        <Route path="/blog/:slug" element={<BlogPost />} />
-        <Route path="/:slug" element={<ToolPage />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+    <LocaleProvider explicitLocale={explicitLocale}>
+      <Outlet />
     </LocaleProvider>
   );
 }
+
+const getAppRoutes = (explicitLocale?: Locale) => (
+  <Route element={<LocaleLayout explicitLocale={explicitLocale} />}>
+    <Route index element={<Index />} />
+    <Route path="install" element={<InstallPage />} />
+    <Route path="premium" element={<PremiumPage />} />
+    <Route path="blog" element={<BlogIndex />} />
+    <Route path="blog/:slug" element={<BlogPost />} />
+    <Route
+      path="admin"
+      element={
+        <AdminGuard>
+          <AdminLayout />
+        </AdminGuard>
+      }
+    >
+      <Route index element={<AdminOverview />} />
+      <Route path="users" element={<AdminUsers />} />
+      <Route path="tools" element={<AdminTools />} />
+    </Route>
+    <Route path=":slug" element={<ToolPage />} />
+    <Route path="*" element={<NotFound />} />
+  </Route>
+);
 
 const App = () => (
   <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
@@ -39,13 +62,24 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <AuthProvider>
+          <ToolConfigProvider>
           <ScrollToTop />
           <Routes>
-            {/* Locale-prefixed routes */}
-            <Route path="/:locale/*" element={<LocaleRoutes />} />
+            {/* Explicitly map over supported locales so it doesn't swallow `:slug` */}
+            {NON_HE_LOCALES.map((loc) => (
+              <Route key={loc} path={`/${loc}`}>
+                {getAppRoutes(loc)}
+              </Route>
+            ))}
+
             {/* Hebrew (default, no prefix) */}
-            <Route path="/*" element={<LocaleRoutes />} />
+            <Route path="/">
+              {getAppRoutes("he")}
+            </Route>
           </Routes>
+          </ToolConfigProvider>
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

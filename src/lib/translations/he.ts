@@ -1,10 +1,62 @@
 export const heTranslations: Record<string, any> = {
   // Brand
   brandName: "תמיר לי",
-  brandTagline: "אתר המרות הקבצים של ישראל",
+  brandTagline: "Tamir.li — המרות קבצים לישראל",
 
   // Navbar
   downloadApp: "הורד אפליקציה",
+
+  auth: {
+    signOut: "התנתקות",
+    account: "חשבון",
+    signInFailed: "ההתחברות נכשלה. נסו שוב.",
+  },
+
+  admin: {
+    title: "לוח ניהול",
+    subtitle: "סטטיסטיקות, משתמשים וכלים",
+    backSite: "חזרה לאתר",
+    navOverview: "סקירה",
+    navUsers: "משתמשים",
+    navTools: "כלים",
+    linkNav: "ניהול",
+    needApi: "יש להגדיר VITE_API_URL כדי להשתמש בלוח הניהול.",
+    statUsers: "משתמשים רשומים",
+    statBlocked: "חשבונות חסומים",
+    statNewWeek: "משתמשים חדשים (7 ימים)",
+    statUsage24h: "אירועי שימוש (24 שעות)",
+    statUsage7d: "אירועי שימוש (7 ימים)",
+    statUsage30d: "אירועי שימוש (30 ימים)",
+    jobStatuses: "משימות המרה לפי סטטוס",
+    topTools: "כלים מובילים (30 יום)",
+    recentActivity: "פעילות אחרונה",
+    colTool: "כלי",
+    colUses: "שימושים",
+    colWhen: "מתי",
+    colUser: "משתמש / סשן",
+    statsLoadError: "לא ניתן לטעון סטטיסטיקות.",
+    searchPlaceholder: "חיפוש לפי אימייל או שם…",
+    search: "חיפוש",
+    colEmail: "משתמש",
+    colRoles: "תפקידים",
+    colBlocked: "חסום",
+    colActions: "פעולות",
+    editRoles: "תפקידים",
+    editRolesTitle: "עריכת תפקידים",
+    rolesRequired: "יש לבחור לפחות תפקיד אחד.",
+    prev: "הקודם",
+    next: "הבא",
+    pageOf: "עמוד {page} מתוך {total}",
+    cancel: "ביטול",
+    save: "שמירה",
+    saved: "נשמר",
+    toolsHint:
+      "כיבוי נראות מסתיר כלי מהדף הראשי והתפריטים. המיון קובע את סדר התצוגה (מספר נמוך יותר מופיע קודם).",
+    colCategory: "קטגוריה",
+    colEnabled: "גלוי",
+    colFeatured: "מודגש",
+    colSort: "מיון",
+  },
 
   // Categories
   categories: {
@@ -17,20 +69,23 @@ export const heTranslations: Record<string, any> = {
 
   // Homepage
   hero: {
-    badge: "כלים חינמיים להמרת קבצים",
+    badge: "Tamir.li — תמיר לי, פשוט",
     title: "המירו כל קובץ,",
     titleHighlight: "תוך שניות",
-    subtitle: "תמונות, וידאו, אודיו ומסמכים — גררו, בחרו פורמט, וסיימתם.",
-    subtitleLine2: "ללא הורדת תוכנה. ללא רישום. חינם.",
+    subtitle: "תמונות, וידאו, אודיו ומסמכים — גררו, בחרו פורמט, הורידו.",
+    subtitleLine2: "בחינם. בלי תוכנה. בלי הרשמה.",
   },
-  stats: [
-    { value: "1.2M+", label: "המרות בוצעו" },
-    { value: "50+", label: "פורמטים נתמכים" },
-    { value: "4.8★", label: "דירוג משתמשים" },
-    { value: "100%", label: "חינם לשימוש יומי" },
-  ],
+  homeStatLabels: {
+    tools: "כלים פעילים באתר",
+    formats: "פורמטים וסיומות נתמכים",
+    categories: "קטגוריות כלים",
+    freeDaily: "מגבלת שימוש חינם (ליום)",
+  },
+  homeStatValues: {
+    freeDaily: "עד 5",
+  },
   toolCount: (n: number) => `(${n} כלים)`,
-  whyChoose: "למה 1.2 מיליון ישראלים בוחרים בתמיר לי?",
+  whyChoose: "למה לבחור בתמיר לי?",
   features: [
     { title: "המרה מהירה", desc: "עיבוד תוך שניות, ישירות בדפדפן" },
     { title: "פרטיות מלאה", desc: "הקבצים לא נשמרים בשרתים" },
@@ -50,14 +105,6 @@ export const heTranslations: Record<string, any> = {
     { step: "2", title: "בחרו פורמט", desc: "בחרו פורמט מהרשימה" },
     { step: "3", title: "הורידו", desc: "מוכן תוך שניות" },
   ],
-  testimonials: {
-    title: "מה אומרים המשתמשים שלנו",
-    items: [
-      { name: "רוני מ.", text: "הכי נוח ומהיר שיש! ממיר תמונות כל יום בלי בעיה." },
-      { name: "שרה כ.", text: "סוף סוף אתר בעברית שעובד כמו שצריך. ממליצה בחום!" },
-      { name: "אורי ד.", text: "עובד מעולה מהנייד. גם PDF ל-Word יוצא מצוין." },
-    ],
-  },
   faqTitle: "שאלות נפוצות",
   faqs: [
     { q: "איך ממירים קובץ?", a: "גררו את הקובץ לאזור ההעלאה, בחרו את הפורמט הרצוי, ולחצו 'התחל המרה'. תוך שניות הקובץ יהיה מוכן להורדה." },
@@ -97,6 +144,9 @@ export const heTranslations: Record<string, any> = {
     converting: "ממיר...",
     done: "הושלם",
     convertingWait: "ממיר קבצים... אנא המתן",
+    conversionNoApi: "לא הוגדר כתובת שרת (VITE_API_URL). ההמרה תתאפשר כשה-API יחובר.",
+    conversionNotReady: "שירות ההמרה בשרת עדיין לא פעיל. אנחנו משלימים את החיבור.",
+    conversionApiError: "לא ניתן להתחיל המרה. נסו שוב מאוחר יותר.",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) =>
       isCustom ? `איך להשתמש ב${name}?` : `איך להמיר ${from} ל-${to}?`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [
@@ -175,8 +225,8 @@ export const heTranslations: Record<string, any> = {
     privacy: "מדיניות פרטיות",
     contact: "צור קשר",
     about: "אודות",
-    seoTitle: "תמיר לי — אתר המרות הקבצים המוביל בישראל",
-    seoText1: "תמיר לי הוא אתר ההמרות המוביל בישראל, המאפשר המרה מהירה וחינמית בין פורמטים שונים של קבצים. בין אם אתם צריכים להמיר תמונה מ-PNG ל-JPG, לדחוס סרטון לשליחה ב-WhatsApp, להמיר שיר מ-WAV ל-MP3, או להפוך מסמך PDF ל-Word לעריכה — תמיר לי עושה את זה תוך שניות.",
+    seoTitle: "תמיר לי — המרת קבצים אונליין בישראל",
+    seoText1: "תמיר לי הוא אתר להמרת קבצים בעברית, שמאפשר המרה מהירה וחינמית (במגבלות השימוש) בין פורמטים שונים של קבצים. בין אם אתם צריכים להמיר תמונה מ-PNG ל-JPG, לדחוס סרטון לשליחה ב-WhatsApp, להמיר שיר מ-WAV ל-MP3, או להפוך מסמך PDF ל-Word לעריכה — תמיר לי עושה את זה תוך שניות.",
     seoText2: "האתר תומך במגוון רחב של פורמטים: תמונות (JPG, PNG, WEBP, GIF, BMP, TIFF, SVG, ICO), וידאו (MP4, AVI, MOV, MKV, WEBM), אודיו (MP3, WAV, AAC, OGG, FLAC), ומסמכים (PDF, DOCX, DOC, TXT). כל ההמרות מתבצעות באופן מאובטח — הקבצים אינם נשמרים על השרתים שלנו ונמחקים מיד לאחר העיבוד.",
     seoText3: "תמיר לי זמין בחינם עם עד 5 המרות ביום. למשתמשים שצריכים יותר, מנוי פרימיום ב-₪4.90 לחודש מציע המרות ללא הגבלה, ללא מודעות, ועיבוד מהיר יותר.",
     copyright: (year: number) => `© ${year} תמיר לי • כל הזכויות שמורות`,
@@ -200,8 +250,9 @@ export const heTranslations: Record<string, any> = {
 
   // SEO
   seo: {
-    homeTitle: "תמיר לי — אתר המרות הקבצים של ישראל",
-    homeDesc: "המרה מהירה וחינמית בין פורמטים של תמונות, וידאו, אודיו ומסמכים. גרור קבצים, בחר פורמט, וסיימת. ללא הורדת תוכנה.",
+    homeTitle: "תמיר לי | Tamir.li — המרת קבצים חינם בישראל",
+    homeDesc:
+      "תמיר לי (משמעות: 'תמיר בשבילי') — המרה מהירה וחינמית של תמונות, וידאו, אודיו ומסמכים. גרור קבצים, בחר פורמט, וסיימת. ללא תוכנה. מותאם לישראל.",
   },
 
   // Install page
@@ -374,11 +425,7 @@ export const heTranslations: Record<string, any> = {
       { feature: "גודל קובץ מקסימלי", free: "50MB", premium: "200MB" },
       { feature: "תמיכה", free: "קהילה", premium: "מייל בעדיפות" },
     ],
-    testimonials: [
-      { name: "שרה מ.", role: "מעצבת גרפית", text: "אני ממירה מאות תמונות בשבוע. הפרימיום משתלם כבר בשעה הראשונה." },
-      { name: "דוד כ.", role: "יוצר תוכן", text: "יצירת התמונות ב-AI לבד שווה פי 10 מהמחיר. ערך מדהים." },
-      { name: "לירון ר.", role: "סטודנטית", text: "בלי מודעות מעצבנות ובלי מגבלות. ה-₪4.90 הכי משתלמים בחודש." },
-    ],
+    testimonials: [],
     faqTitle: "שאלות נפוצות",
     faqs: [
       { q: "אפשר לבטל בכל עת?", a: "בטח! בלי חוזים, בלי התחייבויות. ביטול בלחיצה אחת." },
@@ -394,7 +441,7 @@ export const heTranslations: Record<string, any> = {
       "באגים שדווחו ולא תוקנו בזמן",
     ],
     finalCta: "מוכנים לשדרג?",
-    finalDesc: "הצטרפו לאלפי משתמשים ששדרגו. ביטול בכל עת, בלי סיכון.",
+    finalDesc: "שדרוג אופציונלי — ביטול בכל עת, לפי תנאי השירות.",
     orGoHome: "או המשיכו עם התוכנית החינמית",
   },
 };

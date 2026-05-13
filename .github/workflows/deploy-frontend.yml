@@ -1,0 +1,56 @@
+# Deploy static `dist/` to GitHub Pages (optional).
+# Enable: Settings → Pages → Source: GitHub Actions.
+# Set repository Variable VITE_SITE_ORIGIN to your real domain.
+
+name: Deploy frontend
+
+# Run manually when you want to publish (after CI is green).
+# Repository → Actions → Deploy frontend → Run workflow.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - name: Build
+        env:
+          VITE_SITE_ORIGIN: ${{ vars.VITE_SITE_ORIGIN || 'https://tamir.li' }}
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+        run: npm run build:prod
+
+      - name: SPA fallback for GitHub Pages
+        run: cp dist/index.html dist/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
