@@ -172,11 +172,11 @@ The workflow reads **SSH/SFTP** settings first, then falls back to the legacy FT
 
 | Secret | Fallback | Description |
 |--------|----------|-------------|
-| `PLESK_SSH_HOST` | `PLESK_FTP_HOST` | Server hostname or IP (often the same as FTP; e.g. `74.208.236.85` or your domain) |
-| `PLESK_SSH_USER` | `PLESK_FTP_USER` | Plesk system/FTP username (e.g. subscription login) |
-| `PLESK_SSH_PASSWORD` | `PLESK_FTP_PASSWORD` | Password for that account |
+| `PLESK_SSH_HOST` | `PLESK_FTP_HOST` | Plesk server IP or hostname (**Websites & Domains** → **Hosting Settings** or **SSH Access**; e.g. `74.208.236.85`) |
+| `PLESK_SSH_USER` | `PLESK_FTP_USER` | Username from Plesk **SSH Access** (often the subscription/system user) |
+| `PLESK_SSH_PASSWORD` | `PLESK_FTP_PASSWORD` | Password from Plesk **SSH Access** |
 
-You do **not** need duplicate secrets if `PLESK_FTP_*` is already set — only add `PLESK_SSH_*` when SFTP must use different values.
+SFTP deploy uses the **same** `PLESK_FTP_HOST`, `PLESK_FTP_USER`, and `PLESK_FTP_PASSWORD` secrets (workflow falls back from optional `PLESK_SSH_*`). Set host to your Plesk server IP or hostname, port **22**, credentials from **SSH Access** in Plesk. Add separate `PLESK_SSH_*` only if SFTP credentials differ from FTP.
 
 Optional: SSH private key deploy is **not** configured in the workflow; password auth is used. To use a key instead, extend the workflow with `ssh_private_key` from a secret.
 
