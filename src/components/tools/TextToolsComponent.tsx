@@ -105,7 +105,7 @@ export function TextToolsComponent() {
           <Download className="w-4 h-4 me-1" />{tt.downloadAs(outputFormat === "html" ? "HTML" : outputFormat === "markdown" ? "MD" : "TXT")}
         </Button>
       </div>
-      <AdSlot type="banner" />
+      <AdSlot type="banner" slotId="tool-text-banner" />
     </div>
   );
 }

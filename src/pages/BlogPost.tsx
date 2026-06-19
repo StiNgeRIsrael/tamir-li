@@ -5,7 +5,8 @@ import { AdSlot } from "@/components/AdSlot";
 import { getBlogArticle, blogArticles } from "@/lib/blog-data";
 import { Calendar, Clock, ArrowRight, ArrowLeft } from "lucide-react";
 import { marked } from "marked";
-import { useLocale, localePath } from "@/lib/i18n";
+import { useLocale, localePath, htmlLangTag } from "@/lib/i18n";
+import { siteUrl } from "@/lib/site";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -43,9 +44,14 @@ export default function BlogPost() {
           "headline": article.title,
           "description": article.metaDescription,
           "datePublished": article.date,
-          "author": { "@type": "Organization", "name": t.brandName },
-          "publisher": { "@type": "Organization", "name": t.brandName },
-          "inLanguage": locale,
+          "mainEntityOfPage": { "@type": "WebPage", "@id": siteUrl(localePath(`/blog/${article.slug}`, locale)) },
+          "author": { "@type": "Organization", "name": t.brandName, "url": siteUrl("/") },
+          "publisher": {
+            "@type": "Organization",
+            "name": t.brandName,
+            "url": siteUrl("/"),
+          },
+          "inLanguage": htmlLangTag(locale),
         }}
       />
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-6 lg:py-10">
@@ -73,7 +79,7 @@ export default function BlogPost() {
               </div>
             </header>
 
-            <AdSlot type="banner" className="mb-6" />
+            <AdSlot type="banner" slotId="blog-post-top" className="mb-6" />
 
             <div
               className="prose prose-sm lg:prose-base dark:prose-invert max-w-none
@@ -86,7 +92,7 @@ export default function BlogPost() {
               dangerouslySetInnerHTML={{ __html: htmlContent }}
             />
 
-            <AdSlot type="inline" className="my-8" />
+            <AdSlot type="inline" slotId="blog-post-mid" className="my-8" />
 
             <div className="bg-card border border-border rounded-xl p-5 space-y-3 my-8">
               <h3 className="font-bold text-foreground">{b.relevantToolsInline}</h3>
@@ -106,7 +112,7 @@ export default function BlogPost() {
 
           <aside className="hidden xl:block space-y-6">
             <div className="sticky top-20 space-y-6">
-              <AdSlot type="inline" />
+              <AdSlot type="inline" slotId="blog-post-sidebar" />
 
               <div className="bg-card border border-border rounded-xl p-5 space-y-3">
                 <h3 className="font-bold text-sm text-foreground">{b.relatedArticles}</h3>
@@ -134,7 +140,7 @@ export default function BlogPost() {
                 </div>
               </div>
 
-              <AdSlot type="banner" />
+              <AdSlot type="banner" slotId="blog-post-sidebar-foot" />
             </div>
           </aside>
         </div>

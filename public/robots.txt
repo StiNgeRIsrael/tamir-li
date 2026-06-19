@@ -13,4 +13,7 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://tamirli.co.il/sitemap.xml
+Sitemap: https://tamir.li/sitemap.xml
+
+# LLM / AI crawlers
+# https://tamir.li/llms.txt

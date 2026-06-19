@@ -64,7 +64,7 @@ export function ImageCompressorTool() {
 
   const handleReset = () => { setFile(null); setPreview(""); setResultUrl(""); setResultSize(0); };
 
-  if (!file) return (<div className="space-y-5"><FileDropZone acceptedFormats={["JPG", "PNG", "WEBP"]} onFilesSelected={handleFile} /><AdSlot type="banner" /></div>);
+  if (!file) return (<div className="space-y-5"><FileDropZone acceptedFormats={["JPG", "PNG", "WEBP"]} onFilesSelected={handleFile} /><AdSlot type="banner" slotId="tool-compressor-empty" /></div>);
 
   return (
     <div className="space-y-5">
@@ -126,7 +126,7 @@ export function ImageCompressorTool() {
           </Button>
         )}
       </div>
-      <AdSlot type="banner" />
+      <AdSlot type="banner" slotId="tool-compressor-foot" />
     </div>
   );
 }

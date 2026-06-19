@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String           @id @default(uuid())
+  email          String           @unique
+  /** חסימת גישה לאתר (למשתמש מחובר) */
+  blocked        Boolean          @default(false)
+  /** סיסמה — רק למשתמשים שנרשמו עם אימייל/סיסמה; OAuth לא דורש */
+  passwordHash   String?
+  /** מזהה ייחודי מחשבון Google (sub בתוך ה-JWT של Google) */
+  googleSub      String?          @unique
+  profile        Profile?
+  roles          UserRole[]
+  subscription   Subscription?
+  payments       Payment[]
+  aiCredits      AiCredit?
+  usageLogs      UsageLog[]
+  conversionJobs ConversionJob[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model Profile {
+  id          String   @id
+  user        User     @relation(fields: [id], references: [id], onDelete: Cascade)
+  displayName String?
+  avatarUrl   String?
+  locale      String   @default("he")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum RoleType {
+  ADMIN
+  MODERATOR
+  USER
+}
+
+model UserRole {
+  id     String   @id @default(uuid())
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   RoleType
+
+  @@unique([userId, role])
+}
+
+/** הגדרות ניהול לכל כלי המרה (מזהה תואם ל־tools[].id בפרונט) */
+model ToolConfig {
+  toolId    String   @id
+  enabled   Boolean  @default(true)
+  featured  Boolean  @default(false)
+  sortOrder Int      @default(0)
+  notes     String?  @db.VarChar(500)
+  updatedAt DateTime @updatedAt
+}
+
+enum SubscriptionPlan {
+  MONTHLY
+  YEARLY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+  UNPAID
+}
+
+model Subscription {
+  id                   String             @id @default(uuid())
+  userId               String             @unique
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeCustomerId     String
+  stripeSubscriptionId String?            @unique
+  plan                 SubscriptionPlan
+  status               SubscriptionStatus @default(ACTIVE)
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  @@index([stripeCustomerId])
+}
+
+enum PaymentType {
+  SUBSCRIPTION
+  CREDITS
+}
+
+enum PaymentStatus {
+  SUCCEEDED
+  PENDING
+  FAILED
+}
+
+model Payment {
+  id                   String        @id @default(uuid())
+  userId               String
+  user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripePaymentIntentId String?       @unique
+  amount               Int // in smallest currency unit (agorot/cents)
+  currency             String        @default("ils")
+  type                 PaymentType
+  status               PaymentStatus @default(SUCCEEDED)
+  metadata             Json?
+  createdAt            DateTime      @default(now())
+}
+
+model AiCredit {
+  id                 String    @id @default(uuid())
+  userId             String    @unique
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance            Int       @default(0)
+  monthlyCredits     Int       @default(0) // resets each billing cycle
+  lifetimePurchased  Int       @default(0)
+  lastMonthlyReset   DateTime?
+  updatedAt          DateTime  @updatedAt
+}
+
+model UsageLog {
+  id               String   @id @default(uuid())
+  userId           String?
+  user             User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  sessionId        String? // for anonymous users
+  toolId           String
+  fromFormat       String?
+  toFormat         String?
+  fileSizeBytes    BigInt?
+  processingTimeMs Int?
+  isPremium        Boolean  @default(false)
+  createdAt        DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([sessionId, createdAt])
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model ConversionJob {
+  id                String    @id @default(uuid())
+  userId            String?
+  user              User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  toolId            String
+  status            JobStatus @default(PENDING)
+  inputStoragePath  String?
+  outputStoragePath String?
+  fromFormat        String
+  toFormat          String
+  fileSizeBytes     BigInt?
+  errorMessage      String?  @db.Text
+  priority          Boolean   @default(false) // premium users get priority
+  createdAt         DateTime  @default(now())
+  completedAt       DateTime?
+}

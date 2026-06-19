@@ -1,18 +1,25 @@
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { SEOHead } from "@/components/SEOHead";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useLocale, localePath } from "@/lib/i18n";
 import {
   Crown, Zap, Check, Star, Shield, Sparkles,
   ImageIcon, Gauge, FileStack, Headphones, ChevronDown, ShieldCheck
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { trackEvent } from "@/lib/analytics/events";
+import { useSubscription, type CheckoutPlan } from "@/hooks/useSubscription";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const featureIcons = [FileStack, Shield, Sparkles, Gauge, ImageIcon, Headphones];
 
 export default function PremiumPage() {
   const { locale, t } = useLocale();
+  const { user } = useAuth();
+  const { checkout, checkoutLoading, refetch } = useSubscription();
+  const [searchParams, setSearchParams] = useSearchParams();
   const u = t.upgradePage || {};
   const features = u.features || [];
   const rows = u.comparisonRows || [];
@@ -21,7 +28,37 @@ export default function PremiumPage() {
   const faqs = u.faqs || [];
   const guaranteeItems = u.guaranteeItems || [];
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [isYearly, setIsYearly] = useState(false);
+  const [isYearly, setIsYearly] = useState(true);
+
+  useEffect(() => {
+    const checkoutResult = searchParams.get("checkout");
+    const plan = searchParams.get("plan");
+    if (checkoutResult === "success") {
+      trackEvent("purchase", { plan: plan ?? undefined, source: "stripe_return" });
+      refetch();
+      toast.success(u.checkoutSuccess ?? "Welcome to Premium!");
+      setSearchParams({}, { replace: true });
+    } else if (checkoutResult === "canceled") {
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams, refetch, u.checkoutSuccess]);
+
+  const startCheckout = async (source: string) => {
+    const plan: CheckoutPlan = isYearly ? "yearly" : "monthly";
+    trackEvent("upgrade_click", { plan, source });
+    trackEvent("begin_checkout", { plan, source });
+
+    if (!user) {
+      toast.error(t.auth?.signInRequired ?? "Sign in to upgrade");
+      return;
+    }
+
+    try {
+      await checkout(plan);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Checkout failed");
+    }
+  };
 
   const displayPrice = isYearly ? u.priceYearlyPerMonth : u.priceMonthly;
   const displayPeriod = u.periodMonthly;
@@ -80,7 +117,12 @@ export default function PremiumPage() {
               </p>
             )}
             <p className="text-xs text-muted-foreground">{billedNote}</p>
-            <Button size="lg" className="w-full bg-premium text-premium-foreground hover:bg-premium/90 font-bold text-base py-6 rounded-xl shadow-md">
+            <Button
+              size="lg"
+              className="w-full bg-premium text-premium-foreground hover:bg-premium/90 font-bold text-base py-6 rounded-xl shadow-md"
+              onClick={() => startCheckout("hero")}
+              disabled={checkoutLoading}
+            >
               <Zap className="w-5 h-5 me-2" />
               {u.ctaMain}
             </Button>
@@ -204,7 +246,12 @@ export default function PremiumPage() {
           <h2 className="text-2xl font-bold text-foreground">{u.finalCta}</h2>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">{u.finalDesc}</p>
           <div className="flex flex-col items-center gap-3">
-            <Button size="lg" className="bg-premium text-premium-foreground hover:bg-premium/90 font-bold px-10 py-6 text-base rounded-xl shadow-md">
+            <Button
+              size="lg"
+              className="bg-premium text-premium-foreground hover:bg-premium/90 font-bold px-10 py-6 text-base rounded-xl shadow-md"
+              onClick={() => startCheckout("footer")}
+              disabled={checkoutLoading}
+            >
               <Zap className="w-5 h-5 me-2" />
               {u.ctaMain} — {displayPrice}{displayPeriod}
             </Button>

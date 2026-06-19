@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
-import { Menu, Wrench, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { BrandWordmark } from "@/components/BrandWordmark";
+import { UserAuthSection } from "@/components/UserAuthSection";
 import { getToolsByCategory, getDefaultSlug, type ToolCategory } from "@/lib/tools-data";
 import { useLocale, localePath } from "@/lib/i18n";
 
@@ -18,13 +20,14 @@ export function MobileHeader() {
     <>
       <header className="lg:hidden sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border">
         <div className="flex items-center justify-between px-4 h-14 gap-2">
-          <Link to={localePath("/", locale)} className="flex items-center gap-2 shrink-0">
-            <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center shrink-0">
-              <Wrench className="w-3.5 h-3.5 text-primary-foreground" />
-            </div>
-            <span className="font-bold text-foreground whitespace-nowrap">{t.brandName}</span>
+          <Link
+            to={localePath("/", locale)}
+            className="shrink-0 rounded-md py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <BrandWordmark locale={locale} size="sm" className="whitespace-nowrap" />
           </Link>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0">
+            <UserAuthSection compact />
             <ThemeToggle />
             <Button variant="ghost" size="icon" onClick={() => setMenuOpen(!menuOpen)}>
               {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

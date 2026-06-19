@@ -1,0 +1,214 @@
+{
+  "_comment": "Import via GTM Admin → Import Container → Merge into Default Workspace. Measurement ID G-EBE6D6BPZ0. Does NOT include the Google Tag config (already in container).",
+  "exportFormatVersion": 2,
+  "containerVersion": {
+    "name": "Tamir.li - Funnel Events",
+    "description": "Custom Event triggers + GA4 Event tags. Requires analytics_storage consent. Import with Merge.",
+    "tag": [
+      {
+        "name": "GA4 - page_view",
+        "type": "gaawe",
+        "parameter": [
+          { "key": "eventName", "value": "page_view" },
+          { "key": "measurementIdOverride", "value": "G-EBE6D6BPZ0" }
+        ],
+        "consentSettings": {
+          "consentStatus": "needed",
+          "consentType": { "analytics_storage": true }
+        },
+        "firingTriggerId": ["1"]
+      },
+      {
+        "name": "GA4 - tool_view",
+        "type": "gaawe",
+        "parameter": [
+          { "key": "eventName", "value": "tool_view" },
+          { "key": "measurementIdOverride", "value": "G-EBE6D6BPZ0" }
+        ],
+        "consentSettings": {
+          "consentStatus": "needed",
+          "consentType": { "analytics_storage": true }
+        },
+        "firingTriggerId": ["2"]
+      },
+      {
+        "name": "GA4 - file_upload",
+        "type": "gaawe",
+        "parameter": [
+          { "key": "eventName", "value": "file_upload" },
+          { "key": "measurementIdOverride", "value": "G-EBE6D6BPZ0" }
+        ],
+        "consentSettings": {
+          "consentStatus": "needed",
+          "consentType": { "analytics_storage": true }
+        },
+        "firingTriggerId": ["3"]
+      },
+      {
+        "name": "GA4 - convert_start",
+        "type": "gaawe",
+        "parameter": [
+          { "key": "eventName", "value": "convert_start" },
+          { "key": "measurementIdOverride", "value": "G-EBE6D6BPZ0" }
+        ],
+        "consentSettings": {
+          "consentStatus": "needed",
+          "consentType": { "analytics_storage": true }
+        },
+        "firingTriggerId": ["4"]
+      },
+      {
+        "name": "GA4 - convert_success",
+        "type": "gaawe",
+        "parameter": [
+          { "key": "eventName", "value": "convert_success" },
+          { "key": "measurementIdOverride", "value": "G-EBE6D6BPZ0" }
+        ],
+        "consentSettings": {
+          "consentStatus": "needed",
+          "consentType": { "analytics_storage": true }
+        },
+        "firingTriggerId": ["5"]
+      },
+      {
+        "name": "GA4 - paywall_hit",
+        "type": "gaawe",
+        "parameter": [
+          { "key": "eventName", "value": "paywall_hit" },
+          { "key": "measurementIdOverride", "value": "G-EBE6D6BPZ0" }
+        ],
+        "consentSettings": {
+          "consentStatus": "needed",
+          "consentType": { "analytics_storage": true }
+        },
+        "firingTriggerId": ["6"]
+      },
+      {
+        "name": "GA4 - upgrade_click",
+        "type": "gaawe",
+        "parameter": [
+          { "key": "eventName", "value": "upgrade_click" },
+          { "key": "measurementIdOverride", "value": "G-EBE6D6BPZ0" }
+        ],
+        "consentSettings": {
+          "consentStatus": "needed",
+          "consentType": { "analytics_storage": true }
+        },
+        "firingTriggerId": ["7"]
+      },
+      {
+        "name": "GA4 - begin_checkout",
+        "type": "gaawe",
+        "parameter": [
+          { "key": "eventName", "value": "begin_checkout" },
+          { "key": "measurementIdOverride", "value": "G-EBE6D6BPZ0" }
+        ],
+        "consentSettings": {
+          "consentStatus": "needed",
+          "consentType": { "analytics_storage": true }
+        },
+        "firingTriggerId": ["8"]
+      },
+      {
+        "name": "GA4 - purchase",
+        "type": "gaawe",
+        "parameter": [
+          { "key": "eventName", "value": "purchase" },
+          { "key": "measurementIdOverride", "value": "G-EBE6D6BPZ0" }
+        ],
+        "consentSettings": {
+          "consentStatus": "needed",
+          "consentType": { "analytics_storage": true }
+        },
+        "firingTriggerId": ["9"]
+      }
+    ],
+    "trigger": [
+      {
+        "triggerId": "1",
+        "name": "CE - page_view",
+        "type": "customEvent",
+        "customEventFilter": [
+          { "type": "equals", "parameter": [{ "key": "arg0", "value": "{{_event}}" }, { "key": "arg1", "value": "page_view" }] }
+        ]
+      },
+      {
+        "triggerId": "2",
+        "name": "CE - tool_view",
+        "type": "customEvent",
+        "customEventFilter": [
+          { "type": "equals", "parameter": [{ "key": "arg0", "value": "{{_event}}" }, { "key": "arg1", "value": "tool_view" }] }
+        ]
+      },
+      {
+        "triggerId": "3",
+        "name": "CE - file_upload",
+        "type": "customEvent",
+        "customEventFilter": [
+          { "type": "equals", "parameter": [{ "key": "arg0", "value": "{{_event}}" }, { "key": "arg1", "value": "file_upload" }] }
+        ]
+      },
+      {
+        "triggerId": "4",
+        "name": "CE - convert_start",
+        "type": "customEvent",
+        "customEventFilter": [
+          { "type": "equals", "parameter": [{ "key": "arg0", "value": "{{_event}}" }, { "key": "arg1", "value": "convert_start" }] }
+        ]
+      },
+      {
+        "triggerId": "5",
+        "name": "CE - convert_success",
+        "type": "customEvent",
+        "customEventFilter": [
+          { "type": "equals", "parameter": [{ "key": "arg0", "value": "{{_event}}" }, { "key": "arg1", "value": "convert_success" }] }
+        ]
+      },
+      {
+        "triggerId": "6",
+        "name": "CE - paywall_hit",
+        "type": "customEvent",
+        "customEventFilter": [
+          { "type": "equals", "parameter": [{ "key": "arg0", "value": "{{_event}}" }, { "key": "arg1", "value": "paywall_hit" }] }
+        ]
+      },
+      {
+        "triggerId": "7",
+        "name": "CE - upgrade_click",
+        "type": "customEvent",
+        "customEventFilter": [
+          { "type": "equals", "parameter": [{ "key": "arg0", "value": "{{_event}}" }, { "key": "arg1", "value": "upgrade_click" }] }
+        ]
+      },
+      {
+        "triggerId": "8",
+        "name": "CE - begin_checkout",
+        "type": "customEvent",
+        "customEventFilter": [
+          { "type": "equals", "parameter": [{ "key": "arg0", "value": "{{_event}}" }, { "key": "arg1", "value": "begin_checkout" }] }
+        ]
+      },
+      {
+        "triggerId": "9",
+        "name": "CE - purchase",
+        "type": "customEvent",
+        "customEventFilter": [
+          { "type": "equals", "parameter": [{ "key": "arg0", "value": "{{_event}}" }, { "key": "arg1", "value": "purchase" }] }
+        ]
+      }
+    ],
+    "variable": [
+      { "name": "dlv - tool_id", "type": "v", "parameter": [{ "key": "name", "value": "tool_id" }] },
+      { "name": "dlv - slug", "type": "v", "parameter": [{ "key": "name", "value": "slug" }] },
+      { "name": "dlv - plan", "type": "v", "parameter": [{ "key": "name", "value": "plan" }] },
+      { "name": "dlv - page_type", "type": "v", "parameter": [{ "key": "name", "value": "page_type" }] },
+      { "name": "dlv - blog_slug", "type": "v", "parameter": [{ "key": "name", "value": "blog_slug" }] },
+      { "name": "dlv - page_path", "type": "v", "parameter": [{ "key": "name", "value": "page_path" }] }
+    ],
+    "builtInVariable": [
+      { "type": "pageUrl" },
+      { "type": "pagePath" },
+      { "type": "event" }
+    ]
+  }
+}
