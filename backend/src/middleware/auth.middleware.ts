@@ -48,4 +48,34 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
   }
 }
 
+/** Sets req.userId when a valid Bearer token is present; otherwise continues anonymously. */
+export async function optionalAuth(req: Request, _res: Response, next: NextFunction): Promise<void> {
+  try {
+    const header = req.headers.authorization;
+    const token = header?.startsWith('Bearer ') ? header.slice(7).trim() : null;
+    if (!token) {
+      next();
+      return;
+    }
+    const payload = jwt.verify(token, getJwtSecret()) as jwt.JwtPayload & { sub?: string };
+    if (!payload.sub) {
+      next();
+      return;
+    }
+    const user = await prisma.user.findUnique({
+      where: { id: payload.sub },
+      select: { blocked: true },
+    });
+    if (!user || user.blocked) {
+      next();
+      return;
+    }
+    req.userId = payload.sub;
+    req.authPayload = payload;
+    next();
+  } catch {
+    next();
+  }
+}
+
 export { getJwtSecret };

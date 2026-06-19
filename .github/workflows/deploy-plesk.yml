@@ -1,0 +1,54 @@
+﻿# Deploy static frontend (dist/) to Plesk via FTPS/SFTP.
+# See docs/plesk-deploy.md for required GitHub secrets and variables.
+
+name: Deploy to Plesk
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plesk-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - name: Build production bundle
+        env:
+          VITE_SITE_ORIGIN: ${{ vars.VITE_SITE_ORIGIN || 'https://tamir.li' }}
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://api.tamir.li' }}
+          VITE_GTM_ID: ${{ secrets.VITE_GTM_ID }}
+          VITE_ADSENSE_CLIENT: ${{ secrets.VITE_ADSENSE_CLIENT }}
+          VITE_ADSENSE_SLOT_BANNER: ${{ secrets.VITE_ADSENSE_SLOT_BANNER }}
+          VITE_ADSENSE_SLOT_SIDEBAR: ${{ secrets.VITE_ADSENSE_SLOT_SIDEBAR }}
+          VITE_ADSENSE_SLOT_INLINE: ${{ secrets.VITE_ADSENSE_SLOT_INLINE }}
+        run: npm run build:prod
+
+      - name: Deploy dist/ to Plesk (FTPS)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.PLESK_FTP_HOST }}
+          username: ${{ secrets.PLESK_FTP_USER }}
+          password: ${{ secrets.PLESK_FTP_PASSWORD }}
+          protocol: ftps
+          port: ${{ vars.PLESK_FTP_PORT || 21 }}
+          local-dir: dist/
+          server-dir: ${{ vars.PLESK_FTP_SERVER_DIR || './' }}
+          log-level: minimal

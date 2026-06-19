@@ -14,3 +14,6 @@ User-agent: *
 Allow: /
 
 Sitemap: https://tamir.li/sitemap.xml
+
+# LLM / AI crawlers
+# https://tamir.li/llms.txt

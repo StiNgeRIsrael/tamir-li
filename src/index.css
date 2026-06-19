@@ -34,7 +34,7 @@
     --input: 214 20% 86%;
     --ring: 217 91% 48%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
     --premium: 42 98% 52%;
     --premium-foreground: 28 55% 14%;
@@ -117,39 +117,52 @@
 }
 
 @layer components {
+  .utility-grid-bg {
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.35) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.35) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: center top;
+  }
+
+  .tool-row-panel {
+    @apply rounded-md border border-border bg-muted/20;
+  }
+
+  .tool-row {
+    @apply bg-card;
+  }
+
+  .format-chip {
+    @apply inline-flex items-center rounded-md border bg-background px-2 py-1 text-[11px] font-mono font-medium transition-colors hover:bg-muted/60;
+  }
+
+  .section-divider {
+    @apply border-b border-border pb-2 mb-1;
+  }
+
   .tool-card {
-    @apply bg-card rounded-xl border border-border p-5 transition-all duration-200 hover:shadow-lg hover:border-primary/30 hover:-translate-y-0.5 cursor-pointer;
+    @apply bg-card rounded-md border border-border p-4 transition-colors duration-150 hover:border-primary/30 cursor-pointer;
   }
 
   .drop-zone {
-    @apply border-2 border-dashed border-transparent rounded-2xl bg-gradient-to-br from-primary/10 via-tool-video/10 to-tool-audio/10 transition-all duration-300;
-    background-origin: border-box;
-    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.35) inset, 0 12px 40px -12px hsl(var(--tool-video) / 0.35);
+    @apply rounded-md border-2 border-dashed border-border bg-muted/30 transition-colors duration-200;
   }
 
   .drop-zone-active {
-    @apply scale-[1.01] from-primary/20 via-tool-video/15 to-accent/15;
-    box-shadow: 0 0 0 2px hsl(var(--accent) / 0.55) inset, 0 16px 48px -8px hsl(var(--primary) / 0.45);
+    @apply border-primary/50 bg-primary/5;
   }
 
   .ad-slot {
-    @apply rounded-lg border border-dashed border-primary/20 bg-gradient-to-br from-muted/60 via-muted/40 to-primary/5 flex items-center justify-center text-muted-foreground text-sm min-h-[90px];
+    @apply rounded-md border border-dashed border-border bg-muted/40 flex items-center justify-center text-muted-foreground text-sm min-h-[90px];
   }
 
   .premium-banner {
-    @apply bg-gradient-to-l from-[hsl(var(--premium))] via-[hsl(32,95%,52%)] to-[hsl(16,90%,52%)] text-[hsl(var(--premium-foreground))] rounded-xl p-4 shadow-lg shadow-[hsl(var(--premium)/0.25)];
-  }
-
-  .page-aurora {
-    @apply pointer-events-none fixed inset-0 -z-10 overflow-hidden;
+    @apply bg-[hsl(var(--premium))] text-[hsl(var(--premium-foreground))] rounded-md p-4 border border-[hsl(var(--premium)/0.4)];
   }
 
   .hero-gradient-text {
-    @apply bg-gradient-to-l from-primary via-tool-video to-tool-audio bg-clip-text text-transparent;
-  }
-
-  .media-card-shine {
-    @apply relative overflow-hidden before:pointer-events-none before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/15 before:to-transparent before:opacity-0 before:transition-opacity hover:before:opacity-100;
+    @apply text-primary;
   }
 }
 

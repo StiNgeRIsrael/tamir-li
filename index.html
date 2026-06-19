@@ -15,6 +15,11 @@
     <meta http-equiv="content-language" content="he-IL" />
     <link rel="canonical" href="https://tamir.li/" />
 
+    <!-- Google Search Console site verification (HTML tag method)
+         Paste your meta tag from GSC → Settings → Ownership verification, e.g.:
+         <meta name="google-site-verification" content="YOUR_VERIFICATION_TOKEN" />
+    -->
+
     <!-- Open Graph -->
     <meta property="og:title" content="תמיר לי | Tamir.li — המרת קבצים חינם בישראל" />
     <meta property="og:description" content="המרה מהירה וחינמית בין פורמטים של תמונות, וידאו, אודיו ומסמכים. פשוט, מאובטח, בעברית." />
@@ -28,9 +33,11 @@
     <meta property="og:locale:alternate" content="fr_FR" />
     <meta property="og:locale:alternate" content="it_IT" />
     <meta property="og:site_name" content="תמיר לי" />
+    <meta property="og:image" content="https://tamir.li/pwa-512x512.png" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://tamir.li/pwa-512x512.png" />
     <meta name="twitter:title" content="תמיר לי | Tamir.li — המרת קבצים חינם בישראל" />
     <meta name="twitter:description" content="המרה מהירה וחינמית בין פורמטים של תמונות, וידאו, אודיו ומסמכים" />
 
@@ -122,10 +129,32 @@
       ]
     }
     </script>
+
+    <!-- Google Consent Mode v2 defaults — must run before GTM / gtag loads (see src/lib/analytics/gtm.ts) -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'functionality_storage': 'denied',
+        'personalization_storage': 'denied',
+        'security_storage': 'granted',
+        'wait_for_update': 500
+      });
+    </script>
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <noscript>
+        <p style="padding:2rem;text-align:center;font-family:system-ui,sans-serif">
+          תמיר לי דורש JavaScript. אנא הפעילו JavaScript בדפדפן.
+        </p>
+      </noscript>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

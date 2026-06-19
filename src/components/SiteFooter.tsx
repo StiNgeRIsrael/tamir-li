@@ -48,10 +48,10 @@ export function SiteFooter() {
           <ul className="space-y-2 text-xs text-muted-foreground">
             <li><Link to={localePath("/install", locale)} className="hover:text-foreground transition-colors">{f.installApp}</Link></li>
             <li><Link to={localePath("/blog", locale)} className="hover:text-foreground transition-colors">{f.blogAndGuides}</Link></li>
-            <li><span className="cursor-default">{f.terms}</span></li>
-            <li><span className="cursor-default">{f.privacy}</span></li>
-            <li><span className="cursor-default">{f.contact}</span></li>
-            <li><span className="cursor-default">{f.about}</span></li>
+            <li><Link to={localePath("/terms", locale)} className="hover:text-foreground transition-colors">{f.terms}</Link></li>
+            <li><Link to={localePath("/privacy", locale)} className="hover:text-foreground transition-colors">{f.privacy}</Link></li>
+            <li><Link to={localePath("/contact", locale)} className="hover:text-foreground transition-colors">{f.contact}</Link></li>
+            <li><Link to={localePath("/about", locale)} className="hover:text-foreground transition-colors">{f.about}</Link></li>
           </ul>
         </div>
       </div>

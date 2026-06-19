@@ -1,6 +1,6 @@
-# Deploy static `dist/` to GitHub Pages (optional).
-# Enable: Settings → Pages → Source: GitHub Actions.
-# Set repository Variable VITE_SITE_ORIGIN to your real domain.
+# OPTIONAL — GitHub Pages deploy (disabled for Plesk hosting).
+# Production (tamir.li): build locally/CI and upload dist/ to Plesk httpdocs — see docs/plesk-deploy.md.
+# To use this workflow instead: Settings → Pages → Source: GitHub Actions; set Variable VITE_SITE_ORIGIN.
 
 name: Deploy frontend
 

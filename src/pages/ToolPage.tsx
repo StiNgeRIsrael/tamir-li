@@ -1,20 +1,24 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { getToolByFormatSlug, getToolById, getDefaultSlug, buildFormatSlug, getRelatedTools, type Tool, type ToolCategory } from "@/lib/tools-data";
+import { getToolByFormatSlug, getToolById, getDefaultSlug, buildFormatSlug, getRelatedTools, categoryIcons, type Tool, type ToolCategory } from "@/lib/tools-data";
 import { AppLayout } from "@/components/AppLayout";
 import { FileDropZone } from "@/components/FileDropZone";
 import { AdSlot } from "@/components/AdSlot";
-import { PremiumBanner, PremiumLock, ConversionSuccessUsage } from "@/components/PremiumComponents";
-import { triggerInterstitial } from "@/components/AdSlot";
+import { PremiumBanner, PremiumLock, ConversionSuccessUsage, UsageLimitNotice } from "@/components/PremiumComponents";
+import { showAdVignette } from "@/components/ads/AdVignette";
+import { handleGatedDownload, triggerFileDownload, type DownloadGateState } from "@/lib/ads/download-gate";
 import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SEOHead } from "@/components/SEOHead";
+import { SEOHead, toolCategoryOgImage } from "@/components/SEOHead";
+import { ToolSeoBlocks, toolFaqJsonLd } from "@/components/ToolSeoBlocks";
+import { TOP_TOOL_IDS } from "@/lib/tool-seo-content";
 import { PdfManagerTool } from "@/components/tools/PdfManagerTool";
 import { TextToolsComponent } from "@/components/tools/TextToolsComponent";
 import { AiImageGeneratorTool } from "@/components/tools/AiImageGeneratorTool";
 import { ImageResizerTool } from "@/components/tools/ImageResizerTool";
 import { ImageCompressorTool } from "@/components/tools/ImageCompressorTool";
 import { HebOcrTool } from "@/components/tools/HebOcrTool";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { ArrowLeft, ArrowRight, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe } from "lucide-react";
 import { useLocale, localePath, htmlLangTag } from "@/lib/i18n";
 import { siteUrl } from "@/lib/site";
@@ -22,13 +26,16 @@ import { allowMockFileConversion } from "@/lib/feature-flags";
 import { getApiBaseUrl } from "@/lib/api/client";
 import { useToolConfig } from "@/contexts/ToolConfigContext";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics/events";
+import { useUsage } from "@/hooks/useUsage";
+import { isAdSenseConfigured } from "@/lib/ads/adsense";
 
-const toolHeaderTint: Record<ToolCategory, string> = {
-  image: "from-tool-image/10 via-card to-card dark:from-tool-image/18",
-  video: "from-tool-video/10 via-card to-card dark:from-tool-video/18",
-  audio: "from-tool-audio/10 via-card to-card dark:from-tool-audio/18",
-  document: "from-tool-document/10 via-card to-card dark:from-tool-document/18",
-  ai: "from-premium/12 via-card to-card dark:from-premium/18",
+const categoryHeaderIcon: Record<ToolCategory, string> = {
+  image: "bg-tool-image/10 text-tool-image",
+  video: "bg-tool-video/10 text-tool-video",
+  audio: "bg-tool-audio/10 text-tool-audio",
+  document: "bg-tool-document/10 text-tool-document",
+  ai: "bg-premium/10 text-premium",
 };
 
 interface FileWithFormat {
@@ -75,10 +82,67 @@ export default function ToolPage() {
 
   const [fileItems, setFileItems] = useState<FileWithFormat[]>([]);
   const [converting, setConverting] = useState(false);
-  const [allDone, setAllDone] = useState(false);
-  const [usedToday] = useState(0);
-  const maxDaily = 5;
+  const [converted, setConverted] = useState(false);
+  const [showSuccessPanel, setShowSuccessPanel] = useState(false);
+  const [downloadGate, setDownloadGate] = useState<DownloadGateState>({});
+  const [allDownloadGate, setAllDownloadGate] = useState(false);
+  const { used: usedToday, max: maxDaily, isPremium, atLimit, recordUsage } = useUsage();
+  const [usageUnlocked, setUsageUnlocked] = useState(false);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
+  const atUsageLimit = atLimit && !usageUnlocked && !isPremium;
+
+  useEffect(() => {
+    if (!tool) return;
+    trackEvent("tool_view", { tool_id: tool.id, slug: slug ?? "" });
+
+    if (isPremium) return;
+
+    const hasAdSurface =
+      isAdSenseConfigured() || !!import.meta.env.VITE_AD_CLICK_URL?.trim();
+    if (!hasAdSurface) return;
+
+    const key = `tamir_tool_vignette_${tool.id}`;
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, "1");
+
+    // Defer until after first paint so SPA navigations don't show a blank overlay.
+    const timer = window.setTimeout(() => {
+      void showAdVignette({ minMs: 3500, slotId: "tool-first-visit-vignette" });
+    }, 600);
+    return () => window.clearTimeout(timer);
+  }, [tool, slug, isPremium]);
+
+  useEffect(() => {
+    if (!tool?.premium || premiumUnlocked) return;
+    trackEvent("paywall_hit", { tool_id: tool.id, type: "premium_tool" });
+  }, [tool, premiumUnlocked]);
+
+  useEffect(() => {
+    if (!tool || isPremium || usageUnlocked || !atLimit) return;
+    trackEvent("paywall_hit", { tool_id: tool.id, type: "daily_limit" });
+  }, [tool, isPremium, usageUnlocked, atLimit]);
+
+  useEffect(() => {
+    if (!converted || showSuccessPanel || !tool) return;
+
+    const revealSuccess = () => {
+      setShowSuccessPanel(true);
+      trackEvent("convert_success", {
+        tool_id: tool.id,
+        from_format: activeFrom,
+        to_format: activeTo,
+        file_count: fileItems.length,
+      });
+      recordUsage({ toolId: tool.id, fromFormat: activeFrom, toFormat: activeTo }).catch(() => {});
+    };
+
+    if (isPremium) {
+      revealSuccess();
+      return;
+    }
+
+    void showAdVignette({ minMs: 4000, slotId: "convert-success-vignette" }).then(revealSuccess);
+  }, [converted, showSuccessPanel, tool, activeFrom, activeTo, fileItems.length, recordUsage, isPremium]);
 
   const changeFrom = (from: string) => {
     const to = from === activeTo ? (tool?.toFormats.find(f => f !== from) || activeTo) : activeTo;
@@ -101,6 +165,9 @@ export default function ToolPage() {
   }, []);
 
   const handleFilesSelected = useCallback(async (files: File[]) => {
+    if (tool) {
+      trackEvent("file_upload", { tool_id: tool.id, file_count: files.length });
+    }
     const newItems: FileWithFormat[] = await Promise.all(
       files.map(async (file) => ({
         file,
@@ -111,7 +178,7 @@ export default function ToolPage() {
       }))
     );
     setFileItems((prev) => [...prev, ...newItems]);
-  }, [activeTo, generateThumbnail]);
+  }, [activeTo, generateThumbnail, tool]);
 
   const removeFile = (index: number) => {
     setFileItems((prev) => prev.filter((_, i) => i !== index));
@@ -126,7 +193,12 @@ export default function ToolPage() {
   const allHaveFormat = fileItems.length > 0 && fileItems.every((f) => f.outputFormat);
 
   const runMockConversion = () => {
-    triggerInterstitial();
+    trackEvent("convert_start", {
+      tool_id: tool!.id,
+      from_format: activeFrom,
+      to_format: activeTo,
+      file_count: fileItems.length,
+    });
     setConverting(true);
 
     fileItems.forEach((_, index) => {
@@ -154,13 +226,17 @@ export default function ToolPage() {
     const totalTime = fileItems.length * 400 + 2500;
     setTimeout(() => {
       setConverting(false);
-      setAllDone(true);
-      triggerInterstitial();
+      setConverted(true);
     }, totalTime);
   };
 
   const handleConvert = async () => {
     if (!allHaveFormat || !tool) return;
+
+    if (atUsageLimit) {
+      trackEvent("paywall_hit", { tool_id: tool.id, type: "daily_limit" });
+      return;
+    }
 
     if (allowMockFileConversion()) {
       runMockConversion();
@@ -173,7 +249,12 @@ export default function ToolPage() {
       return;
     }
 
-    triggerInterstitial();
+    trackEvent("convert_start", {
+      tool_id: tool.id,
+      from_format: activeFrom,
+      to_format: activeTo,
+      file_count: fileItems.length,
+    });
     setConverting(true);
     try {
       const fd = new FormData();
@@ -193,7 +274,7 @@ export default function ToolPage() {
         return;
       }
 
-      setAllDone(true);
+      setConverted(true);
       toast.success(tt.conversionDone);
     } catch {
       toast.error(tt.conversionApiError);
@@ -204,8 +285,54 @@ export default function ToolPage() {
 
   const handleReset = () => {
     setFileItems([]);
-    setAllDone(false);
+    setConverted(false);
+    setShowSuccessPanel(false);
+    setDownloadGate({});
+    setAllDownloadGate(false);
   };
+
+  const onDownloadFile = async (index: number) => {
+    const item = fileItems[index];
+    if (!item) return;
+    const { triggered, nextState } = await handleGatedDownload(
+      index,
+      item.file,
+      item.outputFormat,
+      downloadGate,
+      isPremium
+    );
+    setDownloadGate(nextState);
+    if (triggered) {
+      trackEvent("file_download", { tool_id: tool!.id, file_index: index });
+    }
+  };
+
+  const onDownloadAll = async () => {
+    if (isPremium || allDownloadGate) {
+      fileItems.forEach((item, index) => triggerFileDownload(item.file, item.outputFormat));
+      trackEvent("file_download_all", { tool_id: tool!.id, file_count: fileItems.length });
+      return;
+    }
+
+    const adUrl = import.meta.env.VITE_AD_CLICK_URL?.trim();
+    trackEvent("ad_click_download", { file_index: -1, method: adUrl ? "popup" : "vignette" });
+    if (adUrl) {
+      window.open(adUrl, "_blank", "noopener,noreferrer");
+    } else {
+      await showAdVignette({ minMs: 3000, slotId: "download-all-vignette" });
+    }
+    setAllDownloadGate(true);
+  };
+
+  if (toolCfgLoading && apiBase && tool) {
+    return (
+      <AppLayout>
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" aria-label={tt.loading ?? "Loading"} />
+        </div>
+      </AppLayout>
+    );
+  }
 
   if (!tool || disabledByAdmin) {
     return (
@@ -229,6 +356,50 @@ export default function ToolPage() {
     : `${tt.convertTitle(activeFrom, activeTo)} — ${t.brandName}`;
   const pageDesc = tt.convertDesc(activeFrom, activeTo);
   const related = filterTools(getRelatedTools(tool)).slice(0, 3);
+  const toolPagePath = isCustom ? `/${tool.id}` : `/${buildFormatSlug(activeFrom, activeTo)}`;
+  const toolPageUrl = siteUrl(localePath(toolPagePath, locale));
+  const homeUrl = siteUrl(localePath("/", locale));
+
+  const faqLd = TOP_TOOL_IDS.includes(tool.id) ? toolFaqJsonLd(tool.id, locale) : null;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        name: pageTitle,
+        description: pageDesc,
+        url: toolPageUrl,
+        applicationCategory: "UtilityApplication",
+        operatingSystem: "Any",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "ILS" },
+        inLanguage: htmlLangTag(locale),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: tt.breadcrumbHome,
+            item: homeUrl,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: catLabels[tool.category],
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: isCustom ? toolName : tt.convertTitle(activeFrom, activeTo),
+            item: toolPageUrl,
+          },
+        ],
+      },
+      ...(faqLd ? [faqLd] : []),
+    ],
+  };
 
   const SidebarContent = () => (
     <div className="space-y-5">
@@ -275,17 +446,8 @@ export default function ToolPage() {
       <SEOHead
         title={pageTitle}
         description={pageDesc}
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "WebApplication",
-          "name": pageTitle,
-          "description": pageDesc,
-          "url": siteUrl(localePath(`/${buildFormatSlug(activeFrom, activeTo)}`, locale)),
-          "applicationCategory": "UtilityApplication",
-          "operatingSystem": "Any",
-          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "ILS" },
-          "inLanguage": htmlLangTag(locale),
-        }}
+        ogImage={toolCategoryOgImage(tool.category)}
+        jsonLd={jsonLd}
       />
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-6 lg:py-10 space-y-6 lg:space-y-8">
         {/* Breadcrumb */}
@@ -300,23 +462,33 @@ export default function ToolPage() {
         </nav>
 
         {/* Header */}
-        <header
-          className={`space-y-3 animate-fade-in rounded-2xl border border-border/70 bg-gradient-to-br ${toolHeaderTint[tool.category]} p-5 shadow-md shadow-black/[0.04] backdrop-blur-sm lg:p-6 dark:shadow-black/20`}
-        >
-          <div className="flex items-center gap-2">
-            <h1 className="bg-gradient-to-l from-foreground to-foreground/80 bg-clip-text text-2xl font-extrabold text-transparent lg:text-3xl xl:text-4xl dark:from-white dark:to-white/85">
-              {isCustom ? toolName : tt.convertTitle(activeFrom, activeTo)}
-            </h1>
-            {tool.premium && <Crown className="w-5 h-5 text-premium" />}
+        <header className="space-y-3 border-b border-border pb-5">
+          <div className="flex items-start gap-3">
+            {(() => {
+              const CatIcon = categoryIcons[tool.category];
+              return (
+                <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${categoryHeaderIcon[tool.category]}`}>
+                  <CatIcon className="h-5 w-5" />
+                </div>
+              );
+            })()}
+            <div className="min-w-0 space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-2xl font-bold text-foreground lg:text-3xl">
+                  {isCustom ? toolName : tt.convertTitle(activeFrom, activeTo)}
+                </h1>
+                {tool.premium && <Crown className="w-5 h-5 text-premium shrink-0" />}
+              </div>
+              <p className="text-sm text-muted-foreground max-w-3xl">{toolLongDesc}</p>
+            </div>
           </div>
-          <p className="text-sm lg:text-base text-muted-foreground max-w-3xl">{toolLongDesc}</p>
 
           {!isCustom && (
-            <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
-              <div className="flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-2.5">
-                <span className="text-muted-foreground text-sm font-medium">{tt.from}</span>
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
+                <span className="text-muted-foreground font-medium">{tt.from}</span>
                 <Select value={activeFrom} onValueChange={changeFrom}>
-                  <SelectTrigger className="w-24 h-9 text-sm border-0 bg-muted font-bold">
+                  <SelectTrigger className="h-8 w-24 border-0 bg-muted text-sm font-semibold">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -326,11 +498,11 @@ export default function ToolPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <Arrow className="w-5 h-5 text-muted-foreground" />
-              <div className="flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-2.5">
-                <span className="text-muted-foreground text-sm font-medium">{tt.to}</span>
+              <Arrow className="w-4 h-4 text-muted-foreground" />
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
+                <span className="text-muted-foreground font-medium">{tt.to}</span>
                 <Select value={activeTo} onValueChange={changeTo}>
-                  <SelectTrigger className="w-24 h-9 text-sm border-0 bg-primary/10 font-bold text-primary">
+                  <SelectTrigger className="h-8 w-24 border-0 bg-primary/10 text-sm font-semibold text-primary">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -343,7 +515,6 @@ export default function ToolPage() {
             </div>
           )}
 
-          {/* Trust badges — mobile only */}
           <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground xl:hidden">
             <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5 text-success" /> {tt.secureBadge}</span>
             <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-accent" /> {tt.fastBadge}</span>
@@ -375,7 +546,9 @@ export default function ToolPage() {
               <HebOcrTool />
             ) : tool.premium && !premiumUnlocked ? (
               <PremiumLock onUnlock={() => setPremiumUnlocked(true)} />
-            ) : allDone ? (
+            ) : atUsageLimit ? (
+              <PremiumLock onUnlock={() => setUsageUnlocked(true)} />
+            ) : showSuccessPanel ? (
               <div className="space-y-3 animate-fade-in">
                 <div className="flex items-center gap-3 mb-4">
                   <CheckCircle2 className="w-6 h-6 text-success" />
@@ -397,96 +570,137 @@ export default function ToolPage() {
                         <p className="text-xs text-muted-foreground">{formatFileSize(item.file.size)} → {item.outputFormat}</p>
                       </div>
                       <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
-                      <Button size="sm" variant="outline" className="shrink-0 text-success border-success/30 hover:bg-success/10">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className={`shrink-0 ${downloadGate[index] ? "text-success border-success/30 hover:bg-success/10" : "text-primary border-primary/30 hover:bg-primary/5"}`}
+                        onClick={() => onDownloadFile(index)}
+                      >
                         <Download className="w-3.5 h-3.5 ml-1" />
-                        {tt.download}
+                        {isPremium ? tt.download : downloadGate[index] ? tt.downloadNow : tt.watchAdToDownload}
                       </Button>
                     </div>
                   );
                 })}
                 <div className="flex items-center justify-between pt-3">
                   <Button variant="outline" onClick={handleReset}>{tt.moreConversion}</Button>
-                  <Button className="bg-success text-success-foreground hover:bg-success/90">
+                  <Button
+                    className={allDownloadGate ? "bg-success text-success-foreground hover:bg-success/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}
+                    onClick={onDownloadAll}
+                  >
                     <Download className="w-4 h-4 ml-2" />
-                    {tt.downloadAll}
+                    {isPremium ? tt.downloadAll : allDownloadGate ? tt.downloadAll : tt.watchAdToDownload}
                   </Button>
                 </div>
-                <ConversionSuccessUsage used={usedToday + fileItems.length} max={maxDaily} />
+                <ConversionSuccessUsage used={usedToday} max={maxDaily} />
                 <AdSlot type="inline" slotId="tool-after-success" className="mt-4" />
+              </div>
+            ) : converted ? (
+              <div className="py-12 text-center text-sm text-muted-foreground">
+                <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin text-primary" />
+                {tt.preparingDownload ?? tt.convertingWait}
               </div>
             ) : (
               <div className="space-y-5">
+                {!isPremium && <UsageLimitNotice used={usedToday} max={maxDaily} />}
                 {fileItems.length === 0 && (
                   <FileDropZone acceptedFormats={tool.fromFormats} onFilesSelected={handleFilesSelected} />
                 )}
                 {fileItems.length > 0 && (
-                  <div className="space-y-2 animate-fade-in">
-                    {fileItems.map((item, index) => {
-                      const Icon = getFileIcon(item.file);
-                      return (
-                        <div key={index} className={`bg-card border rounded-xl px-4 py-3 transition-all duration-300 ${item.status === "done" ? "border-success/40" : item.status === "converting" ? "border-primary/40" : "border-border"}`}>
-                          <div className="flex items-center gap-3">
-                            {item.thumbnail ? (
-                              <img src={item.thumbnail} alt={item.file.name} className="w-10 h-10 rounded-lg object-cover border border-border shrink-0" />
-                            ) : (
-                              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                <Icon className="w-5 h-5 text-primary" />
-                              </div>
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium truncate">{item.file.name}</p>
-                              <p className="text-xs text-muted-foreground">{formatFileSize(item.file.size)}</p>
-                            </div>
-                            {item.status === "converting" && <Loader2 className="w-4 h-4 text-primary animate-spin shrink-0" />}
-                            {item.status === "done" && <CheckCircle2 className="w-4 h-4 text-success shrink-0" />}
-                            <div className="flex items-center gap-2 shrink-0">
-                              <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
-                              <Select value={item.outputFormat} onValueChange={(val) => setFileFormat(index, val)} disabled={converting}>
-                                <SelectTrigger className="w-24 h-7 text-xs border-0 bg-muted">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {tool.toFormats.filter(f => f !== activeFrom).map((fmt) => (
-                                    <SelectItem key={fmt} value={fmt}>{fmt}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            {!converting && (
-                              <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0 opacity-50 hover:opacity-100" onClick={() => removeFile(index)}>
-                                <X className="w-3.5 h-3.5" />
-                              </Button>
-                            )}
-                          </div>
-                          {(item.status === "converting" || item.status === "done") && (
-                            <div className="mt-2.5">
-                              <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                                <div className={`h-full rounded-full transition-all duration-300 ease-out ${item.status === "done" ? "bg-success" : "bg-primary"}`} style={{ width: `${item.progress}%` }} />
-                              </div>
-                              <div className="flex items-center justify-between mt-1">
-                                <span className="text-[10px] text-muted-foreground">{item.status === "converting" ? tt.converting : tt.done}</span>
-                                <span className="text-[10px] text-muted-foreground">{item.progress}%</span>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                  <div className="space-y-3 animate-fade-in">
+                    <div className="overflow-hidden rounded-md border border-border bg-card">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="bg-muted/40 hover:bg-muted/40 border-b border-border">
+                            <TableHead className="h-8 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{tt.queueFile ?? "File"}</TableHead>
+                            <TableHead className="hidden sm:table-cell h-8 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{tt.queueSize ?? "Size"}</TableHead>
+                            <TableHead className="h-8 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{tt.queueFormat ?? "Format"}</TableHead>
+                            <TableHead className="hidden md:table-cell h-8 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{tt.queueStatus ?? "Status"}</TableHead>
+                            <TableHead className="w-10 h-8 text-end" />
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {fileItems.map((item, index) => {
+                            const Icon = getFileIcon(item.file);
+                            const statusLabel =
+                              item.status === "converting"
+                                ? tt.converting
+                                : item.status === "done"
+                                  ? tt.done
+                                  : tt.queuePending ?? "Waiting";
+                            return (
+                              <TableRow key={index} className="hover:bg-muted/20">
+                                <TableCell className="py-2">
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    {item.thumbnail ? (
+                                      <img src={item.thumbnail} alt="" className="h-8 w-8 rounded object-cover border border-border shrink-0" />
+                                    ) : (
+                                      <div className="flex h-8 w-8 items-center justify-center rounded border border-border bg-muted shrink-0">
+                                        <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+                                      </div>
+                                    )}
+                                    <span className="truncate text-sm font-medium">{item.file.name}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="hidden sm:table-cell py-2 font-mono text-xs text-muted-foreground">
+                                  {formatFileSize(item.file.size)}
+                                </TableCell>
+                                <TableCell className="py-2">
+                                  <Select value={item.outputFormat} onValueChange={(val) => setFileFormat(index, val)} disabled={converting}>
+                                    <SelectTrigger className="h-7 w-[4.5rem] rounded border-0 bg-muted text-xs font-mono">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {tool.toFormats.filter(f => f !== activeFrom).map((fmt) => (
+                                        <SelectItem key={fmt} value={fmt}>{fmt}</SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </TableCell>
+                                <TableCell className="hidden md:table-cell py-2">
+                                  <div className="flex items-center gap-1.5">
+                                    {item.status === "converting" && <Loader2 className="h-3 w-3 animate-spin text-primary" />}
+                                    {item.status === "done" && <CheckCircle2 className="h-3 w-3 text-success" />}
+                                    {item.status === "pending" && <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />}
+                                    <span className={`text-xs ${item.status === "done" ? "text-success" : "text-muted-foreground"}`}>{statusLabel}</span>
+                                  </div>
+                                  {(item.status === "converting" || item.status === "done") && (
+                                    <div className="mt-1 h-0.5 max-w-[100px] overflow-hidden rounded-full bg-muted">
+                                      <div
+                                        className={`h-full transition-all ${item.status === "done" ? "bg-success" : "bg-primary"}`}
+                                        style={{ width: `${item.progress}%` }}
+                                      />
+                                    </div>
+                                  )}
+                                </TableCell>
+                                <TableCell className="py-2 text-end">
+                                  {!converting && (
+                                    <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => removeFile(index)}>
+                                      <X className="h-3.5 w-3.5" />
+                                    </Button>
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </div>
                     {!converting && (
-                      <div className="flex items-center justify-between pt-2">
-                        <Button variant="outline" size="sm" className="text-sm" onClick={() => document.getElementById("file-input")?.click()}>
-                          <Plus className="w-4 h-4 ml-1" />
+                      <div className="flex items-center justify-between pt-1">
+                        <Button variant="outline" size="sm" onClick={() => document.getElementById("file-input")?.click()}>
+                          <Plus className="w-4 h-4 me-1" />
                           {tt.addFiles}
                         </Button>
-                        <Button onClick={handleConvert} disabled={!allHaveFormat || converting} className="h-10 px-8 font-bold bg-accent text-accent-foreground hover:bg-accent/90" size="lg">
-                          <RefreshCw className="w-4 h-4 ml-2" />
+                        <Button onClick={handleConvert} disabled={!allHaveFormat || converting || atUsageLimit} size="lg">
+                          <RefreshCw className="w-4 h-4 me-2" />
                           {tt.convertN(fileItems.length)}
                         </Button>
                       </div>
                     )}
                     {converting && (
-                      <div className="text-center py-2 text-sm text-muted-foreground animate-fade-in">
-                        <Loader2 className="w-5 h-5 mx-auto animate-spin mb-2 text-primary" />
+                      <div className="py-2 text-center text-sm text-muted-foreground">
+                        <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin text-primary" />
                         {tt.convertingWait}
                       </div>
                     )}
@@ -544,13 +758,15 @@ export default function ToolPage() {
         <AdSlot type="inline" slotId="tool-mid-page" />
 
         {/* SEO rich text */}
-        <section className="bg-card border border-border rounded-xl p-5 lg:p-8 space-y-3 text-sm lg:text-base text-muted-foreground leading-relaxed">
-          <h2 className="text-base lg:text-lg font-bold text-foreground">
+        <section className="rounded-md border border-border bg-card p-4 lg:p-6 space-y-3 text-sm text-muted-foreground leading-relaxed">
+          <h2 className="text-base font-bold text-foreground">
             {tt.seoTitle(toolName, activeFrom, activeTo, isCustom)}
           </h2>
           <p>{tt.seoText(toolName, activeFrom, activeTo, isCustom)}</p>
           {!isCustom && <p>{tt.seoFormats(tool.fromFormats, tool.toFormats)}</p>}
         </section>
+
+        {TOP_TOOL_IDS.includes(tool.id) && <ToolSeoBlocks toolId={tool.id} />}
 
         <AdSlot type="inline" slotId="tool-bottom" />
       </div>

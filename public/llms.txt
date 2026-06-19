@@ -1,0 +1,32 @@
+# Tamir.li (תמיר לי)
+
+> Hebrew-first online file conversion for Israel. Images, video, audio, documents — drag, pick format, download.
+
+## Site
+- https://tamir.li
+- Sitemap: https://tamir.li/sitemap.xml
+- Languages: he (default), en, es, ru, de, fr, it
+
+## What we do
+- Free tier: up to 5 conversions/day
+- Premium: unlimited conversions, no ads (Stripe)
+- Files processed securely; not stored after conversion
+
+## Popular tools
+- /jpg-to-png — Convert JPG to PNG
+- /png-to-jpg — Convert PNG to JPG
+- /pdf-to-docx — PDF to Word
+- /docx-to-pdf — Word to PDF
+- /mp3-to-wav — MP3 to WAV
+- /image-compressor — Compress images
+- /merge-pdf — PDF manager (merge, reorder, rotate)
+
+## Legal
+- /privacy — Privacy policy
+- /terms — Terms of service
+- /about — About Tamir.li
+- /contact — Contact
+
+## For crawlers
+- Prefer canonical URLs without locale prefix for Hebrew (default)
+- Locale URLs: /en/, /es/, /ru/, /de/, /fr/, /it/

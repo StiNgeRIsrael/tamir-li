@@ -1,21 +1,30 @@
 import { ReactNode } from "react";
+import { useLocation } from "react-router-dom";
 import { TopNavbar } from "@/components/TopNavbar";
 import { SiteFooter } from "@/components/SiteFooter";
+import { DesktopAdRail } from "@/components/ads/DesktopAdRail";
 import { useLocale } from "@/lib/i18n";
 
-export function AppLayout({ children }: { children: ReactNode }) {
+function isPremiumSalesPath(pathname: string): boolean {
+  const segments = pathname.split("/").filter(Boolean);
+  return segments[segments.length - 1] === "premium";
+}
+
+export function AppLayout({ children, hideSideAds }: { children: ReactNode; hideSideAds?: boolean }) {
   const { dir } = useLocale();
+  const { pathname } = useLocation();
+  const suppressSideAds = hideSideAds ?? isPremiumSalesPath(pathname);
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col" dir={dir}>
-      <div className="page-aurora" aria-hidden>
-        <div className="absolute -top-32 start-[10%] h-72 w-72 rounded-full bg-tool-image/25 blur-3xl dark:bg-tool-image/20" />
-        <div className="absolute top-40 end-0 h-96 w-96 rounded-full bg-tool-video/20 blur-3xl dark:bg-tool-video/15" />
-        <div className="absolute bottom-20 start-1/4 h-64 w-64 rounded-full bg-tool-document/15 blur-3xl dark:bg-tool-document/12" />
-        <div className="absolute top-1/2 start-1/2 h-px w-px -translate-x-1/2 bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
-      </div>
+    <div className="relative min-h-screen w-full flex flex-col bg-background utility-grid-bg" dir={dir}>
       <TopNavbar />
-      <main className="relative flex-1">{children}</main>
+      <div className="relative flex flex-1 justify-center">
+        {!suppressSideAds && <DesktopAdRail side="start" />}
+        <main className="relative w-full min-w-0 flex-1">
+          {children}
+        </main>
+        {!suppressSideAds && <DesktopAdRail side="end" />}
+      </div>
       <SiteFooter />
     </div>
   );

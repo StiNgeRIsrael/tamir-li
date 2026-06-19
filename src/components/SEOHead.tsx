@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useLocale, LOCALES, localePath, type Locale } from "@/lib/i18n";
-import { siteUrl } from "@/lib/site";
+import { siteUrl, DEFAULT_OG_IMAGE, absoluteImageUrl, categoryOgImage } from "@/lib/site";
+import type { ToolCategory } from "@/lib/tools-data";
 
 interface SEOHeadProps {
   title: string;
   description: string;
   canonical?: string;
+  ogImage?: string;
   jsonLd?: object;
 }
 
@@ -31,7 +33,11 @@ const OG_LOCALE_FOR_LOCALE: Record<Locale, string> = {
   it: "it_IT",
 };
 
-export function SEOHead({ title, description, canonical, jsonLd }: SEOHeadProps) {
+export function toolCategoryOgImage(category: ToolCategory): string {
+  return categoryOgImage(category);
+}
+
+export function SEOHead({ title, description, canonical, ogImage, jsonLd }: SEOHeadProps) {
   const location = useLocation();
   const { locale } = useLocale();
 
@@ -44,6 +50,7 @@ export function SEOHead({ title, description, canonical, jsonLd }: SEOHeadProps)
   }
 
   const url = canonical || siteUrl(location.pathname);
+  const imageUrl = absoluteImageUrl(ogImage ?? DEFAULT_OG_IMAGE);
 
   useEffect(() => {
     document.title = title;
@@ -65,6 +72,9 @@ export function SEOHead({ title, description, canonical, jsonLd }: SEOHeadProps)
     setMeta("og:url", url, true);
     setMeta("og:type", "website", true);
     setMeta("og:locale", OG_LOCALE_FOR_LOCALE[locale], true);
+    setMeta("og:image", imageUrl, true);
+    setMeta("twitter:card", "summary_large_image");
+    setMeta("twitter:image", imageUrl);
     setMeta("twitter:title", title);
     setMeta("twitter:description", description);
 
@@ -113,7 +123,7 @@ export function SEOHead({ title, description, canonical, jsonLd }: SEOHeadProps)
     } else {
       existingLd?.remove();
     }
-  }, [title, description, url, jsonLd, basePath, locale]);
+  }, [title, description, url, imageUrl, jsonLd, basePath, locale]);
 
   return null;
 }

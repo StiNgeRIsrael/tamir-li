@@ -7,6 +7,7 @@ export const enTranslations: Record<string, any> = {
     signOut: "Sign out",
     account: "Account",
     signInFailed: "Sign-in failed. Try again.",
+    signInRequired: "Sign in to continue",
   },
   admin: {
     title: "Admin dashboard",
@@ -67,6 +68,15 @@ export const enTranslations: Record<string, any> = {
     subtitle: "Images, video, audio & documents — drag, choose format, done.",
     subtitleLine2: "No software to install. No signup. Free.",
   },
+  homePicker: {
+    title: "File conversion tools",
+    searchPlaceholder: "Search tools or formats…",
+    fromLabel: "From",
+    toLabel: "To",
+    go: "Go",
+    popular: "Popular conversions",
+    allTools: "All tools",
+  },
   homeStatLabels: {
     tools: "Tools on the site",
     formats: "Supported formats & extensions",
@@ -77,6 +87,23 @@ export const enTranslations: Record<string, any> = {
     freeDaily: "Up to 5",
   },
   toolCount: (n: number) => `(${n} tools)`,
+  homeSearch: {
+    placeholder: "Search by name, format or tool…",
+    all: "All",
+    noResults: "No tools found — try another term",
+    results: (n: number) => `${n} tools`,
+  },
+  internalLinks: {
+    title: "Popular Conversions",
+    image: "Images",
+    document: "Documents",
+    audio: "Audio",
+    video: "Video",
+  },
+  toolSeoBlocks: {
+    faqTitle: "Tool FAQ",
+    comparisonTitle: "Format Comparison",
+  },
   whyChoose: "Why choose Tamir.li?",
   features: [
     { title: "Fast Conversion", desc: "Processed in seconds, right in your browser" },
@@ -127,6 +154,9 @@ export const enTranslations: Record<string, any> = {
     conversionDone: "Conversion Complete!",
     download: "Download",
     downloadAll: "Download All",
+    watchAdToDownload: "Watch ad to download",
+    downloadNow: "Download now",
+    preparingDownload: "Preparing your download…",
     moreConversion: "Convert More",
     addFiles: "Add Files",
     convert: "Convert",
@@ -134,6 +164,12 @@ export const enTranslations: Record<string, any> = {
     converting: "Converting...",
     done: "Done",
     convertingWait: "Converting files... please wait",
+    queueFile: "File",
+    queueSize: "Size",
+    queueFormat: "Format",
+    queueStatus: "Status",
+    queueActions: "Actions",
+    queuePending: "Waiting",
     conversionNoApi: "API URL is not set (VITE_API_URL). Conversions will work once the backend is connected.",
     conversionNotReady: "The conversion service is not live yet. We're finishing the server integration.",
     conversionApiError: "Could not start conversion. Please try again later.",
@@ -197,6 +233,11 @@ export const enTranslations: Record<string, any> = {
     "ai-image-generator": "Advanced AI image creation tool. Describe the image you want in free text, choose a style and aspect ratio, and the AI will generate an original image in seconds. Available for Premium subscribers only.",
   },
   adLabel: "Ad • Google Ads",
+  adVignette: {
+    label: "Advertisement",
+    close: "Close",
+    wait: "Please wait a moment…",
+  },
   sidebarHome: "Home",
   sidebarUpgrade: "Upgrade to Premium",
   sidebarNoAds: "No ads • Unlimited",
@@ -384,6 +425,7 @@ export const enTranslations: Record<string, any> = {
     billedYearly: "Billed annually at $12.38/year. Cancel anytime.",
     perMonthNote: "/mo",
     ctaMain: "Upgrade Now",
+    checkoutSuccess: "Welcome to Premium! Your account is being updated.",
     guarantee: "100% Money-Back Guarantee",
     features: [
       { title: "Unlimited Conversions", desc: "No daily limits. Convert as many files as you need, every day." },
@@ -421,5 +463,131 @@ export const enTranslations: Record<string, any> = {
     finalCta: "Ready to Go Premium?",
     finalDesc: "Optional upgrade — cancel anytime, per terms of service.",
     orGoHome: "or continue with free plan",
+  },
+
+  consent: {
+    title: "Cookies & privacy",
+    description: "We use cookies for analytics (GA4) and ads (Google AdSense). You can accept or reject non-essential cookies.",
+    acceptAll: "Accept all",
+    rejectAll: "Reject all",
+    privacyLink: "Privacy Policy",
+  },
+
+  privacyPage: {
+    seoTitle: "Privacy Policy | Tamir.li",
+    seoDesc: "Tamir.li privacy policy — data collection, cookies, Google Analytics, AdSense, and your rights.",
+    title: "Privacy Policy",
+    lastUpdated: "Last updated: June 2025",
+    sections: [
+      {
+        heading: "Who we are",
+        body: [
+          "Tamir.li is an online file conversion service operated from Israel. This policy explains how we collect, use, and protect your information.",
+        ],
+      },
+      {
+        heading: "Files you upload",
+        body: [
+          "Files uploaded for conversion are processed only to perform the conversion. We do not retain files after processing except for brief technical windows if required.",
+        ],
+      },
+      {
+        heading: "Cookies and tracking",
+        body: [
+          "We use Google Analytics 4 (via Google Tag Manager) for anonymous usage analytics — only after you consent.",
+          "We use Google AdSense to show ads to free-tier users — only after you consent to advertising cookies.",
+          "Essential cookies (security, preferences) are required for the site to function and do not require separate consent.",
+        ],
+      },
+      {
+        heading: "Google AdSense",
+        body: [
+          "Google and its partners may use cookies to serve ads based on your prior visits to this or other websites.",
+          "Premium subscribers see no ads and AdSense scripts are not loaded for them.",
+          "Learn more: policies.google.com/privacy",
+        ],
+      },
+      {
+        heading: "Your rights",
+        body: [
+          "You can change cookie preferences anytime by clearing site data in your browser — the banner will appear on your next visit.",
+          "Privacy inquiries: support@tamir.li",
+        ],
+      },
+    ],
+  },
+
+  termsPage: {
+    seoTitle: "Terms of Service | Tamir.li",
+    seoDesc: "Tamir.li terms of service — free tier, premium subscription, liability limits, and usage rules.",
+    title: "Terms of Service",
+    lastUpdated: "Last updated: June 2025",
+    sections: [
+      {
+        heading: "Acceptance",
+        body: [
+          "Using Tamir.li means you agree to these terms. If you do not agree, please do not use the service.",
+        ],
+      },
+      {
+        heading: "Free and premium",
+        body: [
+          "The free plan includes a daily conversion limit and may show ads.",
+          "Premium (paid) removes ads and expands limits as described on the premium page.",
+          "Pricing and billing terms may change; active subscribers will be notified in advance.",
+        ],
+      },
+      {
+        heading: "Acceptable use",
+        body: [
+          "The service is for converting files you own or are authorized to convert.",
+          "Do not upload illegal, harmful, or copyright-infringing content.",
+        ],
+      },
+      {
+        heading: "Limitation of liability",
+        body: [
+          "The service is provided \"as is\". We are not liable for indirect damages or data loss arising from use of the service.",
+          "Premium refund terms are described on the premium page.",
+        ],
+      },
+    ],
+  },
+
+  aboutPage: {
+    seoTitle: "About Tamir.li",
+    seoDesc: "About Tamir.li — Hebrew-first file conversion for Israel. Images, video, audio, and documents.",
+    title: "About Tamir.li",
+    intro: "Tamir.li is a file conversion website built for users in Israel — fast, simple, and no software install required.",
+    sections: [
+      {
+        heading: "What we do",
+        body: [
+          "Convert between common image, video, audio, and document formats — directly in your browser.",
+          "The site defaults to Hebrew and is available in additional languages for international users.",
+        ],
+      },
+      {
+        heading: "Why choose us",
+        body: [
+          "Hebrew-first interface, Israel-focused, with broad format support.",
+          "Free tier with daily limits; premium removes ads and unlocks unlimited conversions.",
+        ],
+      },
+    ],
+    contactPrompt: "Have a question?",
+    contactLink: "Contact us",
+  },
+
+  contactPage: {
+    seoTitle: "Contact | Tamir.li",
+    seoDesc: "Contact the Tamir.li team — support, feedback, and business inquiries.",
+    title: "Contact",
+    intro: "We're happy to help with questions about the service, technical issues, or general feedback.",
+    emailHeading: "Email",
+    email: "support@tamir.li",
+    responseTime: "We typically respond within 1–3 business days.",
+    supportHeading: "Technical support",
+    supportBody: "For conversion issues, include file type, target format, and browser/device. Premium users receive priority responses.",
   },
 };

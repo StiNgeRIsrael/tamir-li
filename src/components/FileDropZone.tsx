@@ -32,20 +32,17 @@ export function FileDropZone({ acceptedFormats, onFilesSelected, multiple = true
     <div>
       <div
         onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
-        className={`drop-zone flex flex-col items-center justify-center gap-4 p-10 lg:p-14 text-center cursor-pointer min-h-[220px] lg:min-h-[300px] ${isDragging ? "drop-zone-active" : ""}`}
+        className={`drop-zone flex flex-col items-center justify-center gap-3 p-10 lg:p-12 text-center cursor-pointer min-h-[200px] lg:min-h-[260px] ${isDragging ? "drop-zone-active" : ""}`}
         onClick={() => document.getElementById("file-input")?.click()}
       >
-        <div className="relative flex h-20 w-20 items-center justify-center">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-tool-image/40 via-tool-video/30 to-tool-document/35 opacity-80 blur-md" />
-          <div className="relative flex h-16 w-16 items-center justify-center rounded-full border-2 border-primary/25 bg-gradient-to-br from-card to-primary/10 shadow-inner">
-            <Upload className="h-8 w-8 text-primary" />
-          </div>
+        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border bg-card">
+          <Upload className="h-7 w-7 text-primary" />
         </div>
         <div>
-          <p className="text-lg font-semibold text-foreground">{fdz.dragHere}</p>
+          <p className="text-base font-semibold text-foreground">{fdz.dragHere}</p>
           <p className="text-sm text-muted-foreground mt-1">{fdz.orClick(maxSizeMB, acceptedFormats.join(", "))}</p>
         </div>
-        <Button variant="outline" size="sm" className="mt-2">
+        <Button variant="outline" size="sm" className="mt-1">
           <FileUp className="w-4 h-4 me-2" />
           {fdz.selectFiles}
         </Button>
