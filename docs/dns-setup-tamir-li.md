@@ -126,7 +126,7 @@ The `_domainconnect` CNAME at the registrar is only for registrar “Domain Conn
 
 | Registrar NS → Cloudflare | Confirm with `nslookup -type=NS tamir.li` |
 
-| Plesk server IP | **Confirm with host** — likely `74.208.236.85` (your Plesk server IP) |
+| Plesk server IP | **Confirm with host** — likely `188.245.188.45` (your Plesk server IP) |
 
 | `tamir.li` A record → Plesk | Add in Cloudflare after NS propagation |
 
@@ -220,7 +220,7 @@ In **Cloudflare Dashboard → tamir.li → DNS → Records**, after NS propagati
 
 
 
-> **Confirm the Plesk server IP** in Plesk → **Websites & Domains** → **Hosting Settings**, or confirm in Plesk (**Websites & Domains** → **Hosting Settings**). The value below (`74.208.236.85`) matched earlier DNS checks but must be verified before going live.
+> **Confirm the Plesk server IP** in Plesk → **Websites & Domains** → **Hosting Settings**, or confirm in Plesk (**Websites & Domains** → **Hosting Settings**). The value below (`188.245.188.45`) matched earlier DNS checks but must be verified before going live.
 
 
 
@@ -232,7 +232,7 @@ In **Cloudflare Dashboard → tamir.li → DNS → Records**, after NS propagati
 
 |------|------|---------|-------|
 
-| A | `@` | `74.208.236.85` | Proxied (orange cloud) recommended |
+| A | `@` | `188.245.188.45` | Proxied (orange cloud) recommended |
 
 
 
@@ -264,7 +264,7 @@ In **Cloudflare Dashboard → tamir.li → DNS → Records**, after NS propagati
 
 |------|------|---------|-------|
 
-| A | `www` | `74.208.236.85` | Proxied |
+| A | `www` | `188.245.188.45` | Proxied |
 
 
 
@@ -470,7 +470,7 @@ Browser / tools:
 
 | ☐ | Wait until `nslookup -type=NS tamir.li` shows Cloudflare NS |
 
-| ☐ | **Confirm Plesk server IP** (likely `74.208.236.85`) |
+| ☐ | **Confirm Plesk server IP** (likely `188.245.188.45`) |
 
 | ☐ | In Cloudflare DNS: A `@` → Plesk IP; CNAME `www` → `tamir.li` (or A `www` → same IP) |
 
