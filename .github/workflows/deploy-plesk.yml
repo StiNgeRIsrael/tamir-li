@@ -1,4 +1,4 @@
-﻿# Deploy static frontend (dist/) to Plesk via FTPS/SFTP.
+﻿# Deploy static frontend (dist/) to Plesk via SFTP (SSH).
 # See docs/plesk-deploy.md for required GitHub secrets and variables.
 
 name: Deploy to Plesk
@@ -41,14 +41,14 @@ jobs:
           VITE_ADSENSE_SLOT_INLINE: ${{ secrets.VITE_ADSENSE_SLOT_INLINE }}
         run: npm run build:prod
 
-      - name: Deploy dist/ to Plesk (FTPS)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+      - name: Deploy dist/ to Plesk (SFTP)
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
-          server: ${{ secrets.PLESK_FTP_HOST }}
-          username: ${{ secrets.PLESK_FTP_USER }}
-          password: ${{ secrets.PLESK_FTP_PASSWORD }}
-          protocol: ftps
-          port: ${{ vars.PLESK_FTP_PORT || 21 }}
-          local-dir: dist/
-          server-dir: ${{ vars.PLESK_FTP_SERVER_DIR || './' }}
-          log-level: minimal
+          server: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}
+          username: ${{ secrets.PLESK_SSH_USER || secrets.PLESK_FTP_USER }}
+          password: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
+          port: ${{ vars.PLESK_SSH_PORT || 22 }}
+          local_path: ./dist/
+          remote_path: ${{ vars.PLESK_SSH_SERVER_DIR || vars.PLESK_FTP_SERVER_DIR || './' }}
+          sftp_only: true
+          sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"

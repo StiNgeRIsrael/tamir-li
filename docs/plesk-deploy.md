@@ -155,16 +155,30 @@ Browser:
 
 ---
 
-## GitHub Actions deploy (recommended)
+﻿## GitHub Actions deploy (recommended)
 
 Workflow: [`.github/workflows/deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml)
 
 | Trigger | When it runs |
 |---------|----------------|
 | **workflow_dispatch** | Actions → Deploy to Plesk → Run workflow |
-| **push to `main`** | After merge to `main` (optional automatic deploy) |
+| **push to `main`** | After merge to `main` (automatic deploy) |
 
-Steps: `npm ci` → `npm run build:prod` with `VITE_*` from repo settings → upload `dist/` to Plesk via **FTPS** (SamKirkland/FTP-Deploy-Action).
+Steps: `npm ci` → `npm run build:prod` with `VITE_*` from repo settings → upload `dist/` to Plesk via **SFTP** ([wlixcc/SFTP-Deploy-Action](https://github.com/wlixcc/SFTP-Deploy-Action), port **22**).
+
+### Credentials (secrets)
+
+The workflow reads **SSH/SFTP** settings first, then falls back to the legacy FTP secret names (same Plesk login often works for both).
+
+| Secret | Fallback | Description |
+|--------|----------|-------------|
+| `PLESK_SSH_HOST` | `PLESK_FTP_HOST` | Server hostname or IP (often the same as FTP; e.g. `74.208.236.85` or your domain) |
+| `PLESK_SSH_USER` | `PLESK_FTP_USER` | Plesk system/FTP username (e.g. subscription login) |
+| `PLESK_SSH_PASSWORD` | `PLESK_FTP_PASSWORD` | Password for that account |
+
+You do **not** need duplicate secrets if `PLESK_FTP_*` is already set — only add `PLESK_SSH_*` when SFTP must use different values.
+
+Optional: SSH private key deploy is **not** configured in the workflow; password auth is used. To use a key instead, extend the workflow with `ssh_private_key` from a secret.
 
 ### Repository variables (Settings → Secrets and variables → Actions → Variables)
 
@@ -172,16 +186,17 @@ Steps: `npm ci` → `npm run build:prod` with `VITE_*` from repo settings → up
 |------|---------|----------|
 | `VITE_SITE_ORIGIN` | `https://tamir.li` | Yes |
 | `VITE_API_URL` | `https://api.tamir.li` | Recommended |
-| `PLESK_FTP_SERVER_DIR` | `./` or `/httpdocs/` | Optional (default `./`) |
-| `PLESK_FTP_PORT` | `21` | Optional (default `21`) |
+| `PLESK_SSH_SERVER_DIR` | `./` or `httpdocs/` | Optional (falls back to `PLESK_FTP_SERVER_DIR`, then `./`) |
+| `PLESK_SSH_PORT` | `22` | Optional (default **22**) |
 
-### Repository secrets (Settings → Secrets and variables → Actions → Secrets)
+**Remote path:** After SFTP login, Plesk often lands you in the subscription home. Use `./` if the session root is already `httpdocs`, or `httpdocs/` if the login root is the subscription folder (confirm in Plesk File Manager).
+
+**Note:** `PLESK_FTP_PORT` (21) is ignored by the SFTP workflow; leave unset so port 22 is used.
+
+### Other repository secrets (build-time)
 
 | Secret | Description |
 |--------|-------------|
-| `PLESK_FTP_HOST` | Plesk FTP/FTPS hostname (e.g. `ftp.tamir.li` or server IP) |
-| `PLESK_FTP_USER` | FTP account username (document root should be `httpdocs`) |
-| `PLESK_FTP_PASSWORD` | FTP account password |
 | `VITE_GTM_ID` | Google Tag Manager container ID (optional) |
 | `VITE_ADSENSE_CLIENT` | AdSense publisher ID (optional) |
 | `VITE_ADSENSE_SLOT_BANNER` | Ad slot ID (optional) |
@@ -203,10 +218,6 @@ gh secret set VITE_ADSENSE_CLIENT
 ```
 
 Use `--body "value"` instead of a prompt when scripting non-interactive setup.
-
-### SFTP instead of FTPS
-
-If your host only exposes SFTP (SSH), replace the deploy step with [wlixcc/SFTP-Deploy-Action](https://github.com/wlixcc/SFTP-Deploy-Action) and secrets `PLESK_SSH_HOST`, `PLESK_SSH_USER`, `PLESK_SSH_PASSWORD` (or key). Document the same `dist/` → `httpdocs` target path.
 
 ### Alternative: Plesk Git extension (manual)
 
