@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "build": "rimraf dist && tsc"
+    "build": "prisma generate && rimraf dist && tsc"
   },
   "keywords": [],
   "author": "",

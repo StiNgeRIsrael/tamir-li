@@ -1,5 +1,5 @@
-﻿# Deploy static frontend (dist/) to Plesk via SFTP (SSH).
-# See docs/plesk-deploy.md for required GitHub secrets and variables.
+﻿# Deploy monolith (frontend dist/ + backend) to Plesk Node.js via SFTP.
+# See docs/plesk-node-deploy.md for Plesk settings and secrets.
 
 name: Deploy to Plesk
 
@@ -26,29 +26,42 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            backend/package-lock.json
 
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Build production bundle
+      - name: Build production app (Vite + backend)
         env:
           VITE_SITE_ORIGIN: ${{ vars.VITE_SITE_ORIGIN || 'https://tamir.li' }}
-          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://api.tamir.li' }}
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://tamir.li' }}
           VITE_GTM_ID: ${{ secrets.VITE_GTM_ID }}
           VITE_ADSENSE_CLIENT: ${{ secrets.VITE_ADSENSE_CLIENT }}
           VITE_ADSENSE_SLOT_BANNER: ${{ secrets.VITE_ADSENSE_SLOT_BANNER }}
           VITE_ADSENSE_SLOT_SIDEBAR: ${{ secrets.VITE_ADSENSE_SLOT_SIDEBAR }}
           VITE_ADSENSE_SLOT_INLINE: ${{ secrets.VITE_ADSENSE_SLOT_INLINE }}
-        run: npm run build:prod
+        run: npm run build
 
-      - name: Deploy dist/ to Plesk (SFTP)
+      - name: Prepare deploy bundle
+        run: |
+          rm -rf deploy
+          mkdir -p deploy/backend
+          cp package.json package-lock.json deploy/
+          cp -r dist deploy/
+          cp -r backend/dist deploy/backend/
+          cp -r backend/prisma deploy/backend/
+          cp backend/package.json backend/package-lock.json deploy/backend/
+
+      - name: Deploy to Plesk Node.js app root (SFTP)
         uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
           server: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}
           username: ${{ secrets.PLESK_SSH_USER || secrets.PLESK_FTP_USER }}
           password: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
           port: ${{ vars.PLESK_SSH_PORT || 22 }}
-          local_path: ./dist/
-          remote_path: ${{ vars.PLESK_SSH_SERVER_DIR || vars.PLESK_FTP_SERVER_DIR || './' }}
+          local_path: ./deploy/
+          remote_path: ${{ vars.PLESK_NODE_APP_DIR || vars.PLESK_SSH_SERVER_DIR || vars.PLESK_FTP_SERVER_DIR || './tamir-li/' }}
           sftp_only: true
           sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"

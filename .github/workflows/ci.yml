@@ -1,4 +1,4 @@
-# Quality checks + production build (artifact) on every push / PR.
+# Quality checks + production build on every push / PR.
 # Configure repository Variables: VITE_SITE_ORIGIN, VITE_API_URL (optional for build).
 
 name: CI
@@ -37,8 +37,8 @@ jobs:
       - name: Build (production mode)
         env:
           VITE_SITE_ORIGIN: ${{ vars.VITE_SITE_ORIGIN || 'https://tamir.li' }}
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
-        run: npm run build:prod
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://tamir.li' }}
+        run: npm run build:frontend
 
       - name: Upload dist
         uses: actions/upload-artifact@v4
@@ -68,3 +68,30 @@ jobs:
 
       - name: Typecheck
         run: npx tsc --noEmit
+
+  monolith-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            backend/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Build full app
+        env:
+          VITE_SITE_ORIGIN: ${{ vars.VITE_SITE_ORIGIN || 'https://tamir.li' }}
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://tamir.li' }}
+        run: npm run build
+
+      - name: Verify build outputs
+        run: |
+          test -f dist/index.html
+          test -f backend/dist/index.js

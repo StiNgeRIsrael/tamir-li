@@ -5,15 +5,23 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:api": "npm run dev --prefix backend",
     "generate:sitemap": "tsx scripts/generate-sitemap.ts",
+    "postinstall": "npm ci --prefix backend --include=dev",
     "prebuild": "npm run generate:sitemap",
-    "build": "vite build",
+    "build:frontend": "vite build --mode production",
+    "build:backend": "npm run build --prefix backend",
+    "build": "npm run build:frontend && npm run build:backend",
     "build:dev": "vite build --mode development",
-    "build:prod": "vite build --mode production",
+    "build:prod": "npm run build",
+    "start": "node backend/dist/index.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

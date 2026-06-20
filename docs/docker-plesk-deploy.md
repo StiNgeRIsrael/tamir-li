@@ -1,5 +1,7 @@
 # Deploy tamir.li with Docker on Plesk
 
+> **Alternative to the preferred Plesk Node.js monolith** — see [`plesk-node-deploy.md`](./plesk-node-deploy.md) for upload-code + `npm start` without Docker. This Compose stack remains valid if you already run nginx + MySQL in containers.
+
 Single **docker compose** stack replaces the split setup (static `httpdocs` + Plesk Node.js subdomain + Plesk MySQL):
 
 | Service | Role |
