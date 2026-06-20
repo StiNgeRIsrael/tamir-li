@@ -1,0 +1,12 @@
+node_modules
+dist
+.git
+.github
+*.md
+!docs/docker-plesk-deploy.md
+.env*
+!.env.example
+!.env.docker.example
+backend/node_modules
+backend/dist
+backend/.env*

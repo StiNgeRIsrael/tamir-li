@@ -1,0 +1,47 @@
+# Deploy full Docker stack on Plesk via SSH (docker compose up -d --build).
+# Requires .env.docker on the server — see docs/docker-plesk-deploy.md
+
+name: Deploy Docker stack to Plesk
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docker/**'
+      - 'backend/**'
+      - 'docker-compose.yml'
+      - '.env.docker.example'
+      - '.github/workflows/deploy-docker-plesk.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plesk-docker-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}
+          username: ${{ secrets.PLESK_SSH_USER || secrets.PLESK_FTP_USER }}
+          password: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
+          port: ${{ vars.PLESK_SSH_PORT || 22 }}
+          command_timeout: 30m
+          script: |
+            set -e
+            DEPLOY_DIR="${{ vars.PLESK_DOCKER_DIR || '~/tamir-li' }}"
+            cd "$DEPLOY_DIR"
+            if [ ! -f .env.docker ]; then
+              echo "Missing .env.docker in $DEPLOY_DIR — create from .env.docker.example on the server"
+              exit 1
+            fi
+            git pull origin main
+            docker compose --env-file .env.docker up -d --build
+            docker compose ps

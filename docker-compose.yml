@@ -1,0 +1,87 @@
+# Tamir.li — consolidated stack (nginx + API + MySQL).
+# Deploy: docker compose --env-file .env.docker up -d --build
+# See docs/docker-plesk-deploy.md
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD in .env.docker}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-tamirly_db}
+      MYSQL_USER: ${MYSQL_USER:-tamirly}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD in .env.docker}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      DATABASE_URL: mysql://${MYSQL_USER:-tamirly}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE:-tamirly_db}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env.docker}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      CORS_ORIGIN: ${CORS_ORIGIN:-https://tamir.li,https://www.tamir.li}
+      ADMIN_EMAILS: ${ADMIN_EMAILS:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_PRICE_MONTHLY: ${STRIPE_PRICE_MONTHLY:-}
+      STRIPE_PRICE_YEARLY: ${STRIPE_PRICE_YEARLY:-}
+      STRIPE_PRICE_CREDITS_10: ${STRIPE_PRICE_CREDITS_10:-}
+      STRIPE_PRICE_CREDITS_30: ${STRIPE_PRICE_CREDITS_30:-}
+      STRIPE_PRICE_CREDITS_60: ${STRIPE_PRICE_CREDITS_60:-}
+      STRIPE_PRICE_CREDITS_120: ${STRIPE_PRICE_CREDITS_120:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:5000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/web/Dockerfile
+      args:
+        VITE_SITE_ORIGIN: ${VITE_SITE_ORIGIN:-https://tamir.li}
+        VITE_API_URL: ${VITE_API_URL:-https://tamir.li}
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
+        VITE_GTM_ID: ${VITE_GTM_ID:-}
+        VITE_ADSENSE_CLIENT: ${VITE_ADSENSE_CLIENT:-}
+        VITE_ADSENSE_SLOT_BANNER: ${VITE_ADSENSE_SLOT_BANNER:-}
+        VITE_ADSENSE_SLOT_SIDEBAR: ${VITE_ADSENSE_SLOT_SIDEBAR:-}
+        VITE_ADSENSE_SLOT_INLINE: ${VITE_ADSENSE_SLOT_INLINE:-}
+        VITE_STRIPE_PUBLISHABLE_KEY: ${VITE_STRIPE_PUBLISHABLE_KEY:-}
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - internal
+
+networks:
+  internal:
+
+volumes:
+  mysql_data:
