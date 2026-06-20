@@ -117,13 +117,162 @@ Avoid Cloudflare **Flexible** if Plesk serves HTTPS — use Full so traffic is e
 
 ## Backend API (`api.tamir.li`)
 
-The Express backend is **separate** from the static frontend:
+The Express/Prisma backend lives in the repo’s `backend/` folder. It is **not** served from `httpdocs` and does **not** use the frontend GitHub Actions workflow today.
 
-- Host on the same Plesk server (subdomain + Node.js) or a VPS
-- Point Cloudflare `api` A/CNAME to that host — see [`dns-setup-tamir-li.md`](./dns-setup-tamir-li.md)
-- Set `VITE_API_URL=https://api.tamir.li` at frontend build time
+### Architecture
 
-See `docs/stripe-setup.md` for webhook URL: `https://api.tamir.li/api/billing/webhook`.
+| Host | Role | Plesk setup |
+|------|------|-------------|
+| `tamir.li` | Static Vite SPA | Document root `httpdocs` (deploy `dist/` via [GitHub Actions](#github-actions-deploy-recommended)) |
+| `api.tamir.li` | Express API (`/api/*`, `/health`) | Subdomain + **Node.js** app pointing at `backend/` |
+
+Frontend calls `VITE_API_URL` + path, e.g. `https://api.tamir.li/api/auth/me`. Set `VITE_API_URL=https://api.tamir.li` (no trailing slash) at frontend build time — already the default in [`.github/workflows/deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml).
+
+Stripe webhook: `https://api.tamir.li/api/billing/webhook` — see [`stripe-setup.md`](./stripe-setup.md).
+
+### Build & runtime (from `backend/package.json`)
+
+| Item | Value |
+|------|-------|
+| Production build | `npm run build` → compiles TypeScript to `dist/` (`tsc`) |
+| Start command | `npm start` → `node dist/index.js` |
+| Dev only | `npm run dev` → `nodemon src/index.ts` (do **not** use in Plesk production) |
+| Default port | `5000` (`PORT` env var; Plesk may inject its own) |
+| Node version | **22** (matches frontend CI) |
+
+After every `npm install` on the server, also run:
+
+```bash
+cd backend
+npx prisma generate
+npx prisma migrate deploy   # first deploy / after schema changes
+npm run build
+```
+
+`prisma` is a devDependency — install with dev deps on the build host (`npm ci` or `npm install --include=dev`), then start with `npm start`.
+
+### MySQL (required)
+
+Prisma uses **MySQL** (`backend/prisma/schema.prisma`). You need a MySQL database on Plesk:
+
+1. Plesk → **Databases** → **Add Database** (e.g. `tamirly_db`).
+2. Create a dedicated DB user with full rights on that database.
+3. Set `DATABASE_URL` in Node.js custom environment variables:
+
+   ```env
+   mysql://DB_USER:DB_PASSWORD@localhost:3306/tamirly_db
+   ```
+
+Use `localhost` when MySQL runs on the same Plesk server. Migrations live in `backend/prisma/migrations/` — apply with `npx prisma migrate deploy` from the application root.
+
+### Plesk Node.js settings (`api.tamir.li`)
+
+Create the subdomain first: **Domains** → **Add Subdomain** → `api.tamir.li`, then open **Node.js** on that subdomain.
+
+| Setting | Recommended value | Notes |
+|---------|-------------------|-------|
+| **Node.js version** | 22.x | Match repo CI |
+| **Package manager** | npm | |
+| **Application root** | Path containing `backend/package.json` | e.g. `/var/www/vhosts/tamir.li/backend` or subscription home `backend/` — **not** `httpdocs` |
+| **Application startup file** | `dist/index.js` | Or leave blank and set **Document root / mode** to run `npm start` if your Plesk build offers “npm” startup |
+| **Application mode** | `production` | Sets typical Node behaviour; also set `NODE_ENV=production` |
+| **Document root** | Subdomain default (often `api.tamir.li/httpdocs`) | Can stay empty/minimal — Plesk proxies HTTP(S) to the Node process |
+| **Application URL** | `/` | API is at subdomain root; routes are `/api/...` and `/health` |
+| **Custom environment variables** | See table below | Required secrets — never commit `backend/.env` |
+
+**CORS:** set `CORS_ORIGIN` to include the live frontend:
+
+```env
+CORS_ORIGIN=https://tamir.li,https://www.tamir.li
+```
+
+(`backend/src/app.ts` reads comma-separated origins and enables `credentials: true`.)
+
+### Environment variables (backend)
+
+Copy from [`backend/.env.example`](../backend/.env.example). Set all of these in Plesk **Node.js → Custom environment variables** (not in git).
+
+| Variable | Required | Example / notes |
+|----------|----------|-----------------|
+| `NODE_ENV` | Yes | `production` |
+| `PORT` | Optional | `5000` — use Plesk’s value if the panel sets it automatically |
+| `DATABASE_URL` | Yes | `mysql://user:pass@localhost:3306/tamirly_db` |
+| `JWT_SECRET` | Yes | Random string, **min 16 characters** |
+| `GOOGLE_CLIENT_ID` | Yes (Google sign-in) | Same Web client ID as frontend `VITE_GOOGLE_CLIENT_ID` |
+| `CORS_ORIGIN` | Yes | `https://tamir.li,https://www.tamir.li` |
+| `ADMIN_EMAILS` | Recommended | Comma-separated admin emails for bootstrap |
+| `STRIPE_SECRET_KEY` | Yes (billing) | `sk_live_...` |
+| `STRIPE_WEBHOOK_SECRET` | Yes (billing) | `whsec_...` from Stripe webhook endpoint |
+| `STRIPE_PRICE_MONTHLY` | Yes (billing) | Stripe Price ID |
+| `STRIPE_PRICE_YEARLY` | Yes (billing) | Stripe Price ID |
+| `STRIPE_PRICE_CREDITS_10` | Optional | Credit pack price IDs |
+| `STRIPE_PRICE_CREDITS_30` | Optional | |
+| `STRIPE_PRICE_CREDITS_60` | Optional | |
+| `STRIPE_PRICE_CREDITS_120` | Optional | |
+| `OPENAI_API_KEY` | Future | Listed in `.env.example`; not wired in routes yet |
+| `RESEND_API_KEY` | Future | Listed in `.env.example`; not wired in routes yet |
+
+### DNS (`api.tamir.li`)
+
+In **Cloudflare → DNS** (same server as `tamir.li`):
+
+| Type | Name | Content | Proxy |
+|------|------|---------|-------|
+| A | `api` | Same Plesk server IP as apex | Proxied or **DNS only** (grey cloud) — DNS only avoids double TLS if Plesk serves Let’s Encrypt directly |
+
+Enable **Let's Encrypt** for `api.tamir.li` in Plesk → subdomain → **SSL/TLS Certificates**.
+
+### Deployment options
+
+#### A) SFTP / Git — backend only (manual)
+
+1. Upload or clone the repo; use only the `backend/` tree on the server (or full repo with app root = `backend/`).
+2. SSH/SFTP into the subscription, then:
+
+   ```bash
+   cd backend
+   npm ci --include=dev
+   npx prisma generate
+   npx prisma migrate deploy
+   npm run build
+   ```
+
+3. In Plesk Node.js, set application root to that folder, startup `dist/index.js`, add env vars, click **Enable Node.js** / **Restart App**.
+
+#### B) Extend GitHub Actions (not implemented yet)
+
+The current [`.github/workflows/deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml) deploys only `dist/` to `httpdocs`. To automate the backend you could add a second job: SFTP `backend/` (excluding `node_modules`), SSH run `npm ci`, `prisma migrate deploy`, `npm run build`, restart Node via Plesk API or a deploy hook.
+
+#### C) Plesk Git on the subdomain
+
+1. Subdomain `api.tamir.li` → **Git** → clone this repo.
+2. **Application root** → `backend` (or repo root if deploy script `cd`s into it).
+3. **Deploy actions**:
+
+   ```bash
+   cd backend
+   npm ci --include=dev
+   npx prisma generate
+   npx prisma migrate deploy
+   npm run build
+   ```
+
+4. Store secrets in Plesk Node.js env vars, not in the repo.
+
+### Post-deploy checks (API)
+
+```bash
+curl https://api.tamir.li/health
+curl https://api.tamir.li/api/tools/config
+```
+
+Browser (with frontend deployed and `VITE_API_URL=https://api.tamir.li`):
+
+- [ ] Google sign-in reaches `POST /api/auth/google`
+- [ ] Admin panel loads stats (admin user in `ADMIN_EMAILS`)
+- [ ] Stripe checkout / webhook (see [`stripe-setup.md`](./stripe-setup.md))
+
+**Note:** `POST /api/conversions` currently returns **501** until conversion workers are connected — auth, billing, usage, and admin routes still need the API live.
 
 ---
 
