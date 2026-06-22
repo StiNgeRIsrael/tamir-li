@@ -37,15 +37,56 @@ First deploy only: ensure MySQL exists and `DATABASE_URL` is set in Plesk env va
 
 Enable **Node.js** on the main domain `tamir.li` (not a subdomain).
 
+The **application root** is the folder that contains the deployed root `package.json` (CI uploads the monolith bundle here). It is **not** the same as the legacy static `httpdocs/` document root unless you deliberately use `httpdocs/` as the app root.
+
+### Recommended layout (GitHub Actions SFTP)
+
+| Location on server | Purpose |
+|--------------------|---------|
+| `httpdocs/` | Legacy static files — **remove** old `index.html`, `dist/`, etc. after Node.js is live |
+| `httpdocs/deploy/` | **Node.js application root** (default `PLESK_NODE_APP_DIR`) |
+
+After CI deploy, `httpdocs/deploy/` contains:
+
+```
+package.json
+package-lock.json
+dist/                 ← Vite frontend (served by Express)
+backend/
+  package.json
+  package-lock.json
+  dist/               ← compiled API
+  prisma/
+```
+
+`node_modules/` is **not** uploaded — install on the server once via SSH or Plesk **Run Node.js commands**.
+
+### Plesk UI values (`httpdocs/deploy/` layout)
+
 | Setting | Value |
 |---------|-------|
 | **Node.js version** | **22.x** |
 | **Package manager** | npm |
-| **Application root** | Repository root (contains root `package.json`), e.g. `/var/www/vhosts/tamir.li/tamir-li` |
-| **Application startup file** | Leave blank — use npm script below, or set `backend/dist/index.js` |
-| **Document root** | Default subdomain/docroot is OK — Plesk proxies HTTP(S) to the Node process |
+| **Application root** | `/var/www/vhosts/tamir.li/httpdocs/deploy` (adjust vhost path; must contain root `package.json`) |
+| **Application startup file** | Leave blank — use **Application mode** + npm script below |
+| **Document root** | Keep default `httpdocs` — Plesk proxies HTTP(S) to the Node process |
 | **Application mode** | `production` |
+| **Document root / startup** | Do **not** point Node.js at `httpdocs/index.html` alone — that is the old static-only deploy |
 | **Custom script / start** | `npm start` (runs `node backend/dist/index.js`) |
+
+First-time SSH after SFTP upload (from application root):
+
+```bash
+cd httpdocs/deploy   # or your PLESK_NODE_APP_DIR
+npm ci
+npx prisma migrate deploy --schema=backend/prisma/schema.prisma
+```
+
+Then in Plesk Node.js: **Restart app** (or enable **Run npm install** if available).
+
+### Alternative: app root outside `httpdocs`
+
+Set GitHub variable `PLESK_NODE_APP_DIR` to e.g. `tamir-li/` (subscription home, sibling to `httpdocs/`). Application root in Plesk becomes `/var/www/vhosts/tamir.li/tamir-li`.
 
 ### Environment variables (Plesk → Node.js → Custom environment variables)
 
@@ -121,19 +162,30 @@ Store secrets in Plesk Node.js env vars. Restart the Node.js app after deploy.
 
 Workflow: [`.github/workflows/deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml)
 
-CI builds the full app, assembles a deploy bundle (`dist/`, `backend/dist/`, `backend/prisma/`, package manifests), and uploads via SFTP.
+CI builds the full app, assembles a deploy bundle (`package.json`, `dist/`, `backend/dist/`, `backend/prisma/`, backend manifests), and uploads via SFTP to the **Node.js application root** — default `httpdocs/deploy/`, **not** the `httpdocs/` document root.
+
+| GitHub variable | Default | Purpose |
+|-----------------|---------|---------|
+| `PLESK_NODE_APP_DIR` | `httpdocs/deploy/` | SFTP target = Plesk Node.js application root |
+| `VITE_SITE_ORIGIN` | `https://tamir.li` | Baked into frontend at build time |
+| `VITE_API_URL` | `https://tamir.li` | Same-origin API (monolith) |
+
+Do **not** set `PLESK_NODE_APP_DIR` to `httpdocs/` unless the app root is literally `httpdocs/` — that mixes legacy static files with the monolith and breaks Plesk Node.js setup.
+
+```bash
+gh variable set PLESK_NODE_APP_DIR --body "httpdocs/deploy/" --repo StiNgeRIsrael/tamir-li
+gh variable set VITE_API_URL --body "https://tamir.li" --repo StiNgeRIsrael/tamir-li
+```
 
 On the server after first upload:
 
 ```bash
-cd backend && npm ci --omit=dev && npx prisma generate
-npx prisma migrate deploy
-cd .. && npm start
+cd httpdocs/deploy
+npm ci
+npx prisma migrate deploy --schema=backend/prisma/schema.prisma
 ```
 
 Or enable Plesk Node.js with `npm start` and run `npm ci` + migrate via SSH once.
-
-Set repository variable `PLESK_NODE_APP_DIR` to the Node.js application root (not `httpdocs/`).
 
 ### C) Manual SFTP
 

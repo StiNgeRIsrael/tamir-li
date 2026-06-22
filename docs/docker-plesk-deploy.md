@@ -224,7 +224,7 @@ On push to `main` (docker-related paths) or manual dispatch: SSH to Plesk → `g
 
 `.env.docker` must exist on the server (not in git).
 
-The existing [`.github/workflows/deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml) still deploys static `dist/` only — disable or stop using it when Docker is live.
+The existing [`.github/workflows/deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml) deploys the Node.js monolith to `PLESK_NODE_APP_DIR` (default `httpdocs/deploy/`). Disable it when Docker is live, or use only one deploy path.
 
 ---
 

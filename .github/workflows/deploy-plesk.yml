@@ -53,6 +53,13 @@ jobs:
           cp -r backend/dist deploy/backend/
           cp -r backend/prisma deploy/backend/
           cp backend/package.json backend/package-lock.json deploy/backend/
+          echo "Deploy bundle contents:"
+          find deploy -maxdepth 3 -type f | head -40
+          test -f deploy/package.json
+          test -f deploy/backend/package.json
+          test -d deploy/dist
+          test -d deploy/backend/dist
+          test -d deploy/backend/prisma
 
       - name: Deploy to Plesk Node.js app root (SFTP)
         uses: wlixcc/SFTP-Deploy-Action@v1.2.6
@@ -62,6 +69,8 @@ jobs:
           password: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
           port: ${{ vars.PLESK_SSH_PORT || 22 }}
           local_path: ./deploy/
-          remote_path: ${{ vars.PLESK_NODE_APP_DIR || vars.PLESK_SSH_SERVER_DIR || vars.PLESK_FTP_SERVER_DIR || './tamir-li/' }}
+          # Node.js application root — NOT the static httpdocs document root.
+          # Default: httpdocs/deploy/ (sibling to legacy static files in httpdocs/).
+          remote_path: ${{ vars.PLESK_NODE_APP_DIR || 'httpdocs/deploy/' }}
           sftp_only: true
           sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"
