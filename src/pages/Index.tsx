@@ -63,9 +63,9 @@ const Index = () => {
   }, [visibleTools]);
   const derived = getDerivedHomeStatsFromTools(visibleTools);
   const statLabels = t.homeStatLabels as { tools: string; formats: string; categories: string; freeDaily: string };
-  const statValues = t.homeStatValues as { freeDaily: string };
+  const statValues = t.homeStatValues as { freeDaily: string; toolsLive: (live: number, total: number) => string };
   const homeStats = [
-    { value: String(derived.toolCount), label: statLabels.tools },
+    { value: statValues.toolsLive(derived.functionalToolCount, derived.toolCount), label: statLabels.tools },
     { value: String(derived.formatCount), label: statLabels.formats },
     { value: String(derived.categoryCount), label: statLabels.categories },
     { value: statValues.freeDaily, label: statLabels.freeDaily },

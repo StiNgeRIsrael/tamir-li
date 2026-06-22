@@ -96,6 +96,7 @@ export const heTranslations = {
   },
   homeStatValues: {
     freeDaily: "עד 5",
+    toolsLive: (live: number, total: number) => `${live} / ${total}`,
   },
   toolCount: (n: number) => `(${n} כלים)`,
   homeSearch: {

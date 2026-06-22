@@ -81,7 +81,10 @@ export const ruTranslations = {
     categories: "Категорий",
     freeDaily: "Бесплатный лимит (в день)",
   },
-  homeStatValues: { freeDaily: "До 5" },
+  homeStatValues: {
+    freeDaily: "До 5",
+    toolsLive: (live: number, total: number) => `${live} / ${total}`,
+  },
   toolCount: (n: number) => `(${n} инструментов)`,
   homeSearch: {
     placeholder: "Поиск по названию, формату или инструменту…",

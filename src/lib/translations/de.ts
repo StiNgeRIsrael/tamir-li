@@ -81,7 +81,10 @@ export const deTranslations = {
     categories: "Kategorien",
     freeDaily: "Kostenloses Kontingent (pro Tag)",
   },
-  homeStatValues: { freeDaily: "Bis zu 5" },
+  homeStatValues: {
+    freeDaily: "Bis zu 5",
+    toolsLive: (live: number, total: number) => `${live} / ${total}`,
+  },
   toolCount: (n: number) => `(${n} Tools)`,
   homeSearch: {
     placeholder: "Suche nach Name, Format oder Tool…",

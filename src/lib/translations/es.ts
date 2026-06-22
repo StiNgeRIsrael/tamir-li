@@ -87,7 +87,10 @@ export const esTranslations = {
     categories: "Categorías",
     freeDaily: "Nivel gratuito (por día)",
   },
-  homeStatValues: { freeDaily: "Hasta 5" },
+  homeStatValues: {
+    freeDaily: "Hasta 5",
+    toolsLive: (live: number, total: number) => `${live} / ${total}`,
+  },
   toolCount: (n: number) => `(${n} herramientas)`,
   homeSearch: {
     placeholder: "Buscar por nombre, formato o herramienta…",

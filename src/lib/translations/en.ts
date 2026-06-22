@@ -90,6 +90,7 @@ export const enTranslations = {
   },
   homeStatValues: {
     freeDaily: "Up to 5",
+    toolsLive: (live: number, total: number) => `${live} / ${total}`,
   },
   toolCount: (n: number) => `(${n} tools)`,
   homeSearch: {
