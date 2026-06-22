@@ -23,7 +23,7 @@ import { ArrowLeft, ArrowRight, Download, Loader2, CheckCircle2, Crown, X, Refre
 import { useLocale, localePath, htmlLangTag } from "@/lib/i18n";
 import { siteUrl } from "@/lib/site";
 import { allowMockFileConversion } from "@/lib/feature-flags";
-import { getApiBaseUrl } from "@/lib/api/client";
+import { getApiBaseUrl, responseLooksLikeJson } from "@/lib/api/client";
 import { useToolConfig } from "@/contexts/ToolConfigContext";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics/events";
@@ -264,6 +264,11 @@ export default function ToolPage() {
       fileItems.forEach((item) => fd.append("files", item.file));
 
       const res = await fetch(`${api}/api/conversions`, { method: "POST", body: fd, credentials: "include" });
+
+      if (!responseLooksLikeJson(res)) {
+        toast.error(tt.conversionApiError);
+        return;
+      }
 
       if (res.status === 501) {
         toast.error(tt.conversionNotReady);

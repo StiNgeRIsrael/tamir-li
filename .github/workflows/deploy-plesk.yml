@@ -155,6 +155,10 @@ jobs:
             # Legacy static files in httpdocs/ (parent of deploy/) take precedence over the Node proxy.
             # Remove them so /, /api/*, and /health reach the monolith in httpdocs/deploy/.
             HTTPDOCS="$(dirname "$APP_DIR")"
+            if [ -f "$HTTPDOCS/.htaccess" ]; then
+              echo "Removing legacy httpdocs/.htaccess (Apache SPA rewrite intercepts /api/* and /health)..."
+              rm -f "$HTTPDOCS/.htaccess"
+            fi
             if [ -f "$HTTPDOCS/index.html" ]; then
               echo "Removing legacy static index.html from $HTTPDOCS (Node monolith should serve the SPA)..."
               rm -f "$HTTPDOCS/index.html"
@@ -162,6 +166,10 @@ jobs:
             if [ -d "$HTTPDOCS/assets" ]; then
               echo "Removing legacy static assets/ from $HTTPDOCS..."
               rm -rf "$HTTPDOCS/assets"
+            fi
+            if [ -d "$HTTPDOCS/dist" ]; then
+              echo "Removing legacy httpdocs/dist/ (old full static deploy)..."
+              rm -rf "$HTTPDOCS/dist"
             fi
             for legacy in registerSW.js sw.js workbox-*.js manifest.webmanifest; do
               rm -f "$HTTPDOCS/$legacy" 2>/dev/null || true
@@ -189,9 +197,9 @@ jobs:
           sleep 15
           HEALTH_CT=$(curl -sS -o /tmp/health-body -w '%{content_type}' https://tamir.li/health || echo "failed")
           if echo "$HEALTH_CT" | grep -qi 'text/html'; then
-            echo "::warning:: GET /health returned HTML (expected application/json). Legacy static layer or Node proxy may still be misconfigured — see docs/plesk-node-deploy.md#fix-static-layer-blocking-node"
+            echo "::error:: GET /health returned HTML (expected application/json). Legacy static layer or Node proxy misconfigured — see docs/plesk-node-deploy.md#fix-static-layer-blocking-node"
             head -c 200 /tmp/health-body || true
-            exit 0
+            exit 1
           fi
           echo "/health content-type: $HEALTH_CT"
           cat /tmp/health-body

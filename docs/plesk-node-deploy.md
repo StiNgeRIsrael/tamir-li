@@ -257,7 +257,7 @@ gh variable set VITE_API_URL --body "https://tamir.li" --repo StiNgeRIsrael/tami
 
 **Root cause:** Either (a) Plesk’s domain document root (`httpdocs/`) still serves **legacy static files** from an older deploy, or (b) **document root is `httpdocs/deploy/dist`** and `dist/.htaccess` rewrites `/api/*` and `/health` to `index.html`. The Node monolith in `httpdocs/deploy/` may be running but **not receiving HTTP traffic**.
 
-CI now removes `httpdocs/index.html` and `httpdocs/assets/` after each deploy (SSH restart step). If login/API still fail, complete the steps below manually once.
+CI now removes `httpdocs/.htaccess`, `httpdocs/index.html`, and `httpdocs/assets/` after each deploy (SSH restart step). If login/API still fail, complete the steps below manually once.
 
 ### Diagnose (from your machine)
 
@@ -281,8 +281,10 @@ curl -s https://tamir.li/assets/index-*.js | grep -o 'apps.googleusercontent.com
    - **Node.js:** enabled → **Restart app**
 
 2. **File Manager → `httpdocs/`** — delete legacy static (keep `deploy/` and SEO files CI uploads):
+   - `.htaccess` (Apache SPA rewrite — intercepts `/api/*` and `/health`)
    - `index.html`
    - `assets/` (entire folder)
+   - `dist/` (entire folder, if present from old static deploy)
    - old `registerSW.js`, `sw.js`, `workbox-*.js` if present at `httpdocs/` root
 
 3. **Node.js → Custom environment variables** — set at minimum:

@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { getApiBaseUrl } from "@/lib/api/client";
+import { getApiBaseUrl, probeApiReachable, responseLooksLikeJson } from "@/lib/api/client";
 
 const STORAGE_KEY = "tamir_auth_token";
 
@@ -36,7 +36,8 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const apiBase = getApiBaseUrl();
   const googleConfigured = !!import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim();
-  const apiAvailable = !!apiBase;
+  const [apiReachable, setApiReachable] = useState<boolean | null>(null);
+  const apiAvailable = !!apiBase && apiReachable === true;
 
   const [token, setTokenState] = useState<string | null>(() => {
     try {
@@ -59,10 +60,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (!apiBase) {
+      setApiReachable(false);
+      return;
+    }
+    let cancelled = false;
+    probeApiReachable(apiBase).then((ok) => {
+      if (!cancelled) setApiReachable(ok);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBase]);
+
+  useEffect(() => {
     let cancelled = false;
 
     async function loadMe() {
       if (!apiBase || !token) {
+        if (!cancelled) {
+          setUser(null);
+          setLoading(false);
+        }
+        return;
+      }
+      if (apiReachable === null) return;
+      if (!apiReachable) {
         if (!cancelled) {
           setUser(null);
           setLoading(false);
@@ -75,7 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (cancelled) return;
-        if (!res.ok) {
+        if (!res.ok || !responseLooksLikeJson(res)) {
           persistToken(null);
           setUser(null);
           setLoading(false);
@@ -100,7 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [apiBase, token, persistToken]);
+  }, [apiBase, token, apiReachable, persistToken]);
 
   const signInWithGoogleCredential = useCallback(
     async (credential: string) => {
@@ -110,6 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken: credential }),
       });
+      if (!responseLooksLikeJson(res)) throw new Error("API_UNAVAILABLE");
       const body = (await res.json().catch(() => ({}))) as { token?: string; user?: AuthUser; message?: string };
       if (!res.ok) {
         throw new Error(body.message || "SIGN_IN_FAILED");
