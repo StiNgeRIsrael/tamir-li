@@ -7,6 +7,7 @@ import { getToolById, getDefaultSlug } from "@/lib/tools-data";
 
 interface ComingSoonPanelProps {
   toolName?: string;
+  toolId?: string;
 }
 
 export function ComingSoonPanel({ toolName, toolId }: ComingSoonPanelProps) {
@@ -16,6 +17,8 @@ export function ComingSoonPanel({ toolName, toolId }: ComingSoonPanelProps) {
     comingSoonTitle: string;
     comingSoonMessage: (name: string) => string;
     comingSoonAlternatives: string;
+    comingSoonPdfWordHint: string;
+    comingSoonPdfWordCta: string;
     backHome: string;
   };
   const toolNames = t.toolNames as Record<string, string>;
@@ -28,6 +31,18 @@ export function ComingSoonPanel({ toolName, toolId }: ComingSoonPanelProps) {
     })
     .filter((item): item is { id: string; name: string; slug: string } => item !== null);
 
+  const pdfManagerAlt =
+    toolId === "pdf-to-word"
+      ? (() => {
+          const mgr = getToolById("merge-pdf");
+          if (!mgr) return null;
+          return {
+            slug: getDefaultSlug(mgr),
+            name: toolNames["merge-pdf"] || mgr.name,
+          };
+        })()
+      : null;
+
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-16 text-center space-y-4">
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted">
@@ -39,6 +54,14 @@ export function ComingSoonPanel({ toolName, toolId }: ComingSoonPanelProps) {
           {tt.comingSoonMessage(toolName ?? "")}
         </p>
       </div>
+      {pdfManagerAlt && (
+        <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm space-y-3 max-w-md w-full">
+          <p className="text-muted-foreground leading-relaxed">{tt.comingSoonPdfWordHint}</p>
+          <Button size="sm" asChild className="w-full sm:w-auto">
+            <Link to={localePath(`/${pdfManagerAlt.slug}`, locale)}>{tt.comingSoonPdfWordCta}</Link>
+          </Button>
+        </div>
+      )}
       {alternatives.length > 0 && (
         <div className="space-y-3 max-w-md w-full">
           <h3 className="text-sm font-semibold text-foreground">{tt.comingSoonAlternatives}</h3>
