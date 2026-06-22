@@ -99,6 +99,7 @@ SITE_URL=https://tamir.li API_URL=https://tamir.li npm run site:check
 
 | Symptom | Likely fix |
 |---------|------------|
+| Passenger **"Could not spawn process… exited prematurely"** | Open `/tmp/passenger-error-*.html` on the server (Plesk **File Manager** or SSH) or **Node.js → Logs** stderr for boot stack trace; often blocked startup migrate before listen — redeploy latest backend; confirm `DATABASE_URL` in custom env; **Restart app** |
 | `/api/usage/today` or `/api/tools/config` → **500** | Fix `DATABASE_URL` in Plesk custom env, restart app (auto-migrate); check `[startup-migrate]` logs |
 | `/health` → HTML or `db.ok: false` | Fix docroot (not `deploy/dist`); verify `DATABASE_URL` in Plesk env; restart app for migrations |
 | `/health` missing `uptime` / `db` | Redeploy latest backend bundle |

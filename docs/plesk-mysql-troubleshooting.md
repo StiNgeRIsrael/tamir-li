@@ -235,6 +235,7 @@ Expect exit **0**, no `db.ok is false` warning.
 
 | Symptom | Fix |
 |---------|-----|
+| Passenger **"Could not spawn process… exited prematurely"** | Plesk **Node.js → Logs** (stderr) or server `/tmp/passenger-error-*.html` (error IDs in panel) for the boot stack trace. Common causes: sync `prisma migrate` blocking before listen (fixed in latest backend — redeploy + restart), missing `backend/dist`, or uncaught import error. App should still start if migrate fails — check `[startup-migrate]` lines. |
 | `/health` → HTML | Document root = `httpdocs/deploy`, not `deploy/dist` — [deploy-checklist.md](./deploy-checklist.md) |
 | `/health` JSON, no `db` / `uptime` | Redeploy latest backend bundle |
 | `db.ok: false` | This doc — `DATABASE_URL`, grants, migrations, restart; check `db.error` (P1000 auth vs P1001 reach vs P1003 wrong DB name) |
