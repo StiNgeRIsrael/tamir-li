@@ -1,7 +1,3 @@
-import mammoth from "mammoth";
-import { PDFDocument, type PDFFont } from "pdf-lib";
-import fontkit from "@pdf-lib/fontkit";
-
 const A4_WIDTH = 595.28;
 const A4_HEIGHT = 841.89;
 const PAGE_MARGIN = 50;
@@ -24,9 +20,13 @@ export function isLegacyDocFile(file: File): boolean {
   return name.endsWith(".doc") && !name.endsWith(".docx");
 }
 
+interface PdfTextFont {
+  widthOfTextAtSize(text: string, size: number): number;
+}
+
 export function splitTextIntoLines(
   text: string,
-  font: PDFFont,
+  font: PdfTextFont,
   fontSize: number,
   maxWidth: number
 ): string[] {
@@ -63,6 +63,12 @@ export async function convertWordFileToPdf(file: File): Promise<Blob> {
   if (isLegacyDocFile(file)) {
     throw new Error("LEGACY_DOC_NOT_SUPPORTED");
   }
+
+  const [{ default: mammoth }, { PDFDocument }, { default: fontkit }] = await Promise.all([
+    import("mammoth"),
+    import("pdf-lib"),
+    import("@pdf-lib/fontkit"),
+  ]);
 
   const arrayBuffer = await file.arrayBuffer();
   const { value: text } = await mammoth.extractRawText({ arrayBuffer });
