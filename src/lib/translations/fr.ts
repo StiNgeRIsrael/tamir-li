@@ -83,6 +83,12 @@ export const frTranslations = {
   },
   homeStatValues: { freeDaily: "Jusqu'à 5" },
   toolCount: (n: number) => `(${n} outils)`,
+  homeSearch: {
+    placeholder: "Rechercher par nom, format ou outil…",
+    all: "Tous",
+    noResults: "Aucun outil trouvé – essayez un autre terme",
+    results: (n: number) => `${n} outils`,
+  },
   toolSeoBlocks: {
     faqTitle: "FAQ de l'outil",
     comparisonTitle: "Comparaison des formats",

@@ -147,7 +147,7 @@ router.post('/', optionalAuth, multipartUpload, async (req: Request, res: Respon
     if (files.length > 0) {
       const dir = ensureJobDir(job.id);
       const first = files[0];
-      const safeName = path.basename(first.originalname || 'input').replace(/[^\w.\-]+/g, '_');
+      const safeName = path.basename(first.originalname || 'input').replace(/[^\w.-]+/g, '_');
       inputStoragePath = path.join(dir, `input-${safeName}`);
       fs.writeFileSync(inputStoragePath, first.buffer);
     }

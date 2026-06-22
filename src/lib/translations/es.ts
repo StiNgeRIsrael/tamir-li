@@ -89,6 +89,12 @@ export const esTranslations = {
   },
   homeStatValues: { freeDaily: "Hasta 5" },
   toolCount: (n: number) => `(${n} herramientas)`,
+  homeSearch: {
+    placeholder: "Buscar por nombre, formato o herramienta…",
+    all: "Todas",
+    noResults: "No se encontraron herramientas – prueba otro término",
+    results: (n: number) => `${n} herramientas`,
+  },
   toolSeoBlocks: {
     faqTitle: "Preguntas frecuentes sobre la herramienta",
     comparisonTitle: "Comparación de formatos",

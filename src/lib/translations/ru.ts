@@ -83,6 +83,12 @@ export const ruTranslations = {
   },
   homeStatValues: { freeDaily: "До 5" },
   toolCount: (n: number) => `(${n} инструментов)`,
+  homeSearch: {
+    placeholder: "Поиск по названию, формату или инструменту…",
+    all: "Все",
+    noResults: "Инструменты не найдены — попробуйте другой запрос",
+    results: (n: number) => `${n} инструментов`,
+  },
   toolSeoBlocks: {
     faqTitle: "Частые вопросы об инструменте",
     comparisonTitle: "Сравнение форматов",
