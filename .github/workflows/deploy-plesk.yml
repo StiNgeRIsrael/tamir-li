@@ -70,6 +70,8 @@ jobs:
           cp -r backend/dist plesk-upload/deploy/backend/
           cp -r backend/prisma plesk-upload/deploy/backend/
           cp backend/package.json backend/package-lock.json plesk-upload/deploy/backend/
+          mkdir -p plesk-upload/deploy/scripts
+          cp scripts/plesk-db.mjs plesk-upload/deploy/scripts/
           for f in sitemap.xml robots.txt ads.txt llms.txt; do
             if [ -f "dist/$f" ]; then
               cp "dist/$f" "plesk-upload/$f"
@@ -83,6 +85,7 @@ jobs:
           test -f plesk-upload/deploy/package.json
           test -f plesk-upload/deploy/app.js
           test -f plesk-upload/deploy/backend/dist/index.js
+          test -f plesk-upload/deploy/scripts/plesk-db.mjs
           test -f plesk-upload/deploy/dist/sitemap.xml
           test -f plesk-upload/sitemap.xml
           SITEMAP_BYTES=$(wc -c < plesk-upload/sitemap.xml | tr -d ' ')
