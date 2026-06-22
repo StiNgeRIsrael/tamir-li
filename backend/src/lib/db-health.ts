@@ -24,6 +24,29 @@ export function isDatabaseUrlSet(): boolean {
   return Boolean(process.env.DATABASE_URL?.trim());
 }
 
+export type ParsedDatabaseUrl = {
+  host?: string;
+  database?: string;
+};
+
+/** Parse DATABASE_URL for safe /health diagnostics — never exposes credentials. */
+export function parseDatabaseUrlSafe(): ParsedDatabaseUrl {
+  const raw = process.env.DATABASE_URL?.trim();
+  if (!raw) return {};
+
+  try {
+    const url = new URL(raw);
+    const host = url.hostname || undefined;
+    const database = url.pathname.replace(/^\/+/, '') || undefined;
+    return {
+      ...(host ? { host } : {}),
+      ...(database ? { database } : {}),
+    };
+  } catch {
+    return {};
+  }
+}
+
 /** Walk Error.cause chains (Node 16+) and nested cause objects. */
 function collectErrorChain(err: unknown): unknown[] {
   const chain: unknown[] = [];
