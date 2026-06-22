@@ -242,6 +242,34 @@ Expect exit **0**, no `db.ok is false` warning.
 | Migrations fail “Environment variable not found: DATABASE_URL” in Run Node.js commands | Expected Plesk quirk — set `DATABASE_URL` in custom env and **Restart app** (auto-migrate); or CI **run_server_setup** / SSH `export`; see [§3](#plesk-quirk-run-nodejs-commands-vs-runtime-env) |
 | New migration after deploy, `db.ok: false` | Restart Node app; check logs for `[startup-migrate]` errors |
 | `run_server_setup` works once, then `db.ok: false` again | Add same `DATABASE_URL` to **Plesk** custom env (not only GitHub secret) |
+| P3018 — `Table 'Tamirli.User' doesn't exist` on first migrate | Fresh DB — see [§8](#8-p3018--table-user-doesnt-exist-fresh-database) |
+
+---
+
+## 8. P3018 — `Table 'User' doesn't exist` (fresh database)
+
+Older deploys shipped only **incremental** migrations (`ALTER TABLE User`, PayPal billing). A **new empty database** needs the baseline migration `20260101000000_init` first (creates `User`, `Profile`, `Subscription`, etc.), then the two follow-ups.
+
+**Symptom:** `prisma migrate deploy` reports P3018 on `20260509120000_admin_tool_config_user_blocked`.
+
+**Fix (SSH on Plesk, after pulling latest code):**
+
+```bash
+cd ~/httpdocs/deploy   # or your app root
+
+export DATABASE_URL='mysql://USER:PASSWORD@localhost:3306/Tamirli'
+
+# If a previous failed attempt left a broken migration record:
+npx prisma migrate resolve --rolled-back 20260509120000_admin_tool_config_user_blocked \
+  --schema=backend/prisma/schema.prisma
+
+# Apply all migrations in order (init → admin → paypal):
+npx prisma migrate deploy --schema=backend/prisma/schema.prisma
+```
+
+Verify: `mysql … -e "SHOW TABLES;"` — expect `_prisma_migrations`, `User`, `UsageLog`, `ToolConfig`, etc.
+
+**Alternative (empty dev DB only, not recommended for production):** `npx prisma db push --schema=backend/prisma/schema.prisma` skips migration history.
 
 ---
 
