@@ -44,7 +44,10 @@ When `db.error` is present it is a **sanitized Prisma code only** (no password o
 | **P1001** | Can't reach MySQL server — wrong host/port, MySQL down, or socket/TCP mismatch | Use `localhost:3306` on same Plesk box; try `127.0.0.1`; confirm MySQL service is running |
 | **P1003** | Database does not exist — name in URL ≠ name in Plesk panel | Use the **full** database name Plesk shows (often subscription-prefixed, e.g. `tamirli_tamirli` not `tamirli`) |
 | **TIMEOUT** | Ping timed out (2s) — network, overloaded MySQL, or firewall | Same as P1001; check server load |
-| **UNKNOWN** | Non-Prisma failure — redeploy latest backend if field missing entirely | Check Plesk / Passenger logs for raw error |
+| **MISSING_ENV** | `DATABASE_URL` not set in the Node process | Plesk → Node.js → **Custom environment variables** — add `DATABASE_URL`, then **Restart App** |
+| **ECONNREFUSED** / **ETIMEDOUT** / **ENOTFOUND** | TCP/DNS failure before MySQL auth | Wrong host/port, MySQL down, or firewall — use `localhost:3306` on same Plesk box |
+| **INVALID_URL** | Malformed `DATABASE_URL` | Fix scheme (`mysql://`), encoding, and path |
+| **UNKNOWN** | Unrecognized failure after parsing — check Plesk logs for raw stack | Redeploy latest backend; inspect `[startup-migrate]` lines at boot |
 
 Or run the full probe:
 
