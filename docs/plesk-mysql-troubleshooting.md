@@ -82,6 +82,24 @@ Reference: [backend/.env.example](../backend/.env.example), [plesk-node-deploy.m
 
 **Common mistake:** `DATABASE_URL` set in GitHub for `run_server_setup` but **missing** in Plesk UI → migrations may have run once, but the running process has no DB URL.
 
+### Plesk quirk: Run Node.js commands vs runtime env
+
+**Custom environment variables apply to the running Node.js app**, not necessarily to **Run Node.js commands** (`run plesk:db`, `run setup`). Those one-off npm invocations often run without Plesk’s custom env — Prisma then fails with:
+
+`Environment variable not found: DATABASE_URL`
+
+(`prisma generate` still succeeds because it does not need `DATABASE_URL`.)
+
+**Fix (pick one):**
+
+| Method | Steps |
+|--------|--------|
+| **`backend/.env` on server** (recommended) | Create `backend/.env` on the server (File Manager or SSH) with `DATABASE_URL=mysql://...` — same value as Plesk custom env. Not committed to git. Then **Run Node.js commands** → `run plesk:db`. Root `plesk:db` loads this file automatically. |
+| **SSH one-liner** | SSH into the subscription, `cd` to app root, `export DATABASE_URL='mysql://...'`, then `npm run plesk:db`. |
+| **GitHub Actions** | workflow_dispatch with **run_server_setup** + GitHub secret `DATABASE_URL` (SSH does not inherit Plesk env either). |
+
+Keep **`DATABASE_URL` in Plesk custom env** for the live app even when using `backend/.env` for migrations.
+
 ---
 
 ## 4. `run setup` vs `run plesk:db`
@@ -91,9 +109,32 @@ Use **Plesk → Node.js → Run Node.js commands** (npm args field only — no `
 | npm args | When to use |
 |----------|-------------|
 | `run setup` | First deploy, lockfile change, or full reinstall: `npm ci` + backend deps + `prisma migrate deploy` |
-| `run plesk:db` | Schema/migration changed, deps already installed: migrations only |
+| `run plesk:db` | Schema/migration changed, deps already installed — **only if** the command runner sees `DATABASE_URL` |
+| `run plesk:db:env` | Same as `plesk:db`, but reads `backend/.env` on the server (Node 22 `--env-file`) |
 
-**Order:** set `DATABASE_URL` in Plesk env **before** either command.
+### `Environment variable not found: DATABASE_URL` (generate OK, migrate fails)
+
+**Cause:** `prisma generate` does not connect to MySQL; `prisma migrate deploy` does. On many Plesk versions, **Custom environment variables** are injected for the **running Node app** only — **Run Node.js commands** often runs in a plain shell **without** those vars. Setting `DATABASE_URL` in the Plesk UI is still correct for runtime; migrations need an extra step.
+
+**Unblock now (no SSH):**
+
+1. **File Manager** → `httpdocs/deploy/backend/` → create **`.env`** (not in git):
+
+   ```
+   DATABASE_URL=mysql://USER:PASSWORD@localhost:3306/DATABASE_NAME
+   ```
+
+   Use the same URL as in Plesk custom env. No surrounding quotes. URL-encode special characters in the password.
+
+2. **Run Node.js commands** → npm args: `run plesk:db:env`
+
+3. **Restart app** in Plesk.
+
+**Alternatives:** SSH → `export DATABASE_URL='mysql://...'` → `npm run plesk:db`; or CI **workflow_dispatch** with **run_server_setup** + GitHub secret `DATABASE_URL`.
+
+Prisma 6 **`migrate deploy` has no `--url` flag** — connection string must come from the environment or a `.env` file Prisma loads.
+
+**Order:** ensure `DATABASE_URL` is available to the migrate command (Plesk custom env *or* `backend/.env`) **before** `run setup` / `run plesk:db` / `run plesk:db:env`.
 
 **CI alternative:** GitHub Actions **workflow_dispatch** on [deploy-plesk.yml](../.github/workflows/deploy-plesk.yml) with **run_server_setup** checked — requires GitHub secret `DATABASE_URL` (SSH does not inherit Plesk env).
 
@@ -169,7 +210,7 @@ Expect exit **0**, no `db.ok is false` warning.
 | `/health` → HTML | Document root = `httpdocs/deploy`, not `deploy/dist` — [deploy-checklist.md](./deploy-checklist.md) |
 | `/health` JSON, no `db` / `uptime` | Redeploy latest backend bundle |
 | `db.ok: false` | This doc — `DATABASE_URL`, grants, migrations, restart |
-| Migrations fail “Environment variable not found: DATABASE_URL” | Set `DATABASE_URL` in Plesk env before `run setup` / `run plesk:db` |
+| Migrations fail “Environment variable not found: DATABASE_URL” | Run Node.js commands don’t inherit Plesk custom env — add `backend/.env` with `DATABASE_URL` on server, or use SSH `export` / CI secret; see [§3 quirk](#plesk-quirk-run-nodejs-commands-vs-runtime-env) |
 | `run_server_setup` works once, then `db.ok: false` again | Add same `DATABASE_URL` to **Plesk** custom env (not only GitHub secret) |
 
 ---

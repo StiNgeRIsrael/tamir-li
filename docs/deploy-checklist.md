@@ -72,6 +72,16 @@ Do **not** put Adsterra Publisher API keys or server secrets in `VITE_*`.
 
 Plesk UI does not support `npx` — use `run plesk:db`, not `npx prisma migrate deploy`.
 
+**`DATABASE_URL` missing during `run plesk:db`:** On many Plesk versions, **Run Node.js commands** does **not** inherit **Custom environment variables** (those apply to the running app only). `prisma generate` still succeeds; `migrate deploy` fails with `Environment variable not found: DATABASE_URL`.
+
+| Fix (pick one) | How |
+|----------------|-----|
+| **A — `backend/.env` on server** | File Manager → `httpdocs/deploy/backend/.env` with `DATABASE_URL=mysql://...` (no quotes). Plesk npm args: `run plesk:db` (loads file automatically) |
+| **B — SSH** | `export DATABASE_URL='mysql://...'` then `npm run plesk:db` |
+| **C — CI** | GitHub Actions **workflow_dispatch** + **run_server_setup** + secret `DATABASE_URL` |
+
+Keep `DATABASE_URL` in Plesk **Custom environment variables** for the live app (restart after changes). Details: [plesk-mysql-troubleshooting.md §3](./plesk-mysql-troubleshooting.md#plesk-quirk-run-nodejs-commands-vs-runtime-env).
+
 ## ffmpeg (server-side audio converter)
 
 - Install on host: `apt install ffmpeg` (or hoster-provided path).

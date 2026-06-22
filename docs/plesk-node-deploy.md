@@ -82,7 +82,7 @@ Plesk only exposes **npm** in the **Run Node.js commands** tab: a dropdown for `
 |------|----------------------------|--------------|
 | 1 | `ci` | Install root dependencies (`postinstall` also installs backend) |
 | 2 | `run plesk:backend-install` | `npm ci --prefix backend --omit=dev` |
-| 3 | `run plesk:db` | `prisma migrate deploy --schema=backend/prisma/schema.prisma` |
+| 3 | `run plesk:db` or `run plesk:db:env` | Migrations — use `plesk:db:env` if custom env vars are not visible to this tab (see below) |
 
 #### After commands succeed
 
@@ -124,6 +124,8 @@ run plesk:db
 ```
 
 **Why not `npx prisma`?** Plesk does not allow `npx` in this UI. Root `package.json` includes `prisma` and scripts `plesk:db` / `setup` so everything runs via `npm <args>` only.
+
+**`DATABASE_URL` not found during migrate?** Custom env vars in the Plesk UI often apply only to the **running app**, not **Run Node.js commands**. `prisma generate` succeeds; `migrate deploy` fails. Create `httpdocs/deploy/backend/.env` with `DATABASE_URL=mysql://...` on the server, then run `run plesk:db:env`. Keep `DATABASE_URL` in Plesk custom env for runtime. Details: [plesk-mysql-troubleshooting.md](./plesk-mysql-troubleshooting.md#4-run-setup-vs-run-pleskdb).
 
 ### After GitHub Actions SFTP upload
 
@@ -408,6 +410,7 @@ See also [`backend/.env.example`](../backend/.env.example) and [`conversion-queu
 | `npm run setup` / `npm run plesk:install` | `run setup` | **Server** — full first-time install + migrate |
 | `npm run plesk:backend-install` | `run plesk:backend-install` | **Server** — backend prod deps only |
 | `npm run plesk:db` | `run plesk:db` | **Server** — apply Prisma migrations |
+| `npm run plesk:db:env` | `run plesk:db:env` | **Server** — migrations using `backend/.env` (when Plesk commands tab lacks custom env) |
 | `npm run build` | `run build` | **CI only** when using GitHub Actions SFTP — not on server |
 | `npm start` | — | Local / CLI — `node backend/dist/index.js` (Plesk uses `app.js` instead) |
 | `npm run dev` / `npm run dev:api` | — | Local development only |
@@ -462,9 +465,11 @@ If the password contains special characters (`@`, `#`, `%`, `:`, `/`, etc.), [UR
 | npm args field | What it runs |
 |----------------|--------------|
 | `run setup` | `npm ci` + backend prod deps + `prisma migrate deploy` |
-| `run plesk:db` | `prisma migrate deploy --schema=backend/prisma/schema.prisma` |
+| `run plesk:db` | `prisma generate` + `prisma migrate deploy` (via `scripts/plesk-db.mjs`) |
 
-**Order matters:** set `DATABASE_URL` in env vars **before** `run setup` or `run plesk:db`. Migrations create tables (`User`, `Profile`, `Subscription`, `Payment`, etc.).
+**Plesk quirk:** Custom environment variables apply to the **running app**, not always to **Run Node.js commands**. If migrate fails with `Environment variable not found: DATABASE_URL`, create **`backend/.env`** on the server with the same `DATABASE_URL` (not in git). `run plesk:db` loads it automatically. See [plesk-mysql-troubleshooting.md §3](./plesk-mysql-troubleshooting.md#plesk-quirk-run-nodejs-commands-vs-runtime-env).
+
+**Order matters:** set `DATABASE_URL` in Plesk custom env (runtime) and/or `backend/.env` (migrations) **before** `run setup` or `run plesk:db`. Migrations create tables (`User`, `Profile`, `Subscription`, `Payment`, etc.).
 
 ### Verify tables (optional)
 
