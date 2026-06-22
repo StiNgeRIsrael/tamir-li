@@ -8,6 +8,7 @@
     "dev:api": "npm run dev --prefix backend",
     "dev:all": "concurrently -n web,api -c blue,green \"npm run dev\" \"npm run dev:api\"",
     "generate:sitemap": "tsx scripts/generate-sitemap.ts",
+    "generate:gsc-priority": "tsx scripts/gsc-priority-urls.ts",
     "postinstall": "npm ci --prefix backend --include=dev",
     "prebuild": "npm run generate:sitemap",
     "build:frontend": "vite build --mode production",
