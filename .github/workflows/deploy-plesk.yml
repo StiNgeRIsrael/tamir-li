@@ -49,64 +49,36 @@ jobs:
 
       - name: Prepare deploy bundle
         run: |
-          rm -rf deploy
-          mkdir -p deploy/backend
-          cp package.json package-lock.json app.js deploy/
-          cp -r dist deploy/
-          cp -r backend/dist deploy/backend/
-          cp -r backend/prisma deploy/backend/
-          cp backend/package.json backend/package-lock.json deploy/backend/
-          echo "Deploy bundle contents:"
-          find deploy -maxdepth 3 -type f | head -40
-          test -f deploy/package.json
-          test -f deploy/app.js
-          test -f deploy/backend/package.json
-          test -f deploy/backend/dist/index.js
-          test -d deploy/dist
-          test -f deploy/dist/sitemap.xml
-          test -f deploy/dist/robots.txt
-          test -d deploy/backend/dist
-          test -d deploy/backend/prisma
-
-      - name: Prepare SEO files for document root
-        run: |
-          mkdir -p deploy-seo
+          rm -rf plesk-upload
+          mkdir -p plesk-upload/deploy/backend
+          cp package.json package-lock.json app.js plesk-upload/deploy/
+          cp -r dist plesk-upload/deploy/
+          cp -r backend/dist plesk-upload/deploy/backend/
+          cp -r backend/prisma plesk-upload/deploy/backend/
+          cp backend/package.json backend/package-lock.json plesk-upload/deploy/backend/
           for f in sitemap.xml robots.txt ads.txt llms.txt; do
             if [ -f "dist/$f" ]; then
-              cp "dist/$f" "deploy-seo/$f"
+              cp "dist/$f" "plesk-upload/$f"
             fi
           done
-          ls -la deploy-seo/
-          test -f deploy-seo/sitemap.xml
+          echo "Plesk upload tree:"
+          find plesk-upload -maxdepth 3 -type f | head -50
+          test -f plesk-upload/deploy/package.json
+          test -f plesk-upload/deploy/app.js
+          test -f plesk-upload/deploy/backend/dist/index.js
+          test -f plesk-upload/deploy/dist/sitemap.xml
+          test -f plesk-upload/sitemap.xml
 
-      - name: Deploy to Plesk Node.js app root (SFTP)
+      - name: Deploy to Plesk (Node app + SEO files)
         uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
           server: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}
           username: ${{ secrets.PLESK_SSH_USER || secrets.PLESK_FTP_USER }}
           password: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
           port: ${{ vars.PLESK_SSH_PORT || 22 }}
-          local_path: ./deploy/
-          # Node.js application root — NOT the static httpdocs document root.
-          # Default: httpdocs/deploy/ (sibling to legacy static files in httpdocs/).
-          remote_path: ${{ vars.PLESK_NODE_APP_DIR || 'httpdocs/deploy/' }}
-          sftp_only: true
+          local_path: ./plesk-upload/
+          # SEO files → httpdocs/sitemap.xml; Node monolith → httpdocs/deploy/
+          remote_path: ${{ vars.PLESK_HTTPDOCS_DIR || 'httpdocs/' }}
+          sftp_only: false
+          rsyncArgs: "-avz --omit-dir-times"
           sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"
-
-      - name: Deploy SEO files to Plesk document root (SFTP)
-        env:
-          SFTP_HOST: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}
-          SFTP_USER: ${{ secrets.PLESK_SSH_USER || secrets.PLESK_FTP_USER }}
-          SFTP_PASS: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
-          SFTP_PORT: ${{ vars.PLESK_SSH_PORT || 22 }}
-          SFTP_DIR: ${{ vars.PLESK_HTTPDOCS_DIR || 'httpdocs' }}
-        run: |
-          sudo apt-get install -y sshpass
-          httpdocs="${SFTP_DIR%/}"
-          batch=$(mktemp)
-          for f in deploy-seo/*; do
-            [ -f "$f" ] || continue
-            echo "put $f ${httpdocs}/$(basename "$f")" >> "$batch"
-          done
-          cat "$batch"
-          sshpass -p "$SFTP_PASS" sftp -o StrictHostKeyChecking=accept-new -P "$SFTP_PORT" -b "$batch" "$SFTP_USER@$SFTP_HOST"
