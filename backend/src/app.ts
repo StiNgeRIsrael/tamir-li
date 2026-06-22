@@ -51,7 +51,8 @@ app.use(
     credentials: true,
   })
 );
-app.use(helmet());
+// same-origin-allow-popups: required for Google Identity Services popup postMessage
+app.use(helmet({ crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' } }));
 app.use(morgan('dev'));
 
 // Routes
