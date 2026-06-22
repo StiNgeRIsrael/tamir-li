@@ -18,6 +18,7 @@ const FORMAT_EXT: Record<string, string> = {
   TIFF: "tiff",
   TIF: "tiff",
   SVG: "svg",
+  ICO: "ico",
 };
 
 export function normalizeFormat(fmt: string): string {
@@ -32,7 +33,22 @@ export function formatToExtension(fmt: string): string {
 /** Output formats the browser can produce without a WASM encoder. */
 export function isOutputFormatSupported(fmt: string): boolean {
   const f = normalizeFormat(fmt);
-  return f in FORMAT_MIME || f === "BMP";
+  return f in FORMAT_MIME || f === "BMP" || f === "ICO";
+}
+
+export function canConvertClientSide(fromFormat: string, toFormat: string): boolean {
+  return isInputFormatSupported(fromFormat) && isOutputFormatSupported(toFormat);
+}
+
+/** True for image-converter and single-pair slugs like svg-to-png / png-to-ico. */
+export function usesClientImageConversion(
+  toolId: string,
+  fromFormats: readonly string[],
+  toFormats: readonly string[]
+): boolean {
+  if (toolId === "image-converter") return true;
+  if (fromFormats.length !== 1 || toFormats.length !== 1) return false;
+  return canConvertClientSide(fromFormats[0], toFormats[0]);
 }
 
 export function isInputFormatSupported(fmt: string): boolean {
@@ -102,6 +118,48 @@ function canvasToBmp(canvas: HTMLCanvasElement): Blob {
   return new Blob([buffer], { type: "image/bmp" });
 }
 
+const FAVICON_SIZES = [16, 32, 48] as const;
+
+async function canvasToIco(source: HTMLCanvasElement): Promise<Blob> {
+  const entries: { size: number; png: Uint8Array }[] = [];
+
+  for (const size of FAVICON_SIZES) {
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d")!;
+    ctx.drawImage(source, 0, 0, size, size);
+    const blob = await canvasToBlob(canvas, "image/png");
+    entries.push({ size, png: new Uint8Array(await blob.arrayBuffer()) });
+  }
+
+  const headerSize = 6 + entries.length * 16;
+  let dataOffset = headerSize;
+  const header = new ArrayBuffer(headerSize);
+  const view = new DataView(header);
+  view.setUint16(0, 0, true);
+  view.setUint16(2, 1, true);
+  view.setUint16(4, entries.length, true);
+
+  const chunks: BlobPart[] = [header];
+  entries.forEach((entry, index) => {
+    const dir = 6 + index * 16;
+    const dim = entry.size >= 256 ? 0 : entry.size;
+    view.setUint8(dir, dim);
+    view.setUint8(dir + 1, dim);
+    view.setUint8(dir + 2, 0);
+    view.setUint8(dir + 3, 0);
+    view.setUint16(dir + 4, 1, true);
+    view.setUint16(dir + 6, 32, true);
+    view.setUint32(dir + 8, entry.png.length, true);
+    view.setUint32(dir + 12, dataOffset, true);
+    dataOffset += entry.png.length;
+    chunks.push(entry.png);
+  });
+
+  return new Blob(chunks, { type: "image/x-icon" });
+}
+
 function canvasToBlob(
   canvas: HTMLCanvasElement,
   mime: string,
@@ -137,6 +195,10 @@ export async function convertImageFile(file: File, toFormat: string): Promise<Bl
 
   if (to === "BMP") {
     return canvasToBmp(canvas);
+  }
+
+  if (to === "ICO") {
+    return canvasToIco(canvas);
   }
 
   const mime = FORMAT_MIME[to];

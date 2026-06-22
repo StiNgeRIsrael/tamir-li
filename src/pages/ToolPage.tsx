@@ -33,7 +33,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useConversionJob } from "@/hooks/useConversionJob";
 import { isAdsterraConfigured } from "@/lib/ads/adsterra";
 import { isToolFunctional } from "@/lib/tool-availability";
-import { convertImageFile, isOutputFormatSupported } from "@/lib/image-convert";
+import { convertImageFile, isOutputFormatSupported, usesClientImageConversion } from "@/lib/image-convert";
 import { ComingSoonPanel } from "@/components/ComingSoonPanel";
 
 const categoryHeaderIcon: Record<ToolCategory, string> = {
@@ -257,7 +257,7 @@ export default function ToolPage() {
       return;
     }
 
-    if (tool.id === "image-converter") {
+    if (usesClientImageConversion(tool.id, tool.fromFormats, tool.toFormats)) {
       trackEvent("convert_start", {
         tool_id: tool.id,
         from_format: activeFrom,
@@ -442,7 +442,7 @@ export default function ToolPage() {
   const toolLongDesc = toolLongDescs?.[tool.id] || tool.longDescription;
   const isCustom = !!tool.customComponent;
   const toolIsFunctional = isToolFunctional(tool.id);
-  const availableToFormats = tool.id === "image-converter"
+  const availableToFormats = usesClientImageConversion(tool.id, tool.fromFormats, tool.toFormats)
     ? tool.toFormats.filter((f) => isOutputFormatSupported(f))
     : tool.toFormats;
   const pageTitle = isCustom

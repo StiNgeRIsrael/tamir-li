@@ -4,6 +4,8 @@ import {
   formatToExtension,
   isOutputFormatSupported,
   isInputFormatSupported,
+  canConvertClientSide,
+  usesClientImageConversion,
 } from "./image-convert";
 import { isToolFunctional, getFunctionalToolIds } from "./tool-availability";
 
@@ -21,8 +23,21 @@ describe("image-convert format helpers", () => {
   it("knows browser-exportable output formats", () => {
     expect(isOutputFormatSupported("PNG")).toBe(true);
     expect(isOutputFormatSupported("BMP")).toBe(true);
+    expect(isOutputFormatSupported("ICO")).toBe(true);
     expect(isOutputFormatSupported("TIFF")).toBe(false);
     expect(isOutputFormatSupported("SVG")).toBe(false);
+  });
+
+  it("detects client-side conversion pairs", () => {
+    expect(canConvertClientSide("SVG", "PNG")).toBe(true);
+    expect(canConvertClientSide("PNG", "ICO")).toBe(true);
+    expect(canConvertClientSide("PNG", "TIFF")).toBe(false);
+  });
+
+  it("routes dedicated image slugs through client conversion", () => {
+    expect(usesClientImageConversion("svg-to-png", ["SVG"], ["PNG"])).toBe(true);
+    expect(usesClientImageConversion("png-to-ico", ["PNG"], ["ICO"])).toBe(true);
+    expect(usesClientImageConversion("pdf-to-word", ["PDF"], ["DOCX"])).toBe(false);
   });
 
   it("accepts common raster inputs including SVG", () => {
@@ -35,6 +50,8 @@ describe("image-convert format helpers", () => {
 describe("tool-availability", () => {
   it("marks shipped tools as functional", () => {
     expect(isToolFunctional("image-converter")).toBe(true);
+    expect(isToolFunctional("svg-to-png")).toBe(true);
+    expect(isToolFunctional("png-to-ico")).toBe(true);
     expect(isToolFunctional("merge-pdf")).toBe(true);
     expect(isToolFunctional("text-tools")).toBe(true);
     expect(isToolFunctional("audio-converter")).toBe(true);
@@ -50,6 +67,6 @@ describe("tool-availability", () => {
     const ids = getFunctionalToolIds();
     expect(ids).toContain("image-compressor");
     expect(ids).toContain("audio-converter");
-    expect(ids.length).toBe(6);
+    expect(ids.length).toBe(8);
   });
 });

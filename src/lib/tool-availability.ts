@@ -6,6 +6,8 @@ const FUNCTIONAL_TOOL_IDS = new Set([
   "image-converter",
   "image-compressor",
   "image-resizer",
+  "svg-to-png",
+  "png-to-ico",
   "merge-pdf",
   "text-tools",
   "audio-converter",
