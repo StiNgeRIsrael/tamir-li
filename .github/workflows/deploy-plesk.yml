@@ -5,6 +5,12 @@ name: Deploy to Plesk
 
 on:
   workflow_dispatch:
+    inputs:
+      run_server_setup:
+        description: Run npm run setup on server (lockfile or migrations changed)
+        required: false
+        default: false
+        type: boolean
   push:
     branches:
       - main
@@ -90,3 +96,52 @@ jobs:
           sftp_only: false
           rsyncArgs: "-avz --omit-dir-times"
           sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"
+
+      # Runs only after SFTP succeeds. No npm install unless workflow_dispatch run_server_setup=true.
+      - name: Restart Node.js app on Plesk
+        if: success()
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}
+          username: ${{ secrets.PLESK_SSH_USER || secrets.PLESK_FTP_USER }}
+          password: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
+          port: ${{ vars.PLESK_SSH_PORT || 22 }}
+          command_timeout: 15m
+          script: |
+            set -e
+            APP_DIR="${{ vars.PLESK_NODE_APP_DIR || 'httpdocs/deploy' }}"
+            APP_DIR="${APP_DIR%/}"
+            DOMAIN="${{ vars.PLESK_DOMAIN || 'tamir.li' }}"
+            cd "$APP_DIR"
+            echo "Node.js app dir: $(pwd)"
+
+            if [ "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.run_server_setup == 'true' }}" = "true" ]; then
+              echo "Running npm run setup (workflow_dispatch run_server_setup=true)..."
+              export PATH="/opt/plesk/node/22/bin:/opt/plesk/node/24/bin:/opt/plesk/node/20/bin:$PATH"
+              npm run setup
+            fi
+
+            RESTARTED=0
+
+            # 1) Plesk Node extension CLI (not available on all Plesk versions)
+            if command -v plesk >/dev/null 2>&1; then
+              if plesk bin node --restart -domain "$DOMAIN" 2>/dev/null; then
+                echo "Restarted via: plesk bin node --restart -domain $DOMAIN"
+                RESTARTED=1
+              else
+                echo "Note: plesk bin node --restart not available (common — using Passenger touch fallback)"
+              fi
+            fi
+
+            if [ "$RESTARTED" -eq 0 ]; then
+              # 2) Phusion Passenger / Plesk GUI "Restart app" uses tmp/restart.txt
+              mkdir -p tmp
+              touch tmp/restart.txt
+              echo "Triggered restart via: touch tmp/restart.txt"
+
+              # 3) Touch startup file (fallback for some Node.js configs)
+              touch app.js
+              echo "Also touched: app.js"
+            fi
+
+            echo "Node.js restart signal sent. App reloads on the next request (Passenger may take a few seconds)."

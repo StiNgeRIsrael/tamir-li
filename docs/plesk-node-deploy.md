@@ -125,7 +125,24 @@ run plesk:db
 
 ### After GitHub Actions SFTP upload
 
-CI ([`.github/workflows/deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml)) **builds everything in GitHub** and uploads a ready-to-run bundle. The server does **not** need `npm run build`.
+CI ([`.github/workflows/deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml)) **builds everything in GitHub**, uploads via SFTP, then **restarts Node.js over SSH** (same `PLESK_SSH_*` secrets as SFTP). The server does **not** need `npm run build`.
+
+**Restart method (tried in order on the server):**
+
+| Order | Command | Notes |
+|-------|---------|-------|
+| 1 | `plesk bin node --restart -domain tamir.li` | Only if Plesk Node CLI supports it; often **not** available |
+| 2 | `touch tmp/restart.txt` | **Standard** — same as Plesk **Restart app** (Phusion Passenger) |
+| 3 | `touch app.js` | Extra fallback; touches the startup file |
+
+Restart runs **only if SFTP deploy succeeded**. CI does **not** run `npm install` on every deploy — code-only updates need only the automatic restart.
+
+**When lockfiles or migrations change**, either:
+
+- Use Plesk **Run Node.js commands** → `run setup` (or `run plesk:db`), then restart, **or**
+- Re-run the workflow manually with **run_server_setup** checked (runs `npm run setup` over SSH, then restart).
+
+**Production note:** If the site still serves legacy static files from `httpdocs/` (no Node.js proxy), the restart is harmless but API/SPA changes require the Node.js monolith + proxy — see [Recommended layout](#recommended-layout-github-actions-sftp).
 
 **Uploaded by CI:**
 
@@ -143,7 +160,23 @@ backend/
 
 **Not uploaded:** `node_modules/` — install on the server once via **Run Node.js commands** (see [Run Node.js commands](#run-nodejs-commands-no-shell-no-npx-no-cd)).
 
-On later deploys, run `run setup` when lockfiles change, `run plesk:db` when migrations change, or just **Restart app** otherwise.
+On later deploys, run `run setup` when lockfiles change, `run plesk:db` when migrations change. Otherwise CI **restarts automatically** — no manual **Restart app** needed unless SSH is disabled or restart fails.
+
+### GitHub secrets & variables (CI deploy + restart)
+
+| Name | Required | Purpose |
+|------|----------|---------|
+| `PLESK_SSH_HOST` | Yes* | Server hostname (or `PLESK_FTP_HOST`) |
+| `PLESK_SSH_USER` | Yes* | SSH/SFTP user (or `PLESK_FTP_USER`) |
+| `PLESK_SSH_PASSWORD` | Yes* | SSH/SFTP password (or `PLESK_FTP_PASSWORD`) |
+| `PLESK_SSH_PORT` (var) | No | Default `22` |
+| `PLESK_HTTPDOCS_DIR` (var) | No | SFTP target; default `httpdocs/` |
+| `PLESK_NODE_APP_DIR` (var) | No | Node app root for restart; default `httpdocs/deploy` |
+| `PLESK_DOMAIN` (var) | No | Domain for Plesk CLI restart attempt; default `tamir.li` |
+
+\*Workflow falls back from `PLESK_SSH_*` to `PLESK_FTP_*`. **No new secrets** are required if SFTP deploy already works — restart reuses the same credentials.
+
+SSH access must be enabled for the subscription user (**Websites & Domains** → **Hosting Settings** → SSH access `/bin/bash` or similar).
 
 ### First deploy checklist (no SSH)
 
@@ -152,7 +185,7 @@ On later deploys, run `run setup` when lockfiles change, `run plesk:db` when mig
 3. Enable Node.js; set application root `httpdocs/deploy`, document root `httpdocs/deploy`, startup file `app.js`.
 4. Wait for GitHub Actions deploy to finish (or upload bundle manually).
 5. **Run Node.js commands:** `run setup` (or step-by-step: `ci`, `run plesk:backend-install`, `run plesk:db`).
-6. **Restart app**.
+6. **Restart app** (first time only — later deploys restart via CI SSH).
 7. Run [post-deploy checks](#post-deploy-checks) (browser or external `curl`).
 
 ### Alternative application root
@@ -317,11 +350,11 @@ If the password contains special characters (`@`, `#`, `%`, `:`, `/`, etc.), [UR
 
 ## Deploy options
 
-### A) GitHub Actions → SFTP (recommended)
+### A) GitHub Actions → SFTP + SSH restart (recommended)
 
 Workflow: [`.github/workflows/deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml)
 
-CI builds the full app, assembles the deploy bundle, and uploads via SFTP to the Node.js application root. On the server: `run setup`, then restart — all via Plesk Node.js UI (see [Run Node.js commands](#run-nodejs-commands-no-shell-no-npx-no-cd)).
+CI builds the full app, uploads via SFTP, then SSH-restarts Node.js (`touch tmp/restart.txt` + `touch app.js`, with optional `plesk bin node --restart` when available). On the server: first deploy still needs **Run Node.js commands** → `run setup` (see [Run Node.js commands](#run-nodejs-commands-no-shell-no-npx-no-cd)). Later code-only deploys need no manual restart.
 
 ### B) Build on server (Plesk Git)
 
