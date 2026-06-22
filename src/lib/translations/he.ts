@@ -206,8 +206,8 @@ export const heTranslations = {
         ? `${name} בדרך — אנחנו מסיימים את הפיתוח. חזרו בקרוב או נסו אחד מהכלים הזמינים.`
         : "הכלי בדרך — אנחנו מסיימים את הפיתוח. חזרו בקרוב או נסו אחד מהכלים הזמינים.",
     comingSoonAlternatives: "נסו במקום",
-    comingSoonPdfWordHint: "בינתיים אפשר למזג, לפצל ולארגן קבצי PDF במנהל PDF שלנו — ישירות בדפדפן.",
-    comingSoonPdfWordCta: "למנהל PDF",
+    comingSoonPdfWordHint: "צריכים PDF עכשיו? המירו מסמכי Word ל-PDF עם הכלי Word ל-PDF שלנו — ישירות בדפדפן.",
+    comingSoonPdfWordCta: "ל-Word ל-PDF",
     comingSoonVideoHint: "צריכים להמיר אודיו עכשיו? המירו MP3, WAV, AAC ועוד עם ממיר האודיו שלנו.",
     comingSoonVideoCta: "לממיר אודיו",
     basicExportBadge: "ייצוא בסיסי",

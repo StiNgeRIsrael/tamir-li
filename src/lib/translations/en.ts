@@ -197,8 +197,8 @@ export const enTranslations = {
         ? `${name} is on the way — we're finishing the implementation. Check back soon or try one of our available tools.`
         : "This tool is on the way — we're finishing the implementation. Check back soon or try one of our available tools.",
     comingSoonAlternatives: "Try these instead",
-    comingSoonPdfWordHint: "In the meantime, merge, split, and organize PDFs in the browser with our PDF Manager.",
-    comingSoonPdfWordCta: "Open PDF Manager",
+    comingSoonPdfWordHint: "Need PDF output now? Convert Word documents to PDF in the browser with our Word to PDF tool.",
+    comingSoonPdfWordCta: "Try Word to PDF",
     comingSoonVideoHint: "Need to convert audio now? Convert MP3, WAV, AAC, and more with our Audio Converter.",
     comingSoonVideoCta: "Open Audio Converter",
     basicExportBadge: "Basic export",

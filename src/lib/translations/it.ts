@@ -156,8 +156,8 @@ export const itTranslations = {
         ? `${name} è in arrivo — stiamo completando l'implementazione. Torna presto o prova uno degli strumenti disponibili.`
         : "Questo strumento è in arrivo — stiamo completando l'implementazione. Torna presto o prova uno degli strumenti disponibili.",
     comingSoonAlternatives: "Prova invece",
-    comingSoonPdfWordHint: "Nel frattempo unisci, dividi e organizza i PDF nel browser con il nostro gestore PDF.",
-    comingSoonPdfWordCta: "Apri gestore PDF",
+    comingSoonPdfWordHint: "Serve un PDF adesso? Converti documenti Word in PDF nel browser con il nostro strumento Word in PDF.",
+    comingSoonPdfWordCta: "Prova Word in PDF",
     comingSoonVideoHint: "Devi convertire audio adesso? Converti MP3, WAV, AAC e altro con il nostro convertitore audio.",
     comingSoonVideoCta: "Apri convertitore audio",
     basicExportBadge: "Esportazione base",

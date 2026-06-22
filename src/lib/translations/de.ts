@@ -156,8 +156,8 @@ export const deTranslations = {
         ? `${name} kommt bald — wir finalisieren die Implementierung. Schauen Sie bald wieder vorbei oder probieren Sie ein verfügbares Tool.`
         : "Dieses Tool kommt bald — wir finalisieren die Implementierung. Schauen Sie bald wieder vorbei oder probieren Sie ein verfügbares Tool.",
     comingSoonAlternatives: "Stattdessen ausprobieren",
-    comingSoonPdfWordHint: "Bis PDF zu Word fertig ist: PDFs im Browser mit unserem PDF-Manager zusammenführen, teilen und sortieren.",
-    comingSoonPdfWordCta: "PDF-Manager öffnen",
+    comingSoonPdfWordHint: "Brauchen Sie jetzt PDF? Konvertieren Sie Word-Dokumente im Browser mit unserem Word-zu-PDF-Tool.",
+    comingSoonPdfWordCta: "Word zu PDF ausprobieren",
     comingSoonVideoHint: "Audio jetzt konvertieren? MP3, WAV, AAC und mehr mit unserem Audiokonverter.",
     comingSoonVideoCta: "Audiokonverter öffnen",
     basicExportBadge: "Basis-Export",

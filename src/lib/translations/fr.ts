@@ -156,8 +156,8 @@ export const frTranslations = {
         ? `${name} arrive bientôt — nous finalisons l'implémentation. Revenez bientôt ou essayez un outil disponible.`
         : "Cet outil arrive bientôt — nous finalisons l'implémentation. Revenez bientôt ou essayez un outil disponible.",
     comingSoonAlternatives: "Essayez plutôt",
-    comingSoonPdfWordHint: "En attendant, fusionnez, divisez et organisez vos PDF dans le navigateur avec notre gestionnaire PDF.",
-    comingSoonPdfWordCta: "Ouvrir le gestionnaire PDF",
+    comingSoonPdfWordHint: "Besoin d'un PDF maintenant ? Convertissez vos documents Word en PDF dans le navigateur avec notre outil Word vers PDF.",
+    comingSoonPdfWordCta: "Essayer Word vers PDF",
     comingSoonVideoHint: "Besoin de convertir de l'audio maintenant ? Convertissez MP3, WAV, AAC et plus avec notre convertisseur audio.",
     comingSoonVideoCta: "Ouvrir le convertisseur audio",
     basicExportBadge: "Export basique",

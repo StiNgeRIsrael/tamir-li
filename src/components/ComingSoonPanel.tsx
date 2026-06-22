@@ -36,10 +36,10 @@ export function ComingSoonPanel({ toolName, toolId }: ComingSoonPanelProps) {
   const toolAlt =
     toolId === "pdf-to-word"
       ? (() => {
-          const mgr = getToolById("merge-pdf");
-          if (!mgr) return null;
+          const wordToPdf = getToolById("word-to-pdf");
+          if (!wordToPdf) return null;
           return {
-            slug: getDefaultSlug(mgr),
+            slug: getDefaultSlug(wordToPdf),
             hint: tt.comingSoonPdfWordHint,
             cta: tt.comingSoonPdfWordCta,
           };

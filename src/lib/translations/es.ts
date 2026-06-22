@@ -177,8 +177,8 @@ export const esTranslations = {
         ? `${name} está en camino — estamos terminando la implementación. Vuelve pronto o prueba una de nuestras herramientas disponibles.`
         : "Esta herramienta está en camino — estamos terminando la implementación. Vuelve pronto o prueba una de nuestras herramientas disponibles.",
     comingSoonAlternatives: "Prueba estas alternativas",
-    comingSoonPdfWordHint: "Mientras tanto, combina, divide y organiza PDFs en el navegador con nuestro gestor de PDF.",
-    comingSoonPdfWordCta: "Abrir gestor de PDF",
+    comingSoonPdfWordHint: "¿Necesitas PDF ahora? Convierte documentos Word a PDF en el navegador con nuestra herramienta Word a PDF.",
+    comingSoonPdfWordCta: "Probar Word a PDF",
     comingSoonVideoHint: "¿Necesitas convertir audio ahora? Convierte MP3, WAV, AAC y más con nuestro conversor de audio.",
     comingSoonVideoCta: "Abrir conversor de audio",
     basicExportBadge: "Exportación básica",
