@@ -32,9 +32,19 @@ curl -sS https://tamir.li/health | jq .
 {
   "status": "OK",
   "uptime": 123.45,
-  "db": { "ok": false }
+  "db": { "ok": false, "error": "P1001" }
 }
 ```
+
+When `db.error` is present it is a **sanitized Prisma code only** (no password or connection string). Use it to narrow the fix:
+
+| `db.error` | Meaning | Typical fix |
+|------------|---------|-------------|
+| **P1000** | Authentication failed — wrong user/password, or user not granted on this database | Re-copy password from Plesk; URL-encode special chars; confirm user is linked to the DB in **Databases** |
+| **P1001** | Can't reach MySQL server — wrong host/port, MySQL down, or socket/TCP mismatch | Use `localhost:3306` on same Plesk box; try `127.0.0.1`; confirm MySQL service is running |
+| **P1003** | Database does not exist — name in URL ≠ name in Plesk panel | Use the **full** database name Plesk shows (often subscription-prefixed, e.g. `tamirli_tamirli` not `tamirli`) |
+| **TIMEOUT** | Ping timed out (2s) — network, overloaded MySQL, or firewall | Same as P1001; check server load |
+| **UNKNOWN** | Non-Prisma failure — redeploy latest backend if field missing entirely | Check Plesk / Passenger logs for raw error |
 
 Or run the full probe:
 
@@ -64,12 +74,26 @@ mysql://tamirly_user:YourStrongPassword@localhost:3306/tamirly_db
 |-------|--------|
 | Scheme | Must start with `mysql://` |
 | User / DB name | Use the **full** names Plesk shows after creation (often prefixed with subscription name) |
+| DB name matches panel | In **Plesk → Databases**, copy the exact database name into the URL path — a short name like `tamirli` is often wrong; Plesk may have created `tamirli_tamirli` or `{subscription}_{name}` |
 | Password special chars | URL-encode `@`, `#`, `%`, `:`, `/`, etc. (`@` → `%40`) |
 | Host | Same server as Node → **`localhost`** and port **`3306`** |
 | Wrong host | Do **not** use public IP, domain name, or “Remote MySQL” host for same-box Node.js |
 | Quotes | Plesk env value: no surrounding quotes unless Plesk adds them literally (usually paste raw URL) |
 
 Reference: [backend/.env.example](../backend/.env.example), [plesk-node-deploy.md § Plesk MySQL](./plesk-node-deploy.md#plesk-mysql).
+
+### Checklist: URL vs Plesk panel (common `db.ok: false` after deploy)
+
+1. **Plesk → Databases** — note the exact **Database name** and **Database user** (not a shortened label).
+2. **`DATABASE_URL` path** must match that database name exactly:
+   - Wrong: `mysql://Tamirli_user:pass@localhost:3306/tamirli`
+   - Often correct: `mysql://Tamirli_user:pass@localhost:3306/tamirli_tamirli` (subscription prefix varies by host).
+3. **User must be assigned** to that database in Plesk (not just created as a standalone user).
+4. **Restart** Node.js after editing custom env.
+5. **`GET /health`** — read `db.error`:
+   - **P1000** → auth (password, user, grants)
+   - **P1001** → reachability (host, port, MySQL down)
+   - **P1003** → database name mismatch
 
 ---
 
@@ -142,16 +166,22 @@ Prisma 6 **`migrate deploy` has no `--url` flag** — connection string must com
 SSH into the Plesk server as the subscription user (same credentials as deploy workflow).
 
 ```bash
-# Parse host/port/db from your DATABASE_URL, then:
-mysql -h localhost -P 3306 -u tamirly_user -p tamirly_db -e "SELECT 1;"
+# Use exact names from Plesk → Databases (example — yours may differ):
+mysql -h localhost -P 3306 -u Tamirli_user -p tamirli_tamirli -e "SELECT 1;"
 ```
 
-| Result | Likely cause |
-|--------|----------------|
-| `SELECT 1` succeeds | MySQL is fine — wrong `DATABASE_URL` in Node env, or app not restarted |
-| `Access denied` | Wrong password, wrong user, or user not granted on this database |
-| `Unknown database` | Database name mismatch (use Plesk full name) |
-| `Can't connect` | MySQL not running, wrong host/port, or socket vs TCP issue (see below) |
+If you only know a short name (`tamirli`), list databases first:
+
+```bash
+mysql -h localhost -u Tamirli_user -p -e "SHOW DATABASES;"
+```
+
+| Result | Likely cause | Maps to `db.error` |
+|--------|----------------|---------------------|
+| `SELECT 1` succeeds | MySQL is fine — wrong `DATABASE_URL` in Node env, or app not restarted | — |
+| `Access denied` | Wrong password, wrong user, or user not granted on this database | **P1000** |
+| `Unknown database` | Database name mismatch (use Plesk full name, not `tamirli` alone) | **P1003** |
+| `Can't connect` | MySQL not running, wrong host/port, or socket vs TCP issue (see below) | **P1001** |
 
 **Optional — list tables after migrate:**
 
@@ -204,7 +234,7 @@ Expect exit **0**, no `db.ok is false` warning.
 |---------|-----|
 | `/health` → HTML | Document root = `httpdocs/deploy`, not `deploy/dist` — [deploy-checklist.md](./deploy-checklist.md) |
 | `/health` JSON, no `db` / `uptime` | Redeploy latest backend bundle |
-| `db.ok: false` | This doc — `DATABASE_URL`, grants, migrations, restart |
+| `db.ok: false` | This doc — `DATABASE_URL`, grants, migrations, restart; check `db.error` (P1000 auth vs P1001 reach vs P1003 wrong DB name) |
 | Migrations fail “Environment variable not found: DATABASE_URL” in Run Node.js commands | Expected Plesk quirk — set `DATABASE_URL` in custom env and **Restart app** (auto-migrate); or CI **run_server_setup** / SSH `export`; see [§3](#plesk-quirk-run-nodejs-commands-vs-runtime-env) |
 | New migration after deploy, `db.ok: false` | Restart Node app; check logs for `[startup-migrate]` errors |
 | `run_server_setup` works once, then `db.ok: false` again | Add same `DATABASE_URL` to **Plesk** custom env (not only GitHub secret) |

@@ -512,7 +512,7 @@ async function run(): Promise<void> {
 
   await checkApiJson("GET", "/health", {
     validate: (data) => {
-      const d = data as { status?: string; uptime?: number; db?: { ok?: boolean } };
+      const d = data as { status?: string; uptime?: number; db?: { ok?: boolean; error?: string } };
       if (d.status !== "OK") return `Expected status OK, got ${d.status}`;
       if (typeof d.uptime !== "number") {
         warn("api GET /health uptime", "Missing uptime — redeploy backend for enhanced probe");
@@ -522,10 +522,11 @@ async function run(): Promise<void> {
       } else {
         lastDbOk = d.db.ok;
         if (d.db.ok === false) {
-          warn(
-            "api GET /health database",
-            "db.ok is false — MySQL/Prisma unreachable. Check DATABASE_URL, migrations, and Plesk Node env."
-          );
+          const codeHint =
+            typeof d.db.error === "string"
+              ? ` Prisma/db.error=${d.db.error} — see docs/plesk-mysql-troubleshooting.md (P1000 auth, P1001 reach, P1003 wrong DB name).`
+              : " Check DATABASE_URL, migrations, and Plesk Node env.";
+          warn("api GET /health database", `db.ok is false — MySQL/Prisma unreachable.${codeHint}`);
         }
       }
       return null;

@@ -18,6 +18,11 @@ function resolvePrismaCli(root: string): string | null {
   return null;
 }
 
+/** Pull Prisma P#### codes from CLI output without logging connection strings. */
+function extractPrismaErrorCode(output: string): string | undefined {
+  return output.match(/\bP\d{4}\b/)?.[0];
+}
+
 /**
  * Apply pending Prisma migrations before the HTTP server starts.
  *
@@ -59,7 +64,7 @@ export function runStartupMigrations(): void {
     {
       cwd: root,
       env: process.env,
-      stdio: 'inherit',
+      encoding: 'utf8',
       shell: process.platform === 'win32',
     }
   );
@@ -70,9 +75,17 @@ export function runStartupMigrations(): void {
   }
 
   const exitCode = result.status ?? 1;
+  const cliOutput = [result.stdout, result.stderr].filter(Boolean).join('\n').trim();
+  const prismaCode = cliOutput ? extractPrismaErrorCode(cliOutput) : undefined;
+
   console.error(
-    `${LOG_PREFIX} Migration failed (exit ${exitCode}) — app will start anyway; check DATABASE_URL, MySQL grants, and Plesk logs`
+    `${LOG_PREFIX} Migration failed (exit ${exitCode})${
+      prismaCode ? ` — Prisma ${prismaCode}` : ''
+    } — app will start anyway; check DATABASE_URL, MySQL grants, and Plesk logs`
   );
+  if (cliOutput) {
+    console.error(`${LOG_PREFIX}`, cliOutput);
+  }
   if (result.error) {
     console.error(`${LOG_PREFIX}`, result.error.message);
   }

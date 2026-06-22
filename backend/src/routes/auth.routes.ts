@@ -47,8 +47,8 @@ router.post('/google', async (req: Request, res: Response) => {
       return;
     }
 
-    const dbOk = await pingDatabase();
-    if (!dbOk) {
+    const dbPing = await pingDatabase();
+    if (!dbPing.ok) {
       res.status(503).json({
         error: 'DATABASE_UNAVAILABLE',
         message: 'Database is temporarily unavailable. Sign-in requires the database.',
@@ -177,8 +177,8 @@ router.post('/google', async (req: Request, res: Response) => {
     });
   } catch (e) {
     console.error('[auth/google]', e);
-    const dbOk = await pingDatabase();
-    if (!dbOk) {
+    const dbPing = await pingDatabase();
+    if (!dbPing.ok) {
       res.status(503).json({
         error: 'DATABASE_UNAVAILABLE',
         message: 'Database is temporarily unavailable. Sign-in requires the database.',

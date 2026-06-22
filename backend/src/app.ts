@@ -67,13 +67,13 @@ app.use('/api/billing', billingRoutes);
 // Health check endpoint (probed by scripts/autonomous-site-check.ts and frontend)
 // Always 200 when the process is up; db.ok reflects MySQL/Prisma reachability.
 app.get('/health', async (_req: Request, res: Response) => {
-  const dbOk = await pingDatabase();
+  const db = await pingDatabase();
   res.status(200).json({
     status: 'OK',
     message: 'Server is running',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
-    db: { ok: dbOk },
+    db: db.ok ? { ok: true } : { ok: false, error: db.error },
   });
 });
 
