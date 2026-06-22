@@ -76,7 +76,7 @@ Minimum for local full stack:
 | `VITE_GOOGLE_CLIENT_ID` | Same as backend | For Google sign-in |
 | `VITE_USE_MOCK_CONVERSION` | omit or `false` | Use real API conversions |
 
-Optional: `VITE_GTM_ID`, `VITE_ADSENSE_*`, `VITE_PAYPAL_CLIENT_ID`, `VITE_STRIPE_PUBLISHABLE_KEY` — not needed for core dev.
+Optional: `VITE_GTM_ID`, `VITE_ADSTERRA_*`, `VITE_PAYPAL_CLIENT_ID`, `VITE_STRIPE_PUBLISHABLE_KEY` — not needed for core dev.
 
 ### Backend — `backend/.env`
 

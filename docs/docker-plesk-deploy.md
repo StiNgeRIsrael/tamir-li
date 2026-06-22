@@ -169,7 +169,7 @@ If you keep a separate API subdomain, set `VITE_API_URL=https://api.tamir.li` an
 | `ADMIN_EMAILS` | Bootstrap admin access |
 | `STRIPE_*` | Billing + webhook |
 | `VITE_STRIPE_PUBLISHABLE_KEY` | Checkout UI |
-| `VITE_GTM_ID`, `VITE_ADSENSE_*` | Analytics / ads |
+| `VITE_GTM_ID`, `VITE_ADSTERRA_*` | Analytics / ads |
 
 `DATABASE_URL` is **not** set manually — compose builds it from `MYSQL_*` for the `backend` service.
 

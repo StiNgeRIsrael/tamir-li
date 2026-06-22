@@ -492,7 +492,7 @@ export const heTranslations: TranslationDict = {
 
   consent: {
     title: "עוגיות ופרטיות",
-    description: "אנו משתמשים בעוגיות לניתוח שימוש (GA4) ולהצגת מודעות (Google AdSense). תוכלו לקבל או לדחות עוגיות שאינן חיוניות.",
+    description: "אנו משתמשים בעוגיות לניתוח שימוש (GA4) ולהצגת מודעות (Adsterra). תוכלו לקבל או לדחות עוגיות שאינן חיוניות.",
     acceptAll: "קבל הכל",
     rejectAll: "דחה הכל",
     privacyLink: "מדיניות פרטיות",
@@ -500,7 +500,7 @@ export const heTranslations: TranslationDict = {
 
   privacyPage: {
     seoTitle: "מדיניות פרטיות | תמיר לי",
-    seoDesc: "מדיניות הפרטיות של תמיר לי — איסוף נתונים, עוגיות, Google Analytics, AdSense וזכויות המשתמש.",
+    seoDesc: "מדיניות הפרטיות של תמיר לי — איסוף נתונים, עוגיות, Google Analytics, Adsterra וזכויות המשתמש.",
     title: "מדיניות פרטיות",
     lastUpdated: "עודכן לאחרונה: יוני 2025",
     sections: [
@@ -520,15 +520,15 @@ export const heTranslations: TranslationDict = {
         heading: "עוגיות וטכנולוגיות מעקב",
         body: [
           "אנו משתמשים ב-Google Analytics 4 (דרך Google Tag Manager) לניתוח שימוש אנונימי באתר — רק לאחר הסכמתכם.",
-          "אנו משתמשים ב-Google AdSense להצגת מודעות למשתמשי התוכנית החינמית — רק לאחר הסכמתכם לעוגיות פרסום.",
+          "אנו משתמשים ב-Adsterra להצגת מודעות למשתמשי התוכנית החינמית — רק לאחר הסכמתכם לעוגיות פרסום.",
           "עוגיות חיוניות (אבטחה, העדפות) נדרשות לתפקוד האתר ואינן דורשות הסכמה נפרדת.",
         ],
       },
       {
-        heading: "Google AdSense",
+        heading: "Adsterra",
         body: [
           "Google ושותפיו עשויים להשתמש בעוגיות להצגת מודעות מותאמות על בסיס ביקורים קודמים באתר זה או באתרים אחרים.",
-          "משתמשי פרימיום אינם רואים מודעות וסקריפטי AdSense אינם נטענים עבורם.",
+          "משתמשי פרימיום אינם רואים מודעות וסקריפטי Adsterra אינם נטענים עבורם.",
           "למידע נוסף: policies.google.com/privacy",
         ],
       },

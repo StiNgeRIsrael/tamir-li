@@ -84,7 +84,7 @@ Checkout is initiated via `POST /api/billing/checkout` (authenticated). No Payme
 - [ ] Webhook logs show `checkout.session.completed` and `invoice.payment_succeeded`.
 - [ ] Credit pack purchase increments `credits` on status endpoint.
 - [ ] Customer portal opens from `POST /api/billing/portal`.
-- [ ] Premium users: no AdSense scripts loaded; side ads hidden.
+- [ ] Premium users: no ad scripts loaded; side ads hidden.
 
 ## 7. Go live
 

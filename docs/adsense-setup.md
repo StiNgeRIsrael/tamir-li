@@ -1,5 +1,7 @@
 # Google AdSense setup — tamir.li
 
+> **Deprecated:** Tamir.li now uses Adsterra. See [`adsterra-setup.md`](./adsterra-setup.md).
+
 Publisher ID: `ca-pub-4410150504570814`
 
 ## Ad units created (2026-06-19)

@@ -28,7 +28,7 @@ import { useToolConfig } from "@/contexts/ToolConfigContext";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics/events";
 import { useUsage } from "@/hooks/useUsage";
-import { isAdSenseConfigured } from "@/lib/ads/adsense";
+import { isAdsterraConfigured } from "@/lib/ads/adsterra";
 
 const categoryHeaderIcon: Record<ToolCategory, string> = {
   image: "bg-tool-image/10 text-tool-image",
@@ -98,7 +98,7 @@ export default function ToolPage() {
     if (isPremium) return;
 
     const hasAdSurface =
-      isAdSenseConfigured() || !!import.meta.env.VITE_AD_CLICK_URL?.trim();
+      isAdsterraConfigured() || !!import.meta.env.VITE_AD_CLICK_URL?.trim();
     if (!hasAdSurface) return;
 
     const key = `tamir_tool_vignette_${tool.id}`;

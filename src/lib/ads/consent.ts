@@ -1,5 +1,5 @@
 import { initGA4, initGTM, updateConsentMode } from "@/lib/analytics/gtm";
-import { loadAdSenseScript } from "@/lib/ads/adsense";
+import { loadPopunderScript } from "@/lib/ads/adsterra";
 
 const CONSENT_STORAGE_KEY = "tamir_consent_v1";
 
@@ -35,7 +35,7 @@ function activateConsent(state: ConsentState): void {
     initGTM();
     initGA4();
   }
-  if (state.ads) loadAdSenseScript();
+  if (state.ads) loadPopunderScript();
   window.dispatchEvent(new CustomEvent("tamir:consent", { detail: state }));
 }
 

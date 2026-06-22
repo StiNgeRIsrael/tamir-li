@@ -470,7 +470,7 @@ export const enTranslations: TranslationDict = {
 
   consent: {
     title: "Cookies & privacy",
-    description: "We use cookies for analytics (GA4) and ads (Google AdSense). You can accept or reject non-essential cookies.",
+    description: "We use cookies for analytics (GA4) and ads (Adsterra). You can accept or reject non-essential cookies.",
     acceptAll: "Accept all",
     rejectAll: "Reject all",
     privacyLink: "Privacy Policy",
@@ -478,7 +478,7 @@ export const enTranslations: TranslationDict = {
 
   privacyPage: {
     seoTitle: "Privacy Policy | Tamir.li",
-    seoDesc: "Tamir.li privacy policy — data collection, cookies, Google Analytics, AdSense, and your rights.",
+    seoDesc: "Tamir.li privacy policy — data collection, cookies, Google Analytics, Adsterra, and your rights.",
     title: "Privacy Policy",
     lastUpdated: "Last updated: June 2025",
     sections: [
@@ -498,15 +498,15 @@ export const enTranslations: TranslationDict = {
         heading: "Cookies and tracking",
         body: [
           "We use Google Analytics 4 (via Google Tag Manager) for anonymous usage analytics — only after you consent.",
-          "We use Google AdSense to show ads to free-tier users — only after you consent to advertising cookies.",
+          "We use Adsterra to show ads to free-tier users — only after you consent to advertising cookies.",
           "Essential cookies (security, preferences) are required for the site to function and do not require separate consent.",
         ],
       },
       {
-        heading: "Google AdSense",
+        heading: "Adsterra",
         body: [
           "Google and its partners may use cookies to serve ads based on your prior visits to this or other websites.",
-          "Premium subscribers see no ads and AdSense scripts are not loaded for them.",
+          "Premium subscribers see no ads and Adsterra scripts are not loaded for them.",
           "Learn more: policies.google.com/privacy",
         ],
       },

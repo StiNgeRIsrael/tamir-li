@@ -237,7 +237,7 @@ Set `ENABLE_STRIPE=true` only if switching from PayPal to Stripe.
 | `VITE_SITE_ORIGIN` | `https://tamir.li` |
 | `VITE_API_URL` | `https://tamir.li` (same origin) or omit (runtime fallback to `window.location.origin`) |
 | `VITE_GOOGLE_CLIENT_ID` | Google OAuth Web client ID |
-| `VITE_GTM_ID`, `VITE_ADSENSE_*`, `VITE_STRIPE_PUBLISHABLE_KEY` | As needed |
+| `VITE_GTM_ID`, `VITE_ADSTERRA_*`, `VITE_STRIPE_PUBLISHABLE_KEY` | As needed |
 
 After changing any `VITE_*` value, trigger a new CI deploy (or rebuild locally and re-upload); no server build step.
 

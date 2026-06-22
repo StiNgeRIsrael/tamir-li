@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getApiBaseUrl } from "@/lib/api/client";
-import { setPremiumUser } from "@/lib/ads/adsense";
+import { setPremiumUser } from "@/lib/ads/adsterra";
 
 export type CheckoutPlan =
   | "monthly"

@@ -1,64 +1,71 @@
-import { useEffect, useRef } from "react";
+import { useMemo } from "react";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { getStoredConsent } from "@/lib/ads/consent";
 import {
-  getAdSenseSlotId,
-  hasAdSenseSlot,
-  isAdSenseConfigured,
-  loadAdSenseScript,
-  pushAdSlot,
-  triggerInterstitialAd,
-} from "@/lib/ads/adsense";
+  buildAdIframeSrcdoc,
+  getAdsterraZoneKey,
+  getPlacementLayout,
+  hasAdsterraZone,
+  isAdsterraConfigured,
+  triggerPopunderAd,
+} from "@/lib/ads/adsterra";
 import { useSubscription } from "@/hooks/useSubscription";
 import { showAdVignette } from "@/components/ads/AdVignette";
 
 interface AdSlotProps {
   type: "banner" | "sidebar" | "inline";
   className?: string;
-  /** Map to your Google Ad Manager / AdSense ad unit name in the publisher console */
+  /** Logical placement id for analytics / second-sidebar routing */
   slotId?: string;
 }
 
 const layout: Record<
   AdSlotProps["type"],
-  { height: string; maxW?: string; labelKey: string }
+  { height: string; maxW?: string; labelKey: string; envVar: string }
 > = {
-  banner: { height: "h-[90px]", maxW: "max-w-[728px]", labelKey: "leaderboard" },
-  sidebar: { height: "h-[250px]", maxW: "max-w-[300px]", labelKey: "sidebar" },
-  inline: { height: "h-[120px]", maxW: "max-w-full", labelKey: "inline" },
-};
-
-const slotEnvVar: Record<AdSlotProps["type"], string> = {
-  banner: "VITE_ADSENSE_SLOT_BANNER",
-  sidebar: "VITE_ADSENSE_SLOT_SIDEBAR",
-  inline: "VITE_ADSENSE_SLOT_INLINE",
+  banner: {
+    height: "h-[90px]",
+    maxW: "max-w-[728px]",
+    labelKey: "leaderboard",
+    envVar: "VITE_ADSTERRA_ZONE_BANNER",
+  },
+  sidebar: {
+    height: "h-[250px]",
+    maxW: "max-w-[300px]",
+    labelKey: "sidebar",
+    envVar: "VITE_ADSTERRA_ZONE_SIDEBAR",
+  },
+  inline: {
+    height: "h-[120px]",
+    maxW: "max-w-full",
+    labelKey: "inline",
+    envVar: "VITE_ADSTERRA_ZONE_INLINE",
+  },
 };
 
 export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
-  const insRef = useRef<HTMLModElement>(null);
   const L = layout[type];
-  const label = t.adLabel || "Ad • Google Ads";
+  const label = t.adLabel || "Ad";
+  const dims = getPlacementLayout(type);
 
-  const client = import.meta.env.VITE_ADSENSE_CLIENT?.trim();
-  const adSlot = getAdSenseSlotId(type);
+  const zoneKey = getAdsterraZoneKey(type, slotId);
   const hasConsent = getStoredConsent()?.ads === true;
-  const clientReady = isAdSenseConfigured() && hasConsent && !isPremium;
-  const showLiveAd = clientReady && hasAdSenseSlot(type);
-  const pendingSlot = clientReady && !hasAdSenseSlot(type);
+  const clientReady = isAdsterraConfigured() && hasConsent && !isPremium;
+  const showLiveAd = clientReady && hasAdsterraZone(type, slotId);
+  const pendingSlot = clientReady && !hasAdsterraZone(type, slotId);
 
-  useEffect(() => {
-    if (!pendingSlot) return;
-    loadAdSenseScript();
-  }, [pendingSlot]);
+  const iframeSrcdoc = useMemo(() => {
+    if (!showLiveAd || !zoneKey) return undefined;
+    return buildAdIframeSrcdoc(zoneKey, dims.width, dims.height);
+  }, [showLiveAd, zoneKey, dims.width, dims.height]);
 
-  useEffect(() => {
-    if (!showLiveAd || !insRef.current) return;
-    loadAdSenseScript();
-    pushAdSlot(insRef.current);
-  }, [showLiveAd, type, adSlot]);
+  const envHint =
+    type === "sidebar" && slotId?.endsWith("-2")
+      ? "VITE_ADSTERRA_ZONE_SIDEBAR_2"
+      : L.envVar;
 
   if (isPremium) return null;
 
@@ -69,7 +76,7 @@ export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
         aria-label={label}
         data-ad-region={type}
         data-ad-slot-id={slotId}
-        data-adsense-pending={pendingSlot ? "slot-id" : undefined}
+        data-adsterra-pending={pendingSlot ? "zone-key" : undefined}
         className={cn(
           "ad-slot mx-auto flex w-full flex-col items-center justify-center gap-1 px-2 py-3 text-center",
           L.height,
@@ -87,10 +94,10 @@ export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
           <span className="sr-only">{label}</span>
           {pendingSlot && import.meta.env.DEV && (
             <p className="text-[11px] leading-snug text-muted-foreground">
-              AdSense client configured. Create ad units in the AdSense dashboard, then set{" "}
-              <code className="rounded bg-muted px-1">{slotEnvVar[type]}</code> in{" "}
-              <code className="rounded bg-muted px-1">.env.development.local</code>. Auto ads from
-              the dashboard may still appear once the site is approved.
+              Adsterra is configured. Create a banner unit in the Adsterra dashboard (unique key per
+              placement), then set{" "}
+              <code className="rounded bg-muted px-1">{envHint}</code> in{" "}
+              <code className="rounded bg-muted px-1">.env.development.local</code>.
             </p>
           )}
         </div>
@@ -111,21 +118,22 @@ export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
         className
       )}
     >
-      <ins
-        ref={insRef}
-        className="adsbygoogle block h-full w-full"
-        style={{ display: "block" }}
-        data-ad-client={client}
-        data-ad-slot={adSlot}
-        data-ad-format="auto"
-        data-full-width-responsive="true"
+      <iframe
+        title={label}
+        srcDoc={iframeSrcdoc}
+        width={dims.width}
+        height={dims.height}
+        loading="lazy"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+        className="mx-auto block max-w-full border-0 bg-transparent"
+        style={{ width: dims.width, height: dims.height, maxWidth: "100%" }}
       />
     </aside>
   );
 }
 
-/** Call after conversion milestones; shows vignette overlay (with optional AdSense unit). */
+/** Call after conversion milestones; shows vignette overlay (with optional popunder). */
 export function triggerInterstitial() {
   void showAdVignette({ minMs: 4000, slotId: "convert-success-vignette" });
-  triggerInterstitialAd();
+  triggerPopunderAd();
 }

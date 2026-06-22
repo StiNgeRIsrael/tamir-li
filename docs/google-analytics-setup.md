@@ -131,17 +131,16 @@ For `page_view`, add parameters: `page_path` → `{{dlv - page_path}}`, `page_ty
 
 ---
 
-## Step 5: Link AdSense (separate from GA4)
+## Step 5: Adsterra (separate from GA4)
 
-AdSense and GA4 are **separate** Google products.
+Adsterra and GA4 are separate products.
 
-1. Apply at [Google AdSense](https://www.google.com/adsense/) with site `https://tamir.li`.
-2. After approval, copy **Publisher ID** (`ca-pub-…`) and ad unit slot IDs.
+1. Apply at [Adsterra](https://adsterra.com) with site `https://tamir.li`.
+2. After approval, copy zone keys from the publisher dashboard.
 3. Set in `.env`:
-   - `VITE_ADSENSE_CLIENT`
-   - `VITE_ADSENSE_SLOT_*` (banner, sidebar, inline, etc.)
-4. AdSense script loads only when the user accepts **ads** cookies (`saveConsent(true, true)` grants both analytics and ad storage).
-5. Optional in GTM: AdSense does not require a GTM tag if you use the built-in `src/lib/ads/adsense.ts` loader.
+   - `VITE_ADSTERRA_ZONE_BANNER`, `VITE_ADSTERRA_ZONE_SIDEBAR`, etc. (see [`adsterra-setup.md`](./adsterra-setup.md))
+4. Ad scripts load only when the user accepts **ads** cookies (`saveConsent(true, true)` grants both analytics and ad storage).
+5. No GTM tag required — banners use isolated iframes via `src/lib/ads/adsterra.ts`.
 
 ---
 
@@ -206,5 +205,5 @@ See `docs/gtm-container-template.json` for a simplified reference export (measur
 5. [ ] Publish GTM container
 6. [ ] Set `VITE_SITE_ORIGIN=https://tamir.li` and deploy
 7. [ ] Verify in GA4 DebugView + GTM Preview
-8. [ ] (Separate) AdSense approval + `VITE_ADSENSE_*` env vars
+8. [ ] (Separate) Adsterra approval + `VITE_ADSTERRA_*` env vars
 9. [ ] (Separate) Search Console verification + sitemap

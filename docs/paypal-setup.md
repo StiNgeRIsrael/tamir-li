@@ -79,7 +79,7 @@ Do **not** commit secrets. Do not rewrite production `backend/.env` from the rep
 - [ ] Webhook simulator fires `BILLING.SUBSCRIPTION.ACTIVATED`.
 - [ ] Credit pack purchase increments `credits` after capture.
 - [ ] Manage billing opens PayPal AutoPay page.
-- [ ] Premium users: no AdSense scripts loaded.
+- [ ] Premium users: no ad scripts loaded.
 
 ## 7. Go live
 
