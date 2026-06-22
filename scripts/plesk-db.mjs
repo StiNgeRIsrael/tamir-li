@@ -1,10 +1,8 @@
 /**
  * Apply Prisma migrations via CLI (CI run_server_setup or SSH with exported DATABASE_URL).
  *
- * Plesk "Run Node.js commands" usually does not inherit Custom environment variables.
- * Production migrations normally run on app restart (backend startup auto-migrate).
- * This script loads backend/.env only when present (local/legacy); Plesk should use
- * Plesk custom env + restart instead of relying on a server-side .env file.
+ * Plesk "Run Node.js commands" does NOT inherit Custom environment variables — DATABASE_URL
+ * is unavailable here by design. Production migrations run on app restart (startup-migrate.ts).
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
@@ -13,6 +11,19 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const envPath = resolve(root, 'backend', '.env');
+
+const PLESK_HINT = `
+DATABASE_URL is not available in this shell (Plesk "Run Node.js commands" never inherits Custom environment variables).
+
+Do NOT use "run plesk:db" in Plesk UI — this failure is expected and normal.
+
+Instead:
+  1. Set DATABASE_URL in Plesk → Node.js → Custom environment variables (if not already).
+  2. Restart the Node.js app — migrations run automatically at boot via startup-migrate (uses process.env.DATABASE_URL).
+
+First deploy / lockfile change: GitHub Actions workflow_dispatch with run_server_setup=true
+(requires GitHub secret DATABASE_URL), or SSH with export DATABASE_URL then npm run setup.
+`.trim();
 
 function loadEnvFile(path) {
   if (!existsSync(path)) return;
@@ -41,6 +52,11 @@ function loadEnvFile(path) {
 }
 
 loadEnvFile(envPath);
+
+if (!process.env.DATABASE_URL?.trim()) {
+  console.error(PLESK_HINT);
+  process.exit(1);
+}
 
 const prismaBin =
   process.platform === 'win32'
