@@ -17,6 +17,7 @@ import {
   isInputFormatSupported,
   formatToExtension,
 } from "../src/lib/image-convert";
+import { usesClientDocumentConversion } from "../src/lib/document-convert";
 
 const MAX_DAILY_FREE = 5;
 const TIMEOUT_MS = Number(process.env.SITE_CHECK_TIMEOUT_MS ?? 15_000);
@@ -224,6 +225,20 @@ function checkImageFormatHelpers(): void {
     fail("format helper isInputFormatSupported(SVG)", "Expected true");
   } else {
     pass("format helper isInputFormatSupported(SVG)");
+  }
+}
+
+function checkDocumentConvertHelpers(): void {
+  if (!usesClientDocumentConversion("word-to-pdf")) {
+    fail("document helper usesClientDocumentConversion(word-to-pdf)", "Expected true");
+  } else {
+    pass("document helper usesClientDocumentConversion(word-to-pdf)");
+  }
+
+  if (usesClientDocumentConversion("pdf-to-word")) {
+    fail("document helper usesClientDocumentConversion(pdf-to-word)", "Expected false");
+  } else {
+    pass("document helper usesClientDocumentConversion(pdf-to-word)");
   }
 }
 
@@ -461,6 +476,7 @@ async function run(): Promise<void> {
 
   // Pure logic (no network)
   checkImageFormatHelpers();
+  checkDocumentConvertHelpers();
   checkToolAvailabilityCatalog();
 
   if (SKIP_NETWORK) {
@@ -478,6 +494,7 @@ async function run(): Promise<void> {
   await checkPage("/en/jpg-to-png", "tool jpg-to-png (en)");
   await checkPage("/image-compressor", "client tool image-compressor");
   await checkPage("/merge-pdf", "client tool merge-pdf");
+  await checkPage("/docx-to-pdf", "client tool word-to-pdf");
   await checkPage("/pdf-to-docx", "coming-soon stub pdf-to-docx");
   await checkPage("/blog", "blog index");
 

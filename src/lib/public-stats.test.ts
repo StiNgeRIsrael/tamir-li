@@ -10,4 +10,10 @@ describe("public-stats", () => {
     expect(stats.functionalToolCount).toBe(getFunctionalToolIds().length);
     expect(stats.functionalToolCount).toBeLessThanOrEqual(stats.toolCount);
   });
+
+  it("shows 9 live tools out of 13 in catalog", () => {
+    const stats = getDerivedHomeStatsFromTools(tools);
+    expect(stats.functionalToolCount).toBe(9);
+    expect(stats.toolCount).toBe(13);
+  });
 });

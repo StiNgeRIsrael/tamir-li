@@ -36,6 +36,7 @@ const FEATURED_FUNCTIONAL_ORDER = [
   "svg-to-png",
   "png-to-ico",
   "merge-pdf",
+  "word-to-pdf",
   "text-tools",
   "audio-converter",
 ] as const;
