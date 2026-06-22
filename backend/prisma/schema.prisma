@@ -62,6 +62,11 @@ model ToolConfig {
   updatedAt DateTime @updatedAt
 }
 
+enum PaymentProvider {
+  STRIPE
+  PAYPAL
+}
+
 enum SubscriptionPlan {
   MONTHLY
   YEARLY
@@ -79,8 +84,10 @@ model Subscription {
   id                   String             @id @default(uuid())
   userId               String             @unique
   user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  stripeCustomerId     String
+  paymentProvider      PaymentProvider    @default(PAYPAL)
+  stripeCustomerId     String?
   stripeSubscriptionId String?            @unique
+  paypalSubscriptionId String?            @unique
   plan                 SubscriptionPlan
   status               SubscriptionStatus @default(ACTIVE)
   currentPeriodStart   DateTime?
@@ -90,6 +97,7 @@ model Subscription {
   updatedAt            DateTime           @updatedAt
 
   @@index([stripeCustomerId])
+  @@index([paypalSubscriptionId])
 }
 
 enum PaymentType {
@@ -104,16 +112,17 @@ enum PaymentStatus {
 }
 
 model Payment {
-  id                   String        @id @default(uuid())
-  userId               String
-  user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                    String        @id @default(uuid())
+  userId                String
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   stripePaymentIntentId String?       @unique
-  amount               Int // in smallest currency unit (agorot/cents)
-  currency             String        @default("ils")
-  type                 PaymentType
-  status               PaymentStatus @default(SUCCEEDED)
-  metadata             Json?
-  createdAt            DateTime      @default(now())
+  paypalTransactionId   String?       @unique
+  amount                Int // in smallest currency unit (agorot/cents)
+  currency              String        @default("ils")
+  type                  PaymentType
+  status                PaymentStatus @default(SUCCEEDED)
+  metadata              Json?
+  createdAt             DateTime      @default(now())
 }
 
 model AiCredit {

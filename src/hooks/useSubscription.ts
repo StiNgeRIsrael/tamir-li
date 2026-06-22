@@ -16,6 +16,7 @@ export type BillingStatus = {
   plan: string | null;
   periodEnd: string | null;
   credits: number;
+  provider?: string | null;
 };
 
 function getAuthHeaders(): HeadersInit {
@@ -53,6 +54,19 @@ async function postCheckout(api: string, plan: CheckoutPlan): Promise<string> {
   }
   if (!body.url) throw new Error("Checkout failed");
   return body.url;
+}
+
+async function postCaptureOrder(api: string, orderId: string): Promise<void> {
+  const res = await fetch(`${api}/api/billing/paypal/capture-order`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+    body: JSON.stringify({ orderId }),
+  });
+  const body = (await res.json().catch(() => ({}))) as { message?: string };
+  if (!res.ok) {
+    throw new Error(body.message || "Could not complete purchase");
+  }
 }
 
 async function postPortal(api: string): Promise<string> {
@@ -124,6 +138,15 @@ export function useSubscription() {
     [portalMutation]
   );
 
+  const captureOrder = useCallback(
+    async (orderId: string) => {
+      if (!api) throw new Error("API not configured");
+      await postCaptureOrder(api, orderId);
+      await queryClient.invalidateQueries({ queryKey: ["billing-status", api] });
+    },
+    [api, queryClient]
+  );
+
   const refetch = useCallback(
     () => queryClient.invalidateQueries({ queryKey: ["billing-status", api] }),
     [queryClient, api]
@@ -139,6 +162,7 @@ export function useSubscription() {
     checkoutLoading: checkoutMutation.isPending,
     openPortal,
     portalLoading: portalMutation.isPending,
+    captureOrder,
     refetch,
   };
 }

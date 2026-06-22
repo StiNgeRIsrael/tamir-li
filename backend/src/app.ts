@@ -11,18 +11,27 @@ import conversionsRoutes from './routes/conversions.routes';
 import toolsRoutes from './routes/tools.routes';
 import adminRoutes from './routes/admin.routes';
 import usageRoutes from './routes/usage.routes';
-import billingRoutes, { stripeWebhookHandler } from './routes/billing.routes';
+import billingRoutes, { paypalWebhookHandler } from './routes/billing.routes';
+import { stripeWebhookHandler } from './routes/billing-stripe.routes';
 
 dotenv.config();
 
 const app: Express = express();
 
-// Stripe webhook requires raw body — must run before express.json()
+// Payment webhooks require raw body — must run before express.json()
 app.post(
-  '/api/billing/webhook',
+  '/api/billing/paypal/webhook',
   express.raw({ type: 'application/json' }),
-  stripeWebhookHandler
+  paypalWebhookHandler
 );
+
+if (process.env.ENABLE_STRIPE === 'true') {
+  app.post(
+    '/api/billing/webhook',
+    express.raw({ type: 'application/json' }),
+    stripeWebhookHandler
+  );
+}
 
 // Middlewares
 app.use(express.json());

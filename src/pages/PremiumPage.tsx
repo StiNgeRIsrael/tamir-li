@@ -18,7 +18,7 @@ const featureIcons = [FileStack, Shield, Sparkles, Gauge, ImageIcon, Headphones]
 export default function PremiumPage() {
   const { locale, t } = useLocale();
   const { user } = useAuth();
-  const { checkout, checkoutLoading, refetch } = useSubscription();
+  const { checkout, checkoutLoading, refetch, captureOrder } = useSubscription();
   const [searchParams, setSearchParams] = useSearchParams();
   const u = t.upgradePage || {};
   const features = u.features || [];
@@ -33,15 +33,28 @@ export default function PremiumPage() {
   useEffect(() => {
     const checkoutResult = searchParams.get("checkout");
     const plan = searchParams.get("plan");
-    if (checkoutResult === "success") {
-      trackEvent("purchase", { plan: plan ?? undefined, source: "stripe_return" });
-      refetch();
-      toast.success(u.checkoutSuccess ?? "Welcome to Premium!");
-      setSearchParams({}, { replace: true });
-    } else if (checkoutResult === "canceled") {
-      setSearchParams({}, { replace: true });
-    }
-  }, [searchParams, setSearchParams, refetch, u.checkoutSuccess]);
+    const paypalToken = searchParams.get("token");
+
+    const finishCheckout = async () => {
+      if (checkoutResult === "success") {
+        if (paypalToken && plan?.startsWith("credits_")) {
+          try {
+            await captureOrder(paypalToken);
+          } catch {
+            /* webhook may have already captured */
+          }
+        }
+        trackEvent("purchase", { plan: plan ?? undefined, source: "paypal_return" });
+        refetch();
+        toast.success(u.checkoutSuccess ?? "Welcome to Premium!");
+        setSearchParams({}, { replace: true });
+      } else if (checkoutResult === "canceled") {
+        setSearchParams({}, { replace: true });
+      }
+    };
+
+    void finishCheckout();
+  }, [searchParams, setSearchParams, refetch, captureOrder, u.checkoutSuccess]);
 
   const startCheckout = async (source: string) => {
     const plan: CheckoutPlan = isYearly ? "yearly" : "monthly";

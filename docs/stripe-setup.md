@@ -1,4 +1,6 @@
-# Stripe setup (test mode checklist)
+# Stripe setup (optional — disabled by default)
+
+> **Note:** Tamir.li uses **PayPal** for billing in Israel. Stripe is kept for future use. Set `ENABLE_STRIPE=true` on the backend to activate. See `docs/paypal-setup.md` for the active integration.
 
 Tamir.li billing uses **Stripe Checkout Sessions** for subscriptions and one-time AI credit packs. Webhooks sync subscription status and grant credits in the backend (`backend/src/routes/billing.routes.ts`).
 

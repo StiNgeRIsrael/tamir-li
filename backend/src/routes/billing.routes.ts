@@ -1,381 +1,223 @@
 import { Router, Request, Response } from 'express';
-import Stripe from 'stripe';
 import {
-  PaymentStatus,
-  PaymentType,
-  Prisma,
+  PaymentProvider,
   SubscriptionPlan,
   SubscriptionStatus,
 } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { requireAuth } from '../middleware/auth.middleware';
+import {
+  CHECKOUT_PLANS,
+  CREDIT_PLANS,
+  type CheckoutPlan,
+  type CreditPlanKey,
+  addPurchasedCredits,
+  getFrontendOrigin,
+  grantInitialPremiumCredits,
+  isActivePremium,
+  logSubscriptionPayment,
+  resetMonthlyPremiumCredits,
+} from '../lib/billing-shared';
+import {
+  capturePayPalOrder,
+  createPayPalOrder,
+  createPayPalSubscription,
+  getPayPalManageUrl,
+  getPayPalSubscription,
+  ilsToAgorot,
+  isPayPalConfigured,
+  verifyPayPalWebhook,
+} from '../lib/paypal';
 
 const router = Router();
 
-const CREDIT_PLANS = {
-  credits_10: { envKey: 'STRIPE_PRICE_CREDITS_10', credits: 10 },
-  credits_30: { envKey: 'STRIPE_PRICE_CREDITS_30', credits: 30 },
-  credits_60: { envKey: 'STRIPE_PRICE_CREDITS_60', credits: 60 },
-  credits_120: { envKey: 'STRIPE_PRICE_CREDITS_120', credits: 120 },
-} as const;
+const ENABLE_STRIPE = process.env.ENABLE_STRIPE === 'true';
 
-type CreditPlanKey = keyof typeof CREDIT_PLANS;
-type SubscriptionPlanKey = 'monthly' | 'yearly';
-type CheckoutPlan = SubscriptionPlanKey | CreditPlanKey;
-
-const CHECKOUT_PLANS: CheckoutPlan[] = [
-  'monthly',
-  'yearly',
-  'credits_10',
-  'credits_30',
-  'credits_60',
-  'credits_120',
-];
-
-const MONTHLY_AI_CREDITS = 6;
-
-function getStripe(): Stripe | null {
-  const key = process.env.STRIPE_SECRET_KEY?.trim();
-  if (!key) return null;
-  return new Stripe(key);
+function getPayPalPlanId(plan: 'monthly' | 'yearly'): string | null {
+  if (plan === 'monthly') return process.env.PAYPAL_PLAN_MONTHLY?.trim() || null;
+  return process.env.PAYPAL_PLAN_YEARLY?.trim() || null;
 }
 
-function stripeUnavailable(res: Response): boolean {
-  if (!getStripe()) {
-    res.status(503).json({
-      error: 'STRIPE_UNAVAILABLE',
-      message: 'Billing is not configured. Set STRIPE_SECRET_KEY in backend environment.',
-    });
-    return true;
-  }
-  return false;
-}
-
-function getFrontendOrigin(): string {
-  const fromCors = process.env.CORS_ORIGIN?.split(',')[0]?.trim();
-  return fromCors || 'http://localhost:8080';
-}
-
-function getPriceId(plan: CheckoutPlan): string | null {
-  if (plan === 'monthly') return process.env.STRIPE_PRICE_MONTHLY?.trim() || null;
-  if (plan === 'yearly') return process.env.STRIPE_PRICE_YEARLY?.trim() || null;
-  const pack = CREDIT_PLANS[plan];
-  return process.env[pack.envKey]?.trim() || null;
-}
-
-function mapStripeStatus(status: Stripe.Subscription.Status): SubscriptionStatus {
-  switch (status) {
-    case 'active':
+function mapPayPalSubscriptionStatus(status: string): SubscriptionStatus {
+  switch (status.toUpperCase()) {
+    case 'ACTIVE':
       return SubscriptionStatus.ACTIVE;
-    case 'trialing':
+    case 'APPROVAL_PENDING':
+    case 'APPROVED':
       return SubscriptionStatus.TRIALING;
-    case 'past_due':
+    case 'SUSPENDED':
       return SubscriptionStatus.PAST_DUE;
-    case 'unpaid':
-      return SubscriptionStatus.UNPAID;
-    case 'canceled':
-    case 'incomplete_expired':
+    case 'CANCELLED':
+    case 'EXPIRED':
       return SubscriptionStatus.CANCELED;
     default:
       return SubscriptionStatus.CANCELED;
   }
 }
 
-function planFromStripePrice(priceId: string | undefined): SubscriptionPlan {
-  const yearly = process.env.STRIPE_PRICE_YEARLY?.trim();
-  return priceId && yearly && priceId === yearly
+function planFromPayPalPlanId(planId: string | undefined): SubscriptionPlan {
+  const yearly = process.env.PAYPAL_PLAN_YEARLY?.trim();
+  return planId && yearly && planId === yearly
     ? SubscriptionPlan.YEARLY
     : SubscriptionPlan.MONTHLY;
 }
 
-function isActivePremium(
-  status: SubscriptionStatus,
-  periodEnd: Date | null | undefined
-): boolean {
-  if (status !== SubscriptionStatus.ACTIVE && status !== SubscriptionStatus.TRIALING) {
-    return false;
-  }
-  if (periodEnd && periodEnd <= new Date()) return false;
-  return true;
-}
-
-async function getOrCreateStripeCustomer(userId: string): Promise<string> {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: { subscription: true },
-  });
-  if (!user) throw new Error('USER_NOT_FOUND');
-
-  if (user.subscription?.stripeCustomerId) {
-    return user.subscription.stripeCustomerId;
-  }
-
-  const stripe = getStripe()!;
-  const customer = await stripe.customers.create({
-    email: user.email,
-    metadata: { userId },
-  });
-
-  await prisma.subscription.upsert({
-    where: { userId },
-    create: {
-      userId,
-      stripeCustomerId: customer.id,
-      plan: SubscriptionPlan.MONTHLY,
-      status: SubscriptionStatus.CANCELED,
-    },
-    update: {
-      stripeCustomerId: customer.id,
-    },
-  });
-
-  return customer.id;
-}
-
-async function syncSubscriptionFromStripe(
-  stripeSub: Stripe.Subscription,
+async function syncSubscriptionFromPayPal(
+  paypalSub: Awaited<ReturnType<typeof getPayPalSubscription>>,
   userId: string
 ): Promise<void> {
-  const priceId = stripeSub.items.data[0]?.price?.id;
-  const plan = planFromStripePrice(priceId);
-  const status = mapStripeStatus(stripeSub.status);
+  const plan = planFromPayPalPlanId(paypalSub.plan_id);
+  const status = mapPayPalSubscriptionStatus(paypalSub.status);
+  const nextBilling = paypalSub.billing_info?.next_billing_time;
 
   await prisma.subscription.upsert({
     where: { userId },
     create: {
       userId,
-      stripeCustomerId: String(stripeSub.customer),
-      stripeSubscriptionId: stripeSub.id,
+      paymentProvider: PaymentProvider.PAYPAL,
+      paypalSubscriptionId: paypalSub.id,
       plan,
       status,
-      currentPeriodStart: new Date(stripeSub.current_period_start * 1000),
-      currentPeriodEnd: new Date(stripeSub.current_period_end * 1000),
-      cancelAtPeriodEnd: stripeSub.cancel_at_period_end,
+      currentPeriodStart: paypalSub.start_time ? new Date(paypalSub.start_time) : new Date(),
+      currentPeriodEnd: nextBilling ? new Date(nextBilling) : null,
+      cancelAtPeriodEnd: status === SubscriptionStatus.CANCELED,
     },
     update: {
-      stripeCustomerId: String(stripeSub.customer),
-      stripeSubscriptionId: stripeSub.id,
+      paymentProvider: PaymentProvider.PAYPAL,
+      paypalSubscriptionId: paypalSub.id,
       plan,
       status,
-      currentPeriodStart: new Date(stripeSub.current_period_start * 1000),
-      currentPeriodEnd: new Date(stripeSub.current_period_end * 1000),
-      cancelAtPeriodEnd: stripeSub.cancel_at_period_end,
+      currentPeriodStart: paypalSub.start_time ? new Date(paypalSub.start_time) : undefined,
+      currentPeriodEnd: nextBilling ? new Date(nextBilling) : null,
+      cancelAtPeriodEnd: status === SubscriptionStatus.CANCELED,
     },
   });
 }
 
-async function grantInitialPremiumCredits(userId: string): Promise<void> {
-  await prisma.aiCredit.upsert({
-    where: { userId },
-    create: {
-      userId,
-      balance: MONTHLY_AI_CREDITS,
-      monthlyCredits: MONTHLY_AI_CREDITS,
-      lastMonthlyReset: new Date(),
-    },
-    update: {
-      monthlyCredits: MONTHLY_AI_CREDITS,
-      balance: { increment: MONTHLY_AI_CREDITS },
-      lastMonthlyReset: new Date(),
-    },
-  });
-}
-
-async function resetMonthlyPremiumCredits(userId: string): Promise<void> {
-  const existing = await prisma.aiCredit.findUnique({ where: { userId } });
-  if (!existing) {
-    await grantInitialPremiumCredits(userId);
-    return;
-  }
-
-  const nonMonthlyBalance = Math.max(0, existing.balance - existing.monthlyCredits);
-  await prisma.aiCredit.update({
-    where: { userId },
-    data: {
-      monthlyCredits: MONTHLY_AI_CREDITS,
-      balance: nonMonthlyBalance + MONTHLY_AI_CREDITS,
-      lastMonthlyReset: new Date(),
-    },
-  });
-}
-
-async function addPurchasedCredits(
-  userId: string,
-  credits: number,
-  paymentIntentId: string,
-  amount: number,
-  currency: string
-): Promise<void> {
-  const existing = await prisma.payment.findUnique({
-    where: { stripePaymentIntentId: paymentIntentId },
-  });
-  if (existing) return;
-
-  await prisma.$transaction([
-    prisma.payment.create({
-      data: {
-        userId,
-        stripePaymentIntentId: paymentIntentId,
-        amount,
-        currency,
-        type: PaymentType.CREDITS,
-        status: PaymentStatus.SUCCEEDED,
-        metadata: { credits },
-      },
-    }),
-    prisma.aiCredit.upsert({
-      where: { userId },
-      create: {
-        userId,
-        balance: credits,
-        lifetimePurchased: credits,
-      },
-      update: {
-        balance: { increment: credits },
-        lifetimePurchased: { increment: credits },
-      },
-    }),
-  ]);
-}
-
-async function logSubscriptionPayment(
-  userId: string,
-  paymentIntentId: string,
-  amount: number,
-  currency: string,
-  metadata?: Prisma.InputJsonValue
-): Promise<void> {
-  const existing = await prisma.payment.findUnique({
-    where: { stripePaymentIntentId: paymentIntentId },
-  });
-  if (existing) return;
-
-  await prisma.payment.create({
-    data: {
-      userId,
-      stripePaymentIntentId: paymentIntentId,
-      amount,
-      currency,
-      type: PaymentType.SUBSCRIPTION,
-      status: PaymentStatus.SUCCEEDED,
-      metadata: metadata ?? {},
-    },
-  });
-}
-
-async function resolveUserIdFromCustomer(customerId: string): Promise<string | null> {
+async function resolveUserIdFromPayPalSubscription(subscriptionId: string): Promise<string | null> {
   const sub = await prisma.subscription.findFirst({
-    where: { stripeCustomerId: customerId },
+    where: { paypalSubscriptionId: subscriptionId },
     select: { userId: true },
   });
-  return sub?.userId ?? null;
+  if (sub?.userId) return sub.userId;
+
+  try {
+    const paypalSub = await getPayPalSubscription(subscriptionId);
+    return paypalSub.custom_id ?? null;
+  } catch {
+    return null;
+  }
 }
 
-export async function stripeWebhookHandler(req: Request, res: Response): Promise<void> {
-  const stripe = getStripe();
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET?.trim();
+function parseCreditCustomId(customId: string | undefined): { userId: string; plan: CreditPlanKey } | null {
+  if (!customId) return null;
+  const [userId, plan] = customId.split('|');
+  if (!userId || !plan || !(plan in CREDIT_PLANS)) return null;
+  return { userId, plan: plan as CreditPlanKey };
+}
 
-  if (!stripe || !webhookSecret) {
+function billingUnavailable(res: Response): boolean {
+  if (!isPayPalConfigured()) {
     res.status(503).json({
-      error: 'STRIPE_UNAVAILABLE',
-      message: 'Stripe webhook is not configured.',
+      error: 'BILLING_UNAVAILABLE',
+      message:
+        'Billing is not configured. Set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET in backend environment.',
     });
+    return true;
+  }
+  return false;
+}
+
+export async function paypalWebhookHandler(req: Request, res: Response): Promise<void> {
+  if (!isPayPalConfigured()) {
+    res.status(503).json({ error: 'BILLING_UNAVAILABLE', message: 'PayPal webhook is not configured.' });
     return;
   }
 
-  const signature = req.headers['stripe-signature'];
-  if (!signature || typeof signature !== 'string') {
-    res.status(400).json({ error: 'MISSING_SIGNATURE', message: 'Missing stripe-signature header' });
-    return;
-  }
+  const rawBody =
+    typeof req.body === 'string'
+      ? req.body
+      : Buffer.isBuffer(req.body)
+        ? req.body.toString('utf8')
+        : JSON.stringify(req.body);
 
-  let event: Stripe.Event;
-  try {
-    event = stripe.webhooks.constructEvent(req.body, signature, webhookSecret);
-  } catch (err) {
-    console.error('[billing/webhook] signature verification failed', err);
+  const verified = await verifyPayPalWebhook(req.headers, rawBody);
+  if (!verified) {
     res.status(400).json({ error: 'INVALID_SIGNATURE', message: 'Webhook signature verification failed' });
     return;
   }
 
-  try {
-    switch (event.type) {
-      case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session;
-        const userId =
-          session.metadata?.userId ||
-          (session.customer
-            ? await resolveUserIdFromCustomer(String(session.customer))
-            : null);
+  const event = JSON.parse(rawBody) as {
+    event_type: string;
+    resource: Record<string, unknown>;
+  };
 
+  try {
+    switch (event.event_type) {
+      case 'BILLING.SUBSCRIPTION.ACTIVATED':
+      case 'BILLING.SUBSCRIPTION.UPDATED':
+      case 'BILLING.SUBSCRIPTION.CANCELLED':
+      case 'BILLING.SUBSCRIPTION.SUSPENDED':
+      case 'BILLING.SUBSCRIPTION.EXPIRED': {
+        const subscriptionId = String(event.resource.id ?? '');
+        if (!subscriptionId) break;
+
+        const userId =
+          String(event.resource.custom_id ?? '') ||
+          (await resolveUserIdFromPayPalSubscription(subscriptionId));
         if (!userId) break;
 
-        if (session.mode === 'subscription' && session.subscription) {
-          const stripeSub = await stripe.subscriptions.retrieve(String(session.subscription));
-          await syncSubscriptionFromStripe(stripeSub, userId);
-          await grantInitialPremiumCredits(userId);
-        } else if (session.mode === 'payment') {
-          const plan = session.metadata?.plan as CreditPlanKey | undefined;
-          const pack = plan ? CREDIT_PLANS[plan] : null;
-          if (!pack) break;
+        const paypalSub = await getPayPalSubscription(subscriptionId);
+        await syncSubscriptionFromPayPal(paypalSub, userId);
 
-          const paymentIntentId = String(session.payment_intent ?? session.id);
-          const amount = session.amount_total ?? 0;
-          const currency = session.currency ?? 'ils';
-          await addPurchasedCredits(userId, pack.credits, paymentIntentId, amount, currency);
+        if (event.event_type === 'BILLING.SUBSCRIPTION.ACTIVATED') {
+          await grantInitialPremiumCredits(userId);
         }
         break;
       }
 
-      case 'customer.subscription.updated':
-      case 'customer.subscription.deleted': {
-        const stripeSub = event.data.object as Stripe.Subscription;
-        const userId =
-          stripeSub.metadata?.userId ||
-          (await resolveUserIdFromCustomer(String(stripeSub.customer)));
-        if (!userId) break;
-        await syncSubscriptionFromStripe(stripeSub, userId);
-        break;
-      }
-
-      case 'invoice.payment_succeeded': {
-        const invoice = event.data.object as Stripe.Invoice;
-        if (!invoice.subscription) break;
-
-        const stripeSub = await stripe.subscriptions.retrieve(String(invoice.subscription));
-        const userId =
-          stripeSub.metadata?.userId ||
-          (await resolveUserIdFromCustomer(String(stripeSub.customer)));
-        if (!userId) break;
-
-        await syncSubscriptionFromStripe(stripeSub, userId);
-
-        const paymentIntentId = String(
-          invoice.payment_intent ?? `${invoice.id}-payment`
+      case 'BILLING.SUBSCRIPTION.PAYMENT.SUCCEEDED': {
+        const subscriptionId = String(
+          (event.resource as { billing_agreement_id?: string }).billing_agreement_id ??
+            (event.resource as { id?: string }).id ??
+            ''
         );
+        if (!subscriptionId) break;
+
+        const userId = await resolveUserIdFromPayPalSubscription(subscriptionId);
+        if (!userId) break;
+
+        const paypalSub = await getPayPalSubscription(subscriptionId);
+        await syncSubscriptionFromPayPal(paypalSub, userId);
+
+        const amount = event.resource.amount as { value?: string; currency_code?: string } | undefined;
+        const paymentId = String(
+          (event.resource as { id?: string }).id ?? `${subscriptionId}-${Date.now()}`
+        );
+
         await logSubscriptionPayment(
           userId,
-          paymentIntentId,
-          invoice.amount_paid ?? 0,
-          invoice.currency ?? 'ils',
-          { invoiceId: invoice.id }
+          paymentId,
+          ilsToAgorot(amount?.value),
+          (amount?.currency_code ?? 'ILS').toLowerCase(),
+          'paypal',
+          { subscriptionId, eventType: event.event_type }
         );
 
-        // Initial invoice is handled in checkout.session.completed — only reset on renewals.
-        if (invoice.billing_reason === 'subscription_cycle') {
+        const sequence = Number((event.resource as { sequence_number?: number }).sequence_number ?? 1);
+        if (sequence > 1) {
           await resetMonthlyPremiumCredits(userId);
         }
         break;
       }
 
-      case 'invoice.payment_failed': {
-        const invoice = event.data.object as Stripe.Invoice;
-        if (!invoice.subscription) break;
+      case 'BILLING.SUBSCRIPTION.PAYMENT.FAILED': {
+        const subscriptionId = String(
+          (event.resource as { billing_agreement_id?: string }).billing_agreement_id ?? ''
+        );
+        if (!subscriptionId) break;
 
-        const stripeSub = await stripe.subscriptions.retrieve(String(invoice.subscription));
-        const userId =
-          stripeSub.metadata?.userId ||
-          (await resolveUserIdFromCustomer(String(stripeSub.customer)));
+        const userId = await resolveUserIdFromPayPalSubscription(subscriptionId);
         if (!userId) break;
 
         await prisma.subscription.updateMany({
@@ -385,19 +227,40 @@ export async function stripeWebhookHandler(req: Request, res: Response): Promise
         break;
       }
 
+      case 'PAYMENT.CAPTURE.COMPLETED': {
+        const resource = event.resource;
+        const customId = String((resource as { custom_id?: string }).custom_id ?? '');
+        const captureId = String((resource as { id?: string }).id ?? '');
+        const amount = (resource as { amount?: { value?: string; currency_code?: string } }).amount;
+
+        const parsed = parseCreditCustomId(customId);
+        if (!parsed || !captureId) break;
+
+        const pack = CREDIT_PLANS[parsed.plan];
+        await addPurchasedCredits(
+          parsed.userId,
+          pack.credits,
+          captureId,
+          ilsToAgorot(amount?.value),
+          (amount?.currency_code ?? 'ILS').toLowerCase(),
+          'paypal'
+        );
+        break;
+      }
+
       default:
         break;
     }
 
     res.json({ received: true });
   } catch (e) {
-    console.error('[billing/webhook]', event.type, e);
+    console.error('[billing/paypal/webhook]', event.event_type, e);
     res.status(500).json({ error: 'WEBHOOK_ERROR', message: 'Failed to process webhook' });
   }
 }
 
 router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
-  if (stripeUnavailable(res)) return;
+  if (billingUnavailable(res)) return;
 
   try {
     const plan = req.body?.plan as CheckoutPlan | undefined;
@@ -406,42 +269,84 @@ router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
       return;
     }
 
-    const priceId = getPriceId(plan);
-    if (!priceId) {
+    const userId = req.userId!;
+    const origin = getFrontendOrigin();
+    const successUrl = `${origin}/premium?checkout=success&plan=${plan}`;
+    const cancelUrl = `${origin}/premium?checkout=canceled`;
+
+    const isCredit = plan.startsWith('credits_');
+
+    if (isCredit) {
+      const pack = CREDIT_PLANS[plan as CreditPlanKey];
+      const { approvalUrl } = await createPayPalOrder(
+        pack.amountIls,
+        pack.label,
+        userId,
+        plan,
+        successUrl,
+        cancelUrl
+      );
+      res.json({ url: approvalUrl, provider: 'paypal' });
+      return;
+    }
+
+    const planId = getPayPalPlanId(plan as 'monthly' | 'yearly');
+    if (!planId) {
       res.status(503).json({
-        error: 'PRICE_NOT_CONFIGURED',
-        message: `Stripe price for "${plan}" is not configured.`,
+        error: 'PLAN_NOT_CONFIGURED',
+        message: `PayPal plan for "${plan}" is not configured.`,
       });
       return;
     }
 
-    const userId = req.userId!;
-    const stripe = getStripe()!;
-    const customerId = await getOrCreateStripeCustomer(userId);
-    const origin = getFrontendOrigin();
-    const isCredit = plan.startsWith('credits_');
-
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      mode: isCredit ? 'payment' : 'subscription',
-      line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${origin}/premium?checkout=success&plan=${plan}`,
-      cancel_url: `${origin}/premium?checkout=canceled`,
-      metadata: { userId, plan },
-      ...(isCredit
-        ? { payment_intent_data: { metadata: { userId, plan } } }
-        : { subscription_data: { metadata: { userId, plan } } }),
-    });
-
-    if (!session.url) {
-      res.status(500).json({ error: 'CHECKOUT_FAILED', message: 'Could not create checkout session' });
-      return;
-    }
-
-    res.json({ url: session.url });
+    const { approvalUrl } = await createPayPalSubscription(
+      planId,
+      userId,
+      successUrl,
+      cancelUrl
+    );
+    res.json({ url: approvalUrl, provider: 'paypal' });
   } catch (e) {
     console.error('[billing/checkout]', e);
     res.status(500).json({ error: 'CHECKOUT_FAILED', message: 'Could not start checkout' });
+  }
+});
+
+router.post('/paypal/capture-order', requireAuth, async (req: Request, res: Response) => {
+  if (billingUnavailable(res)) return;
+
+  try {
+    const orderId = String(req.body?.orderId ?? '').trim();
+    if (!orderId) {
+      res.status(400).json({ error: 'INVALID_ORDER', message: 'Missing orderId' });
+      return;
+    }
+
+    const order = await capturePayPalOrder(orderId);
+    const unit = order.purchase_units?.[0];
+    const parsed = parseCreditCustomId(unit?.custom_id);
+    if (!parsed || parsed.userId !== req.userId) {
+      res.status(403).json({ error: 'FORBIDDEN', message: 'Order does not belong to this user' });
+      return;
+    }
+
+    const pack = CREDIT_PLANS[parsed.plan];
+    const capture = unit?.payments?.captures?.[0];
+    const captureId = capture?.id ?? orderId;
+
+    await addPurchasedCredits(
+      parsed.userId,
+      pack.credits,
+      captureId,
+      ilsToAgorot(capture?.amount?.value ?? unit?.amount?.value),
+      (capture?.amount?.currency_code ?? unit?.amount?.currency_code ?? 'ILS').toLowerCase(),
+      'paypal'
+    );
+
+    res.json({ captured: true, credits: pack.credits });
+  } catch (e) {
+    console.error('[billing/paypal/capture-order]', e);
+    res.status(500).json({ error: 'CAPTURE_FAILED', message: 'Could not capture order' });
   }
 });
 
@@ -453,15 +358,14 @@ router.get('/status', requireAuth, async (req: Request, res: Response) => {
       prisma.aiCredit.findUnique({ where: { userId } }),
     ]);
 
-    const isPremium = sub
-      ? isActivePremium(sub.status, sub.currentPeriodEnd)
-      : false;
+    const isPremium = sub ? isActivePremium(sub.status, sub.currentPeriodEnd) : false;
 
     res.json({
       isPremium,
       plan: isPremium ? sub!.plan.toLowerCase() : null,
       periodEnd: sub?.currentPeriodEnd?.toISOString() ?? null,
       credits: credits?.balance ?? 0,
+      provider: sub?.paymentProvider?.toLowerCase() ?? (isPayPalConfigured() ? 'paypal' : null),
     });
   } catch (e) {
     console.error('[billing/status]', e);
@@ -470,36 +374,37 @@ router.get('/status', requireAuth, async (req: Request, res: Response) => {
 });
 
 router.post('/portal', requireAuth, async (req: Request, res: Response) => {
-  if (stripeUnavailable(res)) return;
+  if (billingUnavailable(res)) return;
 
   try {
     const userId = req.userId!;
     const sub = await prisma.subscription.findUnique({ where: { userId } });
-    if (!sub?.stripeCustomerId) {
+
+    if (!sub?.paypalSubscriptionId && sub?.paymentProvider !== PaymentProvider.PAYPAL) {
+      if (ENABLE_STRIPE) {
+        res.status(400).json({
+          error: 'NO_BILLING_ACCOUNT',
+          message: 'No billing account found. Subscribe first.',
+        });
+        return;
+      }
+    }
+
+    if (!sub?.paypalSubscriptionId) {
       res.status(400).json({
-        error: 'NO_CUSTOMER',
-        message: 'No billing account found. Subscribe first.',
+        error: 'NO_SUBSCRIPTION',
+        message: 'No active PayPal subscription found. Subscribe first.',
       });
       return;
     }
 
-    const stripe = getStripe()!;
-    const origin = getFrontendOrigin();
-    const session = await stripe.billingPortal.sessions.create({
-      customer: sub.stripeCustomerId,
-      return_url: `${origin}/premium`,
-    });
-
-    if (!session.url) {
-      res.status(500).json({ error: 'PORTAL_FAILED', message: 'Could not open customer portal' });
-      return;
-    }
-
-    res.json({ url: session.url });
+    res.json({ url: getPayPalManageUrl(), provider: 'paypal' });
   } catch (e) {
     console.error('[billing/portal]', e);
-    res.status(500).json({ error: 'PORTAL_FAILED', message: 'Could not open customer portal' });
+    res.status(500).json({ error: 'PORTAL_FAILED', message: 'Could not open billing portal' });
   }
 });
 
 export default router;
+
+// Stripe integration retained behind ENABLE_STRIPE=true — see billing-stripe.routes.ts if re-enabled.
