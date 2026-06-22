@@ -157,7 +157,7 @@ export default function PremiumPage() {
         {/* Features grid */}
         <section className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {features.map((f: any, i: number) => {
+            {(features as { title: string; desc: string }[]).map((f, i: number) => {
               const Icon = featureIcons[i] || Zap;
               return (
                 <article key={i} className="bg-card border border-border rounded-xl p-5 space-y-3 hover:border-premium/30 hover:shadow-sm transition-all">
@@ -181,7 +181,7 @@ export default function PremiumPage() {
               <div className="p-4 text-center text-muted-foreground">{headers.free}</div>
               <div className="p-4 text-center text-premium bg-premium/5">{headers.premium}</div>
             </div>
-            {rows.map((row: any, i: number) => (
+            {(rows as { feature: string; free: string; premium: string }[]).map((row, i: number) => (
               <div key={i} className={`grid grid-cols-3 text-sm ${i % 2 === 0 ? "" : "bg-muted/30"} ${i === rows.length - 1 ? "" : "border-b border-border/50"}`}>
                 <div className="p-4 font-medium text-foreground">{row.feature}</div>
                 <div className="p-4 text-center text-muted-foreground">{row.free}</div>
@@ -218,17 +218,17 @@ export default function PremiumPage() {
         {testimonials.length > 0 && (
           <section className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {testimonials.map((t: any, i: number) => (
+              {(testimonials as { text: string; name: string; role: string }[]).map((item, i: number) => (
                 <div key={i} className="bg-card border border-border rounded-xl p-5 space-y-3">
                   <div className="flex gap-1">
                     {[...Array(5)].map((_, j) => (
                       <Star key={j} className="w-4 h-4 text-premium fill-premium" />
                     ))}
                   </div>
-                  <p className="text-sm text-foreground leading-relaxed italic">"{t.text}"</p>
+                  <p className="text-sm text-foreground leading-relaxed italic">"{item.text}"</p>
                   <div>
-                    <p className="text-sm font-bold text-foreground">{t.name}</p>
-                    <p className="text-xs text-muted-foreground">{t.role}</p>
+                    <p className="text-sm font-bold text-foreground">{item.name}</p>
+                    <p className="text-xs text-muted-foreground">{item.role}</p>
                   </div>
                 </div>
               ))}
@@ -241,7 +241,7 @@ export default function PremiumPage() {
           <section className="space-y-4">
             <h2 className="text-2xl font-bold text-foreground text-center">{u.faqTitle}</h2>
             <div className="max-w-2xl mx-auto space-y-2">
-              {faqs.map((faq: any, i: number) => (
+              {(faqs as { q: string; a: string }[]).map((faq, i: number) => (
                 <div key={i} className="bg-card border border-border rounded-xl overflow-hidden">
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}

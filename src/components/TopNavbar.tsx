@@ -21,7 +21,7 @@ export function TopNavbar() {
   const adminNav = t.admin as Record<string, string> | undefined;
   const [menuOpen, setMenuOpen] = useState(false);
   const [openCat, setOpenCat] = useState<ToolCategory | null>(null);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
 
   useEffect(() => {
     const handler = (e: Event) => {

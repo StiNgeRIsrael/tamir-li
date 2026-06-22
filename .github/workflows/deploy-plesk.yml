@@ -38,14 +38,19 @@ jobs:
           VITE_SITE_ORIGIN: ${{ vars.VITE_SITE_ORIGIN || 'https://tamir.li' }}
           VITE_API_URL: ${{ vars.VITE_API_URL || 'https://tamir.li' }}
           VITE_GTM_ID: ${{ secrets.VITE_GTM_ID }}
-          VITE_ADSENSE_CLIENT: ${{ secrets.VITE_ADSENSE_CLIENT }}
-          VITE_ADSENSE_SLOT_BANNER: ${{ secrets.VITE_ADSENSE_SLOT_BANNER }}
-          VITE_ADSENSE_SLOT_SIDEBAR: ${{ secrets.VITE_ADSENSE_SLOT_SIDEBAR }}
-          VITE_ADSENSE_SLOT_INLINE: ${{ secrets.VITE_ADSENSE_SLOT_INLINE }}
+          VITE_ADSTERRA_ZONE_BANNER: ${{ secrets.VITE_ADSTERRA_ZONE_BANNER }}
+          VITE_ADSTERRA_ZONE_SIDEBAR: ${{ secrets.VITE_ADSTERRA_ZONE_SIDEBAR }}
+          VITE_ADSTERRA_ZONE_SIDEBAR_2: ${{ secrets.VITE_ADSTERRA_ZONE_SIDEBAR_2 }}
+          VITE_ADSTERRA_ZONE_INLINE: ${{ secrets.VITE_ADSTERRA_ZONE_INLINE }}
+          VITE_ADSTERRA_POPUNDER_SCRIPT_URL: ${{ secrets.VITE_ADSTERRA_POPUNDER_SCRIPT_URL }}
+          VITE_ADSTERRA_INVOKE_HOST: ${{ secrets.VITE_ADSTERRA_INVOKE_HOST }}
         run: |
           npm run build
           test -f dist/sitemap.xml
           test -f dist/robots.txt
+          SITEMAP_BYTES=$(wc -c < dist/sitemap.xml | tr -d ' ')
+          echo "dist/sitemap.xml: ${SITEMAP_BYTES} bytes"
+          test "$SITEMAP_BYTES" -gt 100000
 
       - name: Prepare deploy bundle
         run: |
@@ -68,6 +73,9 @@ jobs:
           test -f plesk-upload/deploy/backend/dist/index.js
           test -f plesk-upload/deploy/dist/sitemap.xml
           test -f plesk-upload/sitemap.xml
+          SITEMAP_BYTES=$(wc -c < plesk-upload/sitemap.xml | tr -d ' ')
+          echo "plesk-upload/sitemap.xml: ${SITEMAP_BYTES} bytes"
+          test "$SITEMAP_BYTES" -gt 100000
 
       - name: Deploy to Plesk (Node app + SEO files)
         uses: wlixcc/SFTP-Deploy-Action@v1.2.6

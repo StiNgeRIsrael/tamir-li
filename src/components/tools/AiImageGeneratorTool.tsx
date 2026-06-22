@@ -73,12 +73,12 @@ export function AiImageGeneratorTool() {
           <div className="space-y-1">
             <label className="text-xs text-muted-foreground">{ai.style}</label>
             <Select value={style} onValueChange={setStyle}><SelectTrigger className="w-32 h-8 text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent>{styles.map((s: any) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}</SelectContent></Select>
+              <SelectContent>{(styles as { value: string; label: string }[]).map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}</SelectContent></Select>
           </div>
           <div className="space-y-1">
             <label className="text-xs text-muted-foreground">{ai.aspectRatio}</label>
             <Select value={aspectRatio} onValueChange={setAspectRatio}><SelectTrigger className="w-32 h-8 text-xs"><SelectValue /></SelectTrigger>
-              <SelectContent>{ratios.map((r: any) => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent></Select>
+              <SelectContent>{(ratios as { value: string; label: string }[]).map((r) => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent></Select>
           </div>
         </div>
         <Button onClick={handleGenerate} disabled={!prompt.trim() || state === "generating" || credits <= 0} className="w-full h-11 font-bold bg-premium text-premium-foreground hover:bg-premium/90" size="lg">

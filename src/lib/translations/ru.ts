@@ -1,4 +1,6 @@
-export const ruTranslations: Record<string, any> = {
+import type { TranslationDict } from "./types";
+
+export const ruTranslations: TranslationDict = {
   brandName: "Tamirly",
   brandTagline: "Простая Конвертация Файлов Онлайн",
   downloadApp: "Скачать",
@@ -164,7 +166,7 @@ export const ruTranslations: Record<string, any> = {
     "text-tools": "Продвинутый текстовый инструмент: конвертация между текстом, Markdown и HTML. Подсчёт слов, символов и многое другое.",
     "ai-image-generator": "Продвинутый инструмент создания изображений с ИИ. Опишите изображение, выберите стиль и соотношение сторон.",
   },
-  adLabel: "Реклама • Google Ads",
+  adLabel: "Реклама • Adsterra",
   sidebarHome: "Главная",
   sidebarUpgrade: "Перейти на Премиум",
   sidebarNoAds: "Без рекламы • Безлимит",

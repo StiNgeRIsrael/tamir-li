@@ -67,7 +67,7 @@ export default function InstallPage() {
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-foreground text-center">{ip.whyDownload}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {benefits.map((b: any, i: number) => {
+            {(benefits as { title: string; desc: string }[]).map((b, i: number) => {
               const BIcon = benefitIcons[i] || Zap;
               return (
                 <article key={i} className="bg-card border border-border rounded-xl p-4 space-y-2">
@@ -116,7 +116,7 @@ export default function InstallPage() {
               <div className="p-3 text-center text-foreground bg-primary/5">{ip.comparisonHeader?.us}</div>
               <div className="p-3 text-center text-muted-foreground">{ip.comparisonHeader?.them}</div>
             </div>
-            {(ip.comparisonRows || []).map((row: any, i: number) => (
+            {((ip.comparisonRows || []) as { label: string; us: string; them: string }[]).map((row, i: number) => (
               <div key={i} className={`grid grid-cols-3 text-xs ${i % 2 === 0 ? "" : "bg-muted/30"}`}>
                 <div className="p-3 font-medium text-foreground">{row.label}</div>
                 <div className="p-3 text-center font-semibold text-primary">{row.us}</div>

@@ -92,7 +92,7 @@ export function ImageCompressorTool() {
           <div className="bg-card border border-border rounded-xl p-4 space-y-3">
             <h3 className="text-sm font-bold text-foreground">{c.quickCompress}</h3>
             <div className="grid grid-cols-2 gap-2">
-              {(c.presets || []).map((p: any) => (
+              {((c.presets || []) as { quality: number; label: string; desc: string }[]).map((p) => (
                 <button key={p.quality} onClick={() => { setQuality(p.quality); setResultUrl(""); }}
                   className={`text-start p-3 rounded-xl border transition-all ${quality === p.quality ? "border-primary bg-primary/10" : "border-border hover:border-primary/30"}`}>
                   <span className={`text-xs font-bold ${quality === p.quality ? "text-primary" : "text-foreground"}`}>{p.label} ({p.quality}%)</span>

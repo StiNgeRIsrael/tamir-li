@@ -1,4 +1,6 @@
-export const enTranslations: Record<string, any> = {
+import type { TranslationDict } from "./types";
+
+export const enTranslations: TranslationDict = {
   brandName: "Tamir.li",
   brandTagline: "Online file conversion — built for clarity",
   downloadApp: "Download App",

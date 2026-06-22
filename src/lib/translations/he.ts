@@ -1,4 +1,6 @@
-export const heTranslations: Record<string, any> = {
+import type { TranslationDict } from "./types";
+
+export const heTranslations: TranslationDict = {
   // Brand
   brandName: "תמיר לי",
   brandTagline: "Tamir.li — המרות קבצים לישראל",

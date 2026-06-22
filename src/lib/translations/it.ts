@@ -1,4 +1,6 @@
-export const itTranslations: Record<string, any> = {
+import type { TranslationDict } from "./types";
+
+export const itTranslations: TranslationDict = {
   brandName: "Tamirly",
   brandTagline: "Conversione File Online Facile",
   downloadApp: "Scarica App",
@@ -160,7 +162,7 @@ export const itTranslations: Record<string, any> = {
     "text-tools": "Strumento di testo avanzato: conversione tra testo, Markdown e HTML. Conteggio parole e caratteri e altro ancora.",
     "ai-image-generator": "Strumento avanzato di creazione immagini con IA. Descrivi l'immagine desiderata, scegli stile e proporzioni.",
   },
-  adLabel: "Pubblicità • Google Ads",
+  adLabel: "Pubblicità • Adsterra",
   sidebarHome: "Home",
   sidebarUpgrade: "Passa a Premium",
   sidebarNoAds: "Senza pubblicità • Illimitato",

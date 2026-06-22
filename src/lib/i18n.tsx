@@ -1,5 +1,6 @@
 import { createContext, useContext, ReactNode, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import type { TranslationDict } from "@/lib/translations/types";
 
 export type Locale = "he" | "en" | "es" | "ru" | "de" | "fr" | "it";
 
@@ -38,7 +39,7 @@ export function localePath(path: string, locale: Locale): string {
 
 interface LocaleContextValue {
   locale: Locale;
-  t: Record<string, any>;
+  t: TranslationDict;
   dir: "rtl" | "ltr";
 }
 
@@ -65,7 +66,7 @@ import { deTranslations } from "@/lib/translations/de";
 import { frTranslations } from "@/lib/translations/fr";
 import { itTranslations } from "@/lib/translations/it";
 
-const translationMap: Record<Locale, Record<string, any>> = {
+const translationMap: Record<Locale, TranslationDict> = {
   he: heTranslations,
   en: enTranslations,
   es: esTranslations,
