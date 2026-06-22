@@ -139,6 +139,9 @@ export const deTranslations = {
     conversionNotReady: "Der Konvertierungsdienst auf dem Server ist noch nicht aktiv.",
     conversionApiError: "Konvertierung konnte nicht gestartet werden. Bitte später erneut versuchen.",
     conversionFormatError: "Diese Formatkombination wird im Browser nicht unterstützt. Versuchen Sie JPG, PNG, WEBP, GIF oder BMP.",
+    conversionServerErrorTitle: "Server vorübergehend nicht erreichbar",
+    conversionServerError: "Unsere Konvertierungsserver sind vorübergehend nicht erreichbar — Ihre Dateien wurden nicht hochgeladen. Bitte versuchen Sie es in ein paar Minuten erneut oder",
+    conversionServerErrorContact: "kontaktieren Sie den Support",
     error: "Fehler",
     comingSoonTitle: "Demnächst",
     comingSoonMessage: (name: string) =>

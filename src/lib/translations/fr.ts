@@ -139,6 +139,9 @@ export const frTranslations = {
     conversionNotReady: "Le service de conversion sur le serveur n'est pas encore actif.",
     conversionApiError: "Impossible de démarrer la conversion. Réessayez plus tard.",
     conversionFormatError: "Cette combinaison de formats n'est pas prise en charge dans le navigateur. Essayez JPG, PNG, WEBP, GIF ou BMP.",
+    conversionServerErrorTitle: "Serveurs temporairement indisponibles",
+    conversionServerError: "Nos serveurs de conversion sont temporairement indisponibles — vos fichiers n'ont pas été téléversés. Réessayez dans quelques minutes, ou",
+    conversionServerErrorContact: "contactez le support",
     error: "Erreur",
     comingSoonTitle: "Bientôt",
     comingSoonMessage: (name: string) =>

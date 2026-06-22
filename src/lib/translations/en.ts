@@ -180,6 +180,9 @@ export const enTranslations = {
     conversionNotReady: "The conversion service is not live yet. We're finishing the server integration.",
     conversionApiError: "Could not start conversion. Please try again later.",
     conversionFormatError: "This format combination is not supported in the browser. Try JPG, PNG, WEBP, GIF, or BMP.",
+    conversionServerErrorTitle: "Servers temporarily unavailable",
+    conversionServerError: "Our conversion servers are temporarily unavailable — your files were not uploaded. Please try again in a few minutes, or",
+    conversionServerErrorContact: "contact support",
     error: "Error",
     comingSoonTitle: "Coming Soon",
     comingSoonMessage: (name: string) =>

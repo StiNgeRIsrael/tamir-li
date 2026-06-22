@@ -142,6 +142,9 @@ export const ruTranslations = {
     conversionNotReady: "Сервер конвертации ещё не запущен.",
     conversionApiError: "Не удалось начать конвертацию. Попробуйте позже.",
     conversionFormatError: "Эта комбинация форматов не поддерживается в браузере. Попробуйте JPG, PNG, WEBP, GIF или BMP.",
+    conversionServerErrorTitle: "Серверы временно недоступны",
+    conversionServerError: "Серверы конвертации временно недоступны — ваши файлы не были загружены. Попробуйте через несколько минут или",
+    conversionServerErrorContact: "свяжитесь с поддержкой",
     error: "Ошибка",
     comingSoonTitle: "Скоро",
     comingSoonMessage: (name: string) =>

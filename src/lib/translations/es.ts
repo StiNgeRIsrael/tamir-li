@@ -160,6 +160,9 @@ export const esTranslations = {
     conversionNotReady: "El servicio de conversión en el servidor aún no está activo.",
     conversionApiError: "No se pudo iniciar la conversión. Inténtalo más tarde.",
     conversionFormatError: "Esta combinación de formatos no es compatible en el navegador. Prueba JPG, PNG, WEBP, GIF o BMP.",
+    conversionServerErrorTitle: "Servidores temporalmente no disponibles",
+    conversionServerError: "Nuestros servidores de conversión no están disponibles temporalmente — tus archivos no se subieron. Inténtalo de nuevo en unos minutos, o",
+    conversionServerErrorContact: "contacta con soporte",
     error: "Error",
     comingSoonTitle: "Próximamente",
     comingSoonMessage: (name: string) =>

@@ -188,6 +188,9 @@ export const heTranslations = {
     conversionNotReady: "שירות ההמרה בשרת עדיין לא פעיל. אנחנו משלימים את החיבור.",
     conversionApiError: "לא ניתן להתחיל המרה. נסו שוב מאוחר יותר.",
     conversionFormatError: "שילוב הפורמטים הזה לא נתמך בדפדפן. נסו JPG, PNG, WEBP, GIF או BMP.",
+    conversionServerErrorTitle: "השרתים לא זמינים כרגע",
+    conversionServerError: "שרתי ההמרה שלנו לא זמינים כרגע — הקבצים לא הועלו. נסו שוב בעוד כמה דקות, או",
+    conversionServerErrorContact: "פנו לתמיכה",
     error: "שגיאה",
     comingSoonTitle: "בקרוב",
     comingSoonMessage: (name: string) =>

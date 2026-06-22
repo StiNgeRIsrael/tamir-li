@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getApiBaseUrl, responseLooksLikeJson } from "@/lib/api/client";
+import { isServerUnavailableHttpStatus, SERVER_UNAVAILABLE } from "@/lib/conversion-errors";
 
 export type ConversionJobStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
 
@@ -76,7 +77,7 @@ export function useConversionJob() {
         throw new Error("JOB_POLL_INVALID_RESPONSE");
       }
       if (!res.ok) {
-        throw new Error("JOB_POLL_FAILED");
+        throw new Error(isServerUnavailableHttpStatus(res.status) ? SERVER_UNAVAILABLE : "JOB_POLL_FAILED");
       }
 
       const job = (await res.json()) as JobResponse;
@@ -132,6 +133,12 @@ export function useConversionJob() {
       if (res.status === 501) {
         setPolling(false);
         return { kind: "not_ready" };
+      }
+
+      if (isServerUnavailableHttpStatus(res.status)) {
+        setPolling(false);
+        setError(SERVER_UNAVAILABLE);
+        throw new Error(SERVER_UNAVAILABLE);
       }
 
       if (!responseLooksLikeJson(res)) {

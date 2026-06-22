@@ -8,6 +8,7 @@ import { PremiumBanner, PremiumLock, ConversionSuccessUsage, UsageLimitNotice } 
 import { showAdVignette } from "@/components/ads/AdVignette";
 import { handleGatedDownload, triggerFileDownload, triggerBlobDownload, type DownloadGateState } from "@/lib/ads/download-gate";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SEOHead, toolCategoryOgImage } from "@/components/SEOHead";
@@ -20,7 +21,7 @@ import { ImageResizerTool } from "@/components/tools/ImageResizerTool";
 import { ImageCompressorTool } from "@/components/tools/ImageCompressorTool";
 import { HebOcrTool } from "@/components/tools/HebOcrTool";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { ArrowLeft, ArrowRight, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe } from "lucide-react";
+import { ArrowLeft, ArrowRight, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe, AlertCircle } from "lucide-react";
 import { useLocale, localePath, htmlLangTag } from "@/lib/i18n";
 import { siteUrl } from "@/lib/site";
 import { allowMockFileConversion } from "@/lib/feature-flags";
@@ -34,6 +35,7 @@ import { useConversionJob } from "@/hooks/useConversionJob";
 import { isAdsterraConfigured } from "@/lib/ads/adsterra";
 import { isToolFunctional } from "@/lib/tool-availability";
 import { convertImageFile, isOutputFormatSupported, usesClientImageConversion } from "@/lib/image-convert";
+import { isServerUnavailableError } from "@/lib/conversion-errors";
 import { ComingSoonPanel } from "@/components/ComingSoonPanel";
 
 const categoryHeaderIcon: Record<ToolCategory, string> = {
@@ -100,6 +102,7 @@ export default function ToolPage() {
   const isPremium = isSubPremium || usageIsPremium;
   const [usageUnlocked, setUsageUnlocked] = useState(false);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
+  const [serverUnavailable, setServerUnavailable] = useState(false);
   const atUsageLimit = atLimit && !usageUnlocked && !isPremium;
   const showPremiumToolLock = tool?.premium && !isSubPremium && !premiumUnlocked;
   const convertSuccessHandled = useRef(false);
@@ -197,6 +200,7 @@ export default function ToolPage() {
       }))
     );
     setFileItems((prev) => [...prev, ...newItems]);
+    setServerUnavailable(false);
   }, [activeTo, generateThumbnail, tool]);
 
   const removeFile = (index: number) => {
@@ -321,6 +325,7 @@ export default function ToolPage() {
       file_count: fileItems.length,
     });
     setConverting(true);
+    setServerUnavailable(false);
     setFileItems((prev) =>
       prev.map((item) => ({ ...item, status: "converting" as const, progress: 0, errorMessage: undefined }))
     );
@@ -350,14 +355,17 @@ export default function ToolPage() {
       );
       setConverted(true);
       toast.success(tt.conversionDone);
-    } catch {
-      toast.error(tt.conversionApiError);
+    } catch (err) {
+      const serverDown = isServerUnavailableError(err);
+      setServerUnavailable(serverDown);
+      const msg = serverDown ? tt.conversionServerError : tt.conversionApiError;
+      toast.error(msg);
       setFileItems((prev) =>
         prev.map((item) => ({
           ...item,
           status: "error" as const,
           progress: 0,
-          errorMessage: tt.conversionApiError,
+          errorMessage: msg,
         }))
       );
     } finally {
@@ -371,6 +379,7 @@ export default function ToolPage() {
     setShowSuccessPanel(false);
     setDownloadGate({});
     setAllDownloadGate(false);
+    setServerUnavailable(false);
   };
 
   const onDownloadFile = async (index: number) => {
@@ -796,6 +805,18 @@ export default function ToolPage() {
                         </TableBody>
                       </Table>
                     </div>
+                    {serverUnavailable && (
+                      <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>{tt.conversionServerErrorTitle}</AlertTitle>
+                        <AlertDescription>
+                          {tt.conversionServerError}{" "}
+                          <Link to={localePath("/contact", locale)} className="font-medium underline underline-offset-4">
+                            {tt.conversionServerErrorContact}
+                          </Link>
+                        </AlertDescription>
+                      </Alert>
+                    )}
                     {!converting && (
                       <div className="flex items-center justify-between pt-1">
                         <Button variant="outline" size="sm" onClick={() => document.getElementById("file-input")?.click()}>
