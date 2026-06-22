@@ -37,7 +37,7 @@ Enable **Node.js** on the main domain `tamir.li` (not a subdomain).
 
 | Setting | Value |
 |---------|-------|
-| **Node.js version** | **22.x** |
+| **Node.js version** | **22.x** preferred (25.x may work; this repo targets Node ≥ 22) |
 | **Package manager** | npm |
 | **Application root** | `httpdocs/deploy` (or path from `PLESK_NODE_APP_DIR`; must contain root `package.json`) |
 | **Application startup file** | Leave blank — use **Application mode** + npm script below |
@@ -48,6 +48,67 @@ Enable **Node.js** on the main domain `tamir.li` (not a subdomain).
 Full path example: `/var/www/vhosts/tamir.li/httpdocs/deploy` (adjust for your vhost).
 
 Set **environment variables** in Node.js → **Custom environment variables** before first start (see table below). `DATABASE_URL` must be set before running migrations.
+
+### Run Node.js commands (no shell, no `npx`, no `cd`)
+
+Plesk only exposes **npm** in the **Run Node.js commands** tab: a dropdown for `npm` plus a text field for arguments (everything after `npm `).
+
+**Working directory** is always the application root (`httpdocs/deploy`). Run **one command at a time** — wait for each to finish before the next.
+
+#### First deploy (after CI upload)
+
+| Step | Type in the npm args field | What it runs |
+|------|----------------------------|--------------|
+| 1 | `run setup` | `npm ci` + backend prod deps + Prisma migrate (all-in-one) |
+
+**Or** run step-by-step (same result, easier to debug):
+
+| Step | Type in the npm args field | What it runs |
+|------|----------------------------|--------------|
+| 1 | `ci` | Install root dependencies (`postinstall` also installs backend) |
+| 2 | `run plesk:backend-install` | `npm ci --prefix backend --omit=dev` |
+| 3 | `run plesk:db` | `prisma migrate deploy --schema=backend/prisma/schema.prisma` |
+
+#### After commands succeed
+
+1. In the Node.js dashboard, confirm **Custom script / start** is `npm start`.
+2. Click **Restart app**.
+
+#### Later deploys
+
+| When | Type in the npm args field |
+|------|----------------------------|
+| `package-lock.json` changed | `run setup` (or `ci` then `run plesk:db` if only migrations changed) |
+| New Prisma migrations only | `run plesk:db` |
+| Code-only update (no lock/migrations) | *(none)* — just **Restart app** |
+
+**Copy-paste strings** (args field only — Plesk prepends `npm`):
+
+```
+run setup
+```
+
+Step-by-step alternative:
+
+```
+ci
+```
+
+```
+run plesk:backend-install
+```
+
+```
+run plesk:db
+```
+
+Migrations only:
+
+```
+run plesk:db
+```
+
+**Why not `npx prisma`?** Plesk does not allow `npx` in this UI. Root `package.json` includes `prisma` and scripts `plesk:db` / `setup` so everything runs via `npm <args>` only.
 
 ### After GitHub Actions SFTP upload
 
@@ -66,26 +127,9 @@ backend/
   prisma/             ← migration SQL
 ```
 
-**Not uploaded:** `node_modules/` — install on the server once.
+**Not uploaded:** `node_modules/` — install on the server once via **Run Node.js commands** (see [Run Node.js commands](#run-nodejs-commands-no-shell-no-npx-no-cd)).
 
-In Plesk → Node.js → **Run Node.js commands**, paste **one command at a time** (working directory is the application root):
-
-```
-npm ci
-```
-
-```
-npx prisma migrate deploy --schema=backend/prisma/schema.prisma
-```
-
-Then:
-
-1. Confirm **Custom script / start** is `npm start`.
-2. Click **Restart app**.
-
-On later deploys (after CI uploads new files), run the same two commands only when `package-lock.json` changed or new migrations exist; otherwise **Restart app** is enough.
-
-**Why `npm ci`?** Root `postinstall` runs `npm ci` in `backend/`, installing Express, `@prisma/client`, Stripe, etc. Prisma CLI (for `migrate deploy`) is in backend devDependencies and is installed via `--include=dev` in postinstall. You do **not** need a full rebuild on the server.
+On later deploys, run `run setup` when lockfiles change, `run plesk:db` when migrations change, or just **Restart app** otherwise.
 
 ### First deploy checklist (no SSH)
 
@@ -93,7 +137,7 @@ On later deploys (after CI uploads new files), run the same two commands only wh
 2. Set Node.js env vars (`DATABASE_URL`, `JWT_SECRET`, Stripe, Google, …).
 3. Enable Node.js; set application root and `npm start` as above.
 4. Wait for GitHub Actions deploy to finish (or upload bundle manually).
-5. **Run Node.js commands:** `npm ci`, then `npx prisma migrate deploy --schema=backend/prisma/schema.prisma`.
+5. **Run Node.js commands:** `run setup` (or step-by-step: `ci`, `run plesk:backend-install`, `run plesk:db`).
 6. **Restart app**.
 7. Run [post-deploy checks](#post-deploy-checks) (browser or external `curl`).
 
@@ -157,13 +201,15 @@ After changing any `VITE_*` value, trigger a new CI deploy (or rebuild locally a
 
 ## Build & start commands (reference)
 
-| Command | CI / server |
-|---------|-------------|
-| `npm ci` | **Server** (via Plesk Run Node.js commands) — installs runtime deps |
-| `npm run build` | **CI only** when using GitHub Actions SFTP — not on server |
-| `npx prisma migrate deploy --schema=backend/prisma/schema.prisma` | **Server** after upload or when migrations change |
-| `npm start` | Plesk startup — `node backend/dist/index.js` |
-| `npm run dev` / `npm run dev:api` | Local development only |
+| Command | Plesk args field | CI / server |
+|---------|------------------|-------------|
+| `npm ci` | `ci` | **Server** — root deps |
+| `npm run setup` / `npm run plesk:install` | `run setup` | **Server** — full first-time install + migrate |
+| `npm run plesk:backend-install` | `run plesk:backend-install` | **Server** — backend prod deps only |
+| `npm run plesk:db` | `run plesk:db` | **Server** — apply Prisma migrations |
+| `npm run build` | `run build` | **CI only** when using GitHub Actions SFTP — not on server |
+| `npm start` | *(Plesk startup script)* | Plesk startup — `node backend/dist/index.js` |
+| `npm run dev` / `npm run dev:api` | — | Local development only |
 
 Local full stack: run `npm run dev` and `npm run dev:api` in two terminals; set `VITE_API_URL=http://localhost:5000` in `.env.development.local`.
 
@@ -173,11 +219,7 @@ Local full stack: run `npm run dev` and `npm run dev:api` in two terminals; set 
 
 1. Plesk → **Databases** → create database + user.
 2. Set `DATABASE_URL` in Node.js env vars.
-3. Apply migrations via **Run Node.js commands**:
-
-   ```
-   npx prisma migrate deploy --schema=backend/prisma/schema.prisma
-   ```
+3. Apply migrations via **Run Node.js commands** → args field: `run plesk:db`
 
 ---
 
@@ -187,22 +229,22 @@ Local full stack: run `npm run dev` and `npm run dev:api` in two terminals; set 
 
 Workflow: [`.github/workflows/deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml)
 
-CI builds the full app, assembles the deploy bundle, and uploads via SFTP to the Node.js application root. On the server: `npm ci`, migrate, restart — all via Plesk Node.js UI (see [Deploy without SSH](#deploy-without-ssh-plesk-nodejs-ui)).
+CI builds the full app, assembles the deploy bundle, and uploads via SFTP to the Node.js application root. On the server: `run setup`, then restart — all via Plesk Node.js UI (see [Run Node.js commands](#run-nodejs-commands-no-shell-no-npx-no-cd)).
 
 ### B) Build on server (Plesk Git)
 
-Only if you deploy source from Plesk **Git** (not the CI bundle). In **Run Node.js commands**, one at a time:
+Only if you deploy source from Plesk **Git** (not the CI bundle). In **Run Node.js commands**, one at a time (args field only):
 
 ```
-npm ci
-```
-
-```
-npm run build
+ci
 ```
 
 ```
-npx prisma migrate deploy --schema=backend/prisma/schema.prisma
+run build
+```
+
+```
+run plesk:db
 ```
 
 Store secrets in Plesk Node.js env vars. Restart the Node.js app after deploy.
