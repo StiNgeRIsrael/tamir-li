@@ -24,7 +24,7 @@ const packages: CreditPackage[] = [
 
 export function CreditsDisplay({ credits, isPremium }: { credits: number; isPremium: boolean }) {
   const t = useT();
-  const p = t.premium || {};
+  const p = t.premium;
   const { openPortal, portalLoading } = useSubscription();
   const { user } = useAuth();
 
@@ -79,7 +79,7 @@ export function CreditsDisplay({ credits, isPremium }: { credits: number; isPrem
 
 export function CreditPackages({ onClose }: { onClose?: () => void }) {
   const t = useT();
-  const p = t.premium || {};
+  const p = t.premium;
   const { checkout, checkoutLoading } = useSubscription();
   const { user } = useAuth();
 

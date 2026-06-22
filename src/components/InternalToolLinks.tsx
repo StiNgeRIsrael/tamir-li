@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useLocale, localePath } from "@/lib/i18n";
-import { buildFormatSlug } from "@/lib/tools-data";
+import { buildFormatSlug, getToolByFormatSlug, getToolById } from "@/lib/tools-data";
+import { isToolFunctional } from "@/lib/tool-availability";
+import { ToolSoonBadge } from "@/components/ToolSoonBadge";
 
 interface LinkGroup {
   title: string;
@@ -45,6 +47,12 @@ const LINK_GROUPS: LinkGroup[] = [
   },
 ];
 
+function getToolIdFromSlug(slug: string): string | null {
+  const formatMatch = getToolByFormatSlug(slug);
+  if (formatMatch) return formatMatch.tool.id;
+  return getToolById(slug)?.id ?? null;
+}
+
 export function InternalToolLinks() {
   const { locale, t } = useLocale();
   const labels = t.internalLinks as {
@@ -71,16 +79,25 @@ export function InternalToolLinks() {
               {catLabels[group.title]}
             </h3>
             <ul className="space-y-1">
-              {group.links.map((link) => (
-                <li key={link.slug}>
-                  <Link
-                    to={localePath(`/${link.slug}`, locale)}
-                    className="text-xs text-foreground/80 hover:text-primary transition-colors"
-                  >
-                    {link.label.includes("→") ? link.label : (t.toolNames as Record<string, string>)[link.label] ?? link.label}
-                  </Link>
-                </li>
-              ))}
+              {group.links.map((link) => {
+                const toolId = getToolIdFromSlug(link.slug);
+                const functional = toolId ? isToolFunctional(toolId) : false;
+                const displayLabel = link.label.includes("→")
+                  ? link.label
+                  : (t.toolNames as Record<string, string>)[link.label] ?? link.label;
+
+                return (
+                  <li key={link.slug}>
+                    <Link
+                      to={localePath(`/${link.slug}`, locale)}
+                      className="inline-flex items-center gap-1.5 text-xs text-foreground/80 hover:text-primary transition-colors"
+                    >
+                      {displayLabel}
+                      {!functional && <ToolSoonBadge />}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}

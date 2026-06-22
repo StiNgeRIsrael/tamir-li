@@ -3,22 +3,36 @@ import { PDFDocument, degrees } from "pdf-lib";
 import { Button } from "@/components/ui/button";
 import { FileDropZone } from "@/components/FileDropZone";
 import { AdSlot } from "@/components/AdSlot";
+import { UsageLimitNotice } from "@/components/PremiumComponents";
 import { Plus, Download, RotateCw, RotateCcw, Trash2, FileText, ChevronUp, ChevronDown, Loader2, CheckCircle2, Merge } from "lucide-react";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
+import {
+  type CustomToolFreemiumProps,
+  onCustomToolSuccess,
+  runGatedDownload,
+} from "@/lib/custom-tool-freemium";
 
 interface PdfPage { pdfIndex: number; pageIndex: number; rotation: number; }
 interface PdfFile { name: string; data: ArrayBuffer; pageCount: number; }
 
-export function PdfManagerTool() {
+type Props = { freemium?: CustomToolFreemiumProps };
+
+export function PdfManagerTool({ freemium }: Props) {
   const t = useT();
-  const pm = t.pdfManager || {};
+  const { t: localeT } = useLocale();
+  const tt = localeT.tool;
+  const pm = t.pdfManager;
   const [pdfFiles, setPdfFiles] = useState<PdfFile[]>([]);
   const [pages, setPages] = useState<PdfPage[]>([]);
   const [loading, setLoading] = useState(false);
   const [merging, setMerging] = useState(false);
   const [mergedUrl, setMergedUrl] = useState<string | null>(null);
   const [thumbnails, setThumbnails] = useState<Map<string, string>>(new Map());
+  const [downloadGate, setDownloadGate] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const isPremium = freemium?.isPremium ?? false;
+  const atUsageLimit = freemium?.atUsageLimit ?? false;
 
   const generateThumbnail = useCallback(async (data: ArrayBuffer, pageNum: number): Promise<string> => {
     try {
@@ -61,6 +75,7 @@ export function PdfManagerTool() {
   };
 
   const mergeAndDownload = async () => {
+    if (atUsageLimit) return;
     setMerging(true);
     try {
       const mergedPdf = await PDFDocument.create();
@@ -71,12 +86,33 @@ export function PdfManagerTool() {
       }
       const bytes = await mergedPdf.save();
       setMergedUrl(URL.createObjectURL(new Blob([bytes as unknown as BlobPart], { type: "application/pdf" })));
+      if (freemium) {
+        await onCustomToolSuccess(freemium.isPremium, freemium.recordUsage);
+      }
     } catch (err) { console.error("PDF merge error:", err); }
     setMerging(false);
   };
 
-  const downloadMerged = () => { if (!mergedUrl) return; const a = document.createElement("a"); a.href = mergedUrl; a.download = "merged.pdf"; a.click(); };
-  const handleReset = () => { setPdfFiles([]); setPages([]); setThumbnails(new Map()); if (mergedUrl) URL.revokeObjectURL(mergedUrl); setMergedUrl(null); };
+  const downloadMerged = async () => {
+    if (!mergedUrl) return;
+    const downloadFn = () => {
+      const a = document.createElement("a");
+      a.href = mergedUrl;
+      a.download = "merged.pdf";
+      a.click();
+    };
+    const { triggered, gateOpen } = await runGatedDownload(downloadGate, isPremium, downloadFn);
+    setDownloadGate(gateOpen);
+    if (!triggered) return;
+  };
+
+  const handleReset = () => {
+    setPdfFiles([]); setPages([]); setThumbnails(new Map());
+    if (mergedUrl) URL.revokeObjectURL(mergedUrl);
+    setMergedUrl(null); setDownloadGate(false);
+  };
+
+  const downloadLabel = isPremium ? pm.downloadPdf : downloadGate ? tt.downloadNow : tt.watchAdToDownload;
 
   if (mergedUrl) return (
     <div className="space-y-4 animate-fade-in">
@@ -85,7 +121,7 @@ export function PdfManagerTool() {
         <FileText className="w-12 h-12 text-success mx-auto" />
         <p className="text-sm text-muted-foreground">{pm.pagesMerged(pages.length)}</p>
         <div className="flex items-center justify-center gap-3">
-          <Button onClick={downloadMerged} className="bg-success text-success-foreground hover:bg-success/90 font-bold"><Download className="w-4 h-4 me-2" />{pm.downloadPdf}</Button>
+          <Button onClick={downloadMerged} className="bg-success text-success-foreground hover:bg-success/90 font-bold"><Download className="w-4 h-4 me-2" />{downloadLabel}</Button>
           <Button variant="outline" onClick={handleReset}>{pm.startOver}</Button>
         </div>
       </div>
@@ -95,6 +131,7 @@ export function PdfManagerTool() {
 
   return (
     <div className="space-y-5">
+      {freemium && !isPremium && <UsageLimitNotice used={freemium.usedToday} max={freemium.maxDaily} />}
       {pages.length === 0 && !loading && <FileDropZone acceptedFormats={["PDF"]} onFilesSelected={handleFilesSelected} multiple />}
       {loading && <div className="text-center py-8"><Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-3" /><p className="text-sm text-muted-foreground">{pm.loadingPages}</p></div>}
       {pages.length > 0 && (
@@ -129,7 +166,7 @@ export function PdfManagerTool() {
             })}
           </div>
           <div className="flex items-center justify-center pt-2">
-            <Button onClick={mergeAndDownload} disabled={merging || pages.length === 0} size="lg" className="font-bold bg-accent text-accent-foreground hover:bg-accent/90 px-8">
+            <Button onClick={mergeAndDownload} disabled={merging || pages.length === 0 || atUsageLimit} size="lg" className="font-bold bg-accent text-accent-foreground hover:bg-accent/90 px-8">
               {merging ? <Loader2 className="w-4 h-4 me-2 animate-spin" /> : <Merge className="w-4 h-4 me-2" />}
               {merging ? pm.merging : pm.mergePages(pages.length)}
             </Button>

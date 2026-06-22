@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { SEOHead } from "@/components/SEOHead";
 import { AdSlot } from "@/components/AdSlot";
+import { AdNativeSlot } from "@/components/ads/AdNativeSlot";
 import { blogArticles } from "@/lib/blog-data";
 import { Calendar, Clock } from "lucide-react";
 import { useLocale, localePath } from "@/lib/i18n";
@@ -46,6 +47,7 @@ export default function BlogIndex() {
           ))}
         </div>
 
+        <AdNativeSlot slotId="blog-index-native" className="my-6" />
         <AdSlot type="banner" slotId="blog-index-bottom" />
       </div>
     </AppLayout>

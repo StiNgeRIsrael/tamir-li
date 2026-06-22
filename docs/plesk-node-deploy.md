@@ -369,6 +369,37 @@ After changing any `VITE_*` value, trigger a new CI deploy (or rebuild locally a
 
 ---
 
+## Server-side audio conversion (ffmpeg)
+
+The **`audio-converter`** tool runs server-side via the conversion queue (`POST /api/conversions` → background worker + **ffmpeg**). Install ffmpeg on the **host** (same machine as Node.js); the CI deploy bundle does not include it.
+
+### Install ffmpeg on the host
+
+**Debian/Ubuntu** (SSH, or ask the hoster to install system-wide):
+
+```bash
+sudo apt update && sudo apt install -y ffmpeg
+ffmpeg -version
+```
+
+On **CentOS / AlmaLinux**, use `dnf install ffmpeg` (may require EPEL or CRB). Confirm `ffmpeg` is on `PATH` for the subscription user that runs Node.js.
+
+**Without SSH:** request that your hoster install `ffmpeg`, or set **`FFMPEG_PATH`** (below) to a binary path they provide.
+
+### Conversion storage and env vars
+
+| Variable | Required | Notes |
+|----------|----------|-------|
+| `CONVERSION_STORAGE_DIR` | Recommended | Writable directory for job input/output files. Default: `backend/data/conversions` under the application root. Example: `/var/www/vhosts/tamir.li/httpdocs/deploy/data/conversions`. The Node.js run user must be able to create, read, and delete files here. |
+| `FFMPEG_PATH` | Optional | Full path to the ffmpeg binary if it is not on `PATH` (e.g. `/usr/bin/ffmpeg`). Default: `ffmpeg` on `PATH`. |
+| `CONVERSION_JOB_TTL_HOURS` | Optional | Delete completed/failed/stale jobs after this many hours (default: `24`). |
+
+Set **`CONVERSION_STORAGE_DIR`** in **Node.js → Custom environment variables** before the first audio conversion. Create the folder via Plesk **File Manager** if needed; fix ownership if job uploads fail with permission errors.
+
+See also [`backend/.env.example`](../backend/.env.example) and [`conversion-queue.md`](./conversion-queue.md).
+
+---
+
 ## Build & start commands (reference)
 
 | Command | Plesk args field | CI / server |

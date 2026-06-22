@@ -1,9 +1,15 @@
 import { createContext, useContext, ReactNode, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import type { TranslationDict } from "@/lib/translations/types";
+import { heTranslations } from "@/lib/translations/he";
+import { enTranslations } from "@/lib/translations/en";
+import { esTranslations } from "@/lib/translations/es";
+import { ruTranslations } from "@/lib/translations/ru";
+import { deTranslations } from "@/lib/translations/de";
+import { frTranslations } from "@/lib/translations/fr";
+import { itTranslations } from "@/lib/translations/it";
 
 export type Locale = "he" | "en" | "es" | "ru" | "de" | "fr" | "it";
-
 export const LOCALES: Locale[] = ["he", "en", "es", "ru", "de", "fr", "it"];
 export const NON_HE_LOCALES: Locale[] = ["en", "es", "ru", "de", "fr", "it"];
 
@@ -45,7 +51,7 @@ interface LocaleContextValue {
 
 const LocaleContext = createContext<LocaleContextValue>({
   locale: "he",
-  t: {},
+  t: heTranslations,
   dir: "rtl",
 });
 
@@ -57,23 +63,14 @@ export function useT() {
   return useContext(LocaleContext).t;
 }
 
-// Lazy-loaded translations
-import { heTranslations } from "@/lib/translations/he";
-import { enTranslations } from "@/lib/translations/en";
-import { esTranslations } from "@/lib/translations/es";
-import { ruTranslations } from "@/lib/translations/ru";
-import { deTranslations } from "@/lib/translations/de";
-import { frTranslations } from "@/lib/translations/fr";
-import { itTranslations } from "@/lib/translations/it";
-
 const translationMap: Record<Locale, TranslationDict> = {
   he: heTranslations,
   en: enTranslations,
-  es: esTranslations,
-  ru: ruTranslations,
-  de: deTranslations,
-  fr: frTranslations,
-  it: itTranslations,
+  es: esTranslations as TranslationDict,
+  ru: ruTranslations as TranslationDict,
+  de: deTranslations as TranslationDict,
+  fr: frTranslations as TranslationDict,
+  it: itTranslations as TranslationDict,
 };
 
 export function LocaleProvider({ children, explicitLocale }: { children: ReactNode, explicitLocale?: Locale }) {

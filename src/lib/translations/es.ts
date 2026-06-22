@@ -1,9 +1,11 @@
 import type { TranslationDict } from "./types";
 
-export const esTranslations: TranslationDict = {
+export const esTranslations = {
   brandName: "Tamirly",
   brandTagline: "Conversión de Archivos Online Fácil",
   downloadApp: "Descargar App",
+  soon: "PRONTO",
+  comingSoon: "Próximamente",
   auth: {
     signOut: "Sign out",
     account: "Account",
@@ -69,6 +71,15 @@ export const esTranslations: TranslationDict = {
     titleHighlight: "En Segundos",
     subtitle: "Imágenes, video, audio y documentos — arrastra, elige formato, listo.",
     subtitleLine2: "Sin instalar software. Sin registro. Gratis.",
+  },
+  homePicker: {
+    title: "Herramientas de conversión",
+    searchPlaceholder: "Buscar herramientas o formatos…",
+    fromLabel: "De",
+    toLabel: "A",
+    go: "Convertir",
+    popular: "Conversiones populares",
+    allTools: "Todas las herramientas",
   },
   homeStatLabels: {
     tools: "Herramientas en el sitio",
@@ -142,6 +153,14 @@ export const esTranslations: TranslationDict = {
     conversionNoApi: "No hay URL de API (VITE_API_URL). Las conversiones funcionarán cuando el backend esté conectado.",
     conversionNotReady: "El servicio de conversión en el servidor aún no está activo.",
     conversionApiError: "No se pudo iniciar la conversión. Inténtalo más tarde.",
+    conversionFormatError: "Esta combinación de formatos no es compatible en el navegador. Prueba JPG, PNG, WEBP, GIF o BMP.",
+    error: "Error",
+    comingSoonTitle: "Próximamente",
+    comingSoonMessage: (name: string) =>
+      name
+        ? `${name} está en camino — estamos terminando la implementación. Vuelve pronto o prueba una de nuestras herramientas disponibles.`
+        : "Esta herramienta está en camino — estamos terminando la implementación. Vuelve pronto o prueba una de nuestras herramientas disponibles.",
+    comingSoonAlternatives: "Prueba estas alternativas",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) =>
       isCustom ? `Cómo Usar ${name}` : `Cómo Convertir ${from} a ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [
@@ -294,7 +313,7 @@ export const esTranslations: TranslationDict = {
     fit: "Ajustar", fitDesc: "Mantiene proporción, cabe en los límites",
     fill: "Llenar", fillDesc: "Mantiene proporción, recorta si es necesario",
     stretch: "Estirar", stretchDesc: "Llena el tamaño exacto, puede distorsionar",
-    readyPresets: "Tamaños Predefinidos", source: "Original", result: "Resultado",
+    readyPresets: "Tamaños Predefinidos", source: "Original", result: "Resultado", preview: "Vista previa en vivo",
     newImage: "Nueva Imagen", processing: "Procesando...",
     resizeTo: (w: number, h: number) => `Redimensionar a ${w}×${h}`,
     downloadImage: (size: string) => `Descargar Imagen (${size})`,

@@ -1,9 +1,11 @@
 import type { TranslationDict } from "./types";
 
-export const deTranslations: TranslationDict = {
+export const deTranslations = {
   brandName: "Tamirly",
   brandTagline: "Einfache Online-Dateikonvertierung",
   downloadApp: "App herunterladen",
+  soon: "BALD",
+  comingSoon: "Demnächst",
   auth: {
     signOut: "Sign out",
     account: "Account",
@@ -64,6 +66,15 @@ export const deTranslations: TranslationDict = {
     subtitle: "Bilder, Video, Audio & Dokumente — ziehen, Format wählen, fertig.",
     subtitleLine2: "Keine Software. Keine Anmeldung. Kostenlos.",
   },
+  homePicker: {
+    title: "Dateikonvertierungstools",
+    searchPlaceholder: "Tools oder Formate suchen…",
+    fromLabel: "Von",
+    toLabel: "Nach",
+    go: "Konvertieren",
+    popular: "Beliebte Konvertierungen",
+    allTools: "Alle Tools",
+  },
   homeStatLabels: {
     tools: "Tools auf der Website",
     formats: "Unterstützte Formate",
@@ -121,6 +132,14 @@ export const deTranslations: TranslationDict = {
     conversionNoApi: "Keine API-URL (VITE_API_URL). Konvertierungen funktionieren, sobald das Backend verbunden ist.",
     conversionNotReady: "Der Konvertierungsdienst auf dem Server ist noch nicht aktiv.",
     conversionApiError: "Konvertierung konnte nicht gestartet werden. Bitte später erneut versuchen.",
+    conversionFormatError: "Diese Formatkombination wird im Browser nicht unterstützt. Versuchen Sie JPG, PNG, WEBP, GIF oder BMP.",
+    error: "Fehler",
+    comingSoonTitle: "Demnächst",
+    comingSoonMessage: (name: string) =>
+      name
+        ? `${name} kommt bald — wir finalisieren die Implementierung. Schauen Sie bald wieder vorbei oder probieren Sie ein verfügbares Tool.`
+        : "Dieses Tool kommt bald — wir finalisieren die Implementierung. Schauen Sie bald wieder vorbei oder probieren Sie ein verfügbares Tool.",
+    comingSoonAlternatives: "Stattdessen ausprobieren",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) => isCustom ? `So verwenden Sie ${name}` : `So konvertieren Sie ${from} in ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [
       { step: "1", title: isCustom ? "Datei hochladen" : `${from}-Datei hochladen`, desc: "Ziehen oder wählen Sie Ihre Dateien" },
@@ -237,7 +256,7 @@ export const deTranslations: TranslationDict = {
     fit: "Einpassen", fitDesc: "Behält Seitenverhältnis, passt in Grenzen",
     fill: "Füllen", fillDesc: "Behält Seitenverhältnis, schneidet bei Bedarf",
     stretch: "Strecken", stretchDesc: "Füllt exakte Größe, kann verzerren",
-    readyPresets: "Fertige Größen", source: "Original", result: "Ergebnis",
+    readyPresets: "Fertige Größen", source: "Original", result: "Ergebnis", preview: "Live-Vorschau",
     newImage: "Neues Bild", processing: "Verarbeitung...",
     resizeTo: (w: number, h: number) => `Größe ändern auf ${w}×${h}`,
     downloadImage: (size: string) => `Bild Herunterladen (${size})`,

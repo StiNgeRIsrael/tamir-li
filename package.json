@@ -25,7 +25,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "site:check": "tsx scripts/autonomous-site-check.ts"
   },
   "engines": {
     "node": ">=22"

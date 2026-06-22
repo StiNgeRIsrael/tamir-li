@@ -7,6 +7,9 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { useLocale, localePath } from "@/lib/i18n";
 import { BrandWordmark } from "@/components/BrandWordmark";
+import { isToolFunctional } from "@/lib/tool-availability";
+import { ToolSoonBadge } from "@/components/ToolSoonBadge";
+import { cn } from "@/lib/utils";
 
 const categories: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
 
@@ -96,19 +99,37 @@ export function ToolsSidebar() {
                   {catTools.map((tool) => {
                     const toolSlug = getDefaultSlug(tool);
                     const toolPath = localePath(`/${toolSlug}`, locale);
-                    return (
+                    const functional = isToolFunctional(tool.id);
+                    const label = (
+                      <>
+                        {tool.premium && <Crown className="w-3 h-3 text-premium" />}
+                        <span className="truncate inline-flex items-center gap-1.5">
+                          {toolNames[tool.id] || tool.name}
+                          {!functional && <ToolSoonBadge />}
+                        </span>
+                      </>
+                    );
+                    return functional ? (
                       <Link
                         key={tool.id}
                         to={toolPath}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors ${
+                        className={cn(
+                          "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors",
                           location.pathname === toolPath
                             ? "bg-primary/10 text-primary font-medium"
                             : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                        }`}
+                        )}
                       >
-                        {tool.premium && <Crown className="w-3 h-3 text-premium" />}
-                        <span className="truncate">{toolNames[tool.id] || tool.name}</span>
+                        {label}
                       </Link>
+                    ) : (
+                      <div
+                        key={tool.id}
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm text-muted-foreground opacity-50 cursor-not-allowed"
+                        aria-disabled="true"
+                      >
+                        {label}
+                      </div>
                     );
                   })}
                 </div>

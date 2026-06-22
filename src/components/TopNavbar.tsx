@@ -7,9 +7,18 @@ import { BrandWordmark } from "@/components/BrandWordmark";
 import { categoryIcons, getToolsByCategory, getDefaultSlug, type ToolCategory } from "@/lib/tools-data";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { UserAuthSection } from "@/components/UserAuthSection";
+import { UsageNavPill } from "@/components/UsageNavPill";
 import { useLocale, localePath } from "@/lib/i18n";
 import { useToolConfig } from "@/contexts/ToolConfigContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { isToolFunctional } from "@/lib/tool-availability";
+import { ToolSoonBadge } from "@/components/ToolSoonBadge";
+import { cn } from "@/lib/utils";
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+}
 
 const categories: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
 
@@ -21,12 +30,12 @@ export function TopNavbar() {
   const adminNav = t.admin as Record<string, string> | undefined;
   const [menuOpen, setMenuOpen] = useState(false);
   const [openCat, setOpenCat] = useState<ToolCategory | null>(null);
-  const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
     const handler = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
@@ -95,18 +104,35 @@ export function TopNavbar() {
                       >
                         {catTools.map((tool) => {
                           const TIcon = tool.icon;
-                          return (
+                          const functional = isToolFunctional(tool.id);
+                          const inner = (
+                            <>
+                              <TIcon className="w-3.5 h-3.5 shrink-0" />
+                              <div className="min-w-0">
+                                <span className="font-medium text-foreground inline-flex items-center gap-1.5">
+                                  {toolNames[tool.id] || tool.name}
+                                  {!functional && <ToolSoonBadge />}
+                                </span>
+                                <p className="text-xs text-muted-foreground truncate">{toolDescs[tool.id] || tool.description}</p>
+                              </div>
+                            </>
+                          );
+                          return functional ? (
                             <Link
                               key={tool.id}
                               to={localePath(`/${getDefaultSlug(tool)}`, locale)}
                               className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                             >
-                              <TIcon className="w-3.5 h-3.5 shrink-0" />
-                              <div className="min-w-0">
-                                <span className="font-medium text-foreground">{toolNames[tool.id] || tool.name}</span>
-                                <p className="text-xs text-muted-foreground truncate">{toolDescs[tool.id] || tool.description}</p>
-                              </div>
+                              {inner}
                             </Link>
+                          ) : (
+                            <div
+                              key={tool.id}
+                              className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground opacity-50 cursor-not-allowed"
+                              aria-disabled="true"
+                            >
+                              {inner}
+                            </div>
                           );
                         })}
                       </div>
@@ -126,6 +152,7 @@ export function TopNavbar() {
                   {adminNav?.linkNav ?? "Admin"}
                 </Link>
               )}
+              <UsageNavPill />
               <UserAuthSection />
               <LanguageSwitcher />
               <ThemeToggle />
@@ -175,15 +202,32 @@ export function TopNavbar() {
                     {catLabels[cat]}
                   </h3>
                   <div className="grid grid-cols-2 gap-2">
-                    {catTools.map((tool) => (
-                      <Link
-                        key={tool.id}
-                        to={localePath(`/${getDefaultSlug(tool)}`, locale)}
-                        className="border border-border bg-card p-3 text-sm font-medium text-foreground hover:border-primary/30 transition-colors"
-                      >
-                        {toolNames[tool.id] || tool.name}
-                      </Link>
-                    ))}
+                    {catTools.map((tool) => {
+                      const functional = isToolFunctional(tool.id);
+                      const label = (
+                        <span className="inline-flex items-center gap-1.5">
+                          {toolNames[tool.id] || tool.name}
+                          {!functional && <ToolSoonBadge />}
+                        </span>
+                      );
+                      return functional ? (
+                        <Link
+                          key={tool.id}
+                          to={localePath(`/${getDefaultSlug(tool)}`, locale)}
+                          className="border border-border bg-card p-3 text-sm font-medium text-foreground hover:border-primary/30 transition-colors"
+                        >
+                          {label}
+                        </Link>
+                      ) : (
+                        <div
+                          key={tool.id}
+                          className="border border-border bg-card p-3 text-sm font-medium text-muted-foreground opacity-50 cursor-not-allowed"
+                          aria-disabled="true"
+                        >
+                          {label}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               );

@@ -15,6 +15,10 @@ interface ImportMetaEnv {
   readonly VITE_ADSTERRA_ZONE_INLINE?: string;
   /** Full popunder/social-bar script URL from Adsterra dashboard (optional). */
   readonly VITE_ADSTERRA_POPUNDER_SCRIPT_URL?: string;
+  /** Native ad invoke.js URL from Adsterra dashboard (optional). */
+  readonly VITE_ADSTERRA_NATIVE_SCRIPT_URL?: string;
+  /** Native ad container element id (e.g. container-abc123). */
+  readonly VITE_ADSTERRA_NATIVE_CONTAINER_ID?: string;
   /** Override invoke.js host if Adsterra assigns a different CDN domain. */
   readonly VITE_ADSTERRA_INVOKE_HOST?: string;
   /** Popup URL opened on first download click (two-step download flow). Falls back to vignette if unset. */

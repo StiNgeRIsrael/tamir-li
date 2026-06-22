@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { SEOHead } from "@/components/SEOHead";
 import { AdSlot } from "@/components/AdSlot";
+import { AdNativeSlot } from "@/components/ads/AdNativeSlot";
 import { getBlogArticle, blogArticles } from "@/lib/blog-data";
 import { Calendar, Clock, ArrowRight, ArrowLeft } from "lucide-react";
 import { marked } from "marked";
@@ -93,6 +94,7 @@ export default function BlogPost() {
             />
 
             <AdSlot type="inline" slotId="blog-post-mid" className="my-8" />
+            <AdNativeSlot slotId="blog-post-native" className="my-8" />
 
             <div className="bg-card border border-border rounded-xl p-5 space-y-3 my-8">
               <h3 className="font-bold text-foreground">{b.relevantToolsInline}</h3>

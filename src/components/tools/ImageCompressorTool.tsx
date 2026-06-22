@@ -3,8 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { FileDropZone } from "@/components/FileDropZone";
 import { AdSlot } from "@/components/AdSlot";
+import { UsageLimitNotice } from "@/components/PremiumComponents";
 import { Download, Loader2, CheckCircle2, RotateCcw, Minimize2, ArrowDown } from "lucide-react";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT } from "@/lib/i18n";
+import {
+  type CustomToolFreemiumProps,
+  onCustomToolSuccess,
+  runGatedDownload,
+} from "@/lib/custom-tool-freemium";
 
 function formatFileSize(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
@@ -16,9 +22,13 @@ function getSavingsPercent(original: number, compressed: number) {
   return Math.round((1 - compressed / original) * 100);
 }
 
-export function ImageCompressorTool() {
+type Props = { freemium?: CustomToolFreemiumProps };
+
+export function ImageCompressorTool({ freemium }: Props) {
   const t = useT();
-  const c = t.compressor || {};
+  const { t: localeT } = useLocale();
+  const tt = localeT.tool;
+  const c = t.compressor;
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
   const [quality, setQuality] = useState(75);
@@ -26,12 +36,16 @@ export function ImageCompressorTool() {
   const [resultUrl, setResultUrl] = useState("");
   const [resultSize, setResultSize] = useState(0);
   const [imgDimensions, setImgDimensions] = useState({ w: 0, h: 0 });
+  const [downloadGate, setDownloadGate] = useState(false);
+
+  const isPremium = freemium?.isPremium ?? false;
+  const atUsageLimit = freemium?.atUsageLimit ?? false;
 
   const qualityLabel = quality > 85 ? c.high : quality > 50 ? c.medium : quality > 25 ? c.low : c.minimal;
 
   const handleFile = useCallback(async (files: File[]) => {
     const f = files[0]; if (!f) return;
-    setFile(f); setResultUrl(""); setResultSize(0);
+    setFile(f); setResultUrl(""); setResultSize(0); setDownloadGate(false);
     const url = URL.createObjectURL(f); setPreview(url);
     const img = new Image();
     img.onload = () => setImgDimensions({ w: img.naturalWidth, h: img.naturalHeight });
@@ -39,7 +53,8 @@ export function ImageCompressorTool() {
   }, []);
 
   const handleCompress = useCallback(async () => {
-    if (!file) return; setProcessing(true);
+    if (!file || atUsageLimit) return;
+    setProcessing(true);
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement("canvas");
@@ -47,27 +62,57 @@ export function ImageCompressorTool() {
       const ctx = canvas.getContext("2d")!; ctx.drawImage(img, 0, 0);
       const isPng = file.type === "image/png";
       const outputType = isPng && quality > 90 ? "image/png" : "image/jpeg";
-      canvas.toBlob((blob) => {
-        if (blob) { setResultUrl(URL.createObjectURL(blob)); setResultSize(blob.size); }
+      canvas.toBlob(async (blob) => {
+        if (blob) {
+          setResultUrl(URL.createObjectURL(blob));
+          setResultSize(blob.size);
+          if (freemium) {
+            await onCustomToolSuccess(freemium.isPremium, freemium.recordUsage);
+          }
+        }
         setProcessing(false);
       }, outputType, quality / 100);
     };
     img.src = preview;
-  }, [file, preview, quality]);
+  }, [file, preview, quality, atUsageLimit, freemium]);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!resultUrl || !file) return;
     const ext = quality > 90 && file.type === "image/png" ? "png" : "jpg";
-    const a = document.createElement("a"); a.href = resultUrl;
-    a.download = `compressed_${file.name.replace(/\.[^.]+$/, "")}.${ext}`; a.click();
+    const downloadFn = () => {
+      const a = document.createElement("a");
+      a.href = resultUrl;
+      a.download = `compressed_${file.name.replace(/\.[^.]+$/, "")}.${ext}`;
+      a.click();
+    };
+    const { triggered, gateOpen } = await runGatedDownload(downloadGate, isPremium, downloadFn);
+    setDownloadGate(gateOpen);
+    if (!triggered) return;
   };
 
-  const handleReset = () => { setFile(null); setPreview(""); setResultUrl(""); setResultSize(0); };
+  const handleReset = () => {
+    setFile(null); setPreview(""); setResultUrl(""); setResultSize(0); setDownloadGate(false);
+  };
 
-  if (!file) return (<div className="space-y-5"><FileDropZone acceptedFormats={["JPG", "PNG", "WEBP"]} onFilesSelected={handleFile} /><AdSlot type="banner" slotId="tool-compressor-empty" /></div>);
+  const downloadLabel = isPremium
+    ? c.download(formatFileSize(resultSize))
+    : downloadGate
+      ? tt.downloadNow
+      : tt.watchAdToDownload;
+
+  if (!file) {
+    return (
+      <div className="space-y-5">
+        {freemium && !isPremium && <UsageLimitNotice used={freemium.usedToday} max={freemium.maxDaily} />}
+        <FileDropZone acceptedFormats={["JPG", "PNG", "WEBP"]} onFilesSelected={handleFile} />
+        <AdSlot type="banner" slotId="tool-compressor-empty" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5">
+      {freemium && !isPremium && <UsageLimitNotice used={freemium.usedToday} max={freemium.maxDaily} />}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="space-y-3">
           <div className="bg-card border border-border rounded-xl p-3">
@@ -84,7 +129,7 @@ export function ImageCompressorTool() {
               <h3 className="text-sm font-bold text-foreground">{c.qualityLevel}</h3>
               <span className="text-sm font-bold text-primary">{quality}% — {qualityLabel}</span>
             </div>
-            <Slider value={[quality]} onValueChange={([v]) => { setQuality(v); setResultUrl(""); }} min={10} max={100} step={5} className="w-full" />
+            <Slider value={[quality]} onValueChange={([v]) => { setQuality(v); setResultUrl(""); setDownloadGate(false); }} min={10} max={100} step={5} className="w-full" />
             <div className="flex justify-between text-[10px] text-muted-foreground">
               <span>{c.smallerFile}</span><span>{c.higherQuality}</span>
             </div>
@@ -93,7 +138,7 @@ export function ImageCompressorTool() {
             <h3 className="text-sm font-bold text-foreground">{c.quickCompress}</h3>
             <div className="grid grid-cols-2 gap-2">
               {((c.presets || []) as { quality: number; label: string; desc: string }[]).map((p) => (
-                <button key={p.quality} onClick={() => { setQuality(p.quality); setResultUrl(""); }}
+                <button key={p.quality} onClick={() => { setQuality(p.quality); setResultUrl(""); setDownloadGate(false); }}
                   className={`text-start p-3 rounded-xl border transition-all ${quality === p.quality ? "border-primary bg-primary/10" : "border-border hover:border-primary/30"}`}>
                   <span className={`text-xs font-bold ${quality === p.quality ? "text-primary" : "text-foreground"}`}>{p.label} ({p.quality}%)</span>
                   <p className="text-[10px] text-muted-foreground mt-0.5">{p.desc}</p>
@@ -117,12 +162,12 @@ export function ImageCompressorTool() {
       <div className="flex items-center gap-3">
         <Button variant="outline" onClick={handleReset}><RotateCcw className="w-4 h-4 me-1" />{c.newImage}</Button>
         {!resultUrl ? (
-          <Button onClick={handleCompress} disabled={processing} className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold flex-1 sm:flex-none">
+          <Button onClick={handleCompress} disabled={processing || atUsageLimit} className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold flex-1 sm:flex-none">
             {processing ? <><Loader2 className="w-4 h-4 me-2 animate-spin" />{c.compressing}</> : <><Minimize2 className="w-4 h-4 me-2" />{c.compress(quality)}</>}
           </Button>
         ) : (
-          <Button onClick={handleDownload} className="bg-success text-success-foreground hover:bg-success/90 font-bold flex-1 sm:flex-none">
-            <Download className="w-4 h-4 me-2" />{c.download(formatFileSize(resultSize))}
+          <Button onClick={handleDownload} className={`font-bold flex-1 sm:flex-none ${downloadGate ? "bg-success text-success-foreground hover:bg-success/90" : "bg-success text-success-foreground hover:bg-success/90"}`}>
+            <Download className="w-4 h-4 me-2" />{downloadLabel}
           </Button>
         )}
       </div>

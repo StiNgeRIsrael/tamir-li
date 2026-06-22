@@ -15,6 +15,7 @@ Recommended sizes for this app:
 | Top/bottom banners | 728×90 | `VITE_ADSTERRA_ZONE_BANNER` |
 | Desktop sidebar rails | 300×250 | `VITE_ADSTERRA_ZONE_SIDEBAR`, `VITE_ADSTERRA_ZONE_SIDEBAR_2` |
 | Inline / vignette | 468×60 (or 300×250) | `VITE_ADSTERRA_ZONE_INLINE` |
+| Native (mid-content) | Native script + container id | `VITE_ADSTERRA_NATIVE_SCRIPT_URL`, `VITE_ADSTERRA_NATIVE_CONTAINER_ID` |
 | Popunder (optional) | Popunder script URL | `VITE_ADSTERRA_POPUNDER_SCRIPT_URL` |
 
 From each unit’s embed code, copy the **`key`** value (hex string in `atOptions`).
@@ -34,6 +35,8 @@ VITE_ADSTERRA_ZONE_BANNER=your_728x90_key
 VITE_ADSTERRA_ZONE_SIDEBAR=your_300x250_key
 VITE_ADSTERRA_ZONE_SIDEBAR_2=your_second_300x250_key
 VITE_ADSTERRA_ZONE_INLINE=your_inline_key
+VITE_ADSTERRA_NATIVE_SCRIPT_URL=https://example.adsterra-cdn.com/your_native_key/invoke.js
+VITE_ADSTERRA_NATIVE_CONTAINER_ID=container-your_native_key
 # Optional:
 # VITE_ADSTERRA_POPUNDER_SCRIPT_URL=https://...
 # VITE_ADSTERRA_INVOKE_HOST=www.highperformanceformat.com
@@ -58,6 +61,7 @@ Replace `public/ads.txt` with the authorization line(s) from Adsterra (Partner C
 - **Banner** (`type="banner"`): home, blog, tool footers — 728×90 iframe.
 - **Sidebar** (`type="sidebar"`): `DesktopAdRail` (two sticky 300×250 units); second rail uses `VITE_ADSTERRA_ZONE_SIDEBAR_2` when `slotId` ends with `-2`.
 - **Inline** (`type="inline"`): mid-page tool/blog slots and conversion vignette overlay.
+- **Native** (`AdNativeSlot`): one mid-content unit per page (home, tool, blog index/post) — script + container id from dashboard; loads after consent.
 - **Popunder**: loaded once after ad cookie consent if `VITE_ADSTERRA_POPUNDER_SCRIPT_URL` is set; also triggered on some conversion milestones via `triggerInterstitial()`.
 - **Premium users**: all ad components return `null`; no scripts loaded.
 - **No consent / unset env**: muted placeholders only; no broken layout.

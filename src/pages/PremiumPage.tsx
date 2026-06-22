@@ -22,13 +22,13 @@ export default function PremiumPage() {
   const auth = t.auth as { signInRequired?: string } | undefined;
   const { checkout, checkoutLoading, refetch, captureOrder } = useSubscription();
   const [searchParams, setSearchParams] = useSearchParams();
-  const u = t.upgradePage || {};
-  const features = u.features || [];
-  const rows = u.comparisonRows || [];
-  const headers = u.comparisonHeaders || {};
-  const testimonials = u.testimonials || [];
-  const faqs = u.faqs || [];
-  const guaranteeItems = u.guaranteeItems || [];
+  const u = t.upgradePage;
+  const features = u.features;
+  const rows = u.comparisonRows;
+  const headers = u.comparisonHeaders;
+  const testimonials = u.testimonials;
+  const faqs = u.faqs;
+  const guaranteeItems = u.guaranteeItems;
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isYearly, setIsYearly] = useState(true);
 

@@ -11,8 +11,8 @@ interface GeneratedImage { prompt: string; url: string; timestamp: number; }
 
 export function AiImageGeneratorTool() {
   const t = useT();
-  const ai = t.aiGenerator || {};
-  const p = t.premium || {};
+  const ai = t.aiGenerator;
+  const p = t.premium;
   const [prompt, setPrompt] = useState("");
   const [style, setStyle] = useState("realistic");
   const [aspectRatio, setAspectRatio] = useState("1:1");

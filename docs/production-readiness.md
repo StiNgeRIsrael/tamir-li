@@ -61,7 +61,8 @@ All probes used `curl https://tamir.li/...`. **HTML = static layer blocking API.
 - `POST /api/conversions` → **501** `CONVERSION_NOT_READY`
 - **Dev:** mock conversion animation (`allowMockFileConversion()` default true)
 - **Prod:** calls API; if static HTML returns 200, UI may show false success without converting files
-- **Real client-side tools:** image compressor/resizer, PDF manager, text tools, Hebrew OCR, etc. (`customComponent` in `tools-data.ts`)
+- **Real client-side tools:** image compressor/resizer, PDF manager, text tools (`customComponent` in `tools-data.ts`)
+- **Stub / WIP:** Hebrew OCR (`HebOcrTool`) — simulated only; not in catalog. See [implementation-status.md](./implementation-status.md)
 
 ### Admin (implemented)
 

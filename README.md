@@ -1,6 +1,19 @@
-# Welcome to your Lovable project
+# tamir.li — conversion hub
 
-## Project info
+Hebrew-first online file conversion at [tamir.li](https://tamir.li). Vite/React frontend, Express/Prisma backend, deployed as a Node.js monolith on Plesk.
+
+## Documentation
+
+| Doc | Audience |
+|-----|----------|
+| [AGENTS.md](./AGENTS.md) | AI coding agents — stack, conventions, do/don't |
+| [docs/tools-and-features.md](./docs/tools-and-features.md) | Full tool catalog, SEO slugs, APIs, implementation status |
+| [docs/product-vision.md](./docs/product-vision.md) | Product mission, freemium, ads, SEO |
+| [docs/local-dev.md](./docs/local-dev.md) | Local development setup |
+
+---
+
+## Project info (Lovable)
 
 **URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
 

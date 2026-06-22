@@ -1,1 +1,4 @@
-export type TranslationDict = Record<string, unknown>;
+import { heTranslations } from "./he";
+
+/** Canonical translation shape — inferred from Hebrew (source of truth). */
+export type TranslationDict = typeof heTranslations;

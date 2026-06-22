@@ -1,9 +1,11 @@
 import type { TranslationDict } from "./types";
 
-export const frTranslations: TranslationDict = {
+export const frTranslations = {
   brandName: "Tamirly",
   brandTagline: "Conversion de Fichiers en Ligne Facile",
   downloadApp: "Télécharger",
+  soon: "BIENTÔT",
+  comingSoon: "Bientôt",
   auth: {
     signOut: "Sign out",
     account: "Account",
@@ -64,6 +66,15 @@ export const frTranslations: TranslationDict = {
     subtitle: "Images, vidéo, audio et documents — glissez, choisissez le format, c'est fait.",
     subtitleLine2: "Sans logiciel. Sans inscription. Gratuit.",
   },
+  homePicker: {
+    title: "Outils de conversion",
+    searchPlaceholder: "Rechercher outils ou formats…",
+    fromLabel: "De",
+    toLabel: "Vers",
+    go: "Convertir",
+    popular: "Conversions populaires",
+    allTools: "Tous les outils",
+  },
   homeStatLabels: {
     tools: "Outils sur le site",
     formats: "Formats pris en charge",
@@ -121,6 +132,14 @@ export const frTranslations: TranslationDict = {
     conversionNoApi: "URL d'API non définie (VITE_API_URL). Les conversions fonctionneront une fois le backend connecté.",
     conversionNotReady: "Le service de conversion sur le serveur n'est pas encore actif.",
     conversionApiError: "Impossible de démarrer la conversion. Réessayez plus tard.",
+    conversionFormatError: "Cette combinaison de formats n'est pas prise en charge dans le navigateur. Essayez JPG, PNG, WEBP, GIF ou BMP.",
+    error: "Erreur",
+    comingSoonTitle: "Bientôt",
+    comingSoonMessage: (name: string) =>
+      name
+        ? `${name} arrive bientôt — nous finalisons l'implémentation. Revenez bientôt ou essayez un outil disponible.`
+        : "Cet outil arrive bientôt — nous finalisons l'implémentation. Revenez bientôt ou essayez un outil disponible.",
+    comingSoonAlternatives: "Essayez plutôt",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) => isCustom ? `Comment Utiliser ${name}` : `Comment Convertir ${from} en ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [
       { step: "1", title: isCustom ? "Téléversez" : `Téléversez ${from}`, desc: "Glissez ou sélectionnez" },
@@ -237,7 +256,7 @@ export const frTranslations: TranslationDict = {
     fit: "Ajuster", fitDesc: "Garde les proportions, s'adapte aux limites",
     fill: "Remplir", fillDesc: "Garde les proportions, recadre si nécessaire",
     stretch: "Étirer", stretchDesc: "Remplit la taille exacte, peut déformer",
-    readyPresets: "Tailles Prédéfinies", source: "Original", result: "Résultat",
+    readyPresets: "Tailles Prédéfinies", source: "Original", result: "Résultat", preview: "Aperçu en direct",
     newImage: "Nouvelle Image", processing: "Traitement...",
     resizeTo: (w: number, h: number) => `Redimensionner à ${w}×${h}`,
     downloadImage: (size: string) => `Télécharger Image (${size})`,

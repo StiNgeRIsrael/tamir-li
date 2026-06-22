@@ -3,9 +3,10 @@ import { getToolByFormatSlug, getToolById, getDefaultSlug, buildFormatSlug, getR
 import { AppLayout } from "@/components/AppLayout";
 import { FileDropZone } from "@/components/FileDropZone";
 import { AdSlot } from "@/components/AdSlot";
+import { AdNativeSlot } from "@/components/ads/AdNativeSlot";
 import { PremiumBanner, PremiumLock, ConversionSuccessUsage, UsageLimitNotice } from "@/components/PremiumComponents";
 import { showAdVignette } from "@/components/ads/AdVignette";
-import { handleGatedDownload, triggerFileDownload, type DownloadGateState } from "@/lib/ads/download-gate";
+import { handleGatedDownload, triggerFileDownload, triggerBlobDownload, type DownloadGateState } from "@/lib/ads/download-gate";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -18,17 +19,22 @@ import { AiImageGeneratorTool } from "@/components/tools/AiImageGeneratorTool";
 import { ImageResizerTool } from "@/components/tools/ImageResizerTool";
 import { ImageCompressorTool } from "@/components/tools/ImageCompressorTool";
 import { HebOcrTool } from "@/components/tools/HebOcrTool";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowRight, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe } from "lucide-react";
 import { useLocale, localePath, htmlLangTag } from "@/lib/i18n";
 import { siteUrl } from "@/lib/site";
 import { allowMockFileConversion } from "@/lib/feature-flags";
-import { getApiBaseUrl, responseLooksLikeJson } from "@/lib/api/client";
+import { getApiBaseUrl } from "@/lib/api/client";
 import { useToolConfig } from "@/contexts/ToolConfigContext";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics/events";
 import { useUsage } from "@/hooks/useUsage";
+import { useSubscription } from "@/hooks/useSubscription";
+import { useConversionJob } from "@/hooks/useConversionJob";
 import { isAdsterraConfigured } from "@/lib/ads/adsterra";
+import { isToolFunctional } from "@/lib/tool-availability";
+import { convertImageFile, isOutputFormatSupported } from "@/lib/image-convert";
+import { ComingSoonPanel } from "@/components/ComingSoonPanel";
 
 const categoryHeaderIcon: Record<ToolCategory, string> = {
   image: "bg-tool-image/10 text-tool-image",
@@ -44,6 +50,8 @@ interface FileWithFormat {
   thumbnail?: string;
   progress: number;
   status: "pending" | "converting" | "done" | "error";
+  resultBlob?: Blob;
+  errorMessage?: string;
 }
 
 function getFileIcon(file: File) {
@@ -86,10 +94,15 @@ export default function ToolPage() {
   const [showSuccessPanel, setShowSuccessPanel] = useState(false);
   const [downloadGate, setDownloadGate] = useState<DownloadGateState>({});
   const [allDownloadGate, setAllDownloadGate] = useState(false);
-  const { used: usedToday, max: maxDaily, isPremium, atLimit, recordUsage } = useUsage();
+  const { used: usedToday, max: maxDaily, isPremium: usageIsPremium, atLimit, recordUsage } = useUsage();
+  const { isPremium: isSubPremium } = useSubscription();
+  const { startJob: startConversionJob } = useConversionJob();
+  const isPremium = isSubPremium || usageIsPremium;
   const [usageUnlocked, setUsageUnlocked] = useState(false);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
   const atUsageLimit = atLimit && !usageUnlocked && !isPremium;
+  const showPremiumToolLock = tool?.premium && !isSubPremium && !premiumUnlocked;
+  const convertSuccessHandled = useRef(false);
 
   useEffect(() => {
     if (!tool) return;
@@ -113,9 +126,9 @@ export default function ToolPage() {
   }, [tool, slug, isPremium]);
 
   useEffect(() => {
-    if (!tool?.premium || premiumUnlocked) return;
+    if (!tool?.premium || premiumUnlocked || isSubPremium) return;
     trackEvent("paywall_hit", { tool_id: tool.id, type: "premium_tool" });
-  }, [tool, premiumUnlocked]);
+  }, [tool, premiumUnlocked, isSubPremium]);
 
   useEffect(() => {
     if (!tool || isPremium || usageUnlocked || !atLimit) return;
@@ -123,7 +136,13 @@ export default function ToolPage() {
   }, [tool, isPremium, usageUnlocked, atLimit]);
 
   useEffect(() => {
-    if (!converted || showSuccessPanel || !tool) return;
+    if (!converted) {
+      convertSuccessHandled.current = false;
+      return;
+    }
+    if (showSuccessPanel || !tool || convertSuccessHandled.current) return;
+
+    convertSuccessHandled.current = true;
 
     const revealSuccess = () => {
       setShowSuccessPanel(true);
@@ -238,6 +257,52 @@ export default function ToolPage() {
       return;
     }
 
+    if (tool.id === "image-converter") {
+      trackEvent("convert_start", {
+        tool_id: tool.id,
+        from_format: activeFrom,
+        to_format: activeTo,
+        file_count: fileItems.length,
+      });
+      setConverting(true);
+      let hadError = false;
+
+      for (let index = 0; index < fileItems.length; index++) {
+        setFileItems((prev) =>
+          prev.map((item, i) =>
+            i === index ? { ...item, status: "converting", progress: 0, errorMessage: undefined } : item
+          )
+        );
+
+        try {
+          const item = fileItems[index];
+          const blob = await convertImageFile(item.file, item.outputFormat);
+          setFileItems((prev) =>
+            prev.map((it, i) =>
+              i === index ? { ...it, status: "done", progress: 100, resultBlob: blob } : it
+            )
+          );
+        } catch {
+          hadError = true;
+          setFileItems((prev) =>
+            prev.map((it, i) =>
+              i === index
+                ? { ...it, status: "error", progress: 0, errorMessage: tt.conversionFormatError }
+                : it
+            )
+          );
+        }
+      }
+
+      setConverting(false);
+      if (!hadError) {
+        setConverted(true);
+      } else {
+        toast.error(tt.conversionFormatError);
+      }
+      return;
+    }
+
     if (allowMockFileConversion()) {
       runMockConversion();
       return;
@@ -256,33 +321,45 @@ export default function ToolPage() {
       file_count: fileItems.length,
     });
     setConverting(true);
+    setFileItems((prev) =>
+      prev.map((item) => ({ ...item, status: "converting" as const, progress: 0, errorMessage: undefined }))
+    );
+
     try {
-      const fd = new FormData();
-      fd.append("toolId", tool.id);
-      fd.append("fromFormat", activeFrom);
-      fd.append("toFormat", activeTo);
-      fileItems.forEach((item) => fd.append("files", item.file));
+      const result = await startConversionJob({
+        toolId: tool.id,
+        fromFormat: activeFrom,
+        toFormat: activeTo,
+        files: fileItems.map((item) => item.file),
+      });
 
-      const res = await fetch(`${api}/api/conversions`, { method: "POST", body: fd, credentials: "include" });
-
-      if (!responseLooksLikeJson(res)) {
-        toast.error(tt.conversionApiError);
-        return;
-      }
-
-      if (res.status === 501) {
+      if (result.kind === "not_ready") {
         toast.error(tt.conversionNotReady);
-        return;
-      }
-      if (!res.ok) {
-        toast.error(tt.conversionApiError);
+        setFileItems((prev) => prev.map((item) => ({ ...item, status: "pending" as const, progress: 0 })));
         return;
       }
 
+      const outputBlob = result.outputBlob;
+      setFileItems((prev) =>
+        prev.map((item, index) => ({
+          ...item,
+          status: "done" as const,
+          progress: 100,
+          ...(outputBlob && index === 0 ? { resultBlob: outputBlob } : {}),
+        }))
+      );
       setConverted(true);
       toast.success(tt.conversionDone);
     } catch {
       toast.error(tt.conversionApiError);
+      setFileItems((prev) =>
+        prev.map((item) => ({
+          ...item,
+          status: "error" as const,
+          progress: 0,
+          errorMessage: tt.conversionApiError,
+        }))
+      );
     } finally {
       setConverting(false);
     }
@@ -304,7 +381,8 @@ export default function ToolPage() {
       item.file,
       item.outputFormat,
       downloadGate,
-      isPremium
+      isPremium,
+      item.resultBlob
     );
     setDownloadGate(nextState);
     if (triggered) {
@@ -314,7 +392,14 @@ export default function ToolPage() {
 
   const onDownloadAll = async () => {
     if (isPremium || allDownloadGate) {
-      fileItems.forEach((item, index) => triggerFileDownload(item.file, item.outputFormat));
+      fileItems.forEach((item, index) => {
+        const baseName = item.file.name.replace(/\.[^.]+$/, "");
+        if (item.resultBlob) {
+          triggerBlobDownload(item.resultBlob, baseName, item.outputFormat);
+        } else {
+          triggerFileDownload(item.file, item.outputFormat);
+        }
+      });
       trackEvent("file_download_all", { tool_id: tool!.id, file_count: fileItems.length });
       return;
     }
@@ -356,12 +441,24 @@ export default function ToolPage() {
   const toolLongDescs = t.toolLongDescriptions as Record<string, string>;
   const toolLongDesc = toolLongDescs?.[tool.id] || tool.longDescription;
   const isCustom = !!tool.customComponent;
+  const toolIsFunctional = isToolFunctional(tool.id);
+  const availableToFormats = tool.id === "image-converter"
+    ? tool.toFormats.filter((f) => isOutputFormatSupported(f))
+    : tool.toFormats;
   const pageTitle = isCustom
     ? `${toolName} — ${t.brandName}`
     : `${tt.convertTitle(activeFrom, activeTo)} — ${t.brandName}`;
   const pageDesc = tt.convertDesc(activeFrom, activeTo);
   const related = filterTools(getRelatedTools(tool)).slice(0, 3);
   const toolPagePath = isCustom ? `/${tool.id}` : `/${buildFormatSlug(activeFrom, activeTo)}`;
+  const customFreemium = {
+    toolId: tool.id,
+    isPremium,
+    atUsageLimit,
+    usedToday,
+    maxDaily,
+    recordUsage: () => recordUsage({ toolId: tool.id }).catch(() => {}),
+  };
   const toolPageUrl = siteUrl(localePath(toolPagePath, locale));
   const homeUrl = siteUrl(localePath("/", locale));
 
@@ -511,7 +608,7 @@ export default function ToolPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {tool.toFormats.filter(f => f !== activeFrom).map((fmt) => (
+                    {availableToFormats.filter(f => f !== activeFrom).map((fmt) => (
                       <SelectItem key={fmt} value={fmt}>{fmt}</SelectItem>
                     ))}
                   </SelectContent>
@@ -537,22 +634,24 @@ export default function ToolPage() {
           </aside>
 
           <div className="min-w-0">
-            {tool.customComponent === "pdf-manager" ? (
-              <PdfManagerTool />
-            ) : tool.customComponent === "text-tools" ? (
-              <TextToolsComponent />
-            ) : tool.customComponent === "ai-image-generator" ? (
-              <AiImageGeneratorTool />
-            ) : tool.customComponent === "image-resizer" ? (
-              <ImageResizerTool />
-            ) : tool.customComponent === "image-compressor" ? (
-              <ImageCompressorTool />
-            ) : tool.customComponent === "heb-ocr" ? (
-              <HebOcrTool />
-            ) : tool.premium && !premiumUnlocked ? (
+            {!toolIsFunctional ? (
+              <ComingSoonPanel toolName={toolName} />
+            ) : showPremiumToolLock ? (
               <PremiumLock onUnlock={() => setPremiumUnlocked(true)} />
             ) : atUsageLimit ? (
               <PremiumLock onUnlock={() => setUsageUnlocked(true)} />
+            ) : tool.customComponent === "pdf-manager" ? (
+              <PdfManagerTool freemium={customFreemium} />
+            ) : tool.customComponent === "text-tools" ? (
+              <TextToolsComponent freemium={customFreemium} />
+            ) : tool.customComponent === "ai-image-generator" ? (
+              <AiImageGeneratorTool />
+            ) : tool.customComponent === "image-resizer" ? (
+              <ImageResizerTool freemium={customFreemium} />
+            ) : tool.customComponent === "image-compressor" ? (
+              <ImageCompressorTool freemium={customFreemium} />
+            ) : tool.customComponent === "heb-ocr" ? (
+              <HebOcrTool />
             ) : showSuccessPanel ? (
               <div className="space-y-3 animate-fade-in">
                 <div className="flex items-center gap-3 mb-4">
@@ -573,6 +672,9 @@ export default function ToolPage() {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{item.file.name.replace(/\.[^.]+$/, '')}.{item.outputFormat.toLowerCase()}</p>
                         <p className="text-xs text-muted-foreground">{formatFileSize(item.file.size)} → {item.outputFormat}</p>
+                        {item.errorMessage && (
+                          <p className="text-xs text-destructive">{item.errorMessage}</p>
+                        )}
                       </div>
                       <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
                       <Button
@@ -632,7 +734,9 @@ export default function ToolPage() {
                                 ? tt.converting
                                 : item.status === "done"
                                   ? tt.done
-                                  : tt.queuePending ?? "Waiting";
+                                  : item.status === "error"
+                                    ? tt.error ?? "Error"
+                                    : tt.queuePending ?? "Waiting";
                             return (
                               <TableRow key={index} className="hover:bg-muted/20">
                                 <TableCell className="py-2">
@@ -656,7 +760,7 @@ export default function ToolPage() {
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      {tool.toFormats.filter(f => f !== activeFrom).map((fmt) => (
+                                      {availableToFormats.filter(f => f !== activeFrom).map((fmt) => (
                                         <SelectItem key={fmt} value={fmt}>{fmt}</SelectItem>
                                       ))}
                                     </SelectContent>
@@ -666,6 +770,7 @@ export default function ToolPage() {
                                   <div className="flex items-center gap-1.5">
                                     {item.status === "converting" && <Loader2 className="h-3 w-3 animate-spin text-primary" />}
                                     {item.status === "done" && <CheckCircle2 className="h-3 w-3 text-success" />}
+                                    {item.status === "error" && <X className="h-3 w-3 text-destructive" />}
                                     {item.status === "pending" && <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />}
                                     <span className={`text-xs ${item.status === "done" ? "text-success" : "text-muted-foreground"}`}>{statusLabel}</span>
                                   </div>
@@ -761,6 +866,7 @@ export default function ToolPage() {
         </section>
 
         <AdSlot type="inline" slotId="tool-mid-page" />
+        <AdNativeSlot slotId="tool-mid-native" className="mt-4" />
 
         {/* SEO rich text */}
         <section className="rounded-md border border-border bg-card p-4 lg:p-6 space-y-3 text-sm text-muted-foreground leading-relaxed">

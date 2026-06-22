@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useLocale, localePath } from "@/lib/i18n";
 import { Link } from "react-router-dom";
+import { useSubscription } from "@/hooks/useSubscription";
 
 export function PremiumBanner() {
   const { locale, t } = useLocale();
-  const p = t.premium || {};
+  const p = t.premium;
   return (
     <div className="premium-banner flex flex-col sm:flex-row items-center justify-between gap-4">
       <div className="flex items-center gap-3">
@@ -30,7 +31,8 @@ export function PremiumBanner() {
 
 export function PremiumLock({ onUnlock }: { onUnlock?: () => void }) {
   const { locale, t } = useLocale();
-  const p = t.premium || {};
+  const { isPremium } = useSubscription();
+  const p = t.premium;
   const [adState, setAdState] = useState<"idle" | "watching" | "done">("idle");
   const [countdown, setCountdown] = useState(15);
 
@@ -40,6 +42,8 @@ export function PremiumLock({ onUnlock }: { onUnlock?: () => void }) {
     const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
     return () => clearTimeout(timer);
   }, [adState, countdown, onUnlock]);
+
+  if (isPremium) return null;
 
   const startAd = () => { setAdState("watching"); setCountdown(15); };
 
@@ -94,7 +98,7 @@ export function PremiumLock({ onUnlock }: { onUnlock?: () => void }) {
 
 export function UsageLimitNotice({ used, max }: { used: number; max: number }) {
   const { locale, t } = useLocale();
-  const p = t.premium || {};
+  const p = t.premium;
   const remaining = max - used;
   return (
     <div className="bg-card border border-border rounded-xl p-4 space-y-3">
@@ -116,7 +120,7 @@ export function UsageLimitNotice({ used, max }: { used: number; max: number }) {
 
 export function ConversionSuccessUsage({ used, max }: { used: number; max: number }) {
   const { locale, t } = useLocale();
-  const p = t.premium || {};
+  const p = t.premium;
   const remaining = max - used;
   return (
     <div className="bg-muted/50 border border-border rounded-xl p-4 text-center space-y-2 animate-fade-in">

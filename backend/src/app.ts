@@ -13,8 +13,25 @@ import adminRoutes from './routes/admin.routes';
 import usageRoutes from './routes/usage.routes';
 import billingRoutes, { paypalWebhookHandler } from './routes/billing.routes';
 import { stripeWebhookHandler } from './routes/billing-stripe.routes';
+import { prisma } from './lib/prisma';
 
 dotenv.config();
+
+const DB_PING_TIMEOUT_MS = 2000;
+
+async function pingDatabase(): Promise<boolean> {
+  try {
+    await Promise.race([
+      prisma.$queryRaw`SELECT 1`,
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('DB ping timeout')), DB_PING_TIMEOUT_MS)
+      ),
+    ]);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 const app: Express = express();
 
@@ -63,9 +80,17 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/usage', usageRoutes);
 app.use('/api/billing', billingRoutes);
 
-// Health check endpoint
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({ status: 'OK', message: 'Server is running' });
+// Health check endpoint (probed by scripts/autonomous-site-check.ts and frontend)
+// Always 200 when the process is up; db.ok reflects MySQL/Prisma reachability.
+app.get('/health', async (_req: Request, res: Response) => {
+  const dbOk = await pingDatabase();
+  res.status(200).json({
+    status: 'OK',
+    message: 'Server is running',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    db: { ok: dbOk },
+  });
 });
 
 // Production: serve Vite build from repo-root dist/ (SPA + /api/* on one host)

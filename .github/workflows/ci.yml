@@ -34,6 +34,11 @@ jobs:
       - name: Test
         run: npm run test
 
+      - name: Site check (logic-only in CI)
+        run: npm run site:check
+        env:
+          SKIP_NETWORK: "1"
+
       - name: Build (production mode)
         env:
           VITE_SITE_ORIGIN: ${{ vars.VITE_SITE_ORIGIN || 'https://tamir.li' }}

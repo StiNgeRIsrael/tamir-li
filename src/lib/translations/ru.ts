@@ -1,9 +1,11 @@
 import type { TranslationDict } from "./types";
 
-export const ruTranslations: TranslationDict = {
+export const ruTranslations = {
   brandName: "Tamirly",
   brandTagline: "Простая Конвертация Файлов Онлайн",
   downloadApp: "Скачать",
+  soon: "СКОРО",
+  comingSoon: "Скоро",
   auth: {
     signOut: "Sign out",
     account: "Account",
@@ -63,6 +65,15 @@ export const ruTranslations: TranslationDict = {
     titleHighlight: "За Секунды",
     subtitle: "Изображения, видео, аудио и документы — перетащите, выберите формат, готово.",
     subtitleLine2: "Без установки. Без регистрации. Бесплатно.",
+  },
+  homePicker: {
+    title: "Инструменты конвертации",
+    searchPlaceholder: "Поиск инструментов или форматов…",
+    fromLabel: "Из",
+    toLabel: "В",
+    go: "Конвертировать",
+    popular: "Популярные конвертации",
+    allTools: "Все инструменты",
   },
   homeStatLabels: {
     tools: "Инструментов на сайте",
@@ -124,6 +135,14 @@ export const ruTranslations: TranslationDict = {
     conversionNoApi: "Не задан URL API (VITE_API_URL). Конвертации заработают после подключения бэкенда.",
     conversionNotReady: "Сервер конвертации ещё не запущен.",
     conversionApiError: "Не удалось начать конвертацию. Попробуйте позже.",
+    conversionFormatError: "Эта комбинация форматов не поддерживается в браузере. Попробуйте JPG, PNG, WEBP, GIF или BMP.",
+    error: "Ошибка",
+    comingSoonTitle: "Скоро",
+    comingSoonMessage: (name: string) =>
+      name
+        ? `${name} скоро появится — мы завершаем разработку. Загляните позже или попробуйте доступные инструменты.`
+        : "Этот инструмент скоро появится — мы завершаем разработку. Загляните позже или попробуйте доступные инструменты.",
+    comingSoonAlternatives: "Попробуйте вместо этого",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) => isCustom ? `Как Использовать ${name}` : `Как Конвертировать ${from} в ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [
       { step: "1", title: isCustom ? "Загрузите Файл" : `Загрузите ${from}`, desc: "Перетащите или выберите файлы" },
@@ -241,7 +260,7 @@ export const ruTranslations: TranslationDict = {
     fit: "Вписать", fitDesc: "Сохраняет пропорции, помещается в границы",
     fill: "Заполнить", fillDesc: "Сохраняет пропорции, обрезает если нужно",
     stretch: "Растянуть", stretchDesc: "Заполняет точный размер, может исказить",
-    readyPresets: "Готовые Размеры", source: "Оригинал", result: "Результат",
+    readyPresets: "Готовые Размеры", source: "Оригинал", result: "Результат", preview: "Предпросмотр",
     newImage: "Новое Изображение", processing: "Обработка...",
     resizeTo: (w: number, h: number) => `Изменить до ${w}×${h}`,
     downloadImage: (size: string) => `Скачать (${size})`,

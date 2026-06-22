@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getApiBaseUrl } from "@/lib/api/client";
 
@@ -140,10 +140,13 @@ export function useUsage() {
     },
   });
 
+  const mutateAsyncRef = useRef(recordMutation.mutateAsync);
+  mutateAsyncRef.current = recordMutation.mutateAsync;
+
   const recordUsage = useCallback(
     (payload: { toolId: string; fromFormat?: string; toFormat?: string }) =>
-      recordMutation.mutateAsync(payload),
-    [recordMutation]
+      mutateAsyncRef.current(payload),
+    []
   );
 
   return {

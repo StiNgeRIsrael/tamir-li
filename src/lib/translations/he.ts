@@ -1,12 +1,12 @@
-import type { TranslationDict } from "./types";
-
-export const heTranslations: TranslationDict = {
+export const heTranslations = {
   // Brand
   brandName: "תמיר לי",
   brandTagline: "Tamir.li — המרות קבצים לישראל",
 
   // Navbar
   downloadApp: "הורד אפליקציה",
+  soon: "בקרוב",
+  comingSoon: "בקרוב",
 
   auth: {
     signOut: "התנתקות",
@@ -167,6 +167,7 @@ export const heTranslations: TranslationDict = {
     conversionDone: "ההמרה הושלמה!",
     download: "הורד",
     downloadAll: "הורד הכל",
+    loading: "טוען…",
     watchAdToDownload: "צפה בפרסומת להורדה",
     downloadNow: "הורד עכשיו",
     preparingDownload: "מכין את ההורדה…",
@@ -186,6 +187,14 @@ export const heTranslations: TranslationDict = {
     conversionNoApi: "לא הוגדר כתובת שרת (VITE_API_URL). ההמרה תתאפשר כשה-API יחובר.",
     conversionNotReady: "שירות ההמרה בשרת עדיין לא פעיל. אנחנו משלימים את החיבור.",
     conversionApiError: "לא ניתן להתחיל המרה. נסו שוב מאוחר יותר.",
+    conversionFormatError: "שילוב הפורמטים הזה לא נתמך בדפדפן. נסו JPG, PNG, WEBP, GIF או BMP.",
+    error: "שגיאה",
+    comingSoonTitle: "בקרוב",
+    comingSoonMessage: (name: string) =>
+      name
+        ? `${name} בדרך — אנחנו מסיימים את הפיתוח. חזרו בקרוב או נסו אחד מהכלים הזמינים.`
+        : "הכלי בדרך — אנחנו מסיימים את הפיתוח. חזרו בקרוב או נסו אחד מהכלים הזמינים.",
+    comingSoonAlternatives: "נסו במקום",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) =>
       isCustom ? `איך להשתמש ב${name}?` : `איך להמיר ${from} ל-${to}?`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [
@@ -324,6 +333,7 @@ export const heTranslations: TranslationDict = {
     remainingToday: (n: number) => `נותרו לך עוד ${n} המרות להיום`,
     upgradeNow: (p: string) => `שדרג עכשיו — ${p}`, upgradeForUnlimited: "שדרג לפרימיום להמרות ללא הגבלה",
     credits: "קרדיטים", premiumSub: "מנוי פרימיום — 6 קרדיטים חודשיים", buyCredits: "קנה קרדיטים",
+    manageBilling: "ניהול חיוב",
     creditPackages: "חבילות קרדיטים", creditPerImage: "כל קרדיט = יצירת תמונה אחת עם AI",
     images: "תמונות", saving: (s: string) => `חיסכון ${s}`, perImage: (p: string) => `${p} לתמונה`,
     mostPopular: "הכי פופולרי", purchasePackage: "רכוש חבילה",
@@ -356,7 +366,7 @@ export const heTranslations: TranslationDict = {
     fit: "התאם (Fit)", fitDesc: "שומר יחס תמונה, התמונה נכנסת לגבולות",
     fill: "מלא (Fill)", fillDesc: "שומר יחס תמונה, חותך אם צריך",
     stretch: "מתח (Stretch)", stretchDesc: "ממלא את הגודל המדויק, עלול לעוות",
-    readyPresets: "גדלים מוכנים", source: "מקור", result: "תוצאה",
+    readyPresets: "גדלים מוכנים", source: "מקור", result: "תוצאה", preview: "תצוגה מקדימה",
     newImage: "תמונה חדשה", processing: "מעבד...",
     resizeTo: (w: number, h: number) => `שנה גודל ל-${w}×${h}`,
     downloadImage: (size: string) => `הורד תמונה (${size})`,

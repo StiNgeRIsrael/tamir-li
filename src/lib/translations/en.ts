@@ -1,9 +1,11 @@
 import type { TranslationDict } from "./types";
 
-export const enTranslations: TranslationDict = {
+export const enTranslations = {
   brandName: "Tamir.li",
   brandTagline: "Online file conversion — built for clarity",
   downloadApp: "Download App",
+  soon: "SOON",
+  comingSoon: "Coming Soon",
 
   auth: {
     signOut: "Sign out",
@@ -157,6 +159,7 @@ export const enTranslations: TranslationDict = {
     conversionDone: "Conversion Complete!",
     download: "Download",
     downloadAll: "Download All",
+    loading: "Loading…",
     watchAdToDownload: "Watch ad to download",
     downloadNow: "Download now",
     preparingDownload: "Preparing your download…",
@@ -176,6 +179,14 @@ export const enTranslations: TranslationDict = {
     conversionNoApi: "API URL is not set (VITE_API_URL). Conversions will work once the backend is connected.",
     conversionNotReady: "The conversion service is not live yet. We're finishing the server integration.",
     conversionApiError: "Could not start conversion. Please try again later.",
+    conversionFormatError: "This format combination is not supported in the browser. Try JPG, PNG, WEBP, GIF, or BMP.",
+    error: "Error",
+    comingSoonTitle: "Coming Soon",
+    comingSoonMessage: (name: string) =>
+      name
+        ? `${name} is on the way — we're finishing the implementation. Check back soon or try one of our available tools.`
+        : "This tool is on the way — we're finishing the implementation. Check back soon or try one of our available tools.",
+    comingSoonAlternatives: "Try these instead",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) =>
       isCustom ? `How to Use ${name}` : `How to Convert ${from} to ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [
@@ -302,6 +313,7 @@ export const enTranslations: TranslationDict = {
     remainingToday: (n: number) => `You have ${n} conversions left today`,
     upgradeNow: (p: string) => `Upgrade Now — ${p}`, upgradeForUnlimited: "Upgrade to Premium for unlimited conversions",
     credits: "credits", premiumSub: "Premium subscription — 6 monthly credits", buyCredits: "Buy Credits",
+    manageBilling: "Manage billing",
     creditPackages: "Credit Packages", creditPerImage: "Each credit = one AI image generation",
     images: "images", saving: (s: string) => `Save ${s}`, perImage: (p: string) => `${p}/image`,
     mostPopular: "Most Popular", purchasePackage: "Purchase Package",
@@ -334,7 +346,7 @@ export const enTranslations: TranslationDict = {
     fit: "Fit", fitDesc: "Keeps aspect ratio, fits within bounds",
     fill: "Fill", fillDesc: "Keeps aspect ratio, crops if needed",
     stretch: "Stretch", stretchDesc: "Fills exact size, may distort",
-    readyPresets: "Ready Sizes", source: "Original", result: "Result",
+    readyPresets: "Ready Sizes", source: "Original", result: "Result", preview: "Live preview",
     newImage: "New Image", processing: "Processing...",
     resizeTo: (w: number, h: number) => `Resize to ${w}×${h}`,
     downloadImage: (size: string) => `Download Image (${size})`,

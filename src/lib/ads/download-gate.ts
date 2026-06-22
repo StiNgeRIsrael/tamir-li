@@ -1,11 +1,24 @@
 import { trackEvent } from "@/lib/analytics/events";
 import { showAdVignette } from "@/components/ads/AdVignette";
 
+import { formatToExtension } from "@/lib/image-convert";
+
 /** Trigger browser download for a converted file (mock: re-exports source with new extension). */
 export function triggerFileDownload(file: File, outputFormat: string): void {
   const baseName = file.name.replace(/\.[^.]+$/, "");
-  const ext = outputFormat.toLowerCase();
+  const ext = formatToExtension(outputFormat);
   const url = URL.createObjectURL(file);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${baseName}.${ext}`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/** Download a converted blob with the correct extension. */
+export function triggerBlobDownload(blob: Blob, baseName: string, outputFormat: string): void {
+  const ext = formatToExtension(outputFormat);
+  const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = `${baseName}.${ext}`;
@@ -21,10 +34,16 @@ export async function handleGatedDownload(
   file: File,
   outputFormat: string,
   gateState: DownloadGateState,
-  isPremium: boolean
+  isPremium: boolean,
+  resultBlob?: Blob
 ): Promise<{ triggered: boolean; nextState: DownloadGateState }> {
   if (isPremium || gateState[fileIndex]) {
-    triggerFileDownload(file, outputFormat);
+    const baseName = file.name.replace(/\.[^.]+$/, "");
+    if (resultBlob) {
+      triggerBlobDownload(resultBlob, baseName, outputFormat);
+    } else {
+      triggerFileDownload(file, outputFormat);
+    }
     return { triggered: true, nextState: gateState };
   }
 
