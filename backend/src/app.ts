@@ -70,7 +70,23 @@ app.get('/health', (req: Request, res: Response) => {
 // Production: serve Vite build from repo-root dist/ (SPA + /api/* on one host)
 if (isProduction) {
   const frontendDist = path.resolve(__dirname, '..', '..', 'dist');
+  const seoStaticFiles = ['sitemap.xml', 'robots.txt', 'ads.txt', 'llms.txt'] as const;
+  const hasFileExtension = (urlPath: string) => /\.[a-zA-Z0-9]+$/.test(urlPath);
+
   if (fs.existsSync(frontendDist)) {
+    for (const file of seoStaticFiles) {
+      app.get(`/${file}`, (req: Request, res: Response, next: NextFunction) => {
+        const filePath = path.join(frontendDist, file);
+        if (!fs.existsSync(filePath)) {
+          res.status(404).type('text/plain').send('Not Found');
+          return;
+        }
+        res.sendFile(filePath, (err) => {
+          if (err) next(err);
+        });
+      });
+    }
+
     app.use(express.static(frontendDist, { index: false }));
     app.use((req: Request, res: Response, next: NextFunction) => {
       if (req.method !== 'GET' && req.method !== 'HEAD') {
@@ -79,6 +95,11 @@ if (isProduction) {
       }
       if (req.path.startsWith('/api/') || req.path === '/health') {
         next();
+        return;
+      }
+      // Missing static assets (e.g. sitemap.xml) must not fall back to index.html.
+      if (hasFileExtension(req.path)) {
+        res.status(404).type('text/plain').send('Not Found');
         return;
       }
       res.sendFile(path.join(frontendDist, 'index.html'), (err) => {

@@ -94,4 +94,5 @@ jobs:
       - name: Verify build outputs
         run: |
           test -f dist/index.html
+          test -f dist/sitemap.xml
           test -f backend/dist/index.js

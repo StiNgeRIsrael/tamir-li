@@ -42,7 +42,10 @@ jobs:
           VITE_ADSENSE_SLOT_BANNER: ${{ secrets.VITE_ADSENSE_SLOT_BANNER }}
           VITE_ADSENSE_SLOT_SIDEBAR: ${{ secrets.VITE_ADSENSE_SLOT_SIDEBAR }}
           VITE_ADSENSE_SLOT_INLINE: ${{ secrets.VITE_ADSENSE_SLOT_INLINE }}
-        run: npm run build
+        run: |
+          npm run build
+          test -f dist/sitemap.xml
+          test -f dist/robots.txt
 
       - name: Prepare deploy bundle
         run: |
@@ -60,8 +63,21 @@ jobs:
           test -f deploy/backend/package.json
           test -f deploy/backend/dist/index.js
           test -d deploy/dist
+          test -f deploy/dist/sitemap.xml
+          test -f deploy/dist/robots.txt
           test -d deploy/backend/dist
           test -d deploy/backend/prisma
+
+      - name: Prepare SEO files for document root
+        run: |
+          mkdir -p deploy-seo
+          for f in sitemap.xml robots.txt ads.txt llms.txt; do
+            if [ -f "dist/$f" ]; then
+              cp "dist/$f" "deploy-seo/$f"
+            fi
+          done
+          ls -la deploy-seo/
+          test -f deploy-seo/sitemap.xml
 
       - name: Deploy to Plesk Node.js app root (SFTP)
         uses: wlixcc/SFTP-Deploy-Action@v1.2.6
@@ -74,5 +90,18 @@ jobs:
           # Node.js application root — NOT the static httpdocs document root.
           # Default: httpdocs/deploy/ (sibling to legacy static files in httpdocs/).
           remote_path: ${{ vars.PLESK_NODE_APP_DIR || 'httpdocs/deploy/' }}
+          sftp_only: true
+          sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"
+
+      - name: Deploy SEO files to Plesk document root (SFTP)
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
+        with:
+          server: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}
+          username: ${{ secrets.PLESK_SSH_USER || secrets.PLESK_FTP_USER }}
+          password: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
+          port: ${{ vars.PLESK_SSH_PORT || 22 }}
+          local_path: ./deploy-seo/
+          # Legacy static docroot — tamir.li/sitemap.xml is served here until Node is sole docroot.
+          remote_path: ${{ vars.PLESK_HTTPDOCS_DIR || 'httpdocs/' }}
           sftp_only: true
           sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"
