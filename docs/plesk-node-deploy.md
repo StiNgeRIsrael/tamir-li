@@ -142,7 +142,7 @@ Restart runs **only if SFTP deploy succeeded**. CI does **not** run `npm install
 **When lockfiles or migrations change**, either:
 
 - Use Plesk **Run Node.js commands** → `run setup` (or `run plesk:db`), then restart, **or**
-- Re-run the workflow manually with **run_server_setup** checked (runs `npm run setup` over SSH, then restart).
+- Re-run the workflow manually with **run_server_setup** checked (runs `npm run setup` over SSH, then restart). SSH does **not** see Plesk Node.js custom env — CI exports `DATABASE_URL` (and optional `JWT_SECRET`, `GOOGLE_CLIENT_ID`) from **GitHub Actions secrets** for that step only. Runtime still uses env vars set in the Plesk UI.
 
 **Production note:** If the site still serves legacy static files from `httpdocs/` (no Node.js proxy), the restart is harmless but API/SPA changes require the Node.js monolith + proxy — see [Recommended layout](#recommended-layout-github-actions-sftp).
 
@@ -177,6 +177,9 @@ On later deploys, run `run setup` when lockfiles change, `run plesk:db` when mig
 | `PLESK_NODE_APP_DIR` (var) | No | Node app root for restart; default `httpdocs/deploy` |
 | `PLESK_DOMAIN` (var) | No | Domain for Plesk CLI restart attempt; default `tamir.li` |
 | `VITE_GOOGLE_CLIENT_ID` (secret) | Yes (Google sign-in) | OAuth Web client ID — baked into frontend at CI build; must match Plesk `GOOGLE_CLIENT_ID` |
+| `DATABASE_URL` (secret) | Only if **run_server_setup** | Same MySQL URL as Plesk Node.js env — used by CI SSH `npm run setup` (Prisma migrate). Not needed for code-only deploys. **Runtime** still reads `DATABASE_URL` from Plesk custom env, not GitHub. |
+| `JWT_SECRET` (secret) | No | Optional for CI setup path; required in Plesk for production auth |
+| `GOOGLE_CLIENT_ID` (secret) | No | Optional for CI setup; falls back to `VITE_GOOGLE_CLIENT_ID`. Plesk `GOOGLE_CLIENT_ID` is required at runtime. |
 
 \*Workflow falls back from `PLESK_SSH_*` to `PLESK_FTP_*`. **No new secrets** are required if SFTP deploy already works — restart reuses the same credentials.
 

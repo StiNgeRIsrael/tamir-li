@@ -101,16 +101,34 @@ jobs:
           rsyncArgs: "-avz --omit-dir-times"
           sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"
 
+      # SSH sessions do not inherit Plesk Node.js custom env — export GitHub secrets when run_server_setup=true.
+      - name: Validate server setup secrets
+        if: success() && github.event_name == 'workflow_dispatch' && github.event.inputs.run_server_setup == 'true'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error:: run_server_setup=true requires GitHub repository secret DATABASE_URL. SSH does not inherit Plesk Node.js custom env vars. Add DATABASE_URL under Settings → Secrets and variables → Actions, or run setup via Plesk UI: Node.js → Run Node.js commands → run setup"
+            exit 1
+          fi
+
       # Runs only after SFTP succeeds. No npm install unless workflow_dispatch run_server_setup=true.
       - name: Restart Node.js app on Plesk
         if: success()
         uses: appleboy/ssh-action@v1.2.0
+        env:
+          RUN_SERVER_SETUP: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.run_server_setup == 'true' }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID || secrets.VITE_GOOGLE_CLIENT_ID }}
+          NODE_ENV: production
         with:
           host: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}
           username: ${{ secrets.PLESK_SSH_USER || secrets.PLESK_FTP_USER }}
           password: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
           port: ${{ vars.PLESK_SSH_PORT || 22 }}
           command_timeout: 15m
+          envs: RUN_SERVER_SETUP,DATABASE_URL,JWT_SECRET,GOOGLE_CLIENT_ID,NODE_ENV
           script: |
             set -e
             APP_DIR="${{ vars.PLESK_NODE_APP_DIR || 'httpdocs/deploy' }}"
@@ -121,9 +139,16 @@ jobs:
             APP_DIR="$(pwd)"
             echo "Node.js app dir: $APP_DIR"
 
-            if [ "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.run_server_setup == 'true' }}" = "true" ]; then
+            if [ "$RUN_SERVER_SETUP" = "true" ]; then
+              if [ -z "$DATABASE_URL" ]; then
+                echo "::error:: DATABASE_URL is not set. Add GitHub secret DATABASE_URL or run setup via Plesk UI: Node.js → Run Node.js commands → run setup"
+                exit 1
+              fi
               echo "Running npm run setup (workflow_dispatch run_server_setup=true)..."
               export PATH="/opt/plesk/node/22/bin:/opt/plesk/node/24/bin:/opt/plesk/node/20/bin:$PATH"
+              export DATABASE_URL NODE_ENV=production
+              [ -n "$JWT_SECRET" ] && export JWT_SECRET
+              [ -n "$GOOGLE_CLIENT_ID" ] && export GOOGLE_CLIENT_ID
               npm run setup
             fi
 
