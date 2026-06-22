@@ -32,8 +32,10 @@ const formatIcons = [Image, FileVideo, FileAudio, FileText];
 const FEATURED_FUNCTIONAL_ORDER = [
   "image-converter",
   "image-compressor",
-  "merge-pdf",
   "image-resizer",
+  "svg-to-png",
+  "png-to-ico",
+  "merge-pdf",
   "text-tools",
   "audio-converter",
 ] as const;
