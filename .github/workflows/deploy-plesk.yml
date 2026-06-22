@@ -116,8 +116,10 @@ jobs:
             APP_DIR="${{ vars.PLESK_NODE_APP_DIR || 'httpdocs/deploy' }}"
             APP_DIR="${APP_DIR%/}"
             DOMAIN="${{ vars.PLESK_DOMAIN || 'tamir.li' }}"
-            cd "$APP_DIR"
-            echo "Node.js app dir: $(pwd)"
+            cd "$APP_DIR" || { echo "Cannot cd to $APP_DIR"; exit 1; }
+            # Normalize to absolute path — relative APP_DIR breaks cleanup/verify after cd.
+            APP_DIR="$(pwd)"
+            echo "Node.js app dir: $APP_DIR"
 
             if [ "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.run_server_setup == 'true' }}" = "true" ]; then
               echo "Running npm run setup (workflow_dispatch run_server_setup=true)..."
@@ -172,7 +174,14 @@ jobs:
             fi
 
             echo "Deploy layout (expected: app.js + dist/index.html + backend/dist/index.js):"
-            ls -la "$APP_DIR/app.js" "$APP_DIR/dist/index.html" "$APP_DIR/backend/dist/index.js"
+            for f in app.js dist/index.html backend/dist/index.js; do
+              if [ ! -f "$f" ]; then
+                echo "::error:: Missing $f in $APP_DIR"
+                ls -la "$(dirname "$f")" 2>/dev/null || true
+                exit 1
+              fi
+              ls -la "$f"
+            done
 
       - name: Verify Node monolith is live
         if: success()
