@@ -25,7 +25,7 @@ export function UsageNavPill({ className }: { className?: string }) {
     <Link
       to={localePath("/premium", locale)}
       className={cn(
-        "hidden md:inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium transition-colors",
+        "inline-flex shrink-0 items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] md:px-2 md:text-xs font-medium transition-colors",
         isLow
           ? "border-accent/40 bg-accent/10 text-accent hover:bg-accent/15"
           : "border-border bg-muted/50 text-muted-foreground hover:text-foreground",
