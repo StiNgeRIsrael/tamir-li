@@ -160,6 +160,12 @@ export const itTranslations = {
     comingSoonPdfWordCta: "Apri gestore PDF",
     comingSoonVideoHint: "Devi convertire audio adesso? Converti MP3, WAV, AAC e altro con il nostro convertitore audio.",
     comingSoonVideoCta: "Apri convertitore audio",
+    basicExportBadge: "Esportazione base",
+    basicExportNotice:
+      "Questo strumento converte il testo del documento in un PDF semplice nel browser. La formattazione avanzata (titoli, immagini, tabelle) potrebbe non essere conservata — ideale per documenti di testo semplice.",
+    wordToPdfLegacyDocError: "I file .doc legacy non sono supportati nel browser. Salva come DOCX in Word e riprova.",
+    wordToPdfEmptyDocError: "Il documento sembra vuoto o non è stato possibile leggere il contenuto.",
+    documentConversionError: "Conversione non riuscita. Assicurati che il file sia un DOCX valido.",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) => isCustom ? `Come Usare ${name}` : `Come Convertire ${from} in ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [
       { step: "1", title: isCustom ? "Carica un File" : `Carica File ${from}`, desc: "Trascina o seleziona" },

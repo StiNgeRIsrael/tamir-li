@@ -210,6 +210,12 @@ export const heTranslations = {
     comingSoonPdfWordCta: "למנהל PDF",
     comingSoonVideoHint: "צריכים להמיר אודיו עכשיו? המירו MP3, WAV, AAC ועוד עם ממיר האודיו שלנו.",
     comingSoonVideoCta: "לממיר אודיו",
+    basicExportBadge: "ייצוא בסיסי",
+    basicExportNotice:
+      "הכלי ממיר את תוכן המסמך ל-PDF פשוט בדפדפן. עיצוב מתקדם (כותרות, תמונות, טבלאות) עשוי לא להישמר — מתאים למסמכי טקסט פשוטים.",
+    wordToPdfLegacyDocError: "קבצי .doc ישנים אינם נתמכים בדפדפן. שמרו כ-DOCX ב-Word ונסו שוב.",
+    wordToPdfEmptyDocError: "המסמך נראה ריק או שלא ניתן לקרוא את התוכן.",
+    documentConversionError: "ההמרה נכשלה. ודאו שהקובץ הוא DOCX תקין.",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) =>
       isCustom ? `איך להשתמש ב${name}?` : `איך להמיר ${from} ל-${to}?`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [

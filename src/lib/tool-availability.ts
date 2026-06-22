@@ -11,6 +11,7 @@ const FUNCTIONAL_TOOL_IDS = new Set([
   "merge-pdf",
   "text-tools",
   "audio-converter",
+  "word-to-pdf",
 ]);
 
 export function isToolFunctional(toolId: string): boolean {

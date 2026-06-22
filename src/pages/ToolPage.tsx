@@ -35,6 +35,8 @@ import { useConversionJob } from "@/hooks/useConversionJob";
 import { isAdsterraConfigured } from "@/lib/ads/adsterra";
 import { isToolFunctional } from "@/lib/tool-availability";
 import { convertImageFile, isOutputFormatSupported, usesClientImageConversion } from "@/lib/image-convert";
+import { usesClientDocumentConversion } from "@/lib/document-convert";
+import { convertWordFileToPdf } from "@/lib/word-to-pdf";
 import { isServerUnavailableError } from "@/lib/conversion-errors";
 import { ComingSoonPanel } from "@/components/ComingSoonPanel";
 
@@ -303,6 +305,57 @@ export default function ToolPage() {
         setConverted(true);
       } else {
         toast.error(tt.conversionFormatError);
+      }
+      return;
+    }
+
+    if (usesClientDocumentConversion(tool.id)) {
+      trackEvent("convert_start", {
+        tool_id: tool.id,
+        from_format: activeFrom,
+        to_format: activeTo,
+        file_count: fileItems.length,
+      });
+      setConverting(true);
+      let hadError = false;
+
+      for (let index = 0; index < fileItems.length; index++) {
+        setFileItems((prev) =>
+          prev.map((item, i) =>
+            i === index ? { ...item, status: "converting", progress: 0, errorMessage: undefined } : item
+          )
+        );
+
+        try {
+          const item = fileItems[index];
+          const blob = await convertWordFileToPdf(item.file);
+          setFileItems((prev) =>
+            prev.map((it, i) =>
+              i === index ? { ...it, status: "done", progress: 100, resultBlob: blob } : it
+            )
+          );
+        } catch (err) {
+          hadError = true;
+          const code = err instanceof Error ? err.message : "";
+          const errorMessage =
+            code === "LEGACY_DOC_NOT_SUPPORTED"
+              ? tt.wordToPdfLegacyDocError
+              : code === "EMPTY_DOCUMENT"
+                ? tt.wordToPdfEmptyDocError
+                : tt.documentConversionError;
+          setFileItems((prev) =>
+            prev.map((it, i) =>
+              i === index ? { ...it, status: "error", progress: 0, errorMessage } : it
+            )
+          );
+        }
+      }
+
+      setConverting(false);
+      if (!hadError) {
+        setConverted(true);
+      } else {
+        toast.error(tt.documentConversionError);
       }
       return;
     }
@@ -589,6 +642,11 @@ export default function ToolPage() {
                   {isCustom ? toolName : tt.convertTitle(activeFrom, activeTo)}
                 </h1>
                 {tool.premium && <Crown className="w-5 h-5 text-premium shrink-0" />}
+                {tool.id === "word-to-pdf" && (
+                  <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/25">
+                    {tt.basicExportBadge}
+                  </span>
+                )}
               </div>
               <p className="text-sm text-muted-foreground max-w-3xl">{toolLongDesc}</p>
             </div>
@@ -719,6 +777,14 @@ export default function ToolPage() {
             ) : (
               <div className="space-y-5">
                 {!isPremium && <UsageLimitNotice used={usedToday} max={maxDaily} />}
+                {tool.id === "word-to-pdf" && (
+                  <Alert className="border-amber-500/25 bg-amber-500/5">
+                    <AlertCircle className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                    <AlertDescription className="text-sm text-muted-foreground leading-relaxed">
+                      {tt.basicExportNotice}
+                    </AlertDescription>
+                  </Alert>
+                )}
                 {fileItems.length === 0 && (
                   <FileDropZone acceptedFormats={tool.fromFormats} onFilesSelected={handleFilesSelected} />
                 )}

@@ -64,6 +64,7 @@ describe("tool-availability", () => {
     expect(isToolFunctional("merge-pdf")).toBe(true);
     expect(isToolFunctional("text-tools")).toBe(true);
     expect(isToolFunctional("audio-converter")).toBe(true);
+    expect(isToolFunctional("word-to-pdf")).toBe(true);
   });
 
   it("keeps mock/stub tools non-functional", () => {
@@ -76,6 +77,7 @@ describe("tool-availability", () => {
     const ids = getFunctionalToolIds();
     expect(ids).toContain("image-compressor");
     expect(ids).toContain("audio-converter");
-    expect(ids.length).toBe(8);
+    expect(ids).toContain("word-to-pdf");
+    expect(ids.length).toBe(9);
   });
 });
