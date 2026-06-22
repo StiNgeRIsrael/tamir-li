@@ -13,6 +13,8 @@ export const heTranslations = {
     account: "חשבון",
     signInWithGoogle: "התחברות עם Google",
     signInFailed: "ההתחברות נכשלה. נסו שוב.",
+    signInDbUnavailable: "ההתחברות אינה זמינה כרגע (מסד הנתונים לא מחובר). נסו שוב מאוחר יותר.",
+    signInMisconfigured: "ההתחברות לא מוגדרת בשרת. צרו קשר עם התמיכה.",
     signInRequired: "יש להתחבר כדי להמשיך",
   },
 

@@ -90,7 +90,12 @@ function getInvokeHost(): string {
 }
 
 /** Build isolated iframe HTML so multiple Adsterra units do not clash on `atOptions`. */
-export function buildAdIframeSrcdoc(key: string, width: number, height: number): string {
+export function buildAdIframeSrcdoc(
+  key: string,
+  width: number,
+  height: number,
+  slotId?: string
+): string {
   const host = getInvokeHost();
   const atOptions = JSON.stringify({
     key,
@@ -99,7 +104,8 @@ export function buildAdIframeSrcdoc(key: string, width: number, height: number):
     width,
     params: {},
   });
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>html,body{margin:0;padding:0;overflow:hidden;background:transparent;}</style></head><body><script type="text/javascript">atOptions = ${atOptions};</script><script type="text/javascript" src="https://${host}/${key}/invoke.js"></script></body></html>`;
+  const slotJson = JSON.stringify(slotId ?? "");
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>html,body{margin:0;padding:0;overflow:hidden;background:transparent;}</style></head><body><script type="text/javascript">atOptions = ${atOptions};</script><script type="text/javascript">(function(){var slot=${slotJson};function notify(status){try{parent.postMessage({tamirAdSlot:slot,status:status},'*');}catch(e){}}notify('loading');var s=document.createElement('script');s.type='text/javascript';s.src='https://${host}/${key}/invoke.js';s.onload=function(){notify('loaded');};s.onerror=function(){notify('blocked');};document.body.appendChild(s);setTimeout(function(){notify('timeout');},8000);})();</script></body></html>`;
 }
 
 /** Load popunder / social-bar script once after ad consent (paste full URL from Adsterra dashboard). */

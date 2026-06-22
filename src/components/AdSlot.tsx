@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { getStoredConsent } from "@/lib/ads/consent";
@@ -19,6 +19,8 @@ interface AdSlotProps {
   /** Logical placement id for analytics / second-sidebar routing */
   slotId?: string;
 }
+
+type AdLoadStatus = "loading" | "loaded" | "failed";
 
 const layout: Record<
   AdSlotProps["type"],
@@ -44,6 +46,19 @@ const layout: Record<
   },
 };
 
+function AdFallbackMessage({ label, className }: { label: string; className?: string }) {
+  return (
+    <div
+      className={cn(
+        "flex h-full w-full flex-col items-center justify-center gap-1 px-3 py-2 text-center",
+        className
+      )}
+    >
+      <span className="text-sm font-medium leading-snug text-foreground">{label}</span>
+    </div>
+  );
+}
+
 export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
@@ -57,10 +72,43 @@ export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
   const showLiveAd = clientReady && hasAdsterraZone(type, slotId);
   const pendingSlot = clientReady && !hasAdsterraZone(type, slotId);
 
+  const [adStatus, setAdStatus] = useState<AdLoadStatus>("loading");
+
   const iframeSrcdoc = useMemo(() => {
     if (!showLiveAd || !zoneKey) return undefined;
-    return buildAdIframeSrcdoc(zoneKey, dims.width, dims.height);
-  }, [showLiveAd, zoneKey, dims.width, dims.height]);
+    return buildAdIframeSrcdoc(zoneKey, dims.width, dims.height, slotId);
+  }, [showLiveAd, zoneKey, dims.width, dims.height, slotId]);
+
+  useEffect(() => {
+    if (!showLiveAd) {
+      setAdStatus("failed");
+      return;
+    }
+
+    setAdStatus("loading");
+    const slotKey = slotId ?? "";
+
+    const onMessage = (event: MessageEvent) => {
+      const data = event.data as { tamirAdSlot?: string; status?: string } | null;
+      if (!data || data.tamirAdSlot !== slotKey) return;
+
+      if (data.status === "loaded") {
+        setAdStatus("loaded");
+      } else if (data.status === "blocked" || data.status === "timeout") {
+        setAdStatus("failed");
+      }
+    };
+
+    window.addEventListener("message", onMessage);
+    const failTimer = window.setTimeout(() => {
+      setAdStatus((current) => (current === "loading" ? "failed" : current));
+    }, 9000);
+
+    return () => {
+      window.removeEventListener("message", onMessage);
+      window.clearTimeout(failTimer);
+    };
+  }, [showLiveAd, slotId, iframeSrcdoc]);
 
   const envHint =
     type === "sidebar" && slotId?.endsWith("-2")
@@ -84,26 +132,20 @@ export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
           className
         )}
       >
-        <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-          {label}
-        </span>
-        <div
-          className="flex w-full flex-1 flex-col items-center justify-center gap-1 rounded-md bg-muted/50 px-2"
-          data-ad-placeholder={L.labelKey}
-        >
-          <span className="sr-only">{label}</span>
-          {pendingSlot && import.meta.env.DEV && (
-            <p className="text-[11px] leading-snug text-muted-foreground">
-              Adsterra is configured. Create a banner unit in the Adsterra dashboard (unique key per
-              placement), then set{" "}
-              <code className="rounded bg-muted px-1">{envHint}</code> in{" "}
-              <code className="rounded bg-muted px-1">.env.development.local</code>.
-            </p>
-          )}
-        </div>
+        <AdFallbackMessage label={label} />
+        {pendingSlot && import.meta.env.DEV && (
+          <p className="text-[11px] leading-snug text-muted-foreground">
+            Adsterra is configured. Create a banner unit in the Adsterra dashboard (unique key per
+            placement), then set{" "}
+            <code className="rounded bg-muted px-1">{envHint}</code> in{" "}
+            <code className="rounded bg-muted px-1">.env.development.local</code>.
+          </p>
+        )}
       </aside>
     );
   }
+
+  const showFallbackOverlay = adStatus !== "loaded";
 
   return (
     <aside
@@ -111,13 +153,19 @@ export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
       aria-label={label}
       data-ad-region={type}
       data-ad-slot-id={slotId}
+      data-ad-load-status={adStatus}
       className={cn(
-        "ad-slot mx-auto w-full overflow-hidden rounded-md",
+        "ad-slot relative mx-auto w-full overflow-hidden rounded-md",
         L.height,
         L.maxW,
         className
       )}
     >
+      {showFallbackOverlay && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-muted/95 px-2">
+          <AdFallbackMessage label={label} />
+        </div>
+      )}
       <iframe
         title={label}
         srcDoc={iframeSrcdoc}
@@ -125,7 +173,10 @@ export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
         height={dims.height}
         loading="lazy"
         sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-        className="mx-auto block max-w-full border-0 bg-transparent"
+        className={cn(
+          "relative z-10 mx-auto block max-w-full border-0 bg-transparent",
+          showFallbackOverlay && "pointer-events-none opacity-0"
+        )}
         style={{ width: dims.width, height: dims.height, maxWidth: "100%" }}
       />
     </aside>

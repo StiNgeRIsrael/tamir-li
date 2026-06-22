@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import { prisma } from '../lib/prisma';
+import { pingDatabase } from '../lib/db-health';
 import { requireAuth, getJwtSecret } from '../middleware/auth.middleware';
 import { RoleType, Prisma } from '@prisma/client';
 
@@ -38,6 +39,23 @@ type UserWithRelations = Prisma.UserGetPayload<typeof userWithRelations>;
 
 router.post('/google', async (req: Request, res: Response) => {
   try {
+    if (!process.env.GOOGLE_CLIENT_ID?.trim()) {
+      res.status(503).json({
+        error: 'AUTH_MISCONFIGURED',
+        message: 'Google sign-in is not configured on the server (GOOGLE_CLIENT_ID missing)',
+      });
+      return;
+    }
+
+    const dbOk = await pingDatabase();
+    if (!dbOk) {
+      res.status(503).json({
+        error: 'DATABASE_UNAVAILABLE',
+        message: 'Database is temporarily unavailable. Sign-in requires the database.',
+      });
+      return;
+    }
+
     const idToken = req.body?.idToken as string | undefined;
     if (!idToken || typeof idToken !== 'string') {
       res.status(400).json({ error: 'INVALID_BODY', message: 'idToken required' });
@@ -159,6 +177,14 @@ router.post('/google', async (req: Request, res: Response) => {
     });
   } catch (e) {
     console.error('[auth/google]', e);
+    const dbOk = await pingDatabase();
+    if (!dbOk) {
+      res.status(503).json({
+        error: 'DATABASE_UNAVAILABLE',
+        message: 'Database is temporarily unavailable. Sign-in requires the database.',
+      });
+      return;
+    }
     res.status(500).json({ error: 'AUTH_FAILED', message: 'Google sign-in failed' });
   }
 });

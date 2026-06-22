@@ -12,6 +12,8 @@ export const enTranslations = {
     account: "Account",
     signInWithGoogle: "Login with Google",
     signInFailed: "Sign-in failed. Try again.",
+    signInDbUnavailable: "Sign-in is temporarily unavailable (database offline). Try again later.",
+    signInMisconfigured: "Sign-in is misconfigured on the server. Contact support.",
     signInRequired: "Sign in to continue",
   },
   admin: {

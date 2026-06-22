@@ -26,6 +26,7 @@ type AuthContextValue = {
   token: string | null;
   loading: boolean;
   apiAvailable: boolean;
+  dbAvailable: boolean | null;
   googleConfigured: boolean;
   signInWithGoogleCredential: (credential: string) => Promise<void>;
   signOut: () => void;
@@ -37,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const apiBase = getApiBaseUrl();
   const googleConfigured = !!import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim();
   const [apiReachable, setApiReachable] = useState<boolean | null>(null);
+  const [dbAvailable, setDbAvailable] = useState<boolean | null>(null);
   const apiAvailable = !!apiBase && apiReachable === true;
 
   const [token, setTokenState] = useState<string | null>(() => {
@@ -65,8 +67,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     let cancelled = false;
-    probeApiReachable(apiBase).then((ok) => {
-      if (!cancelled) setApiReachable(ok);
+    probeApiReachable(apiBase).then((result) => {
+      if (!cancelled) {
+        setApiReachable(result.reachable);
+        setDbAvailable(result.dbOk);
+      }
     });
     return () => {
       cancelled = true;
@@ -134,9 +139,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ idToken: credential }),
       });
       if (!responseLooksLikeJson(res)) throw new Error("API_UNAVAILABLE");
-      const body = (await res.json().catch(() => ({}))) as { token?: string; user?: AuthUser; message?: string };
+      const body = (await res.json().catch(() => ({}))) as {
+        token?: string;
+        user?: AuthUser;
+        message?: string;
+        error?: string;
+      };
       if (!res.ok) {
-        throw new Error(body.message || "SIGN_IN_FAILED");
+        throw new Error(body.error || body.message || "SIGN_IN_FAILED");
       }
       if (!body.token || !body.user) throw new Error("INVALID_RESPONSE");
       persistToken(body.token);
@@ -157,11 +167,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         token,
         loading,
         apiAvailable,
+        dbAvailable,
         googleConfigured,
         signInWithGoogleCredential,
         signOut,
       }) satisfies AuthContextValue,
-    [user, token, loading, apiAvailable, googleConfigured, signInWithGoogleCredential, signOut]
+    [user, token, loading, apiAvailable, dbAvailable, googleConfigured, signInWithGoogleCredential, signOut]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

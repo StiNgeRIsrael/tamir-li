@@ -230,3 +230,6 @@ jobs:
           fi
           echo "/health content-type: $HEALTH_CT"
           cat /tmp/health-body
+          if grep -q '"ok"[[:space:]]*:[[:space:]]*false' /tmp/health-body; then
+            echo "::warning:: GET /health reports db.ok=false — Google sign-in and usage limits require MySQL. Check DATABASE_URL in Plesk Node.js env and run migrations (see docs/plesk-mysql-troubleshooting.md)."
+          fi

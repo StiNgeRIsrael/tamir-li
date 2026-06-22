@@ -13,25 +13,9 @@ import adminRoutes from './routes/admin.routes';
 import usageRoutes from './routes/usage.routes';
 import billingRoutes, { paypalWebhookHandler } from './routes/billing.routes';
 import { stripeWebhookHandler } from './routes/billing-stripe.routes';
-import { prisma } from './lib/prisma';
+import { pingDatabase } from './lib/db-health';
 
 dotenv.config();
-
-const DB_PING_TIMEOUT_MS = 2000;
-
-async function pingDatabase(): Promise<boolean> {
-  try {
-    await Promise.race([
-      prisma.$queryRaw`SELECT 1`,
-      new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('DB ping timeout')), DB_PING_TIMEOUT_MS)
-      ),
-    ]);
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 const app: Express = express();
 

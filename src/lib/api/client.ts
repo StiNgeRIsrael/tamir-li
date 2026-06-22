@@ -17,14 +17,26 @@ export function responseLooksLikeJson(res: Response): boolean {
 }
 
 /** Probe /health — returns false when static Apache layer returns SPA HTML instead of Express. */
-export async function probeApiReachable(base: string): Promise<boolean> {
+export type ApiProbeResult = {
+  reachable: boolean;
+  dbOk: boolean | null;
+};
+
+export async function probeApiReachable(base: string): Promise<ApiProbeResult> {
   try {
     const res = await fetch(`${base.replace(/\/$/, "")}/health`, {
       method: "GET",
       credentials: "omit",
     });
-    return responseLooksLikeJson(res);
+    if (!responseLooksLikeJson(res)) {
+      return { reachable: false, dbOk: null };
+    }
+    const json = (await res.json()) as { db?: { ok?: boolean } };
+    return {
+      reachable: true,
+      dbOk: typeof json.db?.ok === "boolean" ? json.db.ok : null,
+    };
   } catch {
-    return false;
+    return { reachable: false, dbOk: null };
   }
 }

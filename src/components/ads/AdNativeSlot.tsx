@@ -16,10 +16,19 @@ interface AdNativeSlotProps {
   slotId?: string;
 }
 
+function AdFallbackMessage({ label }: { label: string }) {
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-1 px-3 py-2 text-center">
+      <span className="text-sm font-medium leading-snug text-foreground">{label}</span>
+    </div>
+  );
+}
+
 export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
   const [hasConsent, setHasConsent] = useState(() => getStoredConsent()?.ads === true);
+  const [nativeLoaded, setNativeLoaded] = useState(false);
   const label = t.adLabel || "Ad";
   const config = getNativeAdConfig();
   const clientReady = isAdsterraConfigured() && hasConsent && !isPremium;
@@ -33,8 +42,38 @@ export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
   }, []);
 
   useEffect(() => {
-    if (!showLiveAd || !config) return;
+    if (!showLiveAd || !config) {
+      setNativeLoaded(false);
+      return;
+    }
+
+    setNativeLoaded(false);
     loadNativeAdScript();
+
+    const checkFilled = () => {
+      const el = document.getElementById(config.containerId);
+      if (el && el.childElementCount > 0) {
+        setNativeLoaded(true);
+      }
+    };
+
+    checkFilled();
+    const observer = new MutationObserver(checkFilled);
+    const el = document.getElementById(config.containerId);
+    if (el) observer.observe(el, { childList: true, subtree: true });
+
+    const failTimer = window.setTimeout(() => {
+      setNativeLoaded((loaded) => {
+        if (loaded) return loaded;
+        const node = document.getElementById(config.containerId);
+        return (node?.childElementCount ?? 0) > 0;
+      });
+    }, 8000);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(failTimer);
+    };
   }, [showLiveAd, config]);
 
   if (isPremium) return null;
@@ -52,26 +91,20 @@ export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
           className
         )}
       >
-        <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-          {label}
-        </span>
-        <div
-          className="flex w-full flex-1 flex-col items-center justify-center gap-1 rounded-md bg-muted/50 px-2"
-          data-ad-placeholder="native"
-        >
-          <span className="sr-only">{label}</span>
-          {pendingSlot && import.meta.env.DEV && (
-            <p className="text-[11px] leading-snug text-muted-foreground">
-              Adsterra is configured. Create a native unit in the Adsterra dashboard, then set{" "}
-              <code className="rounded bg-muted px-1">VITE_ADSTERRA_NATIVE_SCRIPT_URL</code> and{" "}
-              <code className="rounded bg-muted px-1">VITE_ADSTERRA_NATIVE_CONTAINER_ID</code> in{" "}
-              <code className="rounded bg-muted px-1">.env.development.local</code>.
-            </p>
-          )}
-        </div>
+        <AdFallbackMessage label={label} />
+        {pendingSlot && import.meta.env.DEV && (
+          <p className="text-[11px] leading-snug text-muted-foreground">
+            Adsterra is configured. Create a native unit in the Adsterra dashboard, then set{" "}
+            <code className="rounded bg-muted px-1">VITE_ADSTERRA_NATIVE_SCRIPT_URL</code> and{" "}
+            <code className="rounded bg-muted px-1">VITE_ADSTERRA_NATIVE_CONTAINER_ID</code> in{" "}
+            <code className="rounded bg-muted px-1">.env.development.local</code>.
+          </p>
+        )}
       </aside>
     );
   }
+
+  const showFallbackOverlay = !nativeLoaded;
 
   return (
     <aside
@@ -79,9 +112,21 @@ export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
       aria-label={label}
       data-ad-region="native"
       data-ad-slot-id={slotId}
-      className={cn("ad-slot mx-auto w-full min-h-[120px] overflow-hidden rounded-md", className)}
+      data-ad-load-status={nativeLoaded ? "loaded" : "failed"}
+      className={cn(
+        "ad-slot relative mx-auto w-full min-h-[120px] overflow-hidden rounded-md",
+        className
+      )}
     >
-      <div id={config!.containerId} className="w-full" />
+      {showFallbackOverlay && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-muted/95 px-2">
+          <AdFallbackMessage label={label} />
+        </div>
+      )}
+      <div
+        id={config!.containerId}
+        className={cn("relative z-10 w-full", showFallbackOverlay && "pointer-events-none opacity-0")}
+      />
     </aside>
   );
 }

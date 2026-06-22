@@ -46,7 +46,12 @@ export function GoogleLoginButton({
   const { apiAvailable, googleConfigured, signInWithGoogleCredential } = useAuth();
   const { t, locale } = useLocale();
   const auth = t.auth as
-    | { signInWithGoogle?: string; signInFailed?: string }
+    | {
+        signInWithGoogle?: string;
+        signInFailed?: string;
+        signInDbUnavailable?: string;
+        signInMisconfigured?: string;
+      }
     | undefined;
 
   const hostRef = useRef<HTMLDivElement>(null);
@@ -70,8 +75,21 @@ export function GoogleLoginButton({
           if (!resp.credential) return;
           try {
             await signInWithGoogleCredential(resp.credential);
-          } catch {
-            toast.error(auth?.signInFailed ?? "Sign-in failed");
+          } catch (e) {
+            const code = e instanceof Error ? e.message : "";
+            if (code === "DATABASE_UNAVAILABLE") {
+              toast.error(
+                auth?.signInDbUnavailable ??
+                  "Sign-in is temporarily unavailable (database offline). Try again later."
+              );
+            } else if (code === "AUTH_MISCONFIGURED") {
+              toast.error(
+                auth?.signInMisconfigured ??
+                  "Sign-in is misconfigured on the server. Contact support."
+              );
+            } else {
+              toast.error(auth?.signInFailed ?? "Sign-in failed");
+            }
           }
         },
         ux_mode: "popup",
@@ -122,6 +140,8 @@ export function GoogleLoginButton({
     compact,
     native,
     auth?.signInFailed,
+    auth?.signInDbUnavailable,
+    auth?.signInMisconfigured,
   ]);
 
   if (!apiAvailable || !googleConfigured) return null;
