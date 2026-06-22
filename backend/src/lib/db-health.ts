@@ -19,7 +19,8 @@ const SYSTEM_ERROR_CODES = new Set([
   'EAI_AGAIN',
 ]);
 
-function hasDatabaseUrl(): boolean {
+/** True when DATABASE_URL is non-empty (does not validate the URL). */
+export function isDatabaseUrlSet(): boolean {
   return Boolean(process.env.DATABASE_URL?.trim());
 }
 
@@ -187,7 +188,7 @@ export function sanitizeDbError(err: unknown): string {
 
 /** Returns reachability plus a sanitized error code when MySQL/Prisma ping fails. */
 export async function pingDatabase(): Promise<DbPingResult> {
-  if (!hasDatabaseUrl()) {
+  if (!isDatabaseUrlSet()) {
     return { ok: false, error: 'MISSING_ENV' };
   }
 

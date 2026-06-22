@@ -13,7 +13,7 @@ import adminRoutes from './routes/admin.routes';
 import usageRoutes from './routes/usage.routes';
 import billingRoutes, { paypalWebhookHandler } from './routes/billing.routes';
 import { stripeWebhookHandler } from './routes/billing-stripe.routes';
-import { pingDatabase } from './lib/db-health';
+import { isDatabaseUrlSet, pingDatabase } from './lib/db-health';
 
 dotenv.config();
 
@@ -67,13 +67,14 @@ app.use('/api/billing', billingRoutes);
 // Health check endpoint (probed by scripts/autonomous-site-check.ts and frontend)
 // Always 200 when the process is up; db.ok reflects MySQL/Prisma reachability.
 app.get('/health', async (_req: Request, res: Response) => {
+  const envSet = isDatabaseUrlSet();
   const db = await pingDatabase();
   res.status(200).json({
     status: 'OK',
     message: 'Server is running',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
-    db: db.ok ? { ok: true } : { ok: false, error: db.error },
+    db: db.ok ? { ok: true, envSet } : { ok: false, error: db.error, envSet },
   });
 });
 
