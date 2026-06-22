@@ -94,14 +94,19 @@ jobs:
           sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"
 
       - name: Deploy SEO files to Plesk document root (SFTP)
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
-        with:
-          server: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}
-          username: ${{ secrets.PLESK_SSH_USER || secrets.PLESK_FTP_USER }}
-          password: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
-          port: ${{ vars.PLESK_SSH_PORT || 22 }}
-          local_path: ./deploy-seo/
-          # Legacy static docroot — tamir.li/sitemap.xml is served here until Node is sole docroot.
-          remote_path: ${{ vars.PLESK_HTTPDOCS_DIR || 'httpdocs/' }}
-          sftp_only: true
-          sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"
+        env:
+          SFTP_HOST: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}
+          SFTP_USER: ${{ secrets.PLESK_SSH_USER || secrets.PLESK_FTP_USER }}
+          SFTP_PASS: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
+          SFTP_PORT: ${{ vars.PLESK_SSH_PORT || 22 }}
+          SFTP_DIR: ${{ vars.PLESK_HTTPDOCS_DIR || 'httpdocs' }}
+        run: |
+          sudo apt-get install -y sshpass
+          httpdocs="${SFTP_DIR%/}"
+          batch=$(mktemp)
+          for f in deploy-seo/*; do
+            [ -f "$f" ] || continue
+            echo "put $f ${httpdocs}/$(basename "$f")" >> "$batch"
+          done
+          cat "$batch"
+          sshpass -p "$SFTP_PASS" sftp -o StrictHostKeyChecking=accept-new -P "$SFTP_PORT" -b "$batch" "$SFTP_USER@$SFTP_HOST"
