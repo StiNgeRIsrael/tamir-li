@@ -1,5 +1,3 @@
-import { useEffect, useRef } from "react";
-import { toast } from "sonner";
 import { LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/lib/i18n";
@@ -12,93 +10,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-
-declare global {
-  interface Window {
-    google?: {
-      accounts: {
-        id: {
-          initialize: (config: Record<string, unknown>) => void;
-          renderButton: (el: HTMLElement, config: Record<string, unknown>) => void;
-        };
-      };
-    };
-  }
-}
-
-const GSI_SCRIPT = "https://accounts.google.com/gsi/client";
+import { GoogleLoginButton } from "@/components/GoogleLoginButton";
 
 export function UserAuthSection({ compact }: { compact?: boolean }) {
-  const { user, loading, apiAvailable, googleConfigured, signInWithGoogleCredential, signOut } = useAuth();
-  const { t, locale } = useLocale();
-  const auth = (t as Record<string, unknown>).auth as
-    | {
-        signOut: string;
-        account: string;
-        signInFailed: string;
-      }
-    | undefined;
-
-  const btnRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!apiAvailable || !googleConfigured || user || loading) return;
-    const el = btnRef.current;
-    if (!el) return;
-
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim();
-    if (!clientId) return;
-
-    el.innerHTML = "";
-
-    const mount = () => {
-      const host = btnRef.current;
-      if (!host || !window.google?.accounts?.id) return;
-      window.google.accounts.id.initialize({
-        client_id: clientId,
-        callback: async (resp: { credential?: string }) => {
-          if (!resp.credential) return;
-          try {
-            await signInWithGoogleCredential(resp.credential);
-          } catch {
-            toast.error(auth?.signInFailed ?? "Sign-in failed");
-          }
-        },
-        ux_mode: "popup",
-        locale: locale === "he" ? "he" : "en",
-      });
-      window.google.accounts.id.renderButton(host, {
-        type: "standard",
-        theme: "outline",
-        size: compact ? "medium" : "large",
-        text: "signin_with",
-        shape: "pill",
-        logo_alignment: "left",
-      });
-    };
-
-    const existing = document.querySelector<HTMLScriptElement>(`script[src="${GSI_SCRIPT}"]`);
-    if (existing) {
-      if (window.google?.accounts?.id) mount();
-      else existing.addEventListener("load", mount, { once: true });
-    } else {
-      const script = document.createElement("script");
-      script.src = GSI_SCRIPT;
-      script.async = true;
-      script.defer = true;
-      script.onload = mount;
-      document.body.appendChild(script);
-    }
-  }, [
-    apiAvailable,
-    googleConfigured,
-    user,
-    loading,
-    signInWithGoogleCredential,
-    locale,
-    compact,
-    auth?.signInFailed,
-  ]);
+  const { user, loading, apiAvailable, googleConfigured, signOut } = useAuth();
+  const { t } = useLocale();
+  const auth = t.auth as { signOut?: string; account?: string } | undefined;
 
   if (!apiAvailable || !googleConfigured) return null;
 
@@ -135,9 +52,5 @@ export function UserAuthSection({ compact }: { compact?: boolean }) {
     );
   }
 
-  return (
-    <div className="flex shrink-0 items-center justify-end">
-      <div ref={btnRef} className="[&>div]:flex [&>div]:justify-end" />
-    </div>
-  );
+  return <GoogleLoginButton compact={compact} native={compact} />;
 }

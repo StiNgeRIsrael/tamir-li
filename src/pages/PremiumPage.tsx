@@ -12,12 +12,14 @@ import { trackEvent } from "@/lib/analytics/events";
 import { useSubscription, type CheckoutPlan } from "@/hooks/useSubscription";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { GoogleLoginButton } from "@/components/GoogleLoginButton";
 
 const featureIcons = [FileStack, Shield, Sparkles, Gauge, ImageIcon, Headphones];
 
 export default function PremiumPage() {
   const { locale, t } = useLocale();
   const { user } = useAuth();
+  const auth = t.auth as { signInRequired?: string } | undefined;
   const { checkout, checkoutLoading, refetch, captureOrder } = useSubscription();
   const [searchParams, setSearchParams] = useSearchParams();
   const u = t.upgradePage || {};
@@ -62,7 +64,7 @@ export default function PremiumPage() {
     trackEvent("begin_checkout", { plan, source });
 
     if (!user) {
-      toast.error(t.auth?.signInRequired ?? "Sign in to upgrade");
+      toast.error(auth?.signInRequired ?? "Sign in to upgrade");
       return;
     }
 
@@ -130,6 +132,12 @@ export default function PremiumPage() {
               </p>
             )}
             <p className="text-xs text-muted-foreground">{billedNote}</p>
+            {!user && (
+              <div className="space-y-2 rounded-xl border border-border bg-muted/30 p-4">
+                <p className="text-sm text-muted-foreground">{auth?.signInRequired ?? "Sign in to continue"}</p>
+                <GoogleLoginButton fullWidth />
+              </div>
+            )}
             <Button
               size="lg"
               className="w-full bg-premium text-premium-foreground hover:bg-premium/90 font-bold text-base py-6 rounded-xl shadow-md"

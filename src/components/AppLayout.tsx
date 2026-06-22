@@ -16,7 +16,7 @@ export function AppLayout({ children, hideSideAds }: { children: ReactNode; hide
   const suppressSideAds = hideSideAds ?? isPremiumSalesPath(pathname);
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col bg-background utility-grid-bg" dir={dir}>
+    <div className="min-h-screen w-full flex flex-col utility-page-bg" dir={dir}>
       <TopNavbar />
       <div className="relative flex flex-1 justify-center">
         {!suppressSideAds && <DesktopAdRail side="start" />}

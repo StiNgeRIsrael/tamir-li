@@ -6,6 +6,7 @@ export const enTranslations: Record<string, any> = {
   auth: {
     signOut: "Sign out",
     account: "Account",
+    signInWithGoogle: "Login with Google",
     signInFailed: "Sign-in failed. Try again.",
     signInRequired: "Sign in to continue",
   },

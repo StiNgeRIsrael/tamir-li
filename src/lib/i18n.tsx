@@ -16,16 +16,6 @@ export const localeNames: Record<Locale, string> = {
   it: "Italiano",
 };
 
-export const localeFlags: Record<Locale, string> = {
-  he: "🇮🇱",
-  en: "🇬🇧",
-  es: "🇪🇸",
-  ru: "🇷🇺",
-  de: "🇩🇪",
-  fr: "🇫🇷",
-  it: "🇮🇹",
-};
-
 export function isRTL(locale: Locale): boolean {
   return locale === "he";
 }

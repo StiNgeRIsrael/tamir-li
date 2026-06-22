@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useLocale, LOCALES, localeNames, localeFlags, localePath, type Locale } from "@/lib/i18n";
-import { Globe, ChevronDown } from "lucide-react";
+import { useLocale, LOCALES, localeNames, localePath, type Locale } from "@/lib/i18n";
+import { LocaleFlag } from "@/components/LocaleFlag";
+import { ChevronDown } from "lucide-react";
 
 export function LanguageSwitcher() {
   const { locale } = useLocale();
@@ -26,7 +27,7 @@ export function LanguageSwitcher() {
         onClick={() => setOpen(!open)}
         className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
       >
-        <span className="text-base">{localeFlags[locale]}</span>
+        <LocaleFlag locale={locale} />
         <span className="hidden sm:inline text-xs uppercase">{locale}</span>
         <ChevronDown className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
@@ -47,7 +48,7 @@ export function LanguageSwitcher() {
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
             >
-              <span className="text-base">{localeFlags[loc]}</span>
+              <LocaleFlag locale={loc} />
               <span>{localeNames[loc]}</span>
             </button>
           ))}

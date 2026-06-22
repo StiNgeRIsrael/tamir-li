@@ -4,7 +4,18 @@ This site has **~847 URLs** across 7 locales (Hebrew default + `/en`, `/es`, `/r
 
 **Per-URL “Request indexing” in Search Console often speeds up discovery for priority pages**, but Google does **not** offer a public bulk API for everyday site owners to request indexing for every URL. Manual inspection plus a correct sitemap is the practical workflow.
 
-There is **no GSC MCP or automation in this repo** — indexing requests are done in the [Search Console UI](https://search.google.com/search-console).
+## Cursor MCP (gscServer) — optional
+
+Manual Google Search Console MCP runs via uvx mcp-search-console in Cursor (not stored in this repo). OAuth credentials stay on your machine only.
+
+| Item | Location |
+|------|----------|
+| MCP config | C:\Users\sting\.cursor\mcp.json → gscServer |
+| OAuth client JSON filename | gsc_client_secrets.json |
+| Full path (save Desktop app JSON here) | C:\Users\sting\.cursor\credentials\gsc_client_secrets.json |
+| Setup steps | C:\Users\sting\.cursor\credentials\README-gsc.txt |
+
+After you add the JSON file, **fully quit and restart Cursor**. Manual URL Inspection in the [Search Console UI](https://search.google.com/search-console) is still useful for priority URLs (see below).
 
 ---
 
@@ -90,7 +101,7 @@ Both together work best: sitemap for completeness, manual inspection for pages t
 
 ## What we cannot automate (today)
 
-- **No Search Console MCP** is configured for this project.
+- **Search Console MCP** is configured locally in Cursor (gscServer); see section above. This repo does not contain OAuth secrets.
 - **Indexing API** ([`indexing.googleapis.com`](https://developers.google.com/search/apis/indexing-api/v3/using-api)) is restricted to job postings and livestream structured data — **not** for general tool/converter pages.
 - **URL Inspection API** exists for query/inspection workflows in some setups but does **not** replace the manual “Request indexing” quota for typical publishers.
 

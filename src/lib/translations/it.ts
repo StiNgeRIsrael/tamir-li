@@ -5,7 +5,9 @@ export const itTranslations: Record<string, any> = {
   auth: {
     signOut: "Sign out",
     account: "Account",
+    signInWithGoogle: "Accedi con Google",
     signInFailed: "Sign-in failed. Try again.",
+    signInRequired: "Sign in to continue",
   },
   admin: {
     title: "Admin dashboard",

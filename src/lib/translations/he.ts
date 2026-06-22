@@ -9,6 +9,7 @@ export const heTranslations: Record<string, any> = {
   auth: {
     signOut: "התנתקות",
     account: "חשבון",
+    signInWithGoogle: "התחברות עם Google",
     signInFailed: "ההתחברות נכשלה. נסו שוב.",
     signInRequired: "יש להתחבר כדי להמשיך",
   },
