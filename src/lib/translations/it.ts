@@ -148,6 +148,8 @@ export const itTranslations = {
     comingSoonAlternatives: "Prova invece",
     comingSoonPdfWordHint: "Nel frattempo unisci, dividi e organizza i PDF nel browser con il nostro gestore PDF.",
     comingSoonPdfWordCta: "Apri gestore PDF",
+    comingSoonVideoHint: "Devi convertire audio adesso? Converti MP3, WAV, AAC e altro con il nostro convertitore audio.",
+    comingSoonVideoCta: "Apri convertitore audio",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) => isCustom ? `Come Usare ${name}` : `Come Convertire ${from} in ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [
       { step: "1", title: isCustom ? "Carica un File" : `Carica File ${from}`, desc: "Trascina o seleziona" },

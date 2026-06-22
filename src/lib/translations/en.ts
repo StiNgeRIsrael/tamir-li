@@ -189,6 +189,8 @@ export const enTranslations = {
     comingSoonAlternatives: "Try these instead",
     comingSoonPdfWordHint: "In the meantime, merge, split, and organize PDFs in the browser with our PDF Manager.",
     comingSoonPdfWordCta: "Open PDF Manager",
+    comingSoonVideoHint: "Need to convert audio now? Convert MP3, WAV, AAC, and more with our Audio Converter.",
+    comingSoonVideoCta: "Open Audio Converter",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) =>
       isCustom ? `How to Use ${name}` : `How to Convert ${from} to ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [

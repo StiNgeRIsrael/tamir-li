@@ -19,6 +19,8 @@ export function ComingSoonPanel({ toolName, toolId }: ComingSoonPanelProps) {
     comingSoonAlternatives: string;
     comingSoonPdfWordHint: string;
     comingSoonPdfWordCta: string;
+    comingSoonVideoHint: string;
+    comingSoonVideoCta: string;
     backHome: string;
   };
   const toolNames = t.toolNames as Record<string, string>;
@@ -31,17 +33,28 @@ export function ComingSoonPanel({ toolName, toolId }: ComingSoonPanelProps) {
     })
     .filter((item): item is { id: string; name: string; slug: string } => item !== null);
 
-  const pdfManagerAlt =
+  const toolAlt =
     toolId === "pdf-to-word"
       ? (() => {
           const mgr = getToolById("merge-pdf");
           if (!mgr) return null;
           return {
             slug: getDefaultSlug(mgr),
-            name: toolNames["merge-pdf"] || mgr.name,
+            hint: tt.comingSoonPdfWordHint,
+            cta: tt.comingSoonPdfWordCta,
           };
         })()
-      : null;
+      : toolId === "video-converter" || toolId === "video-compressor"
+        ? (() => {
+            const audio = getToolById("audio-converter");
+            if (!audio) return null;
+            return {
+              slug: getDefaultSlug(audio),
+              hint: tt.comingSoonVideoHint,
+              cta: tt.comingSoonVideoCta,
+            };
+          })()
+        : null;
 
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-16 text-center space-y-4">
@@ -54,11 +67,11 @@ export function ComingSoonPanel({ toolName, toolId }: ComingSoonPanelProps) {
           {tt.comingSoonMessage(toolName ?? "")}
         </p>
       </div>
-      {pdfManagerAlt && (
+      {toolAlt && (
         <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm space-y-3 max-w-md w-full">
-          <p className="text-muted-foreground leading-relaxed">{tt.comingSoonPdfWordHint}</p>
+          <p className="text-muted-foreground leading-relaxed">{toolAlt.hint}</p>
           <Button size="sm" asChild className="w-full sm:w-auto">
-            <Link to={localePath(`/${pdfManagerAlt.slug}`, locale)}>{tt.comingSoonPdfWordCta}</Link>
+            <Link to={localePath(`/${toolAlt.slug}`, locale)}>{toolAlt.cta}</Link>
           </Button>
         </div>
       )}

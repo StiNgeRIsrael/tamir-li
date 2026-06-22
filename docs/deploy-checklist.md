@@ -111,6 +111,7 @@ Billing checkout is intentionally skipped by the probe (`SKIP_BILLING=true`).
 
 ## Related docs
 
+- [plesk-mysql-troubleshooting.md](./plesk-mysql-troubleshooting.md) — fix `db.ok: false` when Node is live
 - [conversion-queue.md](./conversion-queue.md) — server job storage and ffmpeg
 - [production-readiness.md](./production-readiness.md) — feature/status audit
 - [backend/.env.example](../backend/.env.example), [.env.example](../.env.example)

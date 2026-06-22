@@ -151,6 +151,8 @@ export const ruTranslations = {
     comingSoonAlternatives: "Попробуйте вместо этого",
     comingSoonPdfWordHint: "Пока конвертер не готов: объединяйте, разделяйте и упорядочивайте PDF в браузере в нашем менеджере PDF.",
     comingSoonPdfWordCta: "Открыть менеджер PDF",
+    comingSoonVideoHint: "Нужно конвертировать аудио сейчас? Конвертируйте MP3, WAV, AAC и другие форматы в нашем аудиоконвертере.",
+    comingSoonVideoCta: "Открыть аудиоконвертер",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) => isCustom ? `Как Использовать ${name}` : `Как Конвертировать ${from} в ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [
       { step: "1", title: isCustom ? "Загрузите Файл" : `Загрузите ${from}`, desc: "Перетащите или выберите файлы" },

@@ -195,6 +195,7 @@ function checkImageFormatHelpers(): void {
   const cases: Array<[string, boolean]> = [
     ["PNG", true],
     ["JPG", true],
+    ["WEBP", true],
     ["TIFF", false],
     ["SVG", false],
   ];

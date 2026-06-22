@@ -148,6 +148,8 @@ export const deTranslations = {
     comingSoonAlternatives: "Stattdessen ausprobieren",
     comingSoonPdfWordHint: "Bis PDF zu Word fertig ist: PDFs im Browser mit unserem PDF-Manager zusammenführen, teilen und sortieren.",
     comingSoonPdfWordCta: "PDF-Manager öffnen",
+    comingSoonVideoHint: "Audio jetzt konvertieren? MP3, WAV, AAC und mehr mit unserem Audiokonverter.",
+    comingSoonVideoCta: "Audiokonverter öffnen",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) => isCustom ? `So verwenden Sie ${name}` : `So konvertieren Sie ${from} in ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [
       { step: "1", title: isCustom ? "Datei hochladen" : `${from}-Datei hochladen`, desc: "Ziehen oder wählen Sie Ihre Dateien" },

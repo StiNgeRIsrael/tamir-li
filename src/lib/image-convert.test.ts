@@ -22,10 +22,19 @@ describe("image-convert format helpers", () => {
 
   it("knows browser-exportable output formats", () => {
     expect(isOutputFormatSupported("PNG")).toBe(true);
+    expect(isOutputFormatSupported("WEBP")).toBe(true);
     expect(isOutputFormatSupported("BMP")).toBe(true);
     expect(isOutputFormatSupported("ICO")).toBe(true);
     expect(isOutputFormatSupported("TIFF")).toBe(false);
     expect(isOutputFormatSupported("SVG")).toBe(false);
+  });
+
+  it("supports WEBP client-side pairs", () => {
+    expect(canConvertClientSide("WEBP", "JPG")).toBe(true);
+    expect(canConvertClientSide("JPG", "WEBP")).toBe(true);
+    expect(canConvertClientSide("PNG", "WEBP")).toBe(true);
+    expect(usesClientImageConversion("webp-to-jpg", ["WEBP"], ["JPG"])).toBe(true);
+    expect(usesClientImageConversion("jpg-to-webp", ["JPG"], ["WEBP"])).toBe(true);
   });
 
   it("detects client-side conversion pairs", () => {
