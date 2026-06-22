@@ -173,8 +173,16 @@ On later deploys, run `run setup` when lockfiles change, `run plesk:db` when mig
 | `PLESK_HTTPDOCS_DIR` (var) | No | SFTP target; default `httpdocs/` |
 | `PLESK_NODE_APP_DIR` (var) | No | Node app root for restart; default `httpdocs/deploy` |
 | `PLESK_DOMAIN` (var) | No | Domain for Plesk CLI restart attempt; default `tamir.li` |
+| `VITE_GOOGLE_CLIENT_ID` (secret) | Yes (Google sign-in) | OAuth Web client ID — baked into frontend at CI build; must match Plesk `GOOGLE_CLIENT_ID` |
 
 \*Workflow falls back from `PLESK_SSH_*` to `PLESK_FTP_*`. **No new secrets** are required if SFTP deploy already works — restart reuses the same credentials.
+
+Set Google OAuth in GitHub (repo **Settings → Secrets and variables → Actions**):
+
+```bash
+gh secret set VITE_GOOGLE_CLIENT_ID --repo StiNgeRIsrael/tamir-li
+# paste the same Web client ID as backend GOOGLE_CLIENT_ID in Plesk Node.js env vars
+```
 
 SSH access must be enabled for the subscription user (**Websites & Domains** → **Hosting Settings** → SSH access `/bin/bash` or similar).
 
@@ -213,6 +221,59 @@ Do **not** set `PLESK_NODE_APP_DIR` to `httpdocs/` unless the app root is litera
 gh variable set PLESK_NODE_APP_DIR --body "httpdocs/deploy/" --repo StiNgeRIsrael/tamir-li
 gh variable set VITE_API_URL --body "https://tamir.li" --repo StiNgeRIsrael/tamir-li
 ```
+
+---
+
+## Fix: static layer blocking Node {#fix-static-layer-blocking-node}
+
+**Symptoms:** Google login button missing; `curl https://tamir.li/health` or `curl https://tamir.li/api/auth/google` returns `index.html` (HTML) instead of JSON.
+
+**Root cause:** Plesk’s domain document root (`httpdocs/`) still serves **legacy static files** (`index.html`, `assets/`) from an older deploy. The Node monolith in `httpdocs/deploy/` is running but **not receiving HTTP traffic** — Apache/nginx serves static files first.
+
+CI now removes `httpdocs/index.html` and `httpdocs/assets/` after each deploy (SSH restart step). If login/API still fail, complete the steps below manually once.
+
+### Diagnose (from your machine)
+
+```bash
+curl -sI https://tamir.li/health | grep -i content-type
+# Expected: application/json
+# Broken:   text/html
+
+curl -s https://tamir.li/assets/index-*.js | grep -o 'apps.googleusercontent.com' | head -1
+# Expected: your OAuth client ID (if VITE_GOOGLE_CLIENT_ID is set in CI)
+# Broken:   (empty — secret missing at build time)
+```
+
+### Plesk: route traffic to Node (required)
+
+1. **Domains → tamir.li → Node.js**
+   - **Application root:** `httpdocs/deploy`
+   - **Document root:** `httpdocs/deploy` (or `httpdocs/deploy/dist`)
+   - **Startup file:** `app.js`
+   - **Application mode:** `production`
+   - **Node.js:** enabled → **Restart app**
+
+2. **File Manager → `httpdocs/`** — delete legacy static (keep `deploy/` and SEO files CI uploads):
+   - `index.html`
+   - `assets/` (entire folder)
+   - old `registerSW.js`, `sw.js`, `workbox-*.js` if present at `httpdocs/` root
+
+3. **Node.js → Custom environment variables** — set at minimum:
+   - `GOOGLE_CLIENT_ID` (same value as GitHub secret `VITE_GOOGLE_CLIENT_ID`)
+   - `DATABASE_URL`, `JWT_SECRET`, `NODE_ENV=production`
+
+4. **Hosting Settings** (optional check): domain document root should not override Node for `/api/*`. If Plesk offers **“Serve static files directly”** for Node.js, disable it or ensure no conflicting `index.html` exists in parent `httpdocs/`.
+
+### Why login is hidden in the UI
+
+The navbar login (`UserAuthSection`) renders **only when both** are true at build/runtime:
+
+| Flag | Source | If missing |
+|------|--------|------------|
+| `googleConfigured` | `VITE_GOOGLE_CLIENT_ID` in CI build | Login hidden |
+| `apiAvailable` | `VITE_API_URL` or same-origin fallback | Login hidden |
+
+Even with a correct build, sign-in fails until `/api/auth/google` reaches Express (Node proxy fix above).
 
 ---
 
