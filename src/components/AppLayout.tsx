@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { useLocation } from "react-router-dom";
+import { DbUnavailableBanner } from "@/components/DbUnavailableBanner";
 import { TopNavbar } from "@/components/TopNavbar";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DesktopAdRail } from "@/components/ads/DesktopAdRail";
@@ -17,6 +18,7 @@ export function AppLayout({ children, hideSideAds }: { children: ReactNode; hide
 
   return (
     <div className="min-h-screen w-full flex flex-col utility-page-bg" dir={dir}>
+      <DbUnavailableBanner />
       <TopNavbar />
       <div className="relative flex flex-1 justify-center">
         {!suppressSideAds && <DesktopAdRail side="start" />}

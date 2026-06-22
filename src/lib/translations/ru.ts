@@ -13,6 +13,10 @@ export const ruTranslations = {
     signInFailed: "Sign-in failed. Try again.",
     signInRequired: "Sign in to continue",
   },
+  siteBanner: {
+    dbUnavailable: "Вход и серверные конвертации временно недоступны.",
+    contactLink: "Свяжитесь с нами",
+  },
   admin: {
     title: "Admin dashboard",
     subtitle: "Statistics, users, and conversion tools",

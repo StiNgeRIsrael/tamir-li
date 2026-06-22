@@ -13,6 +13,10 @@ export const esTranslations = {
     signInFailed: "Sign-in failed. Try again.",
     signInRequired: "Sign in to continue",
   },
+  siteBanner: {
+    dbUnavailable: "El inicio de sesión y las conversiones en el servidor no están disponibles temporalmente.",
+    contactLink: "Contáctanos",
+  },
   admin: {
     title: "Admin dashboard",
     subtitle: "Statistics, users, and conversion tools",

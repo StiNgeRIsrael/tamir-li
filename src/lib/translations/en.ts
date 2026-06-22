@@ -16,6 +16,10 @@ export const enTranslations = {
     signInMisconfigured: "Sign-in is misconfigured on the server. Contact support.",
     signInRequired: "Sign in to continue",
   },
+  siteBanner: {
+    dbUnavailable: "Sign-in and server-side conversions are temporarily unavailable.",
+    contactLink: "Contact us",
+  },
   admin: {
     title: "Admin dashboard",
     subtitle: "Statistics, users, and conversion tools",

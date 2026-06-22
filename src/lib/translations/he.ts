@@ -18,6 +18,11 @@ export const heTranslations = {
     signInRequired: "יש להתחבר כדי להמשיך",
   },
 
+  siteBanner: {
+    dbUnavailable: "ההתחברות והמרות בשרת אינן זמינות זמנית.",
+    contactLink: "צרו קשר",
+  },
+
   admin: {
     title: "לוח ניהול",
     subtitle: "סטטיסטיקות, משתמשים וכלים",

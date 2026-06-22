@@ -13,6 +13,10 @@ export const deTranslations = {
     signInFailed: "Sign-in failed. Try again.",
     signInRequired: "Sign in to continue",
   },
+  siteBanner: {
+    dbUnavailable: "Anmeldung und serverseitige Konvertierungen sind vorübergehend nicht verfügbar.",
+    contactLink: "Kontaktieren Sie uns",
+  },
   admin: {
     title: "Admin dashboard",
     subtitle: "Statistics, users, and conversion tools",
