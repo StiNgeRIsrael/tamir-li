@@ -201,7 +201,7 @@ export const esTranslations: TranslationDict = {
     "text-tools": "Herramienta de texto avanzada: convierte entre texto plano, Markdown y HTML. Incluye conteo de palabras y caracteres, conversión de mayúsculas y más.",
     "ai-image-generator": "Herramienta avanzada de creación de imágenes con IA. Describe la imagen que quieres, elige un estilo y proporción, y la IA generará una imagen original en segundos.",
   },
-  adLabel: "Anuncio • Adsterra",
+  adLabel: "Desactiva el bloqueador de anuncios :(",
   sidebarHome: "Inicio",
   sidebarUpgrade: "Mejora a Premium",
   sidebarNoAds: "Sin anuncios • Ilimitado",

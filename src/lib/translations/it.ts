@@ -162,7 +162,7 @@ export const itTranslations: TranslationDict = {
     "text-tools": "Strumento di testo avanzato: conversione tra testo, Markdown e HTML. Conteggio parole e caratteri e altro ancora.",
     "ai-image-generator": "Strumento avanzato di creazione immagini con IA. Descrivi l'immagine desiderata, scegli stile e proporzioni.",
   },
-  adLabel: "Pubblicità • Adsterra",
+  adLabel: "Disattiva il blocco degli annunci :(",
   sidebarHome: "Home",
   sidebarUpgrade: "Passa a Premium",
   sidebarNoAds: "Senza pubblicità • Illimitato",

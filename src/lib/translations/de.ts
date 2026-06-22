@@ -162,7 +162,7 @@ export const deTranslations: TranslationDict = {
     "text-tools": "Erweitertes Text-Tool: Konvertierung zwischen Text, Markdown und HTML. Wort- und Zeichenzählung und mehr.",
     "ai-image-generator": "Erweitertes KI-Bildgenerierungstool. Beschreiben Sie das gewünschte Bild, wählen Sie Stil und Seitenverhältnis.",
   },
-  adLabel: "Anzeige • Adsterra",
+  adLabel: "Bitte deaktivieren Sie Ihren Werbeblocker :(",
   sidebarHome: "Startseite",
   sidebarUpgrade: "Auf Premium upgraden",
   sidebarNoAds: "Keine Werbung • Unbegrenzt",
