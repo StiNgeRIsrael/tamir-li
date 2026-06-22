@@ -147,8 +147,8 @@ On later deploys, run `run setup` when lockfiles change, `run plesk:db` when mig
 
 ### First deploy checklist (no SSH)
 
-1. Create MySQL database in Plesk → **Databases**.
-2. Set Node.js env vars (`DATABASE_URL`, `JWT_SECRET`, Stripe, Google, …).
+1. Create MySQL database — [Plesk MySQL](#plesk-mysql) (UI steps + `DATABASE_URL`).
+2. Set Node.js env vars (`DATABASE_URL`, `JWT_SECRET`, `GOOGLE_CLIENT_ID`, PayPal live/sandbox, …).
 3. Enable Node.js; set application root `httpdocs/deploy`, document root `httpdocs/deploy`, startup file `app.js`.
 4. Wait for GitHub Actions deploy to finish (or upload bundle manually).
 5. **Run Node.js commands:** `run setup` (or step-by-step: `ci`, `run plesk:backend-install`, `run plesk:db`).
@@ -185,20 +185,50 @@ gh variable set VITE_API_URL --body "https://tamir.li" --repo StiNgeRIsrael/tami
 
 ## Environment variables (Plesk → Node.js → Custom environment variables)
 
-Set **backend** secrets here (never commit `.env` files).
+Set **backend** secrets here (never commit `.env` files). See [`backend/.env.example`](../backend/.env.example) for the full list.
+
+### Required for production (core)
 
 | Variable | Required | Example / notes |
 |----------|----------|-----------------|
 | `NODE_ENV` | Yes | `production` |
+| `DATABASE_URL` | Yes | `mysql://tamirly_user:pass@localhost:3306/tamirly_db` — see [Plesk MySQL](#plesk-mysql) |
+| `JWT_SECRET` | Yes | Random string, **min 16 characters** |
+| `GOOGLE_CLIENT_ID` | Yes (Google sign-in) | OAuth Web client ID; must match `VITE_GOOGLE_CLIENT_ID` baked at CI build time |
+
+### Recommended
+
+| Variable | Required | Example / notes |
+|----------|----------|-----------------|
 | `PORT` | Optional | Use Plesk’s injected port if present |
-| `DATABASE_URL` | Yes | `mysql://user:pass@localhost:3306/tamirly_db` |
-| `JWT_SECRET` | Yes | Random string, min 16 characters |
-| `GOOGLE_CLIENT_ID` | Yes (Google sign-in) | Same as `VITE_GOOGLE_CLIENT_ID` at build time |
-| `CORS_ORIGIN` | Optional | Omit for same-origin; or `https://tamir.li,https://www.tamir.li` |
-| `ADMIN_EMAILS` | Recommended | Comma-separated admin emails |
-| `STRIPE_SECRET_KEY` | Yes (billing) | `sk_live_...` |
-| `STRIPE_WEBHOOK_SECRET` | Yes (billing) | `whsec_...` — webhook URL: `https://tamir.li/api/billing/webhook` |
-| `STRIPE_PRICE_*` | Billing | See [`backend/.env.example`](../backend/.env.example) |
+| `CORS_ORIGIN` | Optional | Omit for same-origin monolith; or `https://tamir.li,https://www.tamir.li` |
+| `ADMIN_EMAILS` | Recommended | Comma-separated emails for admin panel access |
+
+### PayPal billing (primary — default)
+
+Billing uses PayPal unless `ENABLE_STRIPE=true`. For **production**, set `PAYPAL_MODE=live` and use live app credentials from PayPal Developer Dashboard.
+
+| Variable | Required | Example / notes |
+|----------|----------|-----------------|
+| `PAYPAL_CLIENT_ID` | Yes (billing) | Live client ID (or sandbox for testing) |
+| `PAYPAL_CLIENT_SECRET` | Yes (billing) | Live secret |
+| `PAYPAL_MODE` | Yes (billing) | `live` for production; `sandbox` for testing |
+| `PAYPAL_WEBHOOK_ID` | Yes (webhooks) | From PayPal Dashboard → Webhooks |
+| `PAYPAL_PLAN_MONTHLY` | Yes (subscriptions) | Plan ID `P-...` |
+| `PAYPAL_PLAN_YEARLY` | Yes (subscriptions) | Plan ID `P-...` |
+
+Set matching **`VITE_PAYPAL_CLIENT_ID`** in GitHub Actions (build-time) to the same PayPal client ID.
+
+### Stripe billing (optional)
+
+Set `ENABLE_STRIPE=true` only if switching from PayPal to Stripe.
+
+| Variable | Required | Example / notes |
+|----------|----------|-----------------|
+| `ENABLE_STRIPE` | If using Stripe | `true` |
+| `STRIPE_SECRET_KEY` | If using Stripe | `sk_live_...` |
+| `STRIPE_WEBHOOK_SECRET` | If using Stripe | `whsec_...` — webhook URL: `https://tamir.li/api/billing/webhook` |
+| `STRIPE_PRICE_*` | If using Stripe | Monthly/yearly and credit pack price IDs — see [`backend/.env.example`](../backend/.env.example) |
 
 **Build-time (`VITE_*`)** — baked into the frontend bundle in CI (or when you run `npm run build` locally). Set in GitHub Actions vars/secrets:
 
@@ -229,11 +259,59 @@ Local full stack: run `npm run dev` and `npm run dev:api` in two terminals; set 
 
 ---
 
-## MySQL
+## Plesk MySQL
 
-1. Plesk → **Databases** → create database + user.
-2. Set `DATABASE_URL` in Node.js env vars.
-3. Apply migrations via **Run Node.js commands** → args field: `run plesk:db`
+The monolith uses **MySQL** via Prisma (`backend/prisma/schema.prisma` → `provider = "mysql"`, `url = env("DATABASE_URL")`). Create the database in Plesk **before** setting Node.js env vars or running migrations.
+
+### Create database in Plesk UI
+
+1. Log in to **Plesk** → select subscription **tamir.li**.
+2. Open **Databases** (left sidebar or **Websites & Domains** → **Databases**).
+3. Click **Add Database**.
+4. **Database name** — e.g. `tamirly_db` (Plesk may prefix with your subscription name; use the **full name** shown after creation in `DATABASE_URL`).
+5. **Database user** — check **Create a new database user** (or select an existing user).
+   - **Username** — e.g. `tamirly_user`
+   - **Password** — generate a strong password; save it securely (you need it for `DATABASE_URL`).
+6. Ensure the user is **granted access** to this database (default when creating user on the same screen).
+7. Click **OK** / **Create**.
+
+**Host for `DATABASE_URL`:** use `localhost` when Node.js runs on the **same server** as MySQL (typical Plesk Node.js setup). Do **not** use the server’s public IP or remote hostname unless MySQL is on another machine.
+
+Plesk may show a “Remote MySQL” or external host — ignore that for same-server Node.js; `localhost:3306` is correct.
+
+### `DATABASE_URL` format
+
+```
+mysql://USER:PASSWORD@localhost:3306/DATABASE_NAME
+```
+
+**Example** (replace with your real values):
+
+```
+mysql://tamirly_user:YourStrongPassword@localhost:3306/tamirly_db
+```
+
+If the password contains special characters (`@`, `#`, `%`, `:`, `/`, etc.), [URL-encode](https://developer.mozilla.org/en-US/docs/Glossary/Percent-encoding) them in the connection string (e.g. `@` → `%40`).
+
+### After the database is created
+
+1. **Plesk** → **Domains** → `tamir.li` → **Node.js** → **Custom environment variables**.
+2. Add **`DATABASE_URL`** with the connection string above (plus other vars — see [Environment variables](#environment-variables-plesk--nodejs--custom-environment-variables)).
+3. **Run Node.js commands** tab → npm args field, **one command at a time**:
+   - First deploy (full install + migrate): `run setup`
+   - Or migrations only (if deps already installed): `run plesk:db`
+4. Click **Restart app**.
+
+| npm args field | What it runs |
+|----------------|--------------|
+| `run setup` | `npm ci` + backend prod deps + `prisma migrate deploy` |
+| `run plesk:db` | `prisma migrate deploy --schema=backend/prisma/schema.prisma` |
+
+**Order matters:** set `DATABASE_URL` in env vars **before** `run setup` or `run plesk:db`. Migrations create tables (`User`, `Profile`, `Subscription`, `Payment`, etc.).
+
+### Verify tables (optional)
+
+**Plesk** → **Databases** → your database → **phpMyAdmin** (or **Webadmin**). After a successful `run plesk:db`, you should see Prisma migration history (`_prisma_migrations`) and application tables.
 
 ---
 
@@ -284,7 +362,7 @@ Browser:
 - [ ] Home page and deep links load (SPA fallback)
 - [ ] Google sign-in (`POST /api/auth/google`)
 - [ ] Admin panel (user in `ADMIN_EMAILS`)
-- [ ] Stripe checkout; webhook at `https://tamir.li/api/billing/webhook`
+- [ ] PayPal checkout (or Stripe if `ENABLE_STRIPE=true`); webhooks configured in PayPal/Stripe dashboard
 
 ---
 
