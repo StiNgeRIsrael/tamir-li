@@ -1,9 +1,10 @@
 /**
- * Apply Prisma migrations on Plesk.
+ * Apply Prisma migrations via CLI (CI run_server_setup or SSH with exported DATABASE_URL).
  *
- * Plesk "Run Node.js commands" does not inherit Custom environment variables
- * (those apply to the running app only). Load backend/.env when present so
- * DATABASE_URL is available for `prisma migrate deploy`.
+ * Plesk "Run Node.js commands" usually does not inherit Custom environment variables.
+ * Production migrations normally run on app restart (backend startup auto-migrate).
+ * This script loads backend/.env only when present (local/legacy); Plesk should use
+ * Plesk custom env + restart instead of relying on a server-side .env file.
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';

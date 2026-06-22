@@ -27,7 +27,9 @@ Triggers on push to `main` or manual **workflow_dispatch**.
 
 **CI secrets for deploy/restart:** `PLESK_SSH_HOST` / `PLESK_FTP_HOST`, `PLESK_SSH_USER`, `PLESK_SSH_PASSWORD` (FTP fallbacks OK). Optional vars: `PLESK_HTTPDOCS_DIR` (default `httpdocs/`), `PLESK_NODE_APP_DIR` (default `httpdocs/deploy`), `PLESK_DOMAIN` (default `tamir.li`).
 
-**run_server_setup=true** requires GitHub secret `DATABASE_URL` (SSH does not inherit Plesk env). Optional: `JWT_SECRET`, `GOOGLE_CLIENT_ID` (falls back to `VITE_GOOGLE_CLIENT_ID`).
+**run_server_setup=true** requires GitHub secret `DATABASE_URL` (SSH does not inherit Plesk env). Use for **first deploy** or lockfile changes (`npm ci` on server). Optional: `JWT_SECRET`, `GOOGLE_CLIENT_ID` (falls back to `VITE_GOOGLE_CLIENT_ID`).
+
+**Migrations on routine deploys:** no manual `run plesk:db` needed — set `DATABASE_URL` in Plesk custom env only; the app runs `prisma migrate deploy` on each restart when `NODE_ENV=production`. After push to `main`, CI restarts the app automatically.
 
 After restart, CI removes legacy `httpdocs/.htaccess`, `index.html`, `assets/`, `dist/` and `deploy/dist/.htaccess`, then probes `GET /health` is JSON (not HTML).
 
@@ -64,23 +66,12 @@ Do **not** put Adsterra Publisher API keys or server secrets in `VITE_*`.
 
 ## Database
 
-1. Create MySQL DB + user in Plesk; set `DATABASE_URL` in Plesk Node.js env.
-2. Run migrations (first deploy or schema change):
-   - Plesk **Run Node.js commands** → npm args: `run setup` (full install + migrate), **or**
-   - Step-by-step: `ci` → `run plesk:backend-install` → `run plesk:db`, **or**
-   - CI **workflow_dispatch** with **run_server_setup** (needs GitHub `DATABASE_URL` secret).
+1. Create MySQL DB + user in Plesk.
+2. Set **`DATABASE_URL`** in Plesk → Node.js → **Custom environment variables** (single source of truth — **no** server-side `backend/.env`).
+3. **First deploy / lockfile change:** GitHub Actions **workflow_dispatch** with **run_server_setup** checked + GitHub secret `DATABASE_URL` (runs `npm run setup` over SSH), **or** Plesk **Run Node.js commands** → `run setup` if env is visible to the runner.
+4. **Schema/migration changes:** deploy code, then **restart** the Node app (CI does this on every push to `main`). Startup runs `prisma migrate deploy` automatically using Plesk custom env.
 
-Plesk UI does not support `npx` — use `run plesk:db`, not `npx prisma migrate deploy`.
-
-**`DATABASE_URL` missing during `run plesk:db`:** On many Plesk versions, **Run Node.js commands** does **not** inherit **Custom environment variables** (those apply to the running app only). `prisma generate` still succeeds; `migrate deploy` fails with `Environment variable not found: DATABASE_URL`.
-
-| Fix (pick one) | How |
-|----------------|-----|
-| **A — `backend/.env` on server** | File Manager → `httpdocs/deploy/backend/.env` with `DATABASE_URL=mysql://...` (no quotes). Plesk npm args: `run plesk:db` (loads file automatically) |
-| **B — SSH** | `export DATABASE_URL='mysql://...'` then `npm run plesk:db` |
-| **C — CI** | GitHub Actions **workflow_dispatch** + **run_server_setup** + secret `DATABASE_URL` |
-
-Keep `DATABASE_URL` in Plesk **Custom environment variables** for the live app (restart after changes). Details: [plesk-mysql-troubleshooting.md §3](./plesk-mysql-troubleshooting.md#plesk-quirk-run-nodejs-commands-vs-runtime-env).
+**Plesk quirk:** **Run Node.js commands** often does **not** inherit custom env — `run plesk:db` may fail with `Environment variable not found: DATABASE_URL`. That is expected; use restart auto-migrate or CI **run_server_setup** instead. Details: [plesk-mysql-troubleshooting.md §3](./plesk-mysql-troubleshooting.md#plesk-quirk-run-nodejs-commands-vs-runtime-env).
 
 ## ffmpeg (server-side audio converter)
 
@@ -108,8 +99,8 @@ SITE_URL=https://tamir.li API_URL=https://tamir.li npm run site:check
 
 | Symptom | Likely fix |
 |---------|------------|
-| `/api/usage/today` or `/api/tools/config` → **500** | Fix `DATABASE_URL`, run `run plesk:db` (or `run setup`), restart app |
-| `/health` → HTML or `db.ok: false` | Fix docroot (not `deploy/dist`); verify `DATABASE_URL` and migrations |
+| `/api/usage/today` or `/api/tools/config` → **500** | Fix `DATABASE_URL` in Plesk custom env, restart app (auto-migrate); check `[startup-migrate]` logs |
+| `/health` → HTML or `db.ok: false` | Fix docroot (not `deploy/dist`); verify `DATABASE_URL` in Plesk env; restart app for migrations |
 | `/health` missing `uptime` / `db` | Redeploy latest backend bundle |
 | `/api/*` returns HTML | Fix document root; remove legacy `httpdocs/index.html` / `.htaccess` (CI does this on restart) |
 | Google login hidden | Set `VITE_GOOGLE_CLIENT_ID` in CI + `GOOGLE_CLIENT_ID` in Plesk; rebuild |
