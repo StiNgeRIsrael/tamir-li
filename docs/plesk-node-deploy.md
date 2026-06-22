@@ -43,10 +43,12 @@ Plesk requires a **startup file** (`app.js`) and the **document root must be ins
 | **Package manager** | npm |
 | **Application root** | `httpdocs/deploy` |
 | **Application startup file** | `app.js` |
-| **Document root** | `httpdocs/deploy` (same as app root) — or `httpdocs/deploy/dist` if you prefer static files as docroot; both are valid subpaths |
+| **Document root** | **`httpdocs/deploy`** (same as application root) — **recommended** |
 | **Application mode** | `production` |
 
 Do **not** set document root to `httpdocs` alone — Plesk errors: *"document root is not a subchild of application root"*.
+
+**Avoid document root `httpdocs/deploy/dist` for the monolith.** If docroot is `deploy/dist`, Apache/nginx serves static files from `dist/` first. The Vite build ships `dist/.htaccess` (Apache SPA fallback), which rewrites `/api/*` and `/health` to `index.html` — so the API never reaches Express. CI omits `dist/.htaccess` on upload, but the reliable fix is **document root = `httpdocs/deploy`** (not `deploy/dist`). Express serves `dist/` internally.
 
 The startup file `app.js` (uploaded by CI) loads the compiled API server:
 
@@ -170,7 +172,8 @@ On later deploys, run `run setup` when lockfiles change, `run plesk:db` when mig
 | `PLESK_SSH_USER` | Yes* | SSH/SFTP user (or `PLESK_FTP_USER`) |
 | `PLESK_SSH_PASSWORD` | Yes* | SSH/SFTP password (or `PLESK_FTP_PASSWORD`) |
 | `PLESK_SSH_PORT` (var) | No | Default `22` |
-| `PLESK_HTTPDOCS_DIR` (var) | No | SFTP target; default `httpdocs/` |
+| `PLESK_HTTPDOCS_DIR` (var) | No | SFTP upload target; default `httpdocs/` |
+| `PLESK_SSH_SERVER_DIR` (var) | No | Legacy alias for `PLESK_HTTPDOCS_DIR` (same value, e.g. `httpdocs/`) |
 | `PLESK_NODE_APP_DIR` (var) | No | Node app root for restart; default `httpdocs/deploy` |
 | `PLESK_DOMAIN` (var) | No | Domain for Plesk CLI restart attempt; default `tamir.li` |
 | `VITE_GOOGLE_CLIENT_ID` (secret) | Yes (Google sign-in) | OAuth Web client ID — baked into frontend at CI build; must match Plesk `GOOGLE_CLIENT_ID` |
@@ -204,6 +207,30 @@ Set GitHub variable `PLESK_NODE_APP_DIR` to e.g. `tamir-li/` (subscription home,
 
 ## Recommended layout (GitHub Actions SFTP)
 
+After CI deploy, the server should look like this (paths relative to subscription home):
+
+```
+httpdocs/
+├── sitemap.xml          ← SEO (flat copy from CI)
+├── robots.txt
+├── ads.txt
+├── llms.txt             ← if present in build
+└── deploy/              ← Plesk Node.js application root
+    ├── app.js           ← startup file (imports backend)
+    ├── package.json
+    ├── package-lock.json
+    ├── dist/            ← Vite frontend (no .htaccess — Node serves SPA)
+    │   ├── index.html
+    │   ├── assets/
+    │   └── …
+    └── backend/
+        ├── package.json
+        ├── package-lock.json
+        ├── dist/        ← compiled Express API
+        │   └── index.js
+        └── prisma/      ← migrations
+```
+
 | Location on server | Purpose |
 |--------------------|---------|
 | `httpdocs/` | Legacy static files — **remove** old `index.html`, `dist/`, etc. after Node.js is live |
@@ -228,7 +255,7 @@ gh variable set VITE_API_URL --body "https://tamir.li" --repo StiNgeRIsrael/tami
 
 **Symptoms:** Google login button missing; `curl https://tamir.li/health` or `curl https://tamir.li/api/auth/google` returns `index.html` (HTML) instead of JSON.
 
-**Root cause:** Plesk’s domain document root (`httpdocs/`) still serves **legacy static files** (`index.html`, `assets/`) from an older deploy. The Node monolith in `httpdocs/deploy/` is running but **not receiving HTTP traffic** — Apache/nginx serves static files first.
+**Root cause:** Either (a) Plesk’s domain document root (`httpdocs/`) still serves **legacy static files** from an older deploy, or (b) **document root is `httpdocs/deploy/dist`** and `dist/.htaccess` rewrites `/api/*` and `/health` to `index.html`. The Node monolith in `httpdocs/deploy/` may be running but **not receiving HTTP traffic**.
 
 CI now removes `httpdocs/index.html` and `httpdocs/assets/` after each deploy (SSH restart step). If login/API still fail, complete the steps below manually once.
 
@@ -248,7 +275,7 @@ curl -s https://tamir.li/assets/index-*.js | grep -o 'apps.googleusercontent.com
 
 1. **Domains → tamir.li → Node.js**
    - **Application root:** `httpdocs/deploy`
-   - **Document root:** `httpdocs/deploy` (or `httpdocs/deploy/dist`)
+   - **Document root:** `httpdocs/deploy` (**not** `httpdocs/deploy/dist` — see [Plesk Node.js settings](#plesk-nodejs-settings))
    - **Startup file:** `app.js`
    - **Application mode:** `production`
    - **Node.js:** enabled → **Restart app**

@@ -73,6 +73,9 @@ jobs:
               cp "dist/$f" "plesk-upload/$f"
             fi
           done
+          # Apache SPA .htaccess breaks the Node monolith when Plesk document root is deploy/dist:
+          # /api/* and /health get rewritten to index.html instead of reaching Express.
+          rm -f plesk-upload/deploy/dist/.htaccess
           echo "Plesk upload tree:"
           find plesk-upload -maxdepth 3 -type f | head -50
           test -f plesk-upload/deploy/package.json
@@ -93,7 +96,7 @@ jobs:
           port: ${{ vars.PLESK_SSH_PORT || 22 }}
           local_path: ./plesk-upload/
           # SEO files → httpdocs/sitemap.xml; Node monolith → httpdocs/deploy/
-          remote_path: ${{ vars.PLESK_HTTPDOCS_DIR || 'httpdocs/' }}
+          remote_path: ${{ vars.PLESK_HTTPDOCS_DIR || vars.PLESK_SSH_SERVER_DIR || 'httpdocs/' }}
           sftp_only: false
           rsyncArgs: "-avz --omit-dir-times"
           sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"
@@ -161,6 +164,15 @@ jobs:
             for legacy in registerSW.js sw.js workbox-*.js manifest.webmanifest; do
               rm -f "$HTTPDOCS/$legacy" 2>/dev/null || true
             done
+
+            # dist/.htaccess (legacy Apache SPA) must not intercept /api/* when docroot is deploy/dist.
+            if [ -f "$APP_DIR/dist/.htaccess" ]; then
+              echo "Removing dist/.htaccess from $APP_DIR/dist (Node monolith serves SPA fallback)..."
+              rm -f "$APP_DIR/dist/.htaccess"
+            fi
+
+            echo "Deploy layout (expected: app.js + dist/index.html + backend/dist/index.js):"
+            ls -la "$APP_DIR/app.js" "$APP_DIR/dist/index.html" "$APP_DIR/backend/dist/index.js"
 
       - name: Verify Node monolith is live
         if: success()
