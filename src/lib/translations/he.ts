@@ -195,6 +195,8 @@ export const heTranslations = {
         ? `${name} בדרך — אנחנו מסיימים את הפיתוח. חזרו בקרוב או נסו אחד מהכלים הזמינים.`
         : "הכלי בדרך — אנחנו מסיימים את הפיתוח. חזרו בקרוב או נסו אחד מהכלים הזמינים.",
     comingSoonAlternatives: "נסו במקום",
+    comingSoonPdfWordHint: "בינתיים אפשר למזג, לפצל ולארגן קבצי PDF במנהל PDF שלנו — ישירות בדפדפן.",
+    comingSoonPdfWordCta: "למנהל PDF",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) =>
       isCustom ? `איך להשתמש ב${name}?` : `איך להמיר ${from} ל-${to}?`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [

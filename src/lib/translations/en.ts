@@ -187,6 +187,8 @@ export const enTranslations = {
         ? `${name} is on the way — we're finishing the implementation. Check back soon or try one of our available tools.`
         : "This tool is on the way — we're finishing the implementation. Check back soon or try one of our available tools.",
     comingSoonAlternatives: "Try these instead",
+    comingSoonPdfWordHint: "In the meantime, merge, split, and organize PDFs in the browser with our PDF Manager.",
+    comingSoonPdfWordCta: "Open PDF Manager",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) =>
       isCustom ? `How to Use ${name}` : `How to Convert ${from} to ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [

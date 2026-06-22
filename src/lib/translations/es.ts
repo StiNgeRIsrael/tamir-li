@@ -167,6 +167,8 @@ export const esTranslations = {
         ? `${name} está en camino — estamos terminando la implementación. Vuelve pronto o prueba una de nuestras herramientas disponibles.`
         : "Esta herramienta está en camino — estamos terminando la implementación. Vuelve pronto o prueba una de nuestras herramientas disponibles.",
     comingSoonAlternatives: "Prueba estas alternativas",
+    comingSoonPdfWordHint: "Mientras tanto, combina, divide y organiza PDFs en el navegador con nuestro gestor de PDF.",
+    comingSoonPdfWordCta: "Abrir gestor de PDF",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) =>
       isCustom ? `Cómo Usar ${name}` : `Cómo Convertir ${from} a ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [

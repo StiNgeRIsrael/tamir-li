@@ -149,6 +149,8 @@ export const ruTranslations = {
         ? `${name} скоро появится — мы завершаем разработку. Загляните позже или попробуйте доступные инструменты.`
         : "Этот инструмент скоро появится — мы завершаем разработку. Загляните позже или попробуйте доступные инструменты.",
     comingSoonAlternatives: "Попробуйте вместо этого",
+    comingSoonPdfWordHint: "Пока конвертер не готов: объединяйте, разделяйте и упорядочивайте PDF в браузере в нашем менеджере PDF.",
+    comingSoonPdfWordCta: "Открыть менеджер PDF",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) => isCustom ? `Как Использовать ${name}` : `Как Конвертировать ${from} в ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [
       { step: "1", title: isCustom ? "Загрузите Файл" : `Загрузите ${from}`, desc: "Перетащите или выберите файлы" },

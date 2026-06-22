@@ -146,6 +146,8 @@ export const itTranslations = {
         ? `${name} è in arrivo — stiamo completando l'implementazione. Torna presto o prova uno degli strumenti disponibili.`
         : "Questo strumento è in arrivo — stiamo completando l'implementazione. Torna presto o prova uno degli strumenti disponibili.",
     comingSoonAlternatives: "Prova invece",
+    comingSoonPdfWordHint: "Nel frattempo unisci, dividi e organizza i PDF nel browser con il nostro gestore PDF.",
+    comingSoonPdfWordCta: "Apri gestore PDF",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) => isCustom ? `Come Usare ${name}` : `Come Convertire ${from} in ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [
       { step: "1", title: isCustom ? "Carica un File" : `Carica File ${from}`, desc: "Trascina o seleziona" },

@@ -635,7 +635,7 @@ export default function ToolPage() {
 
           <div className="min-w-0">
             {!toolIsFunctional ? (
-              <ComingSoonPanel toolName={toolName} />
+              <ComingSoonPanel toolName={toolName} toolId={tool.id} />
             ) : showPremiumToolLock ? (
               <PremiumLock onUnlock={() => setPremiumUnlocked(true)} />
             ) : atUsageLimit ? (

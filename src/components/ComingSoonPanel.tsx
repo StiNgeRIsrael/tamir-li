@@ -9,7 +9,7 @@ interface ComingSoonPanelProps {
   toolName?: string;
 }
 
-export function ComingSoonPanel({ toolName }: ComingSoonPanelProps) {
+export function ComingSoonPanel({ toolName, toolId }: ComingSoonPanelProps) {
   const { locale } = useLocale();
   const t = useT();
   const tt = t.tool as {
