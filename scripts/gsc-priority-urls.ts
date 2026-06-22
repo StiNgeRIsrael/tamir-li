@@ -5,8 +5,10 @@
  *   npm run generate:gsc-priority
  *   npm run generate:gsc-priority -- --tier=1
  *   npm run generate:gsc-priority -- --daily=15
+ *   npm run generate:gsc-priority -- --daily=15 --skip-indexed
+ *   npm run generate:gsc-priority -- --mark-done https://tamir.li/jpg-to-png
  */
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, appendFileSync, existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { getAllSitemapUrls, getBasePaths } from "../src/lib/sitemap-paths";
@@ -15,6 +17,7 @@ import { getDefaultSlug, getPopularTools } from "../src/lib/tools-data";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outPath = resolve(__dirname, "../gsc-priority-urls.txt");
+const progressPath = resolve(__dirname, "../gsc-indexing-progress.txt");
 
 const origin = (process.env.VITE_SITE_ORIGIN || "https://tamir.li").replace(/\/$/, "");
 
@@ -44,15 +47,42 @@ function getTier2ToolPaths(): string[] {
   return [...paths].sort();
 }
 
-function parseArgs(): { tier?: number; daily?: number } {
-  const opts: { tier?: number; daily?: number } = {};
+function parseArgs(): { tier?: number; daily?: number; skipIndexed?: boolean; markDone?: string[] } {
+  const opts: { tier?: number; daily?: number; skipIndexed?: boolean; markDone?: string[] } = {};
+  const markDone: string[] = [];
   for (const arg of process.argv.slice(2)) {
     const tierMatch = arg.match(/^--tier=(\d)$/);
     if (tierMatch) opts.tier = Number(tierMatch[1]);
     const dailyMatch = arg.match(/^--daily=(\d+)$/);
     if (dailyMatch) opts.daily = Number(dailyMatch[1]);
+    if (arg === "--skip-indexed") opts.skipIndexed = true;
+    if (arg.startsWith("http://") || arg.startsWith("https://")) markDone.push(arg);
   }
+  if (markDone.length) opts.markDone = markDone;
   return opts;
+}
+
+function readIndexedUrls(): Set<string> {
+  if (!existsSync(progressPath)) return new Set();
+  const lines = readFileSync(progressPath, "utf8")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith("#"));
+  return new Set(lines);
+}
+
+function markUrlsDone(urls: string[]): void {
+  const existing = readIndexedUrls();
+  const toAdd = urls.filter((u) => !existing.has(u));
+  if (!toAdd.length) {
+    console.log("All URLs already in progress file.");
+    return;
+  }
+  const header = existsSync(progressPath)
+    ? ""
+    : "# GSC indexing progress — one URL per line (submitted via URL Inspection)\n";
+  appendFileSync(progressPath, header + toAdd.map((u) => `${u}\n`).join(""), "utf8");
+  console.log(`Marked ${toAdd.length} URL(s) done → ${progressPath}`);
 }
 
 const tier1 = urlsForPaths(TIER1_PATHS);
@@ -86,16 +116,26 @@ for (const section of sections) {
 
 writeFileSync(outPath, lines.join("\n"), "utf8");
 
-const { tier, daily } = parseArgs();
+const { tier, daily, skipIndexed, markDone } = parseArgs();
+
+if (markDone?.length) {
+  markUrlsDone(markDone);
+  process.exit(0);
+}
 
 if (daily !== undefined) {
-  const priorityOrder = [...tier1, ...tier2, ...tier3];
+  const indexed = skipIndexed ? readIndexedUrls() : new Set<string>();
+  const priorityOrder = [...tier1, ...tier2, ...tier3].filter((u) => !indexed.has(u));
   const batch = priorityOrder.slice(0, daily);
-  console.log(`Daily batch (first ${daily} URLs in priority order):\n`);
+  const skipped = skipIndexed ? tier1.length + tier2.length + tier3.length - priorityOrder.length : 0;
+  console.log(`Daily batch (next ${daily} URLs in priority order${skipIndexed ? ", skipping indexed" : ""}):\n`);
   for (const url of batch) {
     console.log(url);
   }
-  console.log(`\n${batch.length} URL(s). Full list: ${outPath}`);
+  console.log(`\n${batch.length} URL(s).${skipped ? ` Skipped ${skipped} already indexed.` : ""}`);
+  console.log(`Mark done: npm run generate:gsc-priority -- --mark-done <url>`);
+  console.log(`Progress file: ${progressPath}`);
+  process.exit(0);
 } else if (tier !== undefined) {
   const section = sections[tier - 1];
   if (!section) {
@@ -114,7 +154,8 @@ if (daily !== undefined) {
   console.log("");
   console.log("Tips:");
   console.log("  npm run generate:gsc-priority -- --tier=1     # print tier 1 only");
-  console.log("  npm run generate:gsc-priority -- --daily=15   # today's manual batch");
+  console.log("  npm run generate:gsc-priority -- --daily=15 --skip-indexed   # skip indexed URLs");
+  console.log("  npm run generate:gsc-priority -- <url>                     # mark URL indexed");
   console.log("");
   console.log("Inspect in GSC: https://search.google.com/search-console/inspect");
 }

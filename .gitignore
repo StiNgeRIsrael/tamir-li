@@ -19,6 +19,9 @@ backend/.env
 # Cursor local
 .cursor/
 
+# GSC manual indexing progress (local per machine)
+gsc-indexing-progress.txt
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

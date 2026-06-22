@@ -70,6 +70,10 @@ export const deTranslations: Record<string, any> = {
   },
   homeStatValues: { freeDaily: "Bis zu 5" },
   toolCount: (n: number) => `(${n} Tools)`,
+  toolSeoBlocks: {
+    faqTitle: "Häufige Fragen zum Tool",
+    comparisonTitle: "Formatvergleich",
+  },
   whyChoose: "Warum Tamir.li?",
   features: [
     { title: "Schnelle Konvertierung", desc: "Verarbeitung in Sekunden, direkt im Browser" },

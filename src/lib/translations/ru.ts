@@ -70,6 +70,10 @@ export const ruTranslations: Record<string, any> = {
   },
   homeStatValues: { freeDaily: "До 5" },
   toolCount: (n: number) => `(${n} инструментов)`,
+  toolSeoBlocks: {
+    faqTitle: "Частые вопросы об инструменте",
+    comparisonTitle: "Сравнение форматов",
+  },
   whyChoose: "Почему Tamir.li?",
   features: [
     { title: "Быстрая Конвертация", desc: "Обработка за секунды прямо в браузере" },

@@ -76,6 +76,10 @@ export const esTranslations: Record<string, any> = {
   },
   homeStatValues: { freeDaily: "Hasta 5" },
   toolCount: (n: number) => `(${n} herramientas)`,
+  toolSeoBlocks: {
+    faqTitle: "Preguntas frecuentes sobre la herramienta",
+    comparisonTitle: "Comparación de formatos",
+  },
   whyChoose: "¿Por qué elegir Tamir.li?",
   features: [
     { title: "Conversión Rápida", desc: "Procesado en segundos, directo en tu navegador" },

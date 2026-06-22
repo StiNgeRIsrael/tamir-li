@@ -56,7 +56,15 @@ npm run generate:gsc-priority -- --tier=1
 npm run generate:gsc-priority -- --daily=15
 ```
 
-Track progress in a spreadsheet or by deleting lines from a copy of `gsc-priority-urls.txt` as you submit them.
+Track progress with `gsc-indexing-progress.txt` (gitignored, local to your machine) or a spreadsheet.
+
+```bash
+# Next 15 URLs, skipping ones you already submitted
+npm run generate:gsc-priority -- --daily=15 --skip-indexed
+
+# After requesting indexing in GSC UI, mark URLs done:
+npm run generate:gsc-priority -- https://tamir.li/ https://tamir.li/en/
+```
 
 ---
 
@@ -67,14 +75,15 @@ Google’s UI limits how often you can **Request indexing** per property (common
 ### Recommended routine (~10–15 minutes/day)
 
 1. **Morning** — open [URL Inspection](https://search.google.com/search-console/inspect).
-2. Run `npm run generate:gsc-priority -- --daily=15` (or pick the next unchecked lines from `gsc-priority-urls.txt`).
+2. Run `npm run generate:gsc-priority -- --daily=15 --skip-indexed` (skips URLs in `gsc-indexing-progress.txt`).
 3. For each URL:
    - Paste the full URL → **Enter**.
    - Wait for “URL is on Google” or “URL is not on Google”.
    - If not indexed (or you changed the page recently) → **Request indexing**.
    - Skip if Google already shows a recent successful crawl and the page is indexed.
 4. **Stop at ~10–15 requests** even if you have time — additional requests are usually ignored until the next day.
-5. **Weekly** — check **Pages** / **Indexing** for errors; fix 404s, redirects, and `noindex` mistakes before requesting more URLs.
+5. **Mark done** — `npm run generate:gsc-priority -- <url> [<url>...]` appends to `gsc-indexing-progress.txt`.
+6. **Weekly** — check **Pages** / **Indexing** for errors; fix 404s, redirects, and `noindex` mistakes before requesting more URLs.
 
 ### Suggested schedule
 
