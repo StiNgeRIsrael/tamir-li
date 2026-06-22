@@ -35,19 +35,32 @@ If you enabled the **Docker** extension, the Node.js panel and **Run Node.js com
 
 Enable **Node.js** on the main domain `tamir.li` (not a subdomain).
 
+Plesk requires a **startup file** (`app.js`) and the **document root must be inside the application root** (not parent `httpdocs/`).
+
 | Setting | Value |
 |---------|-------|
 | **Node.js version** | **22.x** preferred (25.x may work; this repo targets Node ≥ 22) |
 | **Package manager** | npm |
-| **Application root** | `httpdocs/deploy` (or path from `PLESK_NODE_APP_DIR`; must contain root `package.json`) |
-| **Application startup file** | Leave blank — use **Application mode** + npm script below |
-| **Document root** | Keep default `httpdocs` — Plesk proxies HTTP(S) to the Node process |
+| **Application root** | `httpdocs/deploy` |
+| **Application startup file** | `app.js` |
+| **Document root** | `httpdocs/deploy` (same as app root) — or `httpdocs/deploy/dist` if you prefer static files as docroot; both are valid subpaths |
 | **Application mode** | `production` |
-| **Custom script / start** | `npm start` (runs `node backend/dist/index.js`) |
+
+Do **not** set document root to `httpdocs` alone — Plesk errors: *"document root is not a subchild of application root"*.
+
+The startup file `app.js` (uploaded by CI) loads the compiled API server:
+
+```js
+import './backend/dist/index.js';
+```
+
+Plesk runs `app.js` directly; it does **not** use the **Custom script / start** field or `npm start`. Keep `npm start` in `package.json` for local/CLI use only.
 
 Full path example: `/var/www/vhosts/tamir.li/httpdocs/deploy` (adjust for your vhost).
 
 Set **environment variables** in Node.js → **Custom environment variables** before first start (see table below). `DATABASE_URL` must be set before running migrations.
+
+**NPM install:** Plesk’s **+ NPM install** button runs `npm install` in the application root. For a reproducible first deploy, prefer **Run Node.js commands** → `run setup` (runs `npm ci` + backend prod deps + migrations).
 
 ### Run Node.js commands (no shell, no `npx`, no `cd`)
 
@@ -71,8 +84,8 @@ Plesk only exposes **npm** in the **Run Node.js commands** tab: a dropdown for `
 
 #### After commands succeed
 
-1. In the Node.js dashboard, confirm **Custom script / start** is `npm start`.
-2. Click **Restart app**.
+1. Confirm **Application startup file** is `app.js`.
+2. Click **Restart app** (or **Enable Node.js** on first run).
 
 #### Later deploys
 
@@ -119,6 +132,7 @@ CI ([`.github/workflows/deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml
 ```
 package.json
 package-lock.json
+app.js                ← Plesk startup entry (imports backend/dist/index.js)
 dist/                 ← Vite frontend (pre-built)
 backend/
   package.json
@@ -135,7 +149,7 @@ On later deploys, run `run setup` when lockfiles change, `run plesk:db` when mig
 
 1. Create MySQL database in Plesk → **Databases**.
 2. Set Node.js env vars (`DATABASE_URL`, `JWT_SECRET`, Stripe, Google, …).
-3. Enable Node.js; set application root and `npm start` as above.
+3. Enable Node.js; set application root `httpdocs/deploy`, document root `httpdocs/deploy`, startup file `app.js`.
 4. Wait for GitHub Actions deploy to finish (or upload bundle manually).
 5. **Run Node.js commands:** `run setup` (or step-by-step: `ci`, `run plesk:backend-install`, `run plesk:db`).
 6. **Restart app**.
@@ -208,7 +222,7 @@ After changing any `VITE_*` value, trigger a new CI deploy (or rebuild locally a
 | `npm run plesk:backend-install` | `run plesk:backend-install` | **Server** — backend prod deps only |
 | `npm run plesk:db` | `run plesk:db` | **Server** — apply Prisma migrations |
 | `npm run build` | `run build` | **CI only** when using GitHub Actions SFTP — not on server |
-| `npm start` | *(Plesk startup script)* | Plesk startup — `node backend/dist/index.js` |
+| `npm start` | — | Local / CLI — `node backend/dist/index.js` (Plesk uses `app.js` instead) |
 | `npm run dev` / `npm run dev:api` | — | Local development only |
 
 Local full stack: run `npm run dev` and `npm run dev:api` in two terminals; set `VITE_API_URL=http://localhost:5000` in `.env.development.local`.

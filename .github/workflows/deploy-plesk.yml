@@ -48,7 +48,7 @@ jobs:
         run: |
           rm -rf deploy
           mkdir -p deploy/backend
-          cp package.json package-lock.json deploy/
+          cp package.json package-lock.json app.js deploy/
           cp -r dist deploy/
           cp -r backend/dist deploy/backend/
           cp -r backend/prisma deploy/backend/
@@ -56,7 +56,9 @@ jobs:
           echo "Deploy bundle contents:"
           find deploy -maxdepth 3 -type f | head -40
           test -f deploy/package.json
+          test -f deploy/app.js
           test -f deploy/backend/package.json
+          test -f deploy/backend/dist/index.js
           test -d deploy/dist
           test -d deploy/backend/dist
           test -d deploy/backend/prisma
