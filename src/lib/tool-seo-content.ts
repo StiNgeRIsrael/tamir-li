@@ -216,6 +216,20 @@ const es: LocalizedContent = {
       { q: "¿A qué formato conviene comprimir?", a: "Para fotos web — WEBP o JPG. Para gráficos con transparencia — PNG comprimido." },
     ],
   },
+  "word-to-pdf": {
+    faqs: [
+      { q: "¿Por qué convertir Word a PDF?", a: "PDF fija el diseño en cualquier dispositivo — perfecto para enviar, imprimir y firmas digitales." },
+      { q: "¿Se conservan las fuentes?", a: "Sí — las fuentes se incrustan en el PDF para que el documento se vea igual en cualquier lugar." },
+      { q: "¿DOC o DOCX?", a: "Ambos formatos son compatibles. DOCX se recomienda para mejores resultados." },
+    ],
+  },
+  "merge-pdf": {
+    faqs: [
+      { q: "¿Cómo fusiono archivos PDF?", a: "Sube todos los archivos, reordena las páginas arrastrándolas y fusiona — obtendrás un solo PDF." },
+      { q: "¿Puedo rotar páginas?", a: "Sí — rota páginas individuales antes de descargar." },
+      { q: "¿Hay límite de archivos?", a: "Plan gratuito: hasta 5 operaciones al día. Premium: ilimitado." },
+    ],
+  },
 };
 
 const fr: LocalizedContent = {
@@ -238,6 +252,20 @@ const fr: LocalizedContent = {
       { q: "De combien puis-je compresser une image ?", a: "Cela dépend du format d'origine. JPG et WEBP se compressent nettement ; PNG moins, mais le poids peut quand même être réduit." },
       { q: "La compression affecte-t-elle la qualité ?", a: "L'outil équilibre taille et qualité. Pour la plupart des sites web, une compression modérée reste à peine visible." },
       { q: "Vers quel format compresser ?", a: "Pour les photos web — WEBP ou JPG. Pour les graphiques avec transparence — PNG compressé." },
+    ],
+  },
+  "word-to-pdf": {
+    faqs: [
+      { q: "Pourquoi convertir Word en PDF ?", a: "Le PDF fixe la mise en page sur tout appareil — parfait pour l'envoi, l'impression et les signatures numériques." },
+      { q: "Les polices sont-elles conservées ?", a: "Oui — les polices sont intégrées au PDF pour que le document soit identique partout." },
+      { q: "DOC ou DOCX ?", a: "Les deux formats sont pris en charge. DOCX est recommandé pour de meilleurs résultats." },
+    ],
+  },
+  "merge-pdf": {
+    faqs: [
+      { q: "Comment fusionner des fichiers PDF ?", a: "Téléversez tous les fichiers, réorganisez les pages par glisser-déposer, puis fusionnez — vous obtenez un seul PDF." },
+      { q: "Puis-je faire pivoter des pages ?", a: "Oui — faites pivoter des pages individuelles avant le téléchargement." },
+      { q: "Y a-t-il une limite de fichiers ?", a: "Offre gratuite : jusqu'à 5 opérations par jour. Premium : illimité." },
     ],
   },
 };
@@ -264,6 +292,20 @@ const ru: LocalizedContent = {
       { q: "В какой формат сжимать?", a: "Для веб-фото — WEBP или JPG. Для графики с прозрачностью — сжатый PNG." },
     ],
   },
+  "word-to-pdf": {
+    faqs: [
+      { q: "Зачем конвертировать Word в PDF?", a: "PDF сохраняет вёрстку на любом устройстве — идеально для отправки, печати и электронной подписи." },
+      { q: "Сохраняются ли шрифты?", a: "Да — шрифты встраиваются в PDF, поэтому документ выглядит одинаково везде." },
+      { q: "DOC или DOCX?", a: "Поддерживаются оба формата. DOCX рекомендуется для лучшего результата." },
+    ],
+  },
+  "merge-pdf": {
+    faqs: [
+      { q: "Как объединить PDF-файлы?", a: "Загрузите все файлы, упорядочьте страницы перетаскиванием и нажмите «Объединить» — получите один PDF." },
+      { q: "Можно ли поворачивать страницы?", a: "Да — поворачивайте отдельные страницы перед скачиванием." },
+      { q: "Есть ли лимит файлов?", a: "Бесплатный план: до 5 операций в день. Премиум: без ограничений." },
+    ],
+  },
 };
 
 const de: LocalizedContent = {
@@ -288,6 +330,20 @@ const de: LocalizedContent = {
       { q: "In welches Format soll ich komprimieren?", a: "Für Webfotos — WEBP oder JPG. Für Grafiken mit Transparenz — komprimiertes PNG." },
     ],
   },
+  "word-to-pdf": {
+    faqs: [
+      { q: "Warum Word in PDF konvertieren?", a: "PDF fixiert das Layout auf jedem Gerät — perfekt zum Senden, Drucken und für digitale Signaturen." },
+      { q: "Bleiben Schriftarten erhalten?", a: "Ja — Schriftarten werden im PDF eingebettet, sodass das Dokument überall identisch aussieht." },
+      { q: "DOC oder DOCX?", a: "Beide Formate werden unterstützt. DOCX wird für beste Ergebnisse empfohlen." },
+    ],
+  },
+  "merge-pdf": {
+    faqs: [
+      { q: "Wie füge ich PDF-Dateien zusammen?", a: "Laden Sie alle Dateien hoch, ordnen Sie die Seiten per Drag-and-Drop und klicken Sie auf Zusammenführen — Sie erhalten ein PDF." },
+      { q: "Kann ich Seiten drehen?", a: "Ja — drehen Sie einzelne Seiten vor dem Download." },
+      { q: "Gibt es ein Dateilimit?", a: "Kostenloser Plan: bis zu 5 Operationen pro Tag. Premium: unbegrenzt." },
+    ],
+  },
 };
 
 const it: LocalizedContent = {
@@ -310,6 +366,20 @@ const it: LocalizedContent = {
       { q: "Quanto posso comprimere un'immagine?", a: "Dipende dal formato originale. JPG e WEBP si comprimono significativamente; PNG meno, ma il peso può comunque essere ridotto." },
       { q: "La compressione riduce la qualità?", a: "Lo strumento bilancia dimensione e qualità. Per la maggior parte dei siti web, una compressione moderata è appena percettibile." },
       { q: "In quale formato comprimere?", a: "Per foto web — WEBP o JPG. Per grafica con trasparenza — PNG compresso." },
+    ],
+  },
+  "word-to-pdf": {
+    faqs: [
+      { q: "Perché convertire Word in PDF?", a: "Il PDF mantiene il layout su qualsiasi dispositivo — perfetto per invio, stampa e firme digitali." },
+      { q: "I font vengono conservati?", a: "Sì — i font sono incorporati nel PDF così il documento appare identico ovunque." },
+      { q: "DOC o DOCX?", a: "Entrambi i formati sono supportati. DOCX è consigliato per i migliori risultati." },
+    ],
+  },
+  "merge-pdf": {
+    faqs: [
+      { q: "Come unisco file PDF?", a: "Carica tutti i file, riordina le pagine trascinandole e clicca Unisci — otterrai un unico PDF." },
+      { q: "Posso ruotare le pagine?", a: "Sì — ruota le singole pagine prima del download." },
+      { q: "C'è un limite di file?", a: "Piano gratuito: fino a 5 operazioni al giorno. Premium: illimitato." },
     ],
   },
 };
