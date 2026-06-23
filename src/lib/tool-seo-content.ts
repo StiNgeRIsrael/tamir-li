@@ -237,6 +237,20 @@ const es: LocalizedContent = {
       { q: "¿Hay límite de tamaño de archivo?", a: "Plan gratuito: hasta 50 MB por archivo. Premium: hasta 500 MB." },
     ],
   },
+  "audio-converter": {
+    comparisonHeaders: { format: "Formato", bestFor: "Ideal para", size: "Tamaño", quality: "Calidad" },
+    formatComparison: [
+      { format: "MP3", bestFor: "Escuchar, compartir", size: "Pequeño", quality: "Buena (con pérdida)" },
+      { format: "WAV", bestFor: "Edición, estudio", size: "Grande", quality: "Sin pérdida" },
+      { format: "FLAC", bestFor: "Colecciones de música", size: "Mediano", quality: "Sin pérdida" },
+      { format: "AAC", bestFor: "iPhone, streaming", size: "Pequeño", quality: "Muy buena" },
+    ],
+    faqs: [
+      { q: "¿MP3 o WAV — cuál elegir?", a: "WAV para edición con calidad total. MP3 para compartir a diario — archivo más pequeño." },
+      { q: "¿Puedo convertir canciones de YouTube?", a: "Sube un archivo de audio que ya tengas. No descargamos contenido de YouTube." },
+      { q: "¿Se conservan los metadatos (artista, álbum)?", a: "La mayoría de los metadatos se conservan al convertir entre formatos comunes." },
+    ],
+  },
   "word-to-pdf": {
     faqs: [
       { q: "¿Por qué convertir Word a PDF?", a: "PDF fija el diseño en cualquier dispositivo — perfecto para enviar, imprimir y firmas digitales." },
@@ -301,6 +315,20 @@ const fr: LocalizedContent = {
       { q: "Quel format vidéo est le plus courant ?", a: "MP4 (H.264) est la norme pour YouTube, WhatsApp, Instagram et les appareils mobiles." },
       { q: "Combien de temps dure une conversion vidéo ?", a: "Cela dépend de la durée et de la taille du fichier. Les clips courts (moins d'une minute) se convertissent en quelques secondes à quelques minutes." },
       { q: "Y a-t-il une limite de taille de fichier ?", a: "Offre gratuite : jusqu'à 50 Mo par fichier. Premium : jusqu'à 500 Mo." },
+    ],
+  },
+  "audio-converter": {
+    comparisonHeaders: { format: "Format", bestFor: "Idéal pour", size: "Taille", quality: "Qualité" },
+    formatComparison: [
+      { format: "MP3", bestFor: "Écoute, partage", size: "Petit", quality: "Bonne (avec perte)" },
+      { format: "WAV", bestFor: "Montage, studio", size: "Grand", quality: "Sans perte" },
+      { format: "FLAC", bestFor: "Collections musicales", size: "Moyen", quality: "Sans perte" },
+      { format: "AAC", bestFor: "iPhone, streaming", size: "Petit", quality: "Très bonne" },
+    ],
+    faqs: [
+      { q: "MP3 ou WAV — lequel choisir ?", a: "WAV pour une édition en qualité maximale. MP3 pour le partage quotidien — fichier plus petit." },
+      { q: "Puis-je convertir des chansons depuis YouTube ?", a: "Téléversez un fichier audio que vous possédez déjà. Nous ne téléchargeons pas de contenu depuis YouTube." },
+      { q: "Les métadonnées (artiste, album) sont-elles conservées ?", a: "La plupart des métadonnées sont conservées lors de la conversion entre formats courants." },
     ],
   },
   "word-to-pdf": {
@@ -369,6 +397,20 @@ const ru: LocalizedContent = {
       { q: "Есть ли ограничение по размеру файла?", a: "Бесплатный план: до 50 МБ на файл. Премиум: до 500 МБ." },
     ],
   },
+  "audio-converter": {
+    comparisonHeaders: { format: "Формат", bestFor: "Подходит для", size: "Размер", quality: "Качество" },
+    formatComparison: [
+      { format: "MP3", bestFor: "Прослушивание, обмен", size: "Малый", quality: "Хорошее (с потерями)" },
+      { format: "WAV", bestFor: "Редактирование, студия", size: "Большой", quality: "Без потерь" },
+      { format: "FLAC", bestFor: "Музыкальные коллекции", size: "Средний", quality: "Без потерь" },
+      { format: "AAC", bestFor: "iPhone, стриминг", size: "Малый", quality: "Очень хорошее" },
+    ],
+    faqs: [
+      { q: "MP3 или WAV — что выбрать?", a: "WAV для редактирования в полном качестве. MP3 для повседневного обмена — меньший размер файла." },
+      { q: "Можно ли конвертировать песни с YouTube?", a: "Загрузите аудиофайл, который у вас уже есть. Мы не скачиваем контент с YouTube." },
+      { q: "Сохраняются ли метаданные (исполнитель, альбом)?", a: "Большинство метаданных сохраняется при конвертации между распространёнными форматами." },
+    ],
+  },
   "word-to-pdf": {
     faqs: [
       { q: "Зачем конвертировать Word в PDF?", a: "PDF сохраняет вёрстку на любом устройстве — идеально для отправки, печати и электронной подписи." },
@@ -435,6 +477,20 @@ const de: LocalizedContent = {
       { q: "Gibt es ein Dateigrößenlimit?", a: "Kostenloser Plan: bis zu 50 MB pro Datei. Premium: bis zu 500 MB." },
     ],
   },
+  "audio-converter": {
+    comparisonHeaders: { format: "Format", bestFor: "Ideal für", size: "Größe", quality: "Qualität" },
+    formatComparison: [
+      { format: "MP3", bestFor: "Hören, Teilen", size: "Klein", quality: "Gut (verlustbehaftet)" },
+      { format: "WAV", bestFor: "Bearbeitung, Studio", size: "Groß", quality: "Verlustfrei" },
+      { format: "FLAC", bestFor: "Musiksammlungen", size: "Mittel", quality: "Verlustfrei" },
+      { format: "AAC", bestFor: "iPhone, Streaming", size: "Klein", quality: "Sehr gut" },
+    ],
+    faqs: [
+      { q: "MP3 oder WAV — was wählen?", a: "WAV für Bearbeitung in voller Qualität. MP3 für den Alltag — kleinere Dateigröße." },
+      { q: "Kann ich Songs von YouTube konvertieren?", a: "Laden Sie eine Audiodatei hoch, die Sie bereits haben. Wir laden keine Inhalte von YouTube herunter." },
+      { q: "Bleiben Metadaten (Künstler, Album) erhalten?", a: "Die meisten Metadaten bleiben bei der Konvertierung zwischen gängigen Formaten erhalten." },
+    ],
+  },
   "word-to-pdf": {
     faqs: [
       { q: "Warum Word in PDF konvertieren?", a: "PDF fixiert das Layout auf jedem Gerät — perfekt zum Senden, Drucken und für digitale Signaturen." },
@@ -499,6 +555,20 @@ const it: LocalizedContent = {
       { q: "Quale formato video è il più comune?", a: "MP4 (H.264) è lo standard per YouTube, WhatsApp, Instagram e dispositivi mobili." },
       { q: "Quanto tempo richiede la conversione video?", a: "Dipende dalla durata e dalla dimensione del file. Clip brevi (sotto un minuto) si convertono in secondi o pochi minuti." },
       { q: "C'è un limite di dimensione del file?", a: "Piano gratuito: fino a 50 MB per file. Premium: fino a 500 MB." },
+    ],
+  },
+  "audio-converter": {
+    comparisonHeaders: { format: "Formato", bestFor: "Ideale per", size: "Dimensione", quality: "Qualità" },
+    formatComparison: [
+      { format: "MP3", bestFor: "Ascolto, condivisione", size: "Piccolo", quality: "Buona (con perdita)" },
+      { format: "WAV", bestFor: "Montaggio, studio", size: "Grande", quality: "Senza perdita" },
+      { format: "FLAC", bestFor: "Collezioni musicali", size: "Medio", quality: "Senza perdita" },
+      { format: "AAC", bestFor: "iPhone, streaming", size: "Piccolo", quality: "Molto buona" },
+    ],
+    faqs: [
+      { q: "MP3 o WAV — quale scegliere?", a: "WAV per la modifica a qualità piena. MP3 per la condivisione quotidiana — file più piccolo." },
+      { q: "Posso convertire brani da YouTube?", a: "Carica un file audio che hai già. Non scarichiamo contenuti da YouTube." },
+      { q: "I metadati (artista, album) vengono conservati?", a: "La maggior parte dei metadati si conserva convertendo tra formati comuni." },
     ],
   },
   "word-to-pdf": {
