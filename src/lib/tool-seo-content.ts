@@ -251,6 +251,13 @@ const es: LocalizedContent = {
       { q: "¿Se conservan los metadatos (artista, álbum)?", a: "La mayoría de los metadatos se conservan al convertir entre formatos comunes." },
     ],
   },
+  "pdf-to-word": {
+    faqs: [
+      { q: "¿Se conserva el formato?", a: "La herramienta mantiene la estructura del documento, encabezados y tablas. Diseños muy complejos pueden requerir pequeños ajustes en Word." },
+      { q: "¿Qué versión de Word se admite?", a: "La salida es DOCX — compatible con Microsoft Word 2007 y superior, Google Docs y LibreOffice." },
+      { q: "¿Puedo convertir PDF escaneados?", a: "Los PDF escaneados (imágenes) requieren OCR. Para documentos escaneados, prueba nuestra herramienta OCR." },
+    ],
+  },
   "word-to-pdf": {
     faqs: [
       { q: "¿Por qué convertir Word a PDF?", a: "PDF fija el diseño en cualquier dispositivo — perfecto para enviar, imprimir y firmas digitales." },
@@ -329,6 +336,13 @@ const fr: LocalizedContent = {
       { q: "MP3 ou WAV — lequel choisir ?", a: "WAV pour une édition en qualité maximale. MP3 pour le partage quotidien — fichier plus petit." },
       { q: "Puis-je convertir des chansons depuis YouTube ?", a: "Téléversez un fichier audio que vous possédez déjà. Nous ne téléchargeons pas de contenu depuis YouTube." },
       { q: "Les métadonnées (artiste, album) sont-elles conservées ?", a: "La plupart des métadonnées sont conservées lors de la conversion entre formats courants." },
+    ],
+  },
+  "pdf-to-word": {
+    faqs: [
+      { q: "La mise en forme est-elle conservée ?", a: "L'outil conserve la structure du document, les titres et les tableaux. Les mises en page très complexes peuvent nécessiter de légers ajustements dans Word." },
+      { q: "Quelle version de Word est prise en charge ?", a: "La sortie est au format DOCX — compatible avec Microsoft Word 2007 et plus, Google Docs et LibreOffice." },
+      { q: "Puis-je convertir des PDF numérisés ?", a: "Les PDF numérisés (images) nécessitent l'OCR. Pour les documents numérisés, essayez notre outil OCR." },
     ],
   },
   "word-to-pdf": {
@@ -411,6 +425,13 @@ const ru: LocalizedContent = {
       { q: "Сохраняются ли метаданные (исполнитель, альбом)?", a: "Большинство метаданных сохраняется при конвертации между распространёнными форматами." },
     ],
   },
+  "pdf-to-word": {
+    faqs: [
+      { q: "Сохраняется ли форматирование?", a: "Инструмент сохраняет структуру документа, заголовки и таблицы. Очень сложные макеты могут потребовать небольших правок в Word." },
+      { q: "Какая версия Word поддерживается?", a: "Результат — DOCX, совместимый с Microsoft Word 2007 и новее, Google Docs и LibreOffice." },
+      { q: "Можно ли конвертировать отсканированные PDF?", a: "Отсканированные PDF (изображения) требуют OCR. Для отсканированных документов попробуйте наш инструмент OCR." },
+    ],
+  },
   "word-to-pdf": {
     faqs: [
       { q: "Зачем конвертировать Word в PDF?", a: "PDF сохраняет вёрстку на любом устройстве — идеально для отправки, печати и электронной подписи." },
@@ -491,6 +512,13 @@ const de: LocalizedContent = {
       { q: "Bleiben Metadaten (Künstler, Album) erhalten?", a: "Die meisten Metadaten bleiben bei der Konvertierung zwischen gängigen Formaten erhalten." },
     ],
   },
+  "pdf-to-word": {
+    faqs: [
+      { q: "Bleibt die Formatierung erhalten?", a: "Das Tool behält Dokumentstruktur, Überschriften und Tabellen bei. Sehr komplexe Layouts können geringfügige Anpassungen in Word erfordern." },
+      { q: "Welche Word-Version wird unterstützt?", a: "Die Ausgabe ist DOCX — kompatibel mit Microsoft Word 2007 und neuer, Google Docs und LibreOffice." },
+      { q: "Kann ich gescannte PDFs konvertieren?", a: "Gescannte PDFs (Bilder) benötigen OCR. Für gescannte Dokumente probieren Sie unser OCR-Tool." },
+    ],
+  },
   "word-to-pdf": {
     faqs: [
       { q: "Warum Word in PDF konvertieren?", a: "PDF fixiert das Layout auf jedem Gerät — perfekt zum Senden, Drucken und für digitale Signaturen." },
@@ -569,6 +597,13 @@ const it: LocalizedContent = {
       { q: "MP3 o WAV — quale scegliere?", a: "WAV per la modifica a qualità piena. MP3 per la condivisione quotidiana — file più piccolo." },
       { q: "Posso convertire brani da YouTube?", a: "Carica un file audio che hai già. Non scarichiamo contenuti da YouTube." },
       { q: "I metadati (artista, album) vengono conservati?", a: "La maggior parte dei metadati si conserva convertendo tra formati comuni." },
+    ],
+  },
+  "pdf-to-word": {
+    faqs: [
+      { q: "La formattazione viene conservata?", a: "Lo strumento mantiene struttura del documento, titoli e tabelle. Layout molto complessi possono richiedere piccoli aggiustamenti in Word." },
+      { q: "Quale versione di Word è supportata?", a: "L'output è DOCX — compatibile con Microsoft Word 2007 e successivi, Google Docs e LibreOffice." },
+      { q: "Posso convertire PDF scansionati?", a: "I PDF scansionati (immagini) richiedono OCR. Per documenti scansionati, prova il nostro strumento OCR." },
     ],
   },
   "word-to-pdf": {
