@@ -53,6 +53,15 @@ Set before `npm run build` / CI deploy; rebuild required after changes.
 
 Do **not** put Adsterra Publisher API keys or server secrets in `VITE_*`.
 
+### Ads — GitHub Actions secrets (build-time)
+
+Add under **Settings → Secrets and variables → Actions** (repo `StiNgeRIsrael/tamir-li`). CI passes these into `npm run build` via [`deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml); empty/missing values bake as `""` in `dist/` and ads stay hidden:
+
+- `VITE_ADSTERRA_ZONE_BANNER`, `VITE_ADSTERRA_ZONE_SIDEBAR`, `VITE_ADSTERRA_ZONE_SIDEBAR_2`, `VITE_ADSTERRA_ZONE_INLINE`
+- `VITE_ADSTERRA_POPUNDER_SCRIPT_URL`, `VITE_ADSTERRA_NATIVE_SCRIPT_URL`, `VITE_ADSTERRA_NATIVE_CONTAINER_ID`, `VITE_ADSTERRA_INVOKE_HOST`
+
+After adding or updating secrets, re-run **Deploy to Plesk** (push to `main` or workflow_dispatch).
+
 ## Runtime (Plesk → Node.js → Custom environment variables)
 
 | Variable | Required | Notes |
