@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { getStoredConsent } from "@/lib/ads/consent";
+import { useAdsConsent } from "@/hooks/useAdsConsent";
 import {
   getNativeAdConfig,
   hasNativeAdConfigured,
@@ -27,19 +27,13 @@ function AdFallbackMessage({ label }: { label: string }) {
 export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
-  const [hasConsent, setHasConsent] = useState(() => getStoredConsent()?.ads === true);
+  const hasConsent = useAdsConsent();
   const [nativeLoaded, setNativeLoaded] = useState(false);
   const label = t.adLabel || "Ad";
   const config = getNativeAdConfig();
   const clientReady = isAdsterraConfigured() && hasConsent && !isPremium;
   const showLiveAd = clientReady && hasNativeAdConfigured();
   const pendingSlot = clientReady && !hasNativeAdConfigured();
-
-  useEffect(() => {
-    const syncConsent = () => setHasConsent(getStoredConsent()?.ads === true);
-    window.addEventListener("tamir:consent", syncConsent);
-    return () => window.removeEventListener("tamir:consent", syncConsent);
-  }, []);
 
   useEffect(() => {
     if (!showLiveAd || !config) {

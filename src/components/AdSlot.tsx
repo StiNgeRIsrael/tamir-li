@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { getStoredConsent } from "@/lib/ads/consent";
 import {
   buildAdIframeSrcdoc,
   getAdsterraZoneKey,
@@ -10,6 +9,7 @@ import {
   isAdsterraConfigured,
   triggerPopunderAd,
 } from "@/lib/ads/adsterra";
+import { useAdsConsent } from "@/hooks/useAdsConsent";
 import { useSubscription } from "@/hooks/useSubscription";
 import { showAdVignette } from "@/components/ads/AdVignette";
 
@@ -62,12 +62,12 @@ function AdFallbackMessage({ label, className }: { label: string; className?: st
 export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
+  const hasConsent = useAdsConsent();
   const L = layout[type];
   const label = t.adLabel || "Ad";
   const dims = getPlacementLayout(type);
 
   const zoneKey = getAdsterraZoneKey(type, slotId);
-  const hasConsent = getStoredConsent()?.ads === true;
   const clientReady = isAdsterraConfigured() && hasConsent && !isPremium;
   const showLiveAd = clientReady && hasAdsterraZone(type, slotId);
   const pendingSlot = clientReady && !hasAdsterraZone(type, slotId);
