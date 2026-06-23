@@ -75,9 +75,11 @@ export default function PremiumPage() {
     }
   };
 
+  const displayAnchorPrice = isYearly ? u.anchorPriceYearlyPerMonth : u.anchorPriceMonthly;
   const displayPrice = isYearly ? u.priceYearlyPerMonth : u.priceMonthly;
   const displayPeriod = u.periodMonthly;
   const billedNote = isYearly ? u.billedYearly : u.billedMonthly;
+  const totalAnchorPrice = isYearly ? u.anchorPriceYearly : u.anchorPriceMonthly;
   const totalPrice = isYearly ? u.priceYearly : u.priceMonthly;
   const totalPeriod = isYearly ? u.periodYearly : u.periodMonthly;
 
@@ -122,13 +124,18 @@ export default function PremiumPage() {
 
           {/* Price card */}
           <div className="max-w-sm mx-auto bg-card border-2 border-premium rounded-2xl p-6 shadow-lg shadow-premium/10 space-y-4">
-            <div className="flex items-baseline justify-center gap-1">
-              <span className="text-5xl font-black text-foreground">{displayPrice}</span>
+            <div className="flex items-baseline justify-center gap-2 flex-wrap">
+              <span className="text-2xl font-semibold text-muted-foreground line-through decoration-muted-foreground/70">
+                {displayAnchorPrice}
+              </span>
+              <span className="text-5xl font-black text-premium">{displayPrice}</span>
               <span className="text-lg text-muted-foreground font-medium">{displayPeriod}</span>
             </div>
             {isYearly && (
               <p className="text-xs text-muted-foreground">
-                {totalPrice}{totalPeriod}
+                <span className="line-through me-1.5 text-muted-foreground/80">{totalAnchorPrice}</span>
+                <span className="font-semibold text-foreground">{totalPrice}</span>
+                {totalPeriod}
               </p>
             )}
             <p className="text-xs text-muted-foreground">{billedNote}</p>
@@ -276,7 +283,7 @@ export default function PremiumPage() {
               disabled={checkoutLoading}
             >
               <Zap className="w-5 h-5 me-2" />
-              {u.ctaMain} — {displayPrice}{displayPeriod}
+              {u.ctaMain} — <span className="line-through opacity-70 font-normal">{displayAnchorPrice}</span> {displayPrice}{displayPeriod}
             </Button>
             <p className="text-xs text-muted-foreground">
               <Link to={localePath("/", locale)} className="text-primary hover:underline">{u.orGoHome}</Link>

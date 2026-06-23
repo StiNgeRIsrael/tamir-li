@@ -259,7 +259,7 @@ export const deTranslations = {
   switchLanguage: "Sprache",
   notFound: { title: "404", text: "Seite nicht gefunden", backHome: "Zur Startseite" },
   premium: {
-    price: "€1.19/Monat", upgradeTo: "Premium Upgrade",
+    price: "₪19.90/Monat", upgradeTo: "Premium Upgrade",
     unlimitedNoAds: "Unbegrenzte Konvertierungen, keine Werbung und schnellere Verarbeitung",
     unlockTitle: "Tool Freigeschaltet!", unlockDesc: "Sie haben eine kostenlose Videokonvertierung erhalten.",
     lockTitle: "Premium — Videokonvertierung",
@@ -375,14 +375,16 @@ export const deTranslations = {
     orGoHome: "oder zur Startseite", andConvert: "und konvertieren Sie direkt im Browser",
   },
   upgradePage: {
-    seoTitle: "Premium Upgrade — Tamirly", seoDesc: "Unbegrenzte Konvertierungen, keine Werbung — nur €1.19/Monat.",
+    seoTitle: "Premium Upgrade — Tamirly", seoDesc: "Unbegrenzte Konvertierungen, keine Werbung — nur ₪19.90/Monat (statt ₪150).",
     badge: "Premium", headline: "Unbegrenzte Konvertierungen. Keine Werbung.",
     subheadline: "Optionales Abo — der kostenlose Plan (5/Tag) bleibt. Premium hebt Limits, Werbung auf und schaltet KI-Tools frei.",
     monthlyLabel: "Monatlich", yearlyLabel: "Jährlich", yearlySave: "20% sparen",
-    priceMonthly: "€1.19", priceYearly: "€11.42", priceYearlyPerMonth: "€0.95",
+    anchorPriceMonthly: "₪150", priceMonthly: "₪19.90",
+    anchorPriceYearlyPerMonth: "₪150", priceYearlyPerMonth: "₪15.92",
+    anchorPriceYearly: "₪1,800", priceYearly: "₪191.04",
     periodMonthly: "/Monat", periodYearly: "/Jahr",
     billedMonthly: "Monatliche Abrechnung. Jederzeit kündbar.",
-    billedYearly: "Jährliche Abrechnung — €11.42/Jahr. Jederzeit kündbar.",
+    billedYearly: "Jährliche Abrechnung — ₪191.04/Jahr (statt ₪1,800). Jederzeit kündbar.",
     perMonthNote: "/Mo",
     ctaMain: "Jetzt Upgraden", guarantee: "Erstattungsrichtlinie — siehe FAQ",
     features: [

@@ -147,7 +147,7 @@ export const esTranslations = {
   faqTitle: "Preguntas Frecuentes",
   faqs: [
     { q: "¿Cómo convierto un archivo?", a: "Arrastra tu archivo al área de carga, elige el formato deseado y haz clic en 'Convertir'. Tu archivo estará listo en segundos." },
-    { q: "¿Es realmente gratis?", a: "¡Sí! Puedes hacer hasta 5 conversiones gratis al día. Los suscriptores Premium ($1.29/mes) obtienen conversiones ilimitadas." },
+    { q: "¿Es realmente gratis?", a: "¡Sí! Puedes hacer hasta 5 conversiones gratis al día. Los suscriptores Premium (₪19.90/mes) obtienen conversiones ilimitadas." },
     { q: "¿Qué formatos son compatibles?", a: "Soportamos: Imágenes (JPG, PNG, WEBP, GIF, BMP, TIFF, SVG), Video (MP4, AVI, MOV, MKV, WEBM), Audio (MP3, WAV, AAC, OGG, FLAC) y Documentos (PDF, DOCX, TXT)." },
     { q: "¿Mis archivos están seguros?", a: "Absolutamente. Los archivos se procesan de forma segura y se eliminan inmediatamente después de la conversión." },
     { q: "¿Necesito instalar software?", a: "No. Tamirly funciona directamente en tu navegador, sin descargas ni instalaciones." },
@@ -285,7 +285,7 @@ export const esTranslations = {
     seoTitle: "Tamirly — El Conversor de Archivos Online Líder",
     seoText1: "Tamirly es un conversor de archivos online líder que te permite convertir rápida y gratuitamente entre diferentes formatos.",
     seoText2: "Soporta: Imágenes (JPG, PNG, WEBP, GIF, BMP, TIFF, SVG, ICO), Video (MP4, AVI, MOV, MKV, WEBM), Audio (MP3, WAV, AAC, OGG, FLAC) y Documentos (PDF, DOCX, DOC, TXT).",
-    seoText3: "Tamirly es gratis con hasta 5 conversiones al día. Suscripción Premium a $1.29/mes para conversiones ilimitadas.",
+    seoText3: "Tamirly es gratis con hasta 5 conversiones al día. Suscripción Premium a ₪19.90/mes para conversiones ilimitadas.",
     copyright: (year: number) => `© ${year} Tamirly • Todos los derechos reservados`,
   },
   blog: {
@@ -315,7 +315,7 @@ export const esTranslations = {
   switchLanguage: "Idioma",
   notFound: { title: "404", text: "¡Ups! Página no encontrada", backHome: "Volver al Inicio" },
   premium: {
-    price: "€1.19/mes", upgradeTo: "Mejora a Premium",
+    price: "₪19.90/mes", upgradeTo: "Mejora a Premium",
     unlimitedNoAds: "Conversiones ilimitadas, sin anuncios y procesamiento más rápido",
     unlockTitle: "¡Herramienta Desbloqueada!", unlockDesc: "Obtuviste una conversión de video gratis. Sube un archivo para comenzar.",
     lockTitle: "Herramienta Premium — Conversión de Video",
@@ -431,14 +431,16 @@ export const esTranslations = {
     orGoHome: "o vuelve al inicio", andConvert: "y empieza a convertir desde el navegador",
   },
   upgradePage: {
-    seoTitle: "Mejora a Premium — Tamirly", seoDesc: "Conversiones ilimitadas, sin anuncios, imágenes IA — solo €1.19/mes.",
+    seoTitle: "Mejora a Premium — Tamirly", seoDesc: "Conversiones ilimitadas, sin anuncios, imágenes IA — solo ₪19.90/mes (antes ₪150).",
     badge: "Premium", headline: "Conversiones Ilimitadas. Cero Anuncios.",
     subheadline: "Suscripción opcional — tu plan gratis (5/día) sigue igual. Premium elimina límites, anuncios y desbloquea herramientas IA.",
     monthlyLabel: "Mensual", yearlyLabel: "Anual", yearlySave: "Ahorra 20%",
-    priceMonthly: "€1.19", priceYearly: "€11.42", priceYearlyPerMonth: "€0.95",
+    anchorPriceMonthly: "₪150", priceMonthly: "₪19.90",
+    anchorPriceYearlyPerMonth: "₪150", priceYearlyPerMonth: "₪15.92",
+    anchorPriceYearly: "₪1,800", priceYearly: "₪191.04",
     periodMonthly: "/mes", periodYearly: "/año",
     billedMonthly: "Facturación mensual. Cancela cuando quieras.",
-    billedYearly: "Facturación anual a €11.42/año. Cancela cuando quieras.",
+    billedYearly: "Facturación anual a ₪191.04/año (antes ₪1,800). Cancela cuando quieras.",
     perMonthNote: "/mes",
     ctaMain: "Mejorar Ahora", guarantee: "Política de reembolso — ver FAQ",
     features: [

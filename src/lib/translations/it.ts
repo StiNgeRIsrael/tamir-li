@@ -259,7 +259,7 @@ export const itTranslations = {
   switchLanguage: "Lingua",
   notFound: { title: "404", text: "Ops! Pagina non trovata", backHome: "Torna alla Home" },
   premium: {
-    price: "€1.19/mese", upgradeTo: "Passa a Premium",
+    price: "₪19.90/mese", upgradeTo: "Passa a Premium",
     unlimitedNoAds: "Conversioni illimitate, senza pubblicità e elaborazione più veloce",
     unlockTitle: "Strumento Sbloccato!", unlockDesc: "Hai ottenuto una conversione video gratuita.",
     lockTitle: "Strumento Premium — Conversione Video",
@@ -375,14 +375,16 @@ export const itTranslations = {
     orGoHome: "o torna alla home", andConvert: "e converti direttamente dal browser",
   },
   upgradePage: {
-    seoTitle: "Passa a Premium — Tamirly", seoDesc: "Conversioni illimitate, senza pubblicità — solo €1.19/mese.",
+    seoTitle: "Passa a Premium — Tamirly", seoDesc: "Conversioni illimitate, senza pubblicità — solo ₪19.90/mese (invece di ₪150).",
     badge: "Premium", headline: "Conversioni Illimitate. Zero Pubblicità.",
     subheadline: "Abbonamento opzionale — il piano gratuito (5/giorno) resta. Premium rimuove limiti, pubblicità e sblocca strumenti IA.",
     monthlyLabel: "Mensile", yearlyLabel: "Annuale", yearlySave: "Risparmia 20%",
-    priceMonthly: "€1.19", priceYearly: "€11.42", priceYearlyPerMonth: "€0.95",
+    anchorPriceMonthly: "₪150", priceMonthly: "₪19.90",
+    anchorPriceYearlyPerMonth: "₪150", priceYearlyPerMonth: "₪15.92",
+    anchorPriceYearly: "₪1,800", priceYearly: "₪191.04",
     periodMonthly: "/mese", periodYearly: "/anno",
     billedMonthly: "Fatturazione mensile. Cancella quando vuoi.",
-    billedYearly: "Fatturazione annuale — €11.42/anno. Cancella quando vuoi.",
+    billedYearly: "Fatturazione annuale — ₪191.04/anno (invece di ₪1,800). Cancella quando vuoi.",
     perMonthNote: "/mese",
     ctaMain: "Passa a Premium", guarantee: "Politica di rimborso — vedi FAQ",
     features: [
