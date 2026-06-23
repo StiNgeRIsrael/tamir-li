@@ -92,7 +92,7 @@ export default function PremiumPage() {
             <Crown className="w-4 h-4" />
             {u.badge}
           </div>
-          <h1 className="text-4xl lg:text-5xl font-black text-foreground leading-tight tracking-tight">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground leading-tight tracking-tight">
             {u.headline}
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
@@ -100,7 +100,7 @@ export default function PremiumPage() {
           </p>
 
           {/* Billing toggle */}
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
             <span className={`text-sm font-medium ${!isYearly ? "text-foreground" : "text-muted-foreground"}`}>
               {u.monthlyLabel}
             </span>
@@ -175,23 +175,25 @@ export default function PremiumPage() {
         {/* Comparison table */}
         <section className="space-y-4">
           <h2 className="text-2xl font-bold text-foreground text-center">{u.comparisonTitle}</h2>
-          <div className="bg-card border border-border rounded-2xl overflow-hidden">
-            <div className="grid grid-cols-3 text-sm font-bold border-b border-border">
-              <div className="p-4 text-muted-foreground">{headers.feature}</div>
-              <div className="p-4 text-center text-muted-foreground">{headers.free}</div>
-              <div className="p-4 text-center text-premium bg-premium/5">{headers.premium}</div>
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="bg-card border border-border rounded-2xl overflow-hidden min-w-[280px]">
+            <div className="grid grid-cols-3 text-xs sm:text-sm font-bold border-b border-border">
+              <div className="p-2.5 sm:p-4 text-muted-foreground">{headers.feature}</div>
+              <div className="p-2.5 sm:p-4 text-center text-muted-foreground">{headers.free}</div>
+              <div className="p-2.5 sm:p-4 text-center text-premium bg-premium/5">{headers.premium}</div>
             </div>
             {(rows as { feature: string; free: string; premium: string }[]).map((row, i: number) => (
-              <div key={i} className={`grid grid-cols-3 text-sm ${i % 2 === 0 ? "" : "bg-muted/30"} ${i === rows.length - 1 ? "" : "border-b border-border/50"}`}>
-                <div className="p-4 font-medium text-foreground">{row.feature}</div>
-                <div className="p-4 text-center text-muted-foreground">{row.free}</div>
-                <div className="p-4 text-center font-semibold text-premium bg-premium/5">
+              <div key={i} className={`grid grid-cols-3 text-xs sm:text-sm ${i % 2 === 0 ? "" : "bg-muted/30"} ${i === rows.length - 1 ? "" : "border-b border-border/50"}`}>
+                <div className="p-2.5 sm:p-4 font-medium text-foreground">{row.feature}</div>
+                <div className="p-2.5 sm:p-4 text-center text-muted-foreground">{row.free}</div>
+                <div className="p-2.5 sm:p-4 text-center font-semibold text-premium bg-premium/5">
                   {typeof row.premium === "string" && row.premium !== "—"
                     ? <span className="inline-flex items-center gap-1"><Check className="w-4 h-4" />{row.premium}</span>
                     : row.premium}
                 </div>
               </div>
             ))}
+          </div>
           </div>
         </section>
 
