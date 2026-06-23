@@ -242,6 +242,23 @@ const fr: LocalizedContent = {
   },
 };
 
+const ru: LocalizedContent = {
+  "image-converter": {
+    comparisonHeaders: { format: "Формат", bestFor: "Подходит для", size: "Размер", quality: "Качество" },
+    formatComparison: [
+      { format: "JPG", bestFor: "Фото, веб, почта", size: "Малый", quality: "Хорошее (с потерями)" },
+      { format: "PNG", bestFor: "Графика, прозрачность", size: "Средний–большой", quality: "Без потерь" },
+      { format: "WEBP", bestFor: "Современные сайты", size: "Очень малый", quality: "Отличное" },
+      { format: "GIF", bestFor: "Короткие анимации", size: "Разный", quality: "256 цветов" },
+    ],
+    faqs: [
+      { q: "В чём разница между JPG и PNG?", a: "JPG использует сжатие с потерями — идеально для фотографий. PNG без потерь и поддерживает прозрачность — отлично для логотипов и графики." },
+      { q: "Снижает ли конвертация качество?", a: "Конвертация в PNG или TIFF сохраняет полное качество. JPG или WEBP могут немного сжать — выбирайте по задаче." },
+      { q: "Сколько файлов можно конвертировать за раз?", a: "Загрузите несколько файлов и конвертируйте пакетом. Бесплатный план: до 5 конвертаций в день." },
+    ],
+  },
+};
+
 const de: LocalizedContent = {
   "image-converter": {
     comparisonHeaders: { format: "Format", bestFor: "Ideal für", size: "Größe", quality: "Qualität" },
@@ -276,7 +293,7 @@ const it: LocalizedContent = {
   },
 };
 
-const byLocale: Partial<Record<Locale, LocalizedContent>> = { he, en, es, fr, de, it };
+const byLocale: Partial<Record<Locale, LocalizedContent>> = { he, en, es, ru, fr, de, it };
 
 /** Top-tool SEO blocks (FAQ + optional format comparison). Falls back to English. */
 export function getToolSeoContent(toolId: string, locale: Locale): ToolSeoContent | null {
