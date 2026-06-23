@@ -73,6 +73,13 @@ Do **not** put Adsterra Publisher API keys or server secrets in `VITE_*`.
 
 **Plesk quirk:** **Run Node.js commands** often does **not** inherit custom env — `run plesk:db` may fail with `Environment variable not found: DATABASE_URL`. That is expected; use restart auto-migrate or CI **run_server_setup** instead. Details: [plesk-mysql-troubleshooting.md §3](./plesk-mysql-troubleshooting.md#plesk-quirk-run-nodejs-commands-vs-runtime-env).
 
+## Admin bootstrap
+
+1. Set **`ADMIN_EMAILS`** in Plesk → Node.js → custom env — comma-separated Google account emails (trimmed, case-insensitive).
+2. On each Google sign-in, the backend upserts a **`UserRole`** row (`role = ADMIN`) when the email matches the list; every user also gets `USER`.
+3. To grant or revoke admin: update `ADMIN_EMAILS`, restart the app, then have the user sign in again — no manual SQL for normal bootstrap.
+4. Verify: sign in → open `/admin` (frontend `AdminGuard`); API routes under `/api/admin/*` require the `ADMIN` role in `UserRole`.
+
 ## ffmpeg (server-side audio converter)
 
 - Install on host: `apt install ffmpeg` (or hoster-provided path).
