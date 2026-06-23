@@ -20,3 +20,13 @@ Every ~30 minutes the worker runs `cleanupExpiredConversionJobs()` (`backend/src
 - Deletes the job directory under `CONVERSION_STORAGE_DIR` and the DB row.
 
 Configure in `backend/.env`: `CONVERSION_STORAGE_DIR`, `CONVERSION_JOB_TTL_HOURS`.
+
+## Stuck `PROCESSING` recovery
+
+The in-process worker is single-threaded. If the Node process restarts while a job is `PROCESSING`, that row would otherwise never complete.
+
+- **On startup** — `recoverInterruptedJobs()` resets all `PROCESSING` rows to `PENDING` so the worker picks them up again.
+- **During TTL cleanup** (~every 30 min) — `cleanupStuckProcessingJobs()` marks jobs still `PROCESSING` after **`CONVERSION_JOB_STUCK_MINUTES`** (default **60**) as `FAILED` with error `Conversion timed out`.
+- **Worker crash mid-job** — the `catch` block in `conversion-worker.ts` sets the job to `FAILED` immediately.
+
+Configure in `backend/.env`: `CONVERSION_JOB_STUCK_MINUTES` (optional; default 60).
