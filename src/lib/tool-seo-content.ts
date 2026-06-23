@@ -281,6 +281,13 @@ const de: LocalizedContent = {
       { q: "Wie viele Dateien kann ich gleichzeitig konvertieren?", a: "Laden Sie mehrere Dateien hoch und konvertieren Sie sie im Stapel. Kostenloser Plan: bis zu 5 Konversionen pro Tag." },
     ],
   },
+  "image-compressor": {
+    faqs: [
+      { q: "Wie stark kann ich ein Bild komprimieren?", a: "Hängt vom Quellformat ab. JPG und WEBP lassen sich deutlich komprimieren; PNG weniger, aber die Dateigröße kann trotzdem reduziert werden." },
+      { q: "Beeinträchtigt die Kompression die Qualität?", a: "Das Tool balanciert Größe und Qualität. Für die meisten Websites ist moderate Kompression kaum sichtbar." },
+      { q: "In welches Format soll ich komprimieren?", a: "Für Webfotos — WEBP oder JPG. Für Grafiken mit Transparenz — komprimiertes PNG." },
+    ],
+  },
 };
 
 const it: LocalizedContent = {
@@ -296,6 +303,13 @@ const it: LocalizedContent = {
       { q: "Qual è la differenza tra JPG e PNG?", a: "JPG usa la compressione con perdita — ideale per le foto. PNG è senza perdita e supporta la trasparenza — perfetto per loghi e grafica." },
       { q: "La conversione riduce la qualità?", a: "La conversione in PNG o TIFF conserva la qualità completa. JPG o WEBP possono comprimere leggermente — scegli in base all'uso." },
       { q: "Quanti file posso convertire contemporaneamente?", a: "Carica più file e convertili in batch. Piano gratuito: fino a 5 conversioni al giorno." },
+    ],
+  },
+  "image-compressor": {
+    faqs: [
+      { q: "Quanto posso comprimere un'immagine?", a: "Dipende dal formato originale. JPG e WEBP si comprimono significativamente; PNG meno, ma il peso può comunque essere ridotto." },
+      { q: "La compressione riduce la qualità?", a: "Lo strumento bilancia dimensione e qualità. Per la maggior parte dei siti web, una compressione moderata è appena percettibile." },
+      { q: "In quale formato comprimere?", a: "Per foto web — WEBP o JPG. Per grafica con trasparenza — PNG compresso." },
     ],
   },
 };
