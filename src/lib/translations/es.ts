@@ -452,7 +452,7 @@ export const esTranslations = {
     guaranteeTitle: "Garantía de Devolución del 100%",
     guaranteeDesc: "Respaldamos nuestro servicio. Tienes derecho a un reembolso completo si no usaste el servicio en el último mes, si tus conversiones fallaron por un problema confirmado, o si reportaste un bug sin resolver.",
     guaranteeItems: ["Sin uso en el último mes", "Fallos de conversión confirmados", "Bugs reportados sin resolver"],
-    finalCta: "¿Listo para Premium?", finalDesc: "Únete a miles de usuarios. Cancela cuando quieras.",
+    finalCta: "¿Listo para Premium?", finalDesc: "Mejora opcional — cancela cuando quieras, según los términos del servicio.",
     orGoHome: "o continuar con el plan gratuito",
   },
 };

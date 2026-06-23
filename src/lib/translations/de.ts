@@ -396,7 +396,7 @@ export const deTranslations = {
     guaranteeTitle: "100% Geld-zurück-Garantie",
     guaranteeDesc: "Wir stehen hinter unserem Service. Vollständige Erstattung bei Nichtnutzung, bestätigten Fehlern oder ungelösten Bugs.",
     guaranteeItems: ["Keine Nutzung im letzten Monat", "Bestätigte Konvertierungsfehler", "Nicht behobene Bugs"],
-    finalCta: "Bereit für Premium?", finalDesc: "Tausende nutzen es bereits. Jederzeit kündbar.",
+    finalCta: "Bereit für Premium?", finalDesc: "Optionales Upgrade — jederzeit kündbar, gemäß den Nutzungsbedingungen.",
     orGoHome: "oder mit kostenlosem Plan fortfahren",
   },
 };

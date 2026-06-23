@@ -396,7 +396,7 @@ export const itTranslations = {
     guaranteeTitle: "Garanzia Rimborso 100%",
     guaranteeDesc: "Sosteniamo il nostro servizio. Rimborso completo per mancato utilizzo, errori confermati o bug non risolti.",
     guaranteeItems: ["Nessun utilizzo nell'ultimo mese", "Errori di conversione confermati", "Bug segnalati non risolti"],
-    finalCta: "Pronto per Premium?", finalDesc: "Unisciti a migliaia di utenti. Cancella quando vuoi.",
+    finalCta: "Pronto per Premium?", finalDesc: "Upgrade opzionale — annulla quando vuoi, secondo i termini di servizio.",
     orGoHome: "o continua gratis",
   },
 };
