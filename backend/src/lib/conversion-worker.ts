@@ -9,12 +9,14 @@ import { cleanupExpiredConversionJobs } from './conversion-cleanup';
 
 import { ensureJobDir, outputFilePath } from './conversion-storage';
 
-const POLL_INTERVAL_MS = 5000;
+const POLL_FAST_MS = 5000;
+const POLL_IDLE_MS = 30_000;
 const CLEANUP_INTERVAL_MS = 30 * 60 * 1000;
 
 const AUDIO_TOOL_ID = 'audio-converter';
 
-let timer: ReturnType<typeof setInterval> | null = null;
+let timer: ReturnType<typeof setTimeout> | null = null;
+let pollMs = POLL_FAST_MS;
 let processing = false;
 let lastCleanupAt = 0;
 let ffmpegAvailable: boolean | null = null;
@@ -133,8 +135,9 @@ function runStubConversion(
   }
 }
 
-async function processNextJob(): Promise<void> {
-  if (processing) return;
+/** Returns true when a job was picked up (queue may have more). */
+async function processNextJob(): Promise<boolean> {
+  if (processing) return false;
   processing = true;
 
   try {
@@ -142,7 +145,7 @@ async function processNextJob(): Promise<void> {
       where: { status: JobStatus.PENDING },
       orderBy: [{ priority: 'desc' }, { createdAt: 'asc' }],
     });
-    if (!job) return;
+    if (!job) return false;
 
     await prisma.conversionJob.update({
       where: { id: job.id },
@@ -165,7 +168,7 @@ async function processNextJob(): Promise<void> {
             outputStoragePath: outPath,
           },
         });
-        return;
+        return true;
       }
 
       if (result === 'no_ffmpeg') {
@@ -185,7 +188,7 @@ async function processNextJob(): Promise<void> {
             outputStoragePath: outPath,
           },
         });
-        return;
+        return true;
       }
 
       await prisma.conversionJob.update({
@@ -197,7 +200,7 @@ async function processNextJob(): Promise<void> {
           outputStoragePath: null,
         },
       });
-      return;
+      return true;
     }
 
     // Stub for other tools until FFmpeg/ImageMagick handlers ship.
@@ -218,8 +221,10 @@ async function processNextJob(): Promise<void> {
         outputStoragePath: outPath,
       },
     });
+    return true;
   } catch (e) {
     console.error('[conversion-worker] unexpected job error:', e);
+    return false;
   } finally {
     processing = false;
   }
@@ -234,21 +239,34 @@ function maybeRunCleanup(): void {
   );
 }
 
+function scheduleWorkerTick(): void {
+  timer = setTimeout(workerTick, pollMs);
+}
+
 function workerTick(): void {
   maybeRunCleanup();
-  void processNextJob().catch((e: unknown) => console.error('[conversion-worker]', e));
+  void processNextJob()
+    .then((hadJob) => {
+      pollMs = hadJob ? POLL_FAST_MS : POLL_IDLE_MS;
+      scheduleWorkerTick();
+    })
+    .catch((e: unknown) => {
+      console.error('[conversion-worker]', e);
+      pollMs = POLL_FAST_MS;
+      scheduleWorkerTick();
+    });
 }
 
 export function startConversionWorker(): void {
   if (timer) return;
-  timer = setInterval(workerTick, POLL_INTERVAL_MS);
+  pollMs = POLL_FAST_MS;
   workerTick();
   console.log('[conversion-worker] In-process worker started');
 }
 
 export function stopConversionWorker(): void {
   if (timer) {
-    clearInterval(timer);
+    clearTimeout(timer);
     timer = null;
   }
 }
