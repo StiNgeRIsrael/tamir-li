@@ -209,6 +209,13 @@ const es: LocalizedContent = {
       { q: "¿Cuántos archivos puedo convertir a la vez?", a: "Sube varios archivos y conviértelos en lote. Plan gratuito: hasta 5 conversiones al día." },
     ],
   },
+  "image-compressor": {
+    faqs: [
+      { q: "¿Cuánto puedo comprimir una imagen?", a: "Depende del formato original. JPG y WEBP se comprimen significativamente; PNG menos, pero aún se puede reducir el peso." },
+      { q: "¿La compresión afecta la calidad?", a: "La herramienta equilibra tamaño y calidad. Para la mayoría de sitios web, una compresión moderada apenas se nota." },
+      { q: "¿A qué formato conviene comprimir?", a: "Para fotos web — WEBP o JPG. Para gráficos con transparencia — PNG comprimido." },
+    ],
+  },
 };
 
 const fr: LocalizedContent = {
