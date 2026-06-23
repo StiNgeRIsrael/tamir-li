@@ -63,7 +63,7 @@ model AdSettings {
   nativeScriptUrl   String?  @db.VarChar(512)
   nativeContainerId String?  @db.VarChar(128)
   invokeHost        String?  @default("www.highperformanceformat.com") @db.VarChar(128)
-  updatedAt         DateTime @updatedAt
+  updatedAt         DateTime @default(now()) @updatedAt
 }
 
 /** הגדרות ניהול לכל כלי המרה (מזהה תואם ל־tools[].id בפרונט) */

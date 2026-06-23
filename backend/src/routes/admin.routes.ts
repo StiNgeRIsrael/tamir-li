@@ -7,6 +7,8 @@ import { KNOWN_TOOL_IDS, TOOL_CATALOG_META, type KnownToolId } from '../data/too
 import {
   ensureAdSettings,
   parseAdSettingsPatch,
+  respondAdSettingsDbError,
+  saveAdSettings,
   serializeAdSettings,
 } from '../lib/ad-settings';
 
@@ -347,14 +349,12 @@ router.get('/ads/settings', async (_req: Request, res: Response) => {
     const row = await ensureAdSettings();
     res.json({ settings: serializeAdSettings(row) });
   } catch (e) {
-    console.error('[admin/ads/settings GET]', e);
-    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not load ad settings' });
+    respondAdSettingsDbError(res, e, 'admin/ads/settings GET', 'load');
   }
 });
 
 router.patch('/ads/settings', async (req: Request, res: Response) => {
   try {
-    await ensureAdSettings();
     const { data, error } = parseAdSettingsPatch(req.body as Record<string, unknown>);
     if (error) {
       res.status(400).json({ error: 'INVALID_BODY', message: error });
@@ -365,14 +365,10 @@ router.patch('/ads/settings', async (req: Request, res: Response) => {
       return;
     }
 
-    const updated = await prisma.adSettings.update({
-      where: { id: 'default' },
-      data,
-    });
+    const updated = await saveAdSettings(data);
     res.json({ settings: serializeAdSettings(updated) });
   } catch (e) {
-    console.error('[admin/ads/settings PATCH]', e);
-    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not update ad settings' });
+    respondAdSettingsDbError(res, e, 'admin/ads/settings PATCH', 'save');
   }
 });
 

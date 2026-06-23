@@ -90,7 +90,7 @@ After adding or updating secrets, re-run **Deploy to Plesk** (push to `main` or 
 1. Create MySQL DB + user in Plesk.
 2. Set **`DATABASE_URL`** in Plesk → Node.js → **Custom environment variables** (single source of truth — **no** server-side `backend/.env`).
 3. **First deploy / lockfile change:** GitHub Actions **workflow_dispatch** with **run_server_setup** checked + GitHub secret `DATABASE_URL` (runs `npm run setup` over SSH), **or** Plesk **Run Node.js commands** → `run setup` if env is visible to the runner.
-4. **Schema/migration changes:** deploy code, then **restart** the Node app (CI does this on every push to `main`). Startup runs `prisma migrate deploy` automatically using Plesk custom env.
+4. **Schema/migration changes:** deploy code, then **restart** the Node app (CI does this on every push to `main`). Startup runs `prisma migrate deploy` automatically using Plesk custom env. After deploy **e28ecdf** (AdSettings migration), restart the app so `/admin/ads` can save — probe `/health` for `adSettingsTable.ok: true`.
 
 **Plesk quirk:** **Run Node.js commands** often does **not** inherit custom env — `run plesk:db` may fail with `Environment variable not found: DATABASE_URL`. That is expected; use restart auto-migrate or CI **run_server_setup** instead. Details: [plesk-mysql-troubleshooting.md §3](./plesk-mysql-troubleshooting.md#plesk-quirk-run-nodejs-commands-vs-runtime-env).
 

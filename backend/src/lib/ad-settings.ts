@@ -1,4 +1,7 @@
-import type { AdSettings } from '@prisma/client';
+import { Prisma, type AdSettings } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import type { Response } from 'express';
+import { sanitizeDbError } from './db-health';
 import { prisma } from './prisma';
 
 export const AD_SETTINGS_ID = 'default';
@@ -25,6 +28,65 @@ export function serializeAdSettings(row: AdSettings): AdSettingsPayload {
     nativeContainerId: row.nativeContainerId,
     invokeHost: row.invokeHost,
   };
+}
+
+export const AD_SETTINGS_TABLE_MISSING_MESSAGE =
+  'AdSettings table missing — restart the app to run migration 20260624120000_ad_settings (requires DATABASE_URL in Plesk env).';
+
+export function isAdSettingsTableMissing(err: unknown): boolean {
+  if (err && typeof err === 'object') {
+    const record = err as { code?: string; meta?: { table?: string } };
+    if (record.code === 'P2021') {
+      const table = record.meta?.table;
+      return !table || table.includes('AdSettings');
+    }
+  }
+  if (err instanceof PrismaClientKnownRequestError && err.code === 'P2021') {
+    const table = (err.meta as { table?: string } | undefined)?.table;
+    return !table || table.includes('AdSettings');
+  }
+  if (err instanceof Error) {
+    const lower = err.message.toLowerCase();
+    return lower.includes('adsettings') && lower.includes('does not exist');
+  }
+  return false;
+}
+
+/** Map Prisma failures to admin-facing HTTP responses. */
+export function respondAdSettingsDbError(
+  res: Response,
+  err: unknown,
+  logLabel: string,
+  action: 'load' | 'save' = 'load',
+): void {
+  console.error(`[${logLabel}]`, err);
+  if (isAdSettingsTableMissing(err)) {
+    res.status(503).json({
+      error: 'MIGRATION_PENDING',
+      message: AD_SETTINGS_TABLE_MISSING_MESSAGE,
+    });
+    return;
+  }
+  res.status(500).json({
+    error: 'SERVER_ERROR',
+    message: adSettingsErrorMessage(err, action),
+  });
+}
+
+/** Lightweight probe for /health — does not create the singleton row. */
+export async function pingAdSettingsTable(): Promise<{ ok: true } | { ok: false; error: string }> {
+  try {
+    await prisma.adSettings.findUnique({
+      where: { id: AD_SETTINGS_ID },
+      select: { id: true },
+    });
+    return { ok: true };
+  } catch (err) {
+    if (isAdSettingsTableMissing(err)) {
+      return { ok: false, error: 'P2021' };
+    }
+    return { ok: false, error: sanitizeDbError(err) };
+  }
 }
 
 /** Ensure the singleton row exists; safe to call on every read. */
@@ -69,4 +131,29 @@ export function parseAdSettingsPatch(body: Record<string, unknown>): {
     data[key] = parsed;
   }
   return { data };
+}
+
+/** Map Prisma / infra failures to actionable admin messages (no secrets). */
+export function adSettingsErrorMessage(e: unknown, action: 'load' | 'save'): string {
+  if (isAdSettingsTableMissing(e)) {
+    return AD_SETTINGS_TABLE_MISSING_MESSAGE;
+  }
+  if (e instanceof Prisma.PrismaClientKnownRequestError) {
+    if (e.code === 'P2000') {
+      return 'One or more values exceed the maximum length (zone keys ≤64 chars, URLs ≤512).';
+    }
+  }
+  if (e instanceof TypeError && String(e.message).includes('adSettings')) {
+    return 'Database client is out of date. Run prisma generate and redeploy the backend.';
+  }
+  return action === 'load' ? 'Could not load ad settings' : 'Could not update ad settings';
+}
+
+/** Persist patch fields on the singleton row (create if missing). */
+export async function saveAdSettings(data: Partial<AdSettingsPayload>): Promise<AdSettings> {
+  return prisma.adSettings.upsert({
+    where: { id: AD_SETTINGS_ID },
+    create: { id: AD_SETTINGS_ID, ...data },
+    update: data,
+  });
 }

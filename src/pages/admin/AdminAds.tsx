@@ -59,10 +59,11 @@ export default function AdminAds() {
   const admin = t.admin as Record<string, string>;
   const qc = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["admin-ads", token],
     queryFn: () => adminFetch<{ settings: AdRuntimeConfig }>("/api/admin/ads/settings", token),
     enabled: !!token,
+    retry: false,
   });
 
   const [form, setForm] = useState<AdSettingsForm>(() => toForm(null));
@@ -96,8 +97,15 @@ export default function AdminAds() {
     );
   }
 
+  const loadError = isError && error instanceof Error ? error.message : null;
+
   return (
     <div className="space-y-6 max-w-2xl">
+      {loadError && (
+        <p className="text-sm text-destructive rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2">
+          {loadError}
+        </p>
+      )}
       <p className="text-sm text-muted-foreground">{admin.adsHint}</p>
 
       <div className="space-y-5">

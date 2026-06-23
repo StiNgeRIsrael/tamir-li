@@ -9,7 +9,7 @@
     "dev:all": "concurrently -n web,api -c blue,green \"npm run dev\" \"npm run dev:api\"",
     "generate:sitemap": "tsx scripts/generate-sitemap.ts",
     "generate:gsc-priority": "tsx scripts/gsc-priority-urls.ts",
-    "postinstall": "npm ci --prefix backend --include=dev",
+    "postinstall": "npm ci --prefix backend --include=dev && npm run plesk:generate",
     "prebuild": "npm run generate:sitemap",
     "build:frontend": "vite build --mode production",
     "build:backend": "npm run build --prefix backend",
