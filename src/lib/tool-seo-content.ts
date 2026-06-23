@@ -194,7 +194,24 @@ const en: LocalizedContent = {
   },
 };
 
-const byLocale: Partial<Record<Locale, LocalizedContent>> = { he, en };
+const es: LocalizedContent = {
+  "image-converter": {
+    comparisonHeaders: { format: "Formato", bestFor: "Ideal para", size: "Tamaño", quality: "Calidad" },
+    formatComparison: [
+      { format: "JPG", bestFor: "Fotos, web, correo", size: "Pequeño", quality: "Buena (con pérdida)" },
+      { format: "PNG", bestFor: "Gráficos, transparencia", size: "Mediano–grande", quality: "Sin pérdida" },
+      { format: "WEBP", bestFor: "Sitios web modernos", size: "Muy pequeño", quality: "Excelente" },
+      { format: "GIF", bestFor: "Animaciones cortas", size: "Variable", quality: "256 colores" },
+    ],
+    faqs: [
+      { q: "¿Cuál es la diferencia entre JPG y PNG?", a: "JPG usa compresión con pérdida — ideal para fotos. PNG es sin pérdida y admite transparencia — perfecto para logotipos y gráficos." },
+      { q: "¿La conversión reduce la calidad?", a: "Convertir a PNG o TIFF conserva la calidad completa. JPG o WEBP pueden comprimir ligeramente — elige según tu uso." },
+      { q: "¿Cuántos archivos puedo convertir a la vez?", a: "Sube varios archivos y conviértelos en lote. Plan gratuito: hasta 5 conversiones al día." },
+    ],
+  },
+};
+
+const byLocale: Partial<Record<Locale, LocalizedContent>> = { he, en, es };
 
 /** Top-tool SEO blocks (FAQ + optional format comparison). Falls back to English. */
 export function getToolSeoContent(toolId: string, locale: Locale): ToolSeoContent | null {
