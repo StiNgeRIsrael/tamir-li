@@ -128,13 +128,13 @@ export default function AdminUsers() {
       </div>
 
       <div className="rounded-lg border border-border overflow-hidden">
-        <Table>
+        <Table className="table-fixed">
           <TableHeader>
             <TableRow>
-              <TableHead>{admin.colEmail}</TableHead>
-              <TableHead>{admin.colRoles}</TableHead>
-              <TableHead>{admin.colBlocked}</TableHead>
-              <TableHead className="text-end">{admin.colActions}</TableHead>
+              <TableHead className="w-[40%]">{admin.colEmail}</TableHead>
+              <TableHead className="w-[30%]">{admin.colRoles}</TableHead>
+              <TableHead className="w-24 text-center">{admin.colBlocked}</TableHead>
+              <TableHead className="w-32 text-end">{admin.colActions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -155,14 +155,16 @@ export default function AdminUsers() {
                     ))}
                   </div>
                 </TableCell>
-                <TableCell>
-                  <Switch
-                    checked={u.blocked}
-                    disabled={u.id === currentUser?.id || patchMutation.isPending}
-                    onCheckedChange={(checked) =>
-                      patchMutation.mutate({ id: u.id, body: { blocked: checked } })
-                    }
-                  />
+                <TableCell className="text-center">
+                  <div className="flex justify-center">
+                    <Switch
+                      checked={u.blocked}
+                      disabled={u.id === currentUser?.id || patchMutation.isPending}
+                      onCheckedChange={(checked) =>
+                        patchMutation.mutate({ id: u.id, body: { blocked: checked } })
+                      }
+                    />
+                  </div>
                 </TableCell>
                 <TableCell className="text-end">
                   <Button variant="outline" size="sm" onClick={() => openRoles(u)}>

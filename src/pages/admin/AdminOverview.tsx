@@ -120,18 +120,18 @@ export default function AdminOverview() {
           <CardTitle className="text-lg">{admin.topTools}</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
+          <Table className="table-fixed">
             <TableHeader>
               <TableRow>
                 <TableHead>{admin.colTool}</TableHead>
-                <TableHead className="text-end">{admin.colUses}</TableHead>
+                <TableHead className="w-24 text-end">{admin.colUses}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {data.topToolsByUsage.map((row) => (
                 <TableRow key={row.toolId}>
                   <TableCell className="font-mono text-xs">{row.toolId}</TableCell>
-                  <TableCell className="text-end">{row.count}</TableCell>
+                  <TableCell className="text-end tabular-nums">{row.count}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

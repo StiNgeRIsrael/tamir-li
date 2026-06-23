@@ -73,16 +73,16 @@ export default function AdminTools() {
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">{admin.toolsHint}</p>
 
-      <div className="rounded-lg border border-border overflow-x-auto">
-        <Table>
+      <div className="rounded-lg border border-border overflow-hidden">
+        <Table className="table-fixed">
           <TableHeader>
             <TableRow>
-              <TableHead>{admin.colTool}</TableHead>
-              <TableHead>{admin.colCategory}</TableHead>
-              <TableHead className="text-center">{admin.colEnabled}</TableHead>
-              <TableHead className="text-center">{admin.colFeatured}</TableHead>
-              <TableHead>{admin.colSort}</TableHead>
-              <TableHead className="text-end">{admin.colUses}</TableHead>
+              <TableHead className="w-[38%]">{admin.colTool}</TableHead>
+              <TableHead className="w-24">{admin.colCategory}</TableHead>
+              <TableHead className="w-20 text-center">{admin.colEnabled}</TableHead>
+              <TableHead className="w-20 text-center">{admin.colFeatured}</TableHead>
+              <TableHead className="w-24 text-center">{admin.colSort}</TableHead>
+              <TableHead className="w-20 text-end">{admin.colUses}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -99,27 +99,31 @@ export default function AdminTools() {
                 </TableCell>
                 <TableCell className="text-sm capitalize">{row.category}</TableCell>
                 <TableCell className="text-center">
-                  <Switch
-                    checked={row.enabled}
-                    disabled={patchMutation.isPending}
-                    onCheckedChange={(checked) =>
-                      patchMutation.mutate({ toolId: row.toolId, body: { enabled: checked } })
-                    }
-                  />
+                  <div className="flex justify-center">
+                    <Switch
+                      checked={row.enabled}
+                      disabled={patchMutation.isPending}
+                      onCheckedChange={(checked) =>
+                        patchMutation.mutate({ toolId: row.toolId, body: { enabled: checked } })
+                      }
+                    />
+                  </div>
                 </TableCell>
                 <TableCell className="text-center">
-                  <Switch
-                    checked={row.featured}
-                    disabled={patchMutation.isPending}
-                    onCheckedChange={(checked) =>
-                      patchMutation.mutate({ toolId: row.toolId, body: { featured: checked } })
-                    }
-                  />
+                  <div className="flex justify-center">
+                    <Switch
+                      checked={row.featured}
+                      disabled={patchMutation.isPending}
+                      onCheckedChange={(checked) =>
+                        patchMutation.mutate({ toolId: row.toolId, body: { featured: checked } })
+                      }
+                    />
+                  </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-center">
                   <Input
                     type="number"
-                    className="h-8 w-20 font-mono text-xs"
+                    className="mx-auto h-8 w-20 font-mono text-xs"
                     defaultValue={row.sortOrder}
                     key={`${row.toolId}-${row.sortOrder}`}
                     onBlur={(e) => {
@@ -130,7 +134,7 @@ export default function AdminTools() {
                     }}
                   />
                 </TableCell>
-                <TableCell className="text-end text-sm">{row.usageLast30Days}</TableCell>
+                <TableCell className="text-end text-sm tabular-nums">{row.usageLast30Days}</TableCell>
               </TableRow>
             ))}
           </TableBody>
