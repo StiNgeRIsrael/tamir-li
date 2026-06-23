@@ -25,11 +25,11 @@ export function LanguageSwitcher() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+        className="flex shrink-0 items-center gap-0.5 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
       >
         <LocaleFlag locale={locale} />
         <span className="hidden sm:inline text-xs uppercase">{locale}</span>
-        <ChevronDown className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown className={`hidden sm:block w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (

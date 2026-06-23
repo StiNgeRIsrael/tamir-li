@@ -101,11 +101,11 @@ export function GoogleLoginButton({
         if (!host) return;
         host.innerHTML = "";
         window.google.accounts.id.renderButton(host, {
-          type: "standard",
+          type: compact ? "icon" : "standard",
           theme: "outline",
           size: compact ? "medium" : "large",
           text: "signin_with",
-          shape: "pill",
+          shape: compact ? "circle" : "pill",
           logo_alignment: "left",
         });
       } else {
