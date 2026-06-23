@@ -786,7 +786,28 @@ export default function ToolPage() {
                   </Alert>
                 )}
                 {fileItems.length === 0 && (
-                  <FileDropZone acceptedFormats={tool.fromFormats} onFilesSelected={handleFilesSelected} />
+                  <section className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <span
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground"
+                        aria-hidden="true"
+                      >
+                        1
+                      </span>
+                      <div className="space-y-1 min-w-0">
+                        <h2 className="text-lg font-semibold text-foreground">
+                          {tt.fileDropZone.uploadStepTitle(activeFrom, activeTo)}
+                        </h2>
+                        <p className="text-sm text-muted-foreground">{tt.fileDropZone.uploadStepHint}</p>
+                      </div>
+                    </div>
+                    <FileDropZone
+                      inputId="tool-file-input"
+                      emphasized
+                      acceptedFormats={tool.fromFormats}
+                      onFilesSelected={handleFilesSelected}
+                    />
+                  </section>
                 )}
                 {fileItems.length > 0 && (
                   <div className="space-y-3 animate-fade-in">
@@ -885,7 +906,7 @@ export default function ToolPage() {
                     )}
                     {!converting && (
                       <div className="flex items-center justify-between pt-1">
-                        <Button variant="outline" size="sm" onClick={() => document.getElementById("file-input")?.click()}>
+                        <Button variant="outline" size="sm" onClick={() => document.getElementById("tool-file-input")?.click()}>
                           <Plus className="w-4 h-4 me-1" />
                           {tt.addFiles}
                         </Button>

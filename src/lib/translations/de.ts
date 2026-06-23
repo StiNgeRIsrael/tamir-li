@@ -258,6 +258,9 @@ export const deTranslations = {
   fileDropZone: {
     dragHere: "Dateien hierher ziehen",
     orClick: (maxMB: number, formats: string) => `oder klicken zum Auswählen • bis ${maxMB}MB • ${formats}`,
+    orClickShort: (maxMB: number) => `oder klicken zum Auswählen • bis ${maxMB}MB`,
+    uploadStepTitle: (from: string, to: string) => `Laden Sie Ihre ${from}-Datei hoch, um in ${to} zu konvertieren`,
+    uploadStepHint: "Hierher ziehen oder Button klicken — kostenlos, im Browser",
     selectFiles: "Dateien Auswählen",
   },
   compressor: {

@@ -363,6 +363,9 @@ export const heTranslations = {
   fileDropZone: {
     dragHere: "גרור קבצים לכאן",
     orClick: (maxMB: number, formats: string) => `או לחץ לבחירת קבצים • עד ${maxMB}MB • ${formats}`,
+    orClickShort: (maxMB: number) => `או לחץ לבחירת קבצים • עד ${maxMB}MB`,
+    uploadStepTitle: (from: string, to: string) => `העלו קובץ ${from} להמרה ל-${to}`,
+    uploadStepHint: "גררו לכאן או לחצו על הכפתור — חינם, ישירות בדפדפן",
     selectFiles: "בחר קבצים",
   },
   compressor: {

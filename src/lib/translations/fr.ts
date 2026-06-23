@@ -258,6 +258,9 @@ export const frTranslations = {
   fileDropZone: {
     dragHere: "Glissez des fichiers ici",
     orClick: (maxMB: number, formats: string) => `ou cliquez pour sélectionner • jusqu'à ${maxMB}Mo • ${formats}`,
+    orClickShort: (maxMB: number) => `ou cliquez pour sélectionner • jusqu'à ${maxMB}Mo`,
+    uploadStepTitle: (from: string, to: string) => `Téléversez votre fichier ${from} pour convertir en ${to}`,
+    uploadStepHint: "Glissez ici ou cliquez sur le bouton — gratuit, dans votre navigateur",
     selectFiles: "Sélectionner des Fichiers",
   },
   compressor: {

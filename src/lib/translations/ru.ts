@@ -262,6 +262,9 @@ export const ruTranslations = {
   fileDropZone: {
     dragHere: "Перетащите файлы сюда",
     orClick: (maxMB: number, formats: string) => `или нажмите для выбора • до ${maxMB}МБ • ${formats}`,
+    orClickShort: (maxMB: number) => `или нажмите для выбора • до ${maxMB}МБ`,
+    uploadStepTitle: (from: string, to: string) => `Загрузите файл ${from} для конвертации в ${to}`,
+    uploadStepHint: "Перетащите сюда или нажмите кнопку — бесплатно, в браузере",
     selectFiles: "Выбрать Файлы",
   },
   compressor: {

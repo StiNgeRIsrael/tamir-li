@@ -258,6 +258,9 @@ export const itTranslations = {
   fileDropZone: {
     dragHere: "Trascina i file qui",
     orClick: (maxMB: number, formats: string) => `o clicca per selezionare • fino a ${maxMB}MB • ${formats}`,
+    orClickShort: (maxMB: number) => `o clicca per selezionare • fino a ${maxMB}MB`,
+    uploadStepTitle: (from: string, to: string) => `Carica il tuo file ${from} per convertire in ${to}`,
+    uploadStepHint: "Trascina qui o clicca il pulsante — gratis, nel browser",
     selectFiles: "Seleziona File",
   },
   compressor: {

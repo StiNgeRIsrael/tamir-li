@@ -315,6 +315,9 @@ export const esTranslations = {
   fileDropZone: {
     dragHere: "Arrastra archivos aquí",
     orClick: (maxMB: number, formats: string) => `o haz clic para seleccionar • hasta ${maxMB}MB • ${formats}`,
+    orClickShort: (maxMB: number) => `o haz clic para seleccionar • hasta ${maxMB}MB`,
+    uploadStepTitle: (from: string, to: string) => `Sube tu archivo ${from} para convertir a ${to}`,
+    uploadStepHint: "Arrastra aquí o haz clic en el botón — gratis, en tu navegador",
     selectFiles: "Seleccionar Archivos",
   },
   compressor: {
