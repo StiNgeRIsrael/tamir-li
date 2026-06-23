@@ -97,29 +97,30 @@ const Index = () => {
       <div className="w-full">
 
         {/* Hero */}
-        <section className="border-b border-border bg-card py-6 lg:py-8 px-4">
+        <section className="border-b border-border bg-card px-4 py-7 sm:px-6 sm:py-8 lg:py-10">
           <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-              <div className={`space-y-1.5 text-center ${isRtl ? "lg:text-right" : "lg:text-left"}`}>
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-8">
+              <div className={`space-y-2 text-center ${isRtl ? "lg:text-right" : "lg:text-left"}`}>
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t.hero.badge}</p>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight text-foreground tracking-tight">
+                <h1 className="mx-auto max-w-xl text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:mx-0 lg:max-w-2xl lg:text-4xl">
                   {t.hero.title}{" "}
                   <span className="text-primary">{t.hero.titleHighlight}</span>
                 </h1>
                 <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground lg:mx-0">
-                  {t.hero.subtitle} {t.hero.subtitleLine2}
+                  {t.hero.subtitle}
+                  <span className="mt-1 block">{t.hero.subtitleLine2}</span>
                 </p>
               </div>
 
-              <div className="grid grid-cols-4 gap-1.5 shrink-0">
+              <div className="grid w-full shrink-0 grid-cols-2 gap-2 sm:w-auto sm:grid-cols-4 sm:gap-1.5">
                 {homeStats.map((s, i) => {
                   const SIcon = iconMap[i];
                   return (
                     <div
                       key={i}
-                      className="flex flex-col items-center rounded border border-border bg-background px-2 py-2 text-center"
+                      className="flex flex-col items-center rounded border border-border bg-background px-2.5 py-2.5 text-center sm:px-2 sm:py-2"
                     >
-                      <SIcon className="h-3.5 w-3.5 text-primary mb-0.5" />
+                      <SIcon className="mb-0.5 h-3.5 w-3.5 text-primary" />
                       <p className="text-base font-bold leading-none text-foreground">{s.value}</p>
                       <p className="mt-0.5 text-[10px] leading-tight text-muted-foreground">{s.label}</p>
                     </div>
@@ -129,7 +130,7 @@ const Index = () => {
             </div>
 
             {featuredTools.length > 0 && (
-              <div className="mt-5 border-t border-border/60 pt-4">
+              <div className="mt-6 border-t border-border/60 pt-4 sm:pt-5">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
                   {homePicker.popular}
                 </p>
