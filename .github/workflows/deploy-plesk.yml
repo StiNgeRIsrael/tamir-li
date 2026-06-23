@@ -20,7 +20,8 @@ permissions:
 
 concurrency:
   group: plesk-deploy-${{ github.ref }}
-  cancel-in-progress: true
+  # Do not cancel mid-SFTP/restart — rapid pushes were leaving prod stale.
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:

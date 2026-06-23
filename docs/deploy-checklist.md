@@ -27,6 +27,10 @@ Triggers on push to `main` or manual **workflow_dispatch**.
 
 **CI secrets for deploy/restart:** `PLESK_SSH_HOST` / `PLESK_FTP_HOST`, `PLESK_SSH_USER`, `PLESK_SSH_PASSWORD` (FTP fallbacks OK). Optional vars: `PLESK_HTTPDOCS_DIR` (default `httpdocs/`), `PLESK_NODE_APP_DIR` (default `httpdocs/deploy`), `PLESK_DOMAIN` (default `tamir.li`).
 
+**Deploy cancelled / prod stale after rapid pushes:** `deploy-plesk.yml` no longer cancels an in-flight deploy when a newer commit lands (`cancel-in-progress: false`). If prod is still old, re-run **Deploy to Plesk** via Actions → workflow_dispatch.
+
+**Docker deploy (optional, not production):** [`deploy-docker-plesk.yml`](../.github/workflows/deploy-docker-plesk.yml) runs only when repo var **`PLESK_DOCKER_ENABLED=true`** or on manual dispatch. Requires server dir (var **`PLESK_DOCKER_DIR`**, default `~/tamir-li`) with `.env.docker`. Run 27993091590 failed with `cd: can't cd to ~/tamir-li` — expected until Docker stack is set up; it does not block the Node monolith deploy.
+
 **run_server_setup=true** requires GitHub secret `DATABASE_URL` (SSH does not inherit Plesk env). Use for **first deploy** or lockfile changes (`npm ci` on server). Optional: `JWT_SECRET`, `GOOGLE_CLIENT_ID` (falls back to `VITE_GOOGLE_CLIENT_ID`).
 
 **Migrations on routine deploys:** no manual `run plesk:db` needed — set `DATABASE_URL` in Plesk custom env only; the app runs `prisma migrate deploy` on each restart when `NODE_ENV=production`. After push to `main`, CI restarts the app automatically.

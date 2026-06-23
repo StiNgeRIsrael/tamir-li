@@ -10,7 +10,6 @@ on:
       - main
     paths:
       - 'docker/**'
-      - 'backend/**'
       - 'docker-compose.yml'
       - '.env.docker.example'
       - '.github/workflows/deploy-docker-plesk.yml'
@@ -25,6 +24,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Production uses the Node monolith (deploy-plesk.yml). Skip unless Docker stack is configured.
+    if: vars.PLESK_DOCKER_ENABLED == 'true' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.0
@@ -37,6 +38,11 @@ jobs:
           script: |
             set -e
             DEPLOY_DIR="${{ vars.PLESK_DOCKER_DIR || '~/tamir-li' }}"
+            DEPLOY_DIR="${DEPLOY_DIR/#\~/$HOME}"
+            if [ ! -d "$DEPLOY_DIR" ]; then
+              echo "::error:: Docker deploy dir missing: $DEPLOY_DIR — set repo var PLESK_DOCKER_DIR or create the directory on the server (see docs/docker-plesk-deploy.md)"
+              exit 1
+            fi
             cd "$DEPLOY_DIR"
             if [ ! -f .env.docker ]; then
               echo "Missing .env.docker in $DEPLOY_DIR — create from .env.docker.example on the server"
