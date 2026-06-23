@@ -158,6 +158,7 @@ export const esTranslations = {
     downloadAll: "Descargar Todo",
     watchAdToDownload: "Paso 1 — Ver anuncio",
     downloadNow: "Paso 2 — Descargar",
+    downloadGateHint: "Toca dos veces — anuncio primero, luego descarga",
     moreConversion: "Convertir Más",
     addFiles: "Agregar Archivos",
     convert: "Convertir",

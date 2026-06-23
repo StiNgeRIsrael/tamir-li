@@ -169,6 +169,7 @@ export const enTranslations = {
     loading: "Loading…",
     watchAdToDownload: "Step 1 — Watch ad",
     downloadNow: "Step 2 — Download now",
+    downloadGateHint: "Tap twice — ad first, then download",
     preparingDownload: "Preparing your download…",
     moreConversion: "Convert More",
     addFiles: "Add Files",

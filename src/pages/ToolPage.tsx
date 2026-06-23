@@ -756,15 +756,20 @@ export default function ToolPage() {
                     </div>
                   );
                 })}
-                <div className="flex items-center justify-between pt-3">
+                <div className="flex flex-col gap-2 pt-3 sm:flex-row sm:items-center sm:justify-between">
                   <Button variant="outline" onClick={handleReset}>{tt.moreConversion}</Button>
-                  <Button
-                    className={allDownloadGate ? "bg-success text-success-foreground hover:bg-success/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}
-                    onClick={onDownloadAll}
-                  >
-                    <Download className="w-4 h-4 ml-2" />
-                    {isPremium ? tt.downloadAll : allDownloadGate ? tt.downloadAll : tt.watchAdToDownload}
-                  </Button>
+                  <div className="flex flex-col items-stretch gap-1 sm:items-end">
+                    <Button
+                      className={allDownloadGate ? "bg-success text-success-foreground hover:bg-success/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}
+                      onClick={onDownloadAll}
+                    >
+                      <Download className="w-4 h-4 ml-2" />
+                      {isPremium ? tt.downloadAll : allDownloadGate ? tt.downloadAll : tt.watchAdToDownload}
+                    </Button>
+                    {!isPremium && (
+                      <p className="text-center text-xs text-muted-foreground sm:hidden">{tt.downloadGateHint}</p>
+                    )}
+                  </div>
                 </div>
                 <ConversionSuccessUsage used={usedToday} max={maxDaily} />
                 <AdSlot type="inline" slotId="tool-after-success" className="mt-4" />

@@ -178,6 +178,7 @@ export const heTranslations = {
     loading: "טוען…",
     watchAdToDownload: "שלב 1 — צפה בפרסומת",
     downloadNow: "שלב 2 — הורד עכשיו",
+    downloadGateHint: "לחצו פעמיים — קודם פרסומת, אחר כך הורדה",
     preparingDownload: "מכין את ההורדה…",
     moreConversion: "המרה נוספת",
     addFiles: "הוסף קבצים",
