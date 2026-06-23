@@ -156,6 +156,8 @@ export const esTranslations = {
     conversionDone: "¡Conversión Completada!",
     download: "Descargar",
     downloadAll: "Descargar Todo",
+    watchAdToDownload: "Paso 1 — Ver anuncio",
+    downloadNow: "Paso 2 — Descargar",
     moreConversion: "Convertir Más",
     addFiles: "Agregar Archivos",
     convert: "Convertir",

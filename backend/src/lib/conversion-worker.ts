@@ -5,7 +5,7 @@ import { JobStatus } from '@prisma/client';
 
 import { prisma } from './prisma';
 
-import { cleanupExpiredConversionJobs } from './conversion-cleanup';
+import { cleanupExpiredConversionJobs, recoverInterruptedJobs } from './conversion-cleanup';
 
 import { ensureJobDir, outputFilePath } from './conversion-storage';
 
@@ -139,6 +139,7 @@ function runStubConversion(
 async function processNextJob(): Promise<boolean> {
   if (processing) return false;
   processing = true;
+  let activeJobId: string | null = null;
 
   try {
     const job = await prisma.conversionJob.findFirst({
@@ -146,6 +147,7 @@ async function processNextJob(): Promise<boolean> {
       orderBy: [{ priority: 'desc' }, { createdAt: 'asc' }],
     });
     if (!job) return false;
+    activeJobId = job.id;
 
     await prisma.conversionJob.update({
       where: { id: job.id },
@@ -224,6 +226,18 @@ async function processNextJob(): Promise<boolean> {
     return true;
   } catch (e) {
     console.error('[conversion-worker] unexpected job error:', e);
+    if (activeJobId) {
+      await prisma.conversionJob
+        .update({
+          where: { id: activeJobId },
+          data: {
+            status: JobStatus.FAILED,
+            completedAt: new Date(),
+            errorMessage: 'Unexpected worker error',
+          },
+        })
+        .catch((err: unknown) => console.error('[conversion-worker] failed to mark job FAILED:', err));
+    }
     return false;
   } finally {
     processing = false;
@@ -260,6 +274,9 @@ function workerTick(): void {
 export function startConversionWorker(): void {
   if (timer) return;
   pollMs = POLL_FAST_MS;
+  void recoverInterruptedJobs().catch((e: unknown) =>
+    console.error('[conversion-cleanup] recover on start:', e)
+  );
   workerTick();
   console.log('[conversion-worker] In-process worker started');
 }
