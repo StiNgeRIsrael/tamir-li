@@ -10,6 +10,8 @@ export type StartupMigrateStatus = {
   state: StartupMigrateState;
   error?: string;
   prismaCode?: string;
+  /** Failed migration name from P3009 output (e.g. 20260624120000_ad_settings). */
+  failedMigration?: string;
   finishedAt?: string;
   attempts?: number;
 };
@@ -19,7 +21,9 @@ type PrismaInvoke = {
   args: string[];
 };
 
-type MigrateResult = { ok: true } | { ok: false; error: string; prismaCode?: string };
+type MigrateResult =
+  | { ok: true }
+  | { ok: false; error: string; prismaCode?: string; failedMigration?: string; cliOutput?: string };
 
 let migrateStatus: StartupMigrateStatus = { state: 'idle' };
 
@@ -62,6 +66,16 @@ function resolvePrismaInvoke(root: string): PrismaInvoke | null {
 /** Pull Prisma P#### codes from CLI output without logging connection strings. */
 function extractPrismaErrorCode(output: string): string | undefined {
   return output.match(/\bP\d{4}\b/)?.[0];
+}
+
+/** Migration folder name from P3009 CLI output: `20260624120000_ad_settings` failed at … */
+function extractFailedMigrationName(output: string): string | undefined {
+  return output.match(/`(\d{14}_[^`]+)`\s+failed/)?.[1];
+}
+
+/** Pre-launch safe auto-resolve: ad_settings migrations on a disposable DB. */
+function isSafeAutoResolveMigration(name: string): boolean {
+  return name.includes('ad_settings');
 }
 
 function runMigrateDeploy(root: string, schemaPath: string, invoke: PrismaInvoke): MigrateResult {
@@ -107,7 +121,75 @@ function runMigrateDeploy(root: string, schemaPath: string, invoke: PrismaInvoke
     console.error(`${LOG_PREFIX}`, result.error.message);
   }
 
-  return { ok: false, error, prismaCode };
+  return { ok: false, error, prismaCode, failedMigration: extractFailedMigrationName(cliOutput), cliOutput };
+}
+
+function runMigrateResolve(
+  root: string,
+  schemaPath: string,
+  invoke: PrismaInvoke,
+  migrationName: string,
+  action: 'rolled-back' | 'applied',
+): MigrateResult {
+  const resolveArgs = [
+    'migrate',
+    'resolve',
+    `--${action}`,
+    migrationName,
+    `--schema=${schemaPath}`,
+  ];
+  const args = invoke.args.length > 0 ? [...invoke.args, ...resolveArgs] : resolveArgs;
+
+  console.log(`${LOG_PREFIX} Running prisma migrate resolve --${action} ${migrationName}...`);
+
+  const result = spawnSync(invoke.command, args, {
+    cwd: root,
+    env: process.env,
+    encoding: 'utf8',
+    shell: process.platform === 'win32' && invoke.args.length === 0,
+    timeout: 60_000,
+  });
+
+  if (result.status === 0) {
+    console.log(`${LOG_PREFIX} Resolved ${migrationName} as ${action}`);
+    return { ok: true };
+  }
+
+  const exitCode = result.status ?? 1;
+  const cliOutput = [result.stdout, result.stderr].filter(Boolean).join('\n').trim();
+  const prismaCode = cliOutput ? extractPrismaErrorCode(cliOutput) : undefined;
+  const error = `Resolve failed (exit ${exitCode})${prismaCode ? ` — Prisma ${prismaCode}` : ''}`;
+
+  console.error(`${LOG_PREFIX} ${error}`);
+  if (cliOutput) {
+    console.error(`${LOG_PREFIX}`, cliOutput);
+  }
+
+  return { ok: false, error, prismaCode, cliOutput };
+}
+
+/** P3009 on ad_settings: clear failed record and redeploy (safe on pre-launch disposable DB). */
+function tryRecoverFromP3009(
+  root: string,
+  schemaPath: string,
+  invoke: PrismaInvoke,
+  failure: Extract<MigrateResult, { ok: false }>,
+): MigrateResult {
+  const migrationName = failure.failedMigration ?? extractFailedMigrationName(failure.cliOutput ?? '');
+  if (failure.prismaCode !== 'P3009' || !migrationName || !isSafeAutoResolveMigration(migrationName)) {
+    return failure;
+  }
+
+  console.warn(
+    `${LOG_PREFIX} P3009 on ${migrationName} — auto-resolving as rolled-back (pre-launch ad_settings recovery)`,
+  );
+
+  const resolveResult = runMigrateResolve(root, schemaPath, invoke, migrationName, 'rolled-back');
+  if (!resolveResult.ok) {
+    return resolveResult;
+  }
+
+  return runMigrateDeploy(root, schemaPath, invoke);
 }
 
 function runMigrateWithRetry(root: string, schemaPath: string, invoke: PrismaInvoke): MigrateResult {
@@ -130,13 +212,33 @@ function runMigrateWithRetry(root: string, schemaPath: string, invoke: PrismaInv
       return result;
     }
 
-    lastFailure = result;
+    const recovered =
+      result.prismaCode === 'P3009' ? tryRecoverFromP3009(root, schemaPath, invoke, result) : result;
+    if (recovered.ok) {
+      setMigrateStatus({
+        state: 'success',
+        attempts: attempt,
+        finishedAt: new Date().toISOString(),
+      });
+      return recovered;
+    }
+
+    lastFailure = recovered;
   }
+
+  const failedMigration = lastFailure.ok ? undefined : lastFailure.failedMigration;
+  const errorDetail =
+    !lastFailure.ok && lastFailure.prismaCode === 'P3009' && failedMigration
+      ? `${lastFailure.error} — failed migration: ${failedMigration}`
+      : lastFailure.ok
+        ? undefined
+        : lastFailure.error;
 
   setMigrateStatus({
     state: 'failed',
-    error: lastFailure.ok ? undefined : lastFailure.error,
+    error: errorDetail,
     prismaCode: lastFailure.ok ? undefined : lastFailure.prismaCode,
+    failedMigration,
     attempts: maxAttempts,
     finishedAt: new Date().toISOString(),
   });

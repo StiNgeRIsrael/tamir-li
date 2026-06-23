@@ -243,6 +243,7 @@ Expect exit **0**, no `db.ok is false` warning.
 | New migration after deploy, `db.ok: false` | Restart Node app; check logs for `[startup-migrate]` errors |
 | `run_server_setup` works once, then `db.ok: false` again | Add same `DATABASE_URL` to **Plesk** custom env (not only GitHub secret) |
 | P3018 — `Table 'Tamirli.User' doesn't exist` on first migrate | Fresh DB — see [§8](#8-p3018--table-user-doesnt-exist-fresh-database) |
+| P3009 — failed migration, `adSettingsTable.ok: false` | Auto-resolved on restart (latest backend) — see [§9](#9-p3009--failed-ad_settings-migration) |
 
 ---
 
@@ -270,6 +271,39 @@ npx prisma migrate deploy --schema=backend/prisma/schema.prisma
 Verify: `mysql … -e "SHOW TABLES;"` — expect `_prisma_migrations`, `User`, `UsageLog`, `ToolConfig`, etc.
 
 **Alternative (empty dev DB only, not recommended for production):** `npx prisma db push --schema=backend/prisma/schema.prisma` skips migration history.
+
+---
+
+## 9. P3009 — failed `ad_settings` migration
+
+**Symptom:** `GET /health` shows `migrations.state: "failed"`, `migrations.prismaCode: "P3009"`, and `adSettingsTable.ok: false` with `P2021` (table missing). A prior `20260624120000_ad_settings` or `20260624133000_ad_settings_updated_at_default` attempt left a **failed** row in `_prisma_migrations`, blocking further deploys.
+
+**Auto-fix (latest backend):** On app restart, `startup-migrate.ts` detects P3009 for `ad_settings` migrations, runs `migrate resolve --rolled-back`, then `migrate deploy` again using the same Plesk `DATABASE_URL`.
+
+Check `/health` after restart:
+
+```json
+{
+  "migrations": { "state": "success" },
+  "adSettingsTable": { "ok": true }
+}
+```
+
+If still failed, read `migrations.failedMigration` and `migrations.error` in `/health`.
+
+**Manual fix (SSH):**
+
+```bash
+cd ~/httpdocs/deploy
+export DATABASE_URL='mysql://USER:PASSWORD@localhost:3306/DATABASE_NAME'
+
+npx prisma migrate resolve --rolled-back 20260624120000_ad_settings \
+  --schema=backend/prisma/schema.prisma
+
+npx prisma migrate deploy --schema=backend/prisma/schema.prisma
+```
+
+If `AdSettings` already exists but migration is stuck, use `--applied` instead of `--rolled-back` for that migration name.
 
 ---
 
