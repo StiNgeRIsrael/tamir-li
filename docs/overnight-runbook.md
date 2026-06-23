@@ -125,6 +125,7 @@ Copy into final commit or PR description:
 - Hebrew default locale; 7 locales for user-facing strings.
 - No secrets in git; no Adsterra Publisher API in `VITE_*`.
 - `npm test` before commit.
+- **Prod verification (required):** after push/deploy, run `npm run site:check:prod` (or `SITE_URL=https://tamir.li API_URL=https://tamir.li npm run site:check`). Local-only `npm run site:check` (~34/43, no live API) is **not** a prod pass — report the prod pass count (expect 45/45).
 - Max scope: one queue item per cycle unless trivial follow-up.
 
 ## Related docs

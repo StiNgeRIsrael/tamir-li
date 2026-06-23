@@ -27,7 +27,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "site:check": "tsx scripts/autonomous-site-check.ts"
+    "site:check": "tsx scripts/autonomous-site-check.ts",
+    "site:check:prod": "tsx scripts/autonomous-site-check.ts --prod"
   },
   "engines": {
     "node": ">=22"

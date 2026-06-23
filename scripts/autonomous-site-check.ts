@@ -5,6 +5,7 @@
  *   npm run site:check
  *   SITE_URL=https://tamir.li npm run site:check
  *   SITE_URL=http://localhost:5173 API_URL=http://localhost:5000 npm run site:check
+ *   npm run site:check:prod
  *
  * Skips all billing / premium checkout routes by design.
  */
@@ -18,6 +19,11 @@ import {
   formatToExtension,
 } from "../src/lib/image-convert";
 import { usesClientDocumentConversion } from "../src/lib/document-convert";
+
+if (process.argv.includes("--prod")) {
+  process.env.SITE_URL = "https://tamir.li";
+  process.env.API_URL = "https://tamir.li";
+}
 
 const MAX_DAILY_FREE = 5;
 const TIMEOUT_MS = Number(process.env.SITE_CHECK_TIMEOUT_MS ?? 15_000);
