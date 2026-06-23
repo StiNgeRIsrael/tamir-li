@@ -25,14 +25,6 @@ export function ComingSoonPanel({ toolName, toolId }: ComingSoonPanelProps) {
   };
   const toolNames = t.toolNames as Record<string, string>;
 
-  const alternatives = getFunctionalToolIds()
-    .map((id) => {
-      const tool = getToolById(id);
-      if (!tool) return null;
-      return { id, name: toolNames[id] || tool.name, slug: getDefaultSlug(tool) };
-    })
-    .filter((item): item is { id: string; name: string; slug: string } => item !== null);
-
   const toolAlt =
     toolId === "pdf-to-word"
       ? (() => {
@@ -55,6 +47,15 @@ export function ComingSoonPanel({ toolName, toolId }: ComingSoonPanelProps) {
             };
           })()
         : null;
+
+  const alternatives = getFunctionalToolIds()
+    .map((id) => {
+      const tool = getToolById(id);
+      if (!tool) return null;
+      return { id, name: toolNames[id] || tool.name, slug: getDefaultSlug(tool) };
+    })
+    .filter((item): item is { id: string; name: string; slug: string } => item !== null)
+    .filter((alt) => !toolAlt || alt.slug !== toolAlt.slug);
 
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 px-6 py-16 text-center space-y-4">
