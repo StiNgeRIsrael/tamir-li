@@ -25,6 +25,17 @@ export function extractFailedMigrationName(output: string): string | undefined {
   return folderMatch?.[1];
 }
 
+/** MySQL 1050 / duplicate table — schema exists but migration not marked applied. */
+export function isAlreadyExistsError(output: string): boolean {
+  const lower = output.toLowerCase();
+  return (
+    lower.includes('already exists') ||
+    /database error code:\s*1050/i.test(output) ||
+    lower.includes('er_table_exists') ||
+    /\b1050\b/.test(output)
+  );
+}
+
 /** Trim CLI output for /health — avoid huge payloads, keep diagnostic tail. */
 export function truncateCliOutput(output: string, maxLen = 2000): string {
   const trimmed = output.trim();

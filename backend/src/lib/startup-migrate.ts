@@ -4,11 +4,14 @@ import path from 'path';
 import {
   extractFailedMigrationName,
   extractPrismaErrorCode,
+  isAlreadyExistsError,
   truncateCliOutput,
 } from './migration-cli-parse';
 
 const LOG_PREFIX = '[startup-migrate]';
-const MAX_P3009_RESOLVE_CYCLES = 3;
+const MAX_MIGRATE_RESOLVE_CYCLES = 3;
+/** Init migration — disposable DB may have User table from db push without _prisma_migrations row. */
+export const INIT_MIGRATION_NAME = '20260101000000_init';
 
 export type StartupMigrateState = 'idle' | 'running' | 'success' | 'failed' | 'skipped';
 
@@ -16,7 +19,7 @@ export type StartupMigrateStatus = {
   state: StartupMigrateState;
   error?: string;
   prismaCode?: string;
-  /** Failed migration name from P3009 output (e.g. 20260624120000_ad_settings). */
+  /** Failed migration name from P3009/P3018 output (e.g. 20260101000000_init). */
   failedMigration?: string;
   finishedAt?: string;
   attempts?: number;
@@ -199,14 +202,63 @@ function tryRecoverFromP3009(
   return runMigrateDeploy(root, schemaPath, invoke);
 }
 
+/** Whether P3018 output indicates duplicate-table recovery via resolve --applied. */
+export function getRecoverableP3018Migration(failure: {
+  prismaCode?: string;
+  cliOutput?: string;
+  failedMigration?: string;
+}): string | undefined {
+  if (failure.prismaCode !== 'P3018') {
+    return undefined;
+  }
+  const cliOutput = failure.cliOutput ?? '';
+  if (!isAlreadyExistsError(cliOutput)) {
+    return undefined;
+  }
+  return failure.failedMigration ?? extractFailedMigrationName(cliOutput);
+}
+
+/** P3018: mark migration applied when tables already exist, then redeploy (pre-launch disposable DB). */
+function tryRecoverFromP3018(
+  root: string,
+  schemaPath: string,
+  invoke: PrismaInvoke,
+  failure: Extract<MigrateResult, { ok: false }>,
+): MigrateResult {
+  const migrationName = getRecoverableP3018Migration(failure);
+  if (!migrationName) {
+    return failure;
+  }
+
+  const isInitWithUser =
+    migrationName === INIT_MIGRATION_NAME &&
+    (failure.cliOutput?.includes('User') ?? false);
+
+  console.warn(
+    isInitWithUser
+      ? `${LOG_PREFIX} P3018 on ${migrationName} (User table exists) — auto-resolving as applied (pre-launch disposable DB recovery)`
+      : `${LOG_PREFIX} P3018 on ${migrationName} (already exists) — auto-resolving as applied (pre-launch disposable DB recovery)`,
+  );
+
+  const resolveResult = runMigrateResolve(root, schemaPath, invoke, migrationName, 'applied');
+  if (!resolveResult.ok) {
+    return {
+      ...resolveResult,
+      failedMigration: migrationName,
+    };
+  }
+
+  return runMigrateDeploy(root, schemaPath, invoke);
+}
+
 function runMigrateWithRetry(root: string, schemaPath: string, invoke: PrismaInvoke): MigrateResult {
   let lastFailure: MigrateResult = { ok: false, error: 'Migration not attempted' };
 
-  for (let cycle = 1; cycle <= MAX_P3009_RESOLVE_CYCLES; cycle++) {
+  for (let cycle = 1; cycle <= MAX_MIGRATE_RESOLVE_CYCLES; cycle++) {
     setMigrateStatus({ state: 'running', attempts: cycle });
     if (cycle > 1) {
       console.warn(
-        `${LOG_PREFIX} Retrying migrate deploy after P3009 resolve (cycle ${cycle}/${MAX_P3009_RESOLVE_CYCLES})...`,
+        `${LOG_PREFIX} Retrying migrate deploy after resolve (cycle ${cycle}/${MAX_MIGRATE_RESOLVE_CYCLES})...`,
       );
     }
 
@@ -234,6 +286,20 @@ function runMigrateWithRetry(root: string, schemaPath: string, invoke: PrismaInv
       continue;
     }
 
+    if (result.prismaCode === 'P3018') {
+      const recovered = tryRecoverFromP3018(root, schemaPath, invoke, result);
+      if (recovered.ok) {
+        setMigrateStatus({
+          state: 'success',
+          attempts: cycle,
+          finishedAt: new Date().toISOString(),
+        });
+        return recovered;
+      }
+      lastFailure = recovered;
+      continue;
+    }
+
     lastFailure = result;
     break;
   }
@@ -246,11 +312,11 @@ function runMigrateWithRetry(root: string, schemaPath: string, invoke: PrismaInv
     error: errorDetail,
     prismaCode: lastFailure.ok ? undefined : lastFailure.prismaCode,
     failedMigration,
-    attempts: MAX_P3009_RESOLVE_CYCLES,
+    attempts: MAX_MIGRATE_RESOLVE_CYCLES,
     finishedAt: new Date().toISOString(),
   });
   console.error(
-    `${LOG_PREFIX} All ${MAX_P3009_RESOLVE_CYCLES} P3009 resolve cycles exhausted — probe GET /health → migrations.state`,
+    `${LOG_PREFIX} All ${MAX_MIGRATE_RESOLVE_CYCLES} resolve cycles exhausted — probe GET /health → migrations.state`,
   );
   return lastFailure;
 }
