@@ -23,6 +23,8 @@ type JobResponse = {
 };
 
 const POLL_INTERVAL_MS = 2000;
+/** ~5 min cap so a stuck job cannot poll forever. */
+const MAX_POLL_ATTEMPTS = 150;
 
 function getAuthHeaders(): HeadersInit {
   try {
@@ -67,7 +69,14 @@ export function useConversionJob() {
     abortRef.current = false;
     setPolling(true);
 
+    let attempts = 0;
     while (!abortRef.current) {
+      if (++attempts > MAX_POLL_ATTEMPTS) {
+        setPolling(false);
+        setError("JOB_POLL_TIMEOUT");
+        throw new Error("JOB_POLL_TIMEOUT");
+      }
+
       const res = await fetch(`${api}/api/conversions/${id}`, {
         credentials: "include",
         headers: getAuthHeaders(),
