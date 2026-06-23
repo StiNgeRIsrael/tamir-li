@@ -11,6 +11,7 @@ import {
   getOrCreateSessionId,
   isPremiumUser,
 } from '../lib/usage-shared';
+import { notifyConversionWorker } from '../lib/conversion-worker';
 import {
   ensureJobDir,
   ensureStorageDir,
@@ -174,6 +175,8 @@ router.post('/', optionalAuth, multipartUpload, async (req: Request, res: Respon
         isPremium: priority,
       },
     });
+
+    notifyConversionWorker();
 
     res.status(202).json({
       jobId: job.id,

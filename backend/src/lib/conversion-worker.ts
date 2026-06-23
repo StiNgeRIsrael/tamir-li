@@ -271,6 +271,18 @@ function workerTick(): void {
     });
 }
 
+/** Wake the worker immediately after enqueue (avoids up to POLL_IDLE_MS sleep). */
+export function notifyConversionWorker(): void {
+  pollMs = POLL_FAST_MS;
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
+  if (!processing) {
+    workerTick();
+  }
+}
+
 export function startConversionWorker(): void {
   if (timer) return;
   pollMs = POLL_FAST_MS;

@@ -5,7 +5,7 @@ Server-side conversions (`POST /api/conversions`) enqueue a `ConversionJob`, sto
 ## Flow
 
 1. **Enqueue** — Client POSTs `toolId`, `fromFormat`, `toFormat`, optional file(s). API checks daily usage, creates `ConversionJob` (`PENDING`), writes input file, records `UsageLog`, returns `202` + `jobId`.
-2. **Process** — Worker polls every 5s; premium jobs first. Status → `PROCESSING` → stub/passthrough output → `COMPLETED` (or `FAILED` when real converters error).
+2. **Process** — Worker polls every 5s when busy, 30s when idle; premium jobs first. `POST /api/conversions` calls `notifyConversionWorker()` so new jobs are picked up immediately instead of waiting for the idle interval. Status → `PROCESSING` → stub/passthrough output → `COMPLETED` (or `FAILED` when real converters error).
 3. **Download** — `GET /api/conversions/:id/file` streams output when `COMPLETED`.
 4. **Poll status** — `GET /api/conversions/:id` returns job metadata and `hasOutputFile`.
 
