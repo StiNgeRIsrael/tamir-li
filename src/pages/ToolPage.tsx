@@ -801,9 +801,9 @@ export default function ToolPage() {
                       </span>
                       <div className="space-y-1 min-w-0">
                         <h2 className="text-lg font-semibold text-foreground">
-                          {tt.fileDropZone.uploadStepTitle(activeFrom, activeTo)}
+                          {t.fileDropZone.uploadStepTitle(activeFrom, activeTo)}
                         </h2>
-                        <p className="text-sm text-muted-foreground">{tt.fileDropZone.uploadStepHint}</p>
+                        <p className="text-sm text-muted-foreground">{t.fileDropZone.uploadStepHint}</p>
                       </div>
                     </div>
                     <FileDropZone
