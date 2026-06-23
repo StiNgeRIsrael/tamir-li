@@ -211,7 +211,24 @@ const es: LocalizedContent = {
   },
 };
 
-const byLocale: Partial<Record<Locale, LocalizedContent>> = { he, en, es };
+const fr: LocalizedContent = {
+  "image-converter": {
+    comparisonHeaders: { format: "Format", bestFor: "Idéal pour", size: "Taille", quality: "Qualité" },
+    formatComparison: [
+      { format: "JPG", bestFor: "Photos, web, e-mail", size: "Petit", quality: "Bonne (avec perte)" },
+      { format: "PNG", bestFor: "Graphiques, transparence", size: "Moyen–grand", quality: "Sans perte" },
+      { format: "WEBP", bestFor: "Sites web modernes", size: "Très petit", quality: "Excellente" },
+      { format: "GIF", bestFor: "Courtes animations", size: "Variable", quality: "256 couleurs" },
+    ],
+    faqs: [
+      { q: "Quelle est la différence entre JPG et PNG ?", a: "JPG utilise une compression avec perte — idéal pour les photos. PNG est sans perte et prend en charge la transparence — parfait pour les logos et graphiques." },
+      { q: "La conversion réduit-elle la qualité ?", a: "Convertir en PNG ou TIFF conserve la qualité complète. JPG ou WEBP peuvent compresser légèrement — choisissez selon votre usage." },
+      { q: "Combien de fichiers puis-je convertir à la fois ?", a: "Téléversez plusieurs fichiers et convertissez-les par lot. Offre gratuite : jusqu'à 5 conversions par jour." },
+    ],
+  },
+};
+
+const byLocale: Partial<Record<Locale, LocalizedContent>> = { he, en, es, fr };
 
 /** Top-tool SEO blocks (FAQ + optional format comparison). Falls back to English. */
 export function getToolSeoContent(toolId: string, locale: Locale): ToolSeoContent | null {
