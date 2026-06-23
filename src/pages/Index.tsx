@@ -54,7 +54,7 @@ const Index = () => {
   const toolNames = t.toolNames as Record<string, string>;
   const toolDescs = t.toolDescriptions as Record<string, string>;
   const homeSearch = t.homeSearch as { placeholder: string; all: string; noResults: string; results: (n: number) => string };
-  const homePicker = t.homePicker as { popular: string; allTools: string };
+  const homePicker = t.homePicker as { title: string; popular: string; allTools: string };
   const visibleTools = filterTools(tools);
   const featuredTools = useMemo(() => {
     const functional = new Set(getFunctionalToolIds());
@@ -166,6 +166,7 @@ const Index = () => {
 
           {/* Search + filter */}
           <div id="home-tools" className="space-y-2.5 scroll-mt-16">
+            <h2 className="text-sm font-bold text-foreground">{homePicker.title}</h2>
             <div className="relative">
               <Search className="absolute top-1/2 -translate-y-1/2 start-3 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
