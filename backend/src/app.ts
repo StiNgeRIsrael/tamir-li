@@ -15,6 +15,7 @@ import usageRoutes from './routes/usage.routes';
 import billingRoutes, { paypalWebhookHandler } from './routes/billing.routes';
 import { stripeWebhookHandler } from './routes/billing-stripe.routes';
 import { pingAdSettingsTable } from './lib/ad-settings';
+import { getStartupMigrateStatus } from './lib/startup-migrate';
 import { isDatabaseUrlSet, parseDatabaseUrlSafe, pingDatabase } from './lib/db-health';
 
 dotenv.config();
@@ -76,12 +77,14 @@ app.get('/health', async (_req: Request, res: Response) => {
   const adSettingsTable =
     db.ok ? await pingAdSettingsTable() : { ok: false as const, error: 'DB_UNREACHABLE' };
   const dbMeta = { envSet, ...dbTarget };
+  const migrations = getStartupMigrateStatus();
   res.status(200).json({
     status: 'OK',
     message: 'Server is running',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
     db: db.ok ? { ok: true, ...dbMeta } : { ok: false, error: db.error, ...dbMeta },
+    migrations,
     adSettingsTable: adSettingsTable.ok
       ? { ok: true }
       : { ok: false, error: adSettingsTable.error },

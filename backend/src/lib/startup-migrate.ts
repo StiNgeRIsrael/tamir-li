@@ -4,10 +4,32 @@ import path from 'path';
 
 const LOG_PREFIX = '[startup-migrate]';
 
+export type StartupMigrateState = 'idle' | 'running' | 'success' | 'failed' | 'skipped';
+
+export type StartupMigrateStatus = {
+  state: StartupMigrateState;
+  error?: string;
+  prismaCode?: string;
+  finishedAt?: string;
+  attempts?: number;
+};
+
 type PrismaInvoke = {
   command: string;
   args: string[];
 };
+
+type MigrateResult = { ok: true } | { ok: false; error: string; prismaCode?: string };
+
+let migrateStatus: StartupMigrateStatus = { state: 'idle' };
+
+export function getStartupMigrateStatus(): StartupMigrateStatus {
+  return { ...migrateStatus };
+}
+
+function setMigrateStatus(partial: StartupMigrateStatus): void {
+  migrateStatus = { ...migrateStatus, ...partial };
+}
 
 /** Resolve Prisma CLI as a Node entry (avoids Linux .bin shell wrappers with shell:false). */
 function resolvePrismaInvoke(root: string): PrismaInvoke | null {
@@ -42,7 +64,7 @@ function extractPrismaErrorCode(output: string): string | undefined {
   return output.match(/\bP\d{4}\b/)?.[0];
 }
 
-function runMigrateDeploy(root: string, schemaPath: string, invoke: PrismaInvoke): void {
+function runMigrateDeploy(root: string, schemaPath: string, invoke: PrismaInvoke): MigrateResult {
   const migrateArgs = ['migrate', 'deploy', `--schema=${schemaPath}`];
   const args = invoke.args.length > 0 ? [...invoke.args, ...migrateArgs] : migrateArgs;
 
@@ -58,25 +80,25 @@ function runMigrateDeploy(root: string, schemaPath: string, invoke: PrismaInvoke
   });
 
   if (result.error?.name === 'AbortError') {
+    const error = 'Migration timed out after 120s';
     console.error(
-      `${LOG_PREFIX} Migration timed out after 120s — app continues; check MySQL reachability and Plesk logs`
+      `${LOG_PREFIX} ${error} — app continues; check MySQL reachability and Plesk logs`
     );
-    return;
+    return { ok: false, error };
   }
 
   if (result.status === 0) {
     console.log(`${LOG_PREFIX} Migrations applied successfully`);
-    return;
+    return { ok: true };
   }
 
   const exitCode = result.status ?? 1;
   const cliOutput = [result.stdout, result.stderr].filter(Boolean).join('\n').trim();
   const prismaCode = cliOutput ? extractPrismaErrorCode(cliOutput) : undefined;
+  const error = `Migration failed (exit ${exitCode})${prismaCode ? ` — Prisma ${prismaCode}` : ''}`;
 
   console.error(
-    `${LOG_PREFIX} Migration failed (exit ${exitCode})${
-      prismaCode ? ` — Prisma ${prismaCode}` : ''
-    } — app will start anyway; check DATABASE_URL, MySQL grants, and Plesk logs`
+    `${LOG_PREFIX} ${error} — app will start anyway; check DATABASE_URL, MySQL grants, and Plesk logs`
   );
   if (cliOutput) {
     console.error(`${LOG_PREFIX}`, cliOutput);
@@ -84,6 +106,44 @@ function runMigrateDeploy(root: string, schemaPath: string, invoke: PrismaInvoke
   if (result.error) {
     console.error(`${LOG_PREFIX}`, result.error.message);
   }
+
+  return { ok: false, error, prismaCode };
+}
+
+function runMigrateWithRetry(root: string, schemaPath: string, invoke: PrismaInvoke): MigrateResult {
+  const maxAttempts = 2;
+  let lastFailure: MigrateResult = { ok: false, error: 'Migration not attempted' };
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    setMigrateStatus({ state: 'running', attempts: attempt });
+    if (attempt > 1) {
+      console.warn(`${LOG_PREFIX} Retrying migrate deploy (attempt ${attempt}/${maxAttempts})...`);
+    }
+
+    const result = runMigrateDeploy(root, schemaPath, invoke);
+    if (result.ok) {
+      setMigrateStatus({
+        state: 'success',
+        attempts: attempt,
+        finishedAt: new Date().toISOString(),
+      });
+      return result;
+    }
+
+    lastFailure = result;
+  }
+
+  setMigrateStatus({
+    state: 'failed',
+    error: lastFailure.ok ? undefined : lastFailure.error,
+    prismaCode: lastFailure.ok ? undefined : lastFailure.prismaCode,
+    attempts: maxAttempts,
+    finishedAt: new Date().toISOString(),
+  });
+  console.error(
+    `${LOG_PREFIX} All ${maxAttempts} migrate attempts failed — probe GET /health → migrations.state`
+  );
+  return lastFailure;
 }
 
 /**
@@ -98,11 +158,14 @@ function runMigrateDeploy(root: string, schemaPath: string, invoke: PrismaInvoke
 export function runStartupMigrations(): void {
   try {
     if (process.env.NODE_ENV !== 'production') {
+      setMigrateStatus({ state: 'skipped', error: 'Not production' });
       return;
     }
 
     if (!process.env.DATABASE_URL) {
-      console.warn(`${LOG_PREFIX} DATABASE_URL not set — skipping migrations`);
+      const error = 'DATABASE_URL not set';
+      console.warn(`${LOG_PREFIX} ${error} — skipping migrations`);
+      setMigrateStatus({ state: 'skipped', error, finishedAt: new Date().toISOString() });
       return;
     }
 
@@ -110,20 +173,24 @@ export function runStartupMigrations(): void {
     const schemaPath = path.join(root, 'backend', 'prisma', 'schema.prisma');
 
     if (!existsSync(schemaPath)) {
-      console.warn(`${LOG_PREFIX} Schema not found at ${schemaPath} — skipping migrations`);
+      const error = `Schema not found at ${schemaPath}`;
+      console.warn(`${LOG_PREFIX} ${error} — skipping migrations`);
+      setMigrateStatus({ state: 'skipped', error, finishedAt: new Date().toISOString() });
       return;
     }
 
     const invoke = resolvePrismaInvoke(root);
     if (!invoke) {
-      console.error(
-        `${LOG_PREFIX} Prisma CLI not found under ${root} — skipping migrations (run npm run plesk:backend-install once)`
-      );
+      const error = 'Prisma CLI not found (run npm run plesk:backend-install once)';
+      console.error(`${LOG_PREFIX} ${error} — skipping migrations`);
+      setMigrateStatus({ state: 'failed', error, finishedAt: new Date().toISOString() });
       return;
     }
 
-    runMigrateDeploy(root, schemaPath, invoke);
+    runMigrateWithRetry(root, schemaPath, invoke);
   } catch (err) {
+    const error = err instanceof Error ? err.message : String(err);
     console.error(`${LOG_PREFIX} Unexpected error — app continues:`, err);
+    setMigrateStatus({ state: 'failed', error, finishedAt: new Date().toISOString() });
   }
 }

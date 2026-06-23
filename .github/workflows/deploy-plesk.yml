@@ -150,6 +150,16 @@ jobs:
             export PATH="/opt/plesk/node/22/bin:/opt/plesk/node/24/bin:/opt/plesk/node/20/bin:$PATH"
             npm run plesk:backend-install
 
+            # Apply pending migrations before restart — SSH has DATABASE_URL from GitHub secrets;
+            # Plesk "Run Node.js commands" does not, but CI deploy always can.
+            if [ -n "$DATABASE_URL" ]; then
+              echo "Running npm run plesk:db (apply pending Prisma migrations before restart)..."
+              export DATABASE_URL NODE_ENV=production
+              npm run plesk:db
+            else
+              echo "::warning:: DATABASE_URL GitHub secret not set — skipping deploy-time migrate; add secret or rely on startup-migrate at restart"
+            fi
+
             if [ "$RUN_SERVER_SETUP" = "true" ]; then
               if [ -z "$DATABASE_URL" ]; then
                 echo "::error:: DATABASE_URL is not set. Add GitHub secret DATABASE_URL or run setup via Plesk UI: Node.js → Run Node.js commands → run setup"
@@ -239,5 +249,8 @@ jobs:
           echo "/health content-type: $HEALTH_CT"
           cat /tmp/health-body
           if grep -q '"ok"[[:space:]]*:[[:space:]]*false' /tmp/health-body; then
-            echo "::warning:: GET /health reports db.ok=false — check DATABASE_URL in Plesk custom env and Restart app (startup-migrate applies migrations; do not use run plesk:db in Plesk UI)."
+            echo "::warning:: GET /health reports db.ok=false — check DATABASE_URL in Plesk custom env and GitHub secret DATABASE_URL for deploy-time migrate."
+          fi
+          if grep -q '"adSettingsTable"[[:space:]]*:[[:space:]]*{[^}]*"ok"[[:space:]]*:[[:space:]]*false' /tmp/health-body; then
+            echo "::warning:: GET /health reports adSettingsTable.ok=false — migration may still be pending; check deploy logs for plesk:db and /health migrations.state"
           fi
