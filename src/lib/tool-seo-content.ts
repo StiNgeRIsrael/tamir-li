@@ -235,7 +235,41 @@ const fr: LocalizedContent = {
   },
 };
 
-const byLocale: Partial<Record<Locale, LocalizedContent>> = { he, en, es, fr };
+const de: LocalizedContent = {
+  "image-converter": {
+    comparisonHeaders: { format: "Format", bestFor: "Ideal für", size: "Größe", quality: "Qualität" },
+    formatComparison: [
+      { format: "JPG", bestFor: "Fotos, Web, E-Mail", size: "Klein", quality: "Gut (verlustbehaftet)" },
+      { format: "PNG", bestFor: "Grafiken, Transparenz", size: "Mittel–groß", quality: "Verlustfrei" },
+      { format: "WEBP", bestFor: "Moderne Websites", size: "Sehr klein", quality: "Ausgezeichnet" },
+      { format: "GIF", bestFor: "Kurze Animationen", size: "Variiert", quality: "256 Farben" },
+    ],
+    faqs: [
+      { q: "Was ist der Unterschied zwischen JPG und PNG?", a: "JPG verwendet verlustbehaftete Kompression — ideal für Fotos. PNG ist verlustfrei und unterstützt Transparenz — perfekt für Logos und Grafiken." },
+      { q: "Reduziert die Konvertierung die Qualität?", a: "Die Konvertierung in PNG oder TIFF behält die volle Qualität. JPG oder WEBP können leicht komprimieren — wählen Sie je nach Verwendung." },
+      { q: "Wie viele Dateien kann ich gleichzeitig konvertieren?", a: "Laden Sie mehrere Dateien hoch und konvertieren Sie sie im Stapel. Kostenloser Plan: bis zu 5 Konversionen pro Tag." },
+    ],
+  },
+};
+
+const it: LocalizedContent = {
+  "image-converter": {
+    comparisonHeaders: { format: "Formato", bestFor: "Ideale per", size: "Dimensione", quality: "Qualità" },
+    formatComparison: [
+      { format: "JPG", bestFor: "Foto, web, e-mail", size: "Piccolo", quality: "Buona (con perdita)" },
+      { format: "PNG", bestFor: "Grafica, trasparenza", size: "Medio–grande", quality: "Senza perdita" },
+      { format: "WEBP", bestFor: "Siti web moderni", size: "Molto piccolo", quality: "Eccellente" },
+      { format: "GIF", bestFor: "Animazioni brevi", size: "Variabile", quality: "256 colori" },
+    ],
+    faqs: [
+      { q: "Qual è la differenza tra JPG e PNG?", a: "JPG usa la compressione con perdita — ideale per le foto. PNG è senza perdita e supporta la trasparenza — perfetto per loghi e grafica." },
+      { q: "La conversione riduce la qualità?", a: "La conversione in PNG o TIFF conserva la qualità completa. JPG o WEBP possono comprimere leggermente — scegli in base all'uso." },
+      { q: "Quanti file posso convertire contemporaneamente?", a: "Carica più file e convertili in batch. Piano gratuito: fino a 5 conversioni al giorno." },
+    ],
+  },
+};
+
+const byLocale: Partial<Record<Locale, LocalizedContent>> = { he, en, es, fr, de, it };
 
 /** Top-tool SEO blocks (FAQ + optional format comparison). Falls back to English. */
 export function getToolSeoContent(toolId: string, locale: Locale): ToolSeoContent | null {
