@@ -107,34 +107,21 @@ jobs:
           rsyncArgs: "-avz --omit-dir-times"
           sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"
 
-      # SSH sessions do not inherit Plesk Node.js custom env — export GitHub secrets when run_server_setup=true.
-      - name: Validate server setup secrets
-        if: success() && github.event_name == 'workflow_dispatch' && github.event.inputs.run_server_setup == 'true'
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: |
-          if [ -z "$DATABASE_URL" ]; then
-            echo "::error:: run_server_setup=true requires GitHub repository secret DATABASE_URL. SSH does not inherit Plesk Node.js custom env vars. Add DATABASE_URL under Settings → Secrets and variables → Actions, or run setup via Plesk UI: Node.js → Run Node.js commands → run setup"
-            exit 1
-          fi
-
       # Runs only after SFTP succeeds. No npm install unless workflow_dispatch run_server_setup=true.
+      # Migrations: never via GitHub DATABASE_URL (often wrong / out of sync with Plesk custom env).
+      # After restart, startup-migrate.ts runs prisma migrate deploy using Plesk-injected DATABASE_URL.
       - name: Restart Node.js app on Plesk
         if: success()
         uses: appleboy/ssh-action@v1.2.0
         env:
           RUN_SERVER_SETUP: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.run_server_setup == 'true' }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID || secrets.VITE_GOOGLE_CLIENT_ID }}
-          NODE_ENV: production
         with:
           host: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}
           username: ${{ secrets.PLESK_SSH_USER || secrets.PLESK_FTP_USER }}
           password: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
           port: ${{ vars.PLESK_SSH_PORT || 22 }}
           command_timeout: 15m
-          envs: RUN_SERVER_SETUP,DATABASE_URL,JWT_SECRET,GOOGLE_CLIENT_ID,NODE_ENV
+          envs: RUN_SERVER_SETUP
           script: |
             set -e
             APP_DIR="${{ vars.PLESK_NODE_APP_DIR || 'httpdocs/deploy' }}"
@@ -145,31 +132,14 @@ jobs:
             APP_DIR="$(pwd)"
             echo "Node.js app dir: $APP_DIR"
 
-            # Backend deps + prisma generate — no DATABASE_URL required (unlike plesk:db / migrate).
+            # Backend deps + prisma generate — no DATABASE_URL required (migrate runs at app restart).
             echo "Running npm run plesk:backend-install (ensure Prisma client after deploy)..."
             export PATH="/opt/plesk/node/22/bin:/opt/plesk/node/24/bin:/opt/plesk/node/20/bin:$PATH"
             npm run plesk:backend-install
 
-            # Apply pending migrations before restart — SSH has DATABASE_URL from GitHub secrets;
-            # Plesk "Run Node.js commands" does not, but CI deploy always can.
-            if [ -n "$DATABASE_URL" ]; then
-              echo "Running npm run plesk:db (apply pending Prisma migrations before restart)..."
-              export DATABASE_URL NODE_ENV=production
-              npm run plesk:db
-            else
-              echo "::warning:: DATABASE_URL GitHub secret not set — skipping deploy-time migrate; add secret or rely on startup-migrate at restart"
-            fi
-
             if [ "$RUN_SERVER_SETUP" = "true" ]; then
-              if [ -z "$DATABASE_URL" ]; then
-                echo "::error:: DATABASE_URL is not set. Add GitHub secret DATABASE_URL or run setup via Plesk UI: Node.js → Run Node.js commands → run setup"
-                exit 1
-              fi
-              echo "Running npm run setup (workflow_dispatch run_server_setup=true)..."
-              export DATABASE_URL NODE_ENV=production
-              [ -n "$JWT_SECRET" ] && export JWT_SECRET
-              [ -n "$GOOGLE_CLIENT_ID" ] && export GOOGLE_CLIENT_ID
-              npm run setup
+              echo "Running npm run plesk:setup-deps (workflow_dispatch run_server_setup=true — deps only, migrate on restart)..."
+              npm run plesk:setup-deps
             fi
 
             RESTARTED=0
@@ -249,8 +219,8 @@ jobs:
           echo "/health content-type: $HEALTH_CT"
           cat /tmp/health-body
           if grep -q '"ok"[[:space:]]*:[[:space:]]*false' /tmp/health-body; then
-            echo "::warning:: GET /health reports db.ok=false — check DATABASE_URL in Plesk custom env and GitHub secret DATABASE_URL for deploy-time migrate."
+            echo "::warning:: GET /health reports db.ok=false — check DATABASE_URL in Plesk Node.js custom env and restart the app."
           fi
           if grep -q '"adSettingsTable"[[:space:]]*:[[:space:]]*{[^}]*"ok"[[:space:]]*:[[:space:]]*false' /tmp/health-body; then
-            echo "::warning:: GET /health reports adSettingsTable.ok=false — migration may still be pending; check deploy logs for plesk:db and /health migrations.state"
+            echo "::warning:: GET /health reports adSettingsTable.ok=false — check Plesk logs for [startup-migrate] and /health migrations.state (restart applies pending migrations)."
           fi

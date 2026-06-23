@@ -34,8 +34,8 @@ function setMigrateStatus(partial: StartupMigrateStatus): void {
 /** Resolve Prisma CLI as a Node entry (avoids Linux .bin shell wrappers with shell:false). */
 function resolvePrismaInvoke(root: string): PrismaInvoke | null {
   const jsCandidates = [
-    path.join(root, 'node_modules', 'prisma', 'build', 'index.js'),
     path.join(root, 'backend', 'node_modules', 'prisma', 'build', 'index.js'),
+    path.join(root, 'node_modules', 'prisma', 'build', 'index.js'),
   ];
 
   for (const jsEntry of jsCandidates) {
@@ -46,8 +46,8 @@ function resolvePrismaInvoke(root: string): PrismaInvoke | null {
 
   const binName = process.platform === 'win32' ? 'prisma.cmd' : 'prisma';
   const binCandidates = [
-    path.join(root, 'node_modules', '.bin', binName),
     path.join(root, 'backend', 'node_modules', '.bin', binName),
+    path.join(root, 'node_modules', '.bin', binName),
   ];
 
   for (const bin of binCandidates) {
@@ -171,6 +171,8 @@ export function runStartupMigrations(): void {
 
     const root = process.cwd();
     const schemaPath = path.join(root, 'backend', 'prisma', 'schema.prisma');
+
+    console.log(`${LOG_PREFIX} cwd=${root} schema=${schemaPath}`);
 
     if (!existsSync(schemaPath)) {
       const error = `Schema not found at ${schemaPath}`;

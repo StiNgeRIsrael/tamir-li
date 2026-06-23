@@ -1,8 +1,8 @@
 /**
- * Apply Prisma migrations via CLI (CI run_server_setup or SSH with exported DATABASE_URL).
+ * Apply Prisma migrations via CLI (manual SSH or CI run_server_setup with exported DATABASE_URL).
  *
- * Plesk "Run Node.js commands" does NOT inherit Custom environment variables — DATABASE_URL
- * is unavailable here by design. Production migrations run on app restart (startup-migrate.ts).
+ * Plesk "Run Node.js commands" and CI SSH do NOT inherit Custom environment variables.
+ * Production migrations run on app restart via startup-migrate.ts (uses Plesk runtime env).
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
