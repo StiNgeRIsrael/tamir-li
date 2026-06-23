@@ -105,6 +105,13 @@ const he: LocalizedContent = {
       { q: "האם העיצוב נשמר בהמרה?", a: "המרה ל-HTML שומרת על מבנה בסיסי; עיצוב מורכב עשוי לדרוש התאמות." },
     ],
   },
+  "ai-image-generator": {
+    faqs: [
+      { q: "האם הכלי חינמי?", a: "זמין למנויי פרימיום בלבד. כל יצירת תמונה עולה קרדיט אחד; מנוי פרימיום כולל 6 קרדיטים בחודש, וניתן לרכוש חבילות נוספות." },
+      { q: "איך כותבים פרומпт טוב?", a: "תארו את הנושא, הסגנון, האור והרקע בטקסט חופשי. ככל שהתיאור מפורט יותר, התוצאה מדויקת יותר." },
+      { q: "אילו סגנונות ויחסי תמונה נתמכים?", a: "ניתן לבחור סגנון (ריאליסטי, אמנותי, קריקטורה, תלת מימד ועוד) ויחס תמונה (ריבוע, רחב, אורך). ההורדה ב-PNG." },
+    ],
+  },
 };
 
 const en: LocalizedContent = {
@@ -190,6 +197,13 @@ const en: LocalizedContent = {
       { q: "Which text formats are supported?", a: "TXT, Markdown and HTML — with two-way conversion between them." },
       { q: "Is there a word count?", a: "Yes — the tool shows word and character counts in real time." },
       { q: "Is formatting preserved?", a: "HTML conversion keeps basic structure; complex styling may need tweaks." },
+    ],
+  },
+  "ai-image-generator": {
+    faqs: [
+      { q: "Is this tool free?", a: "Available for Premium subscribers only. Each image costs 1 credit; Premium includes 6 credits per month, and you can buy extra credit packs." },
+      { q: "How do I write a good prompt?", a: "Describe the subject, style, lighting and background in free text. The more detailed the description, the better the result." },
+      { q: "Which styles and aspect ratios are supported?", a: "Choose a style (realistic, artistic, cartoon, 3D and more) and aspect ratio (square, wide, portrait). Download as PNG." },
     ],
   },
 };
@@ -279,6 +293,13 @@ const es: LocalizedContent = {
       { q: "¿Se conserva el formato?", a: "La conversión a HTML mantiene la estructura básica; estilos complejos pueden requerir ajustes." },
     ],
   },
+  "ai-image-generator": {
+    faqs: [
+      { q: "¿Es gratis esta herramienta?", a: "Disponible solo para suscriptores Premium. Cada imagen cuesta 1 crédito; Premium incluye 6 créditos al mes y puedes comprar paquetes adicionales." },
+      { q: "¿Cómo escribir un buen prompt?", a: "Describe el tema, estilo, iluminación y fondo en texto libre. Cuanto más detallada sea la descripción, mejor será el resultado." },
+      { q: "¿Qué estilos y proporciones se admiten?", a: "Elige estilo (realista, artístico, caricatura, 3D y más) y proporción (cuadrado, ancho, vertical). Descarga en PNG." },
+    ],
+  },
 };
 
 const fr: LocalizedContent = {
@@ -364,6 +385,13 @@ const fr: LocalizedContent = {
       { q: "Quels formats texte sont pris en charge ?", a: "TXT, Markdown et HTML — avec conversion bidirectionnelle entre eux." },
       { q: "Y a-t-il un compteur de mots ?", a: "Oui — l'outil affiche mots et caractères en temps réel." },
       { q: "La mise en forme est-elle conservée ?", a: "La conversion en HTML garde la structure de base ; un style complexe peut nécessiter des ajustements." },
+    ],
+  },
+  "ai-image-generator": {
+    faqs: [
+      { q: "Cet outil est-il gratuit ?", a: "Réservé aux abonnés Premium. Chaque image coûte 1 crédit ; Premium inclut 6 crédits par mois, avec des packs supplémentaires disponibles." },
+      { q: "Comment rédiger un bon prompt ?", a: "Décrivez le sujet, le style, l'éclairage et l'arrière-plan en texte libre. Plus la description est détaillée, meilleur est le résultat." },
+      { q: "Quels styles et ratios sont pris en charge ?", a: "Choisissez un style (réaliste, artistique, cartoon, 3D, etc.) et un ratio (carré, large, portrait). Téléchargement en PNG." },
     ],
   },
 };
@@ -453,6 +481,13 @@ const ru: LocalizedContent = {
       { q: "Сохраняется ли форматирование?", a: "Конвертация в HTML сохраняет базовую структуру; сложное оформление может потребовать правок." },
     ],
   },
+  "ai-image-generator": {
+    faqs: [
+      { q: "Этот инструмент бесплатный?", a: "Доступен только подписчикам Premium. Каждое изображение стоит 1 кредит; Premium включает 6 кредитов в месяц, дополнительные пакеты можно купить." },
+      { q: "Как написать хороший промпт?", a: "Опишите тему, стиль, освещение и фон свободным текстом. Чем подробнее описание, тем лучше результат." },
+      { q: "Какие стили и пропорции поддерживаются?", a: "Выберите стиль (реалистичный, художественный, мультяшный, 3D и др.) и пропорции (квадрат, широкий, вертикальный). Скачивание в PNG." },
+    ],
+  },
 };
 
 const de: LocalizedContent = {
@@ -540,6 +575,13 @@ const de: LocalizedContent = {
       { q: "Bleibt die Formatierung erhalten?", a: "Die HTML-Konvertierung behält die Grundstruktur; komplexes Styling kann Anpassungen erfordern." },
     ],
   },
+  "ai-image-generator": {
+    faqs: [
+      { q: "Ist dieses Tool kostenlos?", a: "Nur für Premium-Abonnenten. Jedes Bild kostet 1 Credit; Premium enthält 6 Credits pro Monat, zusätzliche Pakete sind käuflich." },
+      { q: "Wie schreibt man einen guten Prompt?", a: "Beschreiben Sie Motiv, Stil, Beleuchtung und Hintergrund in freiem Text. Je detaillierter die Beschreibung, desto besser das Ergebnis." },
+      { q: "Welche Stile und Seitenverhältnisse werden unterstützt?", a: "Wählen Sie Stil (realistisch, künstlerisch, Cartoon, 3D u. a.) und Seitenverhältnis (quadratisch, breit, hoch). Download als PNG." },
+    ],
+  },
 };
 
 const it: LocalizedContent = {
@@ -625,6 +667,13 @@ const it: LocalizedContent = {
       { q: "Quali formati di testo sono supportati?", a: "TXT, Markdown e HTML — con conversione bidirezionale tra loro." },
       { q: "C'è un contatore di parole?", a: "Sì — lo strumento mostra parole e caratteri in tempo reale." },
       { q: "La formattazione viene conservata?", a: "La conversione in HTML mantiene la struttura di base; stili complessi possono richiedere modifiche." },
+    ],
+  },
+  "ai-image-generator": {
+    faqs: [
+      { q: "Questo strumento è gratuito?", a: "Disponibile solo per abbonati Premium. Ogni immagine costa 1 credito; Premium include 6 crediti al mese, con pacchetti aggiuntivi acquistabili." },
+      { q: "Come scrivere un buon prompt?", a: "Descrivi soggetto, stile, illuminazione e sfondo in testo libero. Più la descrizione è dettagliata, migliore è il risultato." },
+      { q: "Quali stili e proporzioni sono supportati?", a: "Scegli stile (realistico, artistico, cartoon, 3D e altri) e proporzione (quadrato, largo, verticale). Download in PNG." },
     ],
   },
 };
