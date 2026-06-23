@@ -216,6 +216,13 @@ const es: LocalizedContent = {
       { q: "¿A qué formato conviene comprimir?", a: "Para fotos web — WEBP o JPG. Para gráficos con transparencia — PNG comprimido." },
     ],
   },
+  "image-resizer": {
+    faqs: [
+      { q: "¿Cambiar el tamaño reduce la calidad?", a: "Reducir la imagen mantiene buena calidad. Ampliar puede difuminar — conviene empezar con un archivo más grande." },
+      { q: "¿Qué dimensiones puedo establecer?", a: "Introduce ancho y alto en píxeles o mantén la proporción. Ideal para iconos, redes sociales y sitios web." },
+      { q: "¿Qué formatos se admiten?", a: "JPG, PNG y WEBP — la salida en el formato que elijas." },
+    ],
+  },
   "video-converter": {
     comparisonHeaders: { format: "Formato", bestFor: "Ideal para", size: "Tamaño", quality: "Calidad" },
     formatComparison: [
@@ -273,6 +280,13 @@ const fr: LocalizedContent = {
       { q: "De combien puis-je compresser une image ?", a: "Cela dépend du format d'origine. JPG et WEBP se compressent nettement ; PNG moins, mais le poids peut quand même être réduit." },
       { q: "La compression affecte-t-elle la qualité ?", a: "L'outil équilibre taille et qualité. Pour la plupart des sites web, une compression modérée reste à peine visible." },
       { q: "Vers quel format compresser ?", a: "Pour les photos web — WEBP ou JPG. Pour les graphiques avec transparence — PNG compressé." },
+    ],
+  },
+  "image-resizer": {
+    faqs: [
+      { q: "Le redimensionnement réduit-il la qualité ?", a: "Réduire l'image conserve une bonne qualité. Agrandir peut flouter — partez d'un fichier plus grand si possible." },
+      { q: "Quelles dimensions puis-je définir ?", a: "Saisissez largeur et hauteur en pixels ou conservez les proportions. Idéal pour icônes, réseaux sociaux et sites web." },
+      { q: "Quels formats sont pris en charge ?", a: "JPG, PNG et WEBP — sortie dans le format de votre choix." },
     ],
   },
   "video-converter": {
@@ -334,6 +348,13 @@ const ru: LocalizedContent = {
       { q: "В какой формат сжимать?", a: "Для веб-фото — WEBP или JPG. Для графики с прозрачностью — сжатый PNG." },
     ],
   },
+  "image-resizer": {
+    faqs: [
+      { q: "Снижает ли изменение размера качество?", a: "Уменьшение сохраняет хорошее качество. Увеличение может размыть — лучше начинать с более крупного файла." },
+      { q: "Какие размеры можно задать?", a: "Введите ширину и высоту в пикселях или сохраните пропорции. Подходит для иконок, соцсетей и сайтов." },
+      { q: "Какие форматы поддерживаются?", a: "JPG, PNG и WEBP — выход в выбранном вами формате." },
+    ],
+  },
   "video-converter": {
     comparisonHeaders: { format: "Формат", bestFor: "Подходит для", size: "Размер", quality: "Качество" },
     formatComparison: [
@@ -393,6 +414,13 @@ const de: LocalizedContent = {
       { q: "In welches Format soll ich komprimieren?", a: "Für Webfotos — WEBP oder JPG. Für Grafiken mit Transparenz — komprimiertes PNG." },
     ],
   },
+  "image-resizer": {
+    faqs: [
+      { q: "Verringert die Größenänderung die Qualität?", a: "Verkleinern behält gute Qualität. Vergrößern kann unscharf wirken — starten Sie wenn möglich mit einer größeren Quelldatei." },
+      { q: "Welche Abmessungen kann ich festlegen?", a: "Breite und Höhe in Pixeln eingeben oder Seitenverhältnis beibehalten. Ideal für Icons, Social Media und Websites." },
+      { q: "Welche Formate werden unterstützt?", a: "JPG, PNG und WEBP — Ausgabe in Ihrem gewählten Format." },
+    ],
+  },
   "video-converter": {
     comparisonHeaders: { format: "Format", bestFor: "Ideal für", size: "Größe", quality: "Qualität" },
     formatComparison: [
@@ -450,6 +478,13 @@ const it: LocalizedContent = {
       { q: "Quanto posso comprimere un'immagine?", a: "Dipende dal formato originale. JPG e WEBP si comprimono significativamente; PNG meno, ma il peso può comunque essere ridotto." },
       { q: "La compressione riduce la qualità?", a: "Lo strumento bilancia dimensione e qualità. Per la maggior parte dei siti web, una compressione moderata è appena percettibile." },
       { q: "In quale formato comprimere?", a: "Per foto web — WEBP o JPG. Per grafica con trasparenza — PNG compresso." },
+    ],
+  },
+  "image-resizer": {
+    faqs: [
+      { q: "Il ridimensionamento riduce la qualità?", a: "Ridurre mantiene una buona qualità. Ingrandire può sfocare — partite da un file più grande se possibile." },
+      { q: "Quali dimensioni posso impostare?", a: "Inserite larghezza e altezza in pixel o mantenete le proporzioni. Ideale per icone, social e siti web." },
+      { q: "Quali formati sono supportati?", a: "JPG, PNG e WEBP — output nel formato scelto." },
     ],
   },
   "video-converter": {
