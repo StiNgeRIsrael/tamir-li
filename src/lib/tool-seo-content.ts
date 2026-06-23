@@ -230,6 +230,13 @@ const es: LocalizedContent = {
       { q: "¿Hay límite de archivos?", a: "Plan gratuito: hasta 5 operaciones al día. Premium: ilimitado." },
     ],
   },
+  "text-tools": {
+    faqs: [
+      { q: "¿Qué formatos de texto se admiten?", a: "TXT, Markdown y HTML — con conversión bidireccional entre ellos." },
+      { q: "¿Hay contador de palabras?", a: "Sí — la herramienta muestra palabras y caracteres en tiempo real." },
+      { q: "¿Se conserva el formato?", a: "La conversión a HTML mantiene la estructura básica; estilos complejos pueden requerir ajustes." },
+    ],
+  },
 };
 
 const fr: LocalizedContent = {
@@ -266,6 +273,13 @@ const fr: LocalizedContent = {
       { q: "Comment fusionner des fichiers PDF ?", a: "Téléversez tous les fichiers, réorganisez les pages par glisser-déposer, puis fusionnez — vous obtenez un seul PDF." },
       { q: "Puis-je faire pivoter des pages ?", a: "Oui — faites pivoter des pages individuelles avant le téléchargement." },
       { q: "Y a-t-il une limite de fichiers ?", a: "Offre gratuite : jusqu'à 5 opérations par jour. Premium : illimité." },
+    ],
+  },
+  "text-tools": {
+    faqs: [
+      { q: "Quels formats texte sont pris en charge ?", a: "TXT, Markdown et HTML — avec conversion bidirectionnelle entre eux." },
+      { q: "Y a-t-il un compteur de mots ?", a: "Oui — l'outil affiche mots et caractères en temps réel." },
+      { q: "La mise en forme est-elle conservée ?", a: "La conversion en HTML garde la structure de base ; un style complexe peut nécessiter des ajustements." },
     ],
   },
 };
@@ -306,6 +320,13 @@ const ru: LocalizedContent = {
       { q: "Есть ли лимит файлов?", a: "Бесплатный план: до 5 операций в день. Премиум: без ограничений." },
     ],
   },
+  "text-tools": {
+    faqs: [
+      { q: "Какие текстовые форматы поддерживаются?", a: "TXT, Markdown и HTML — с двусторонней конвертацией между ними." },
+      { q: "Есть ли подсчёт слов?", a: "Да — инструмент показывает количество слов и символов в реальном времени." },
+      { q: "Сохраняется ли форматирование?", a: "Конвертация в HTML сохраняет базовую структуру; сложное оформление может потребовать правок." },
+    ],
+  },
 };
 
 const de: LocalizedContent = {
@@ -344,6 +365,13 @@ const de: LocalizedContent = {
       { q: "Gibt es ein Dateilimit?", a: "Kostenloser Plan: bis zu 5 Operationen pro Tag. Premium: unbegrenzt." },
     ],
   },
+  "text-tools": {
+    faqs: [
+      { q: "Welche Textformate werden unterstützt?", a: "TXT, Markdown und HTML — mit bidirektionaler Konvertierung zwischen ihnen." },
+      { q: "Gibt es eine Wortzählung?", a: "Ja — das Tool zeigt Wörter und Zeichen in Echtzeit." },
+      { q: "Bleibt die Formatierung erhalten?", a: "Die HTML-Konvertierung behält die Grundstruktur; komplexes Styling kann Anpassungen erfordern." },
+    ],
+  },
 };
 
 const it: LocalizedContent = {
@@ -380,6 +408,13 @@ const it: LocalizedContent = {
       { q: "Come unisco file PDF?", a: "Carica tutti i file, riordina le pagine trascinandole e clicca Unisci — otterrai un unico PDF." },
       { q: "Posso ruotare le pagine?", a: "Sì — ruota le singole pagine prima del download." },
       { q: "C'è un limite di file?", a: "Piano gratuito: fino a 5 operazioni al giorno. Premium: illimitato." },
+    ],
+  },
+  "text-tools": {
+    faqs: [
+      { q: "Quali formati di testo sono supportati?", a: "TXT, Markdown e HTML — con conversione bidirezionale tra loro." },
+      { q: "C'è un contatore di parole?", a: "Sì — lo strumento mostra parole e caratteri in tempo reale." },
+      { q: "La formattazione viene conservata?", a: "La conversione in HTML mantiene la struttura di base; stili complessi possono richiedere modifiche." },
     ],
   },
 };
