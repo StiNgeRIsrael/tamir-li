@@ -21,7 +21,7 @@ export function ToolsSidebar() {
   const toolNames = t.toolNames as Record<string, string>;
   const [collapsed, setCollapsed] = useState(true);
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({
-    image: true, video: true, audio: true, document: true,
+    image: true, video: true, audio: true, document: true, ai: true,
   });
 
   const toggleCategory = (cat: string) =>
