@@ -10,25 +10,32 @@ Display ads use **zone keys** from the Adsterra publisher dashboard (script embe
 
 Recommended sizes for this app:
 
-| Placement | Size | Env var |
-|-----------|------|---------|
-| Top/bottom banners | 728×90 | `VITE_ADSTERRA_ZONE_BANNER` |
-| Desktop sidebar rails | 300×250 | `VITE_ADSTERRA_ZONE_SIDEBAR`, `VITE_ADSTERRA_ZONE_SIDEBAR_2` |
-| Inline / vignette | 468×60 (or 300×250) | `VITE_ADSTERRA_ZONE_INLINE` |
-| Native (mid-content) | Native script + container id | `VITE_ADSTERRA_NATIVE_SCRIPT_URL`, `VITE_ADSTERRA_NATIVE_CONTAINER_ID` |
-| Popunder (optional) | Popunder script URL | `VITE_ADSTERRA_POPUNDER_SCRIPT_URL` |
+| Placement | Size | Admin field |
+|-----------|------|-------------|
+| Top/bottom banners | 728×90 | `zoneBanner` |
+| Desktop sidebar rails | 300×250 | `zoneSidebar`, `zoneSidebar2` |
+| Inline / vignette | 468×60 (or 300×250) | `zoneInline` |
+| Native (mid-content) | Native script + container id | `nativeScriptUrl`, `nativeContainerId` |
+| Popunder (optional) | Popunder script URL | `popunderScriptUrl` |
 
 From each unit’s embed code, copy the **`key`** value (hex string in `atOptions`).
 
-If the script URL host differs from `www.highperformanceformat.com`, set:
+If the script URL host differs from `www.highperformanceformat.com`, set **Invoke host** in admin (or `VITE_ADSTERRA_INVOKE_HOST` locally).
 
-```env
-VITE_ADSTERRA_INVOKE_HOST=www.highperformanceformat.com
-```
+## 2. Production — admin panel (primary)
 
-## 2. Local env (never commit secrets)
+After deploy, sign in as admin and open **`/admin/ads`** (Hebrew: `/admin/ads`, other locales: `/en/admin/ads`, etc.).
 
-Add to `.env.development.local` (see `.env.example`):
+Paste zone keys and script URLs from the Adsterra dashboard → **Save**. Settings are stored in MySQL (`AdSettings` table) and served at runtime via `GET /api/ads/config` — **no rebuild required** when keys change.
+
+Requires:
+
+- `DATABASE_URL` in Plesk custom env (migration `20260624120000_ad_settings` runs on app restart)
+- Admin role (`ADMIN_EMAILS` + Google sign-in)
+
+## 3. Local dev — optional `VITE_*` fallback
+
+For local development without the API, add to `.env.development.local` (see `.env.example`):
 
 ```env
 VITE_ADSTERRA_ZONE_BANNER=your_728x90_key
@@ -42,41 +49,47 @@ VITE_ADSTERRA_NATIVE_CONTAINER_ID=container-your_native_key
 # VITE_ADSTERRA_INVOKE_HOST=www.highperformanceformat.com
 ```
 
-Restart `npm run dev` after changing env vars.
+Restart `npm run dev` after changing env vars. Runtime DB config takes precedence when `VITE_API_URL` points at a backend with saved settings.
 
 **Note:** Do not put your Adsterra API key in `VITE_*` vars — it would be exposed in the browser bundle. API keys are for server-side reporting only.
 
-## 3. Production / CI
+## 4. CI / legacy build-time secrets (optional)
 
-Set GitHub Actions secrets (or Plesk env) matching the `VITE_ADSTERRA_*` names in `.github/workflows/deploy-plesk.yml`.
+GitHub Actions can still pass `VITE_ADSTERRA_*` into `npm run build` via [`deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml) as a fallback when the DB row is empty. **Prefer `/admin/ads`** for production — avoids redeploy on key rotation.
 
-Docker builds: pass the same vars as build args (see `docker/web/Dockerfile` and `.env.docker.example`).
-
-## 4. ads.txt
+## 5. ads.txt
 
 Replace `public/ads.txt` with the authorization line(s) from Adsterra (Partner Care or dashboard). Deploy so `https://tamir.li/ads.txt` is reachable.
 
-## 5. How placements work in the app
+## 6. How placements work in the app
 
 - **Banner** (`type="banner"`): home, blog, tool footers — 728×90 iframe.
-- **Sidebar** (`type="sidebar"`): `DesktopAdRail` (two sticky 300×250 units); second rail uses `VITE_ADSTERRA_ZONE_SIDEBAR_2` when `slotId` ends with `-2`.
+- **Sidebar** (`type="sidebar"`): `DesktopAdRail` (two sticky 300×250 units); second rail uses `zoneSidebar2` when `slotId` ends with `-2`.
 - **Inline** (`type="inline"`): mid-page tool/blog slots and conversion vignette overlay.
 - **Native** (`AdNativeSlot`): one mid-content unit per page (home, tool, blog index/post) — script + container id from dashboard; loads after consent.
-- **Popunder**: loaded once after ad cookie consent if `VITE_ADSTERRA_POPUNDER_SCRIPT_URL` is set; also triggered on some conversion milestones via `triggerInterstitial()`.
+- **Popunder**: loaded once after ad cookie consent if `popunderScriptUrl` is set; also triggered on some conversion milestones via `triggerInterstitial()`.
 - **Premium users**: all ad components return `null`; no scripts loaded.
-- **No consent / unset env**: muted placeholders only; no broken layout.
+- **No consent / unset config**: muted placeholders only; no broken layout.
 
 Implementation: each live unit renders in an isolated `<iframe srcDoc=…>` so multiple `atOptions` scripts do not conflict (standard React SPA pattern for Adsterra).
 
-## 6. Migration from Google AdSense
+## 7. Migration from Google AdSense
 
 | AdSense | Adsterra |
 |---------|----------|
 | `VITE_ADSENSE_CLIENT` | Not needed (per-zone keys) |
-| `VITE_ADSENSE_SLOT_BANNER` | `VITE_ADSTERRA_ZONE_BANNER` |
-| `VITE_ADSENSE_SLOT_SIDEBAR` | `VITE_ADSTERRA_ZONE_SIDEBAR` + `VITE_ADSTERRA_ZONE_SIDEBAR_2` |
-| `VITE_ADSENSE_SLOT_INLINE` | `VITE_ADSTERRA_ZONE_INLINE` |
-| `VITE_ADSENSE_SLOT_INTERSTITIAL` / `ANCHOR` | `VITE_ADSTERRA_POPUNDER_SCRIPT_URL` (optional) |
+| `VITE_ADSENSE_SLOT_BANNER` | `zoneBanner` (admin) |
+| `VITE_ADSENSE_SLOT_SIDEBAR` | `zoneSidebar` + `zoneSidebar2` |
+| `VITE_ADSENSE_SLOT_INLINE` | `zoneInline` |
+| `VITE_ADSENSE_SLOT_INTERSTITIAL` / `ANCHOR` | `popunderScriptUrl` (optional) |
 | `google.com, pub-…` in ads.txt | Adsterra-provided ads.txt line |
 
 Remove old `VITE_ADSENSE_*` secrets from GitHub/Plesk after switching.
+
+## 8. API reference
+
+| Endpoint | Auth | Purpose |
+|----------|------|---------|
+| `GET /api/ads/config` | Public | Runtime zone keys for frontend |
+| `GET /api/admin/ads/settings` | Admin | Same fields for admin form |
+| `PATCH /api/admin/ads/settings` | Admin | Update any subset of fields |

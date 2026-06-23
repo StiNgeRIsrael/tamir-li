@@ -52,6 +52,20 @@ model UserRole {
   @@unique([userId, role])
 }
 
+/** הגדרות פרסום Adsterra — שורה יחידה (id = default) */
+model AdSettings {
+  id                String   @id @default("default")
+  zoneBanner        String?  @db.VarChar(64)
+  zoneSidebar       String?  @db.VarChar(64)
+  zoneSidebar2      String?  @db.VarChar(64)
+  zoneInline        String?  @db.VarChar(64)
+  popunderScriptUrl String?  @db.VarChar(512)
+  nativeScriptUrl   String?  @db.VarChar(512)
+  nativeContainerId String?  @db.VarChar(128)
+  invokeHost        String?  @default("www.highperformanceformat.com") @db.VarChar(128)
+  updatedAt         DateTime @updatedAt
+}
+
 /** הגדרות ניהול לכל כלי המרה (מזהה תואם ל־tools[].id בפרונט) */
 model ToolConfig {
   toolId    String   @id

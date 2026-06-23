@@ -22,11 +22,13 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { AdVignetteHost } from "@/components/ads/AdVignette";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ToolConfigProvider } from "@/contexts/ToolConfigContext";
+import { AdConfigProvider } from "@/contexts/AdConfigContext";
 import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import AdminOverview from "@/pages/admin/AdminOverview";
 import AdminUsers from "@/pages/admin/AdminUsers";
 import AdminTools from "@/pages/admin/AdminTools";
+import AdminAds from "@/pages/admin/AdminAds";
 
 const queryClient = new QueryClient();
 
@@ -64,7 +66,9 @@ const getAppRoutes = (explicitLocale?: Locale) => (
     >
       <Route index element={<AdminOverview />} />
       <Route path="users" element={<AdminUsers />} />
-      <Route path="tools" element={<AdminTools />} />    </Route>
+      <Route path="tools" element={<AdminTools />} />
+      <Route path="ads" element={<AdminAds />} />
+    </Route>
     <Route path=":slug" element={<ToolPageRoute />} />
     <Route path="*" element={<NotFound />} />
   </Route>
@@ -79,6 +83,7 @@ const App = () => (
         <BrowserRouter>
           <AuthProvider>
           <ToolConfigProvider>
+          <AdConfigProvider>
           <ScrollToTop />
           <AnalyticsPageTracker />
           <CookieConsent />
@@ -96,6 +101,7 @@ const App = () => (
               {getAppRoutes("he")}
             </Route>
           </Routes>
+          </AdConfigProvider>
           </ToolConfigProvider>
           </AuthProvider>
         </BrowserRouter>

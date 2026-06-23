@@ -4,6 +4,11 @@ import { prisma } from '../lib/prisma';
 import { requireAuth } from '../middleware/auth.middleware';
 import { requireRoles } from '../middleware/admin.middleware';
 import { KNOWN_TOOL_IDS, TOOL_CATALOG_META, type KnownToolId } from '../data/tool-catalog';
+import {
+  ensureAdSettings,
+  parseAdSettingsPatch,
+  serializeAdSettings,
+} from '../lib/ad-settings';
 
 const router = Router();
 
@@ -334,6 +339,40 @@ router.patch('/tools/:toolId', async (req: Request, res: Response) => {
   } catch (e) {
     console.error('[admin/tools patch]', e);
     res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not update tool' });
+  }
+});
+
+router.get('/ads/settings', async (_req: Request, res: Response) => {
+  try {
+    const row = await ensureAdSettings();
+    res.json({ settings: serializeAdSettings(row) });
+  } catch (e) {
+    console.error('[admin/ads/settings GET]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not load ad settings' });
+  }
+});
+
+router.patch('/ads/settings', async (req: Request, res: Response) => {
+  try {
+    await ensureAdSettings();
+    const { data, error } = parseAdSettingsPatch(req.body as Record<string, unknown>);
+    if (error) {
+      res.status(400).json({ error: 'INVALID_BODY', message: error });
+      return;
+    }
+    if (Object.keys(data).length === 0) {
+      res.status(400).json({ error: 'INVALID_BODY', message: 'No fields to update' });
+      return;
+    }
+
+    const updated = await prisma.adSettings.update({
+      where: { id: 'default' },
+      data,
+    });
+    res.json({ settings: serializeAdSettings(updated) });
+  } catch (e) {
+    console.error('[admin/ads/settings PATCH]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not update ad settings' });
   }
 });
 

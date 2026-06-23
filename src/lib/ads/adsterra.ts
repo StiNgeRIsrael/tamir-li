@@ -2,22 +2,54 @@ import { getStoredConsent } from "@/lib/ads/consent";
 
 export type AdPlacementType = "banner" | "sidebar" | "inline";
 
+export type AdRuntimeConfig = {
+  zoneBanner?: string | null;
+  zoneSidebar?: string | null;
+  zoneSidebar2?: string | null;
+  zoneInline?: string | null;
+  popunderScriptUrl?: string | null;
+  nativeScriptUrl?: string | null;
+  nativeContainerId?: string | null;
+  invokeHost?: string | null;
+};
+
 const PLACEMENT_LAYOUT: Record<
   AdPlacementType,
-  { width: number; height: number; envKey: string; envKeyAlt?: string }
+  { width: number; height: number; configKey: keyof AdRuntimeConfig; envKey: string; envKeyAlt?: keyof AdRuntimeConfig }
 > = {
-  banner: { width: 728, height: 90, envKey: "VITE_ADSTERRA_ZONE_BANNER" },
+  banner: { width: 728, height: 90, configKey: "zoneBanner", envKey: "VITE_ADSTERRA_ZONE_BANNER" },
   sidebar: {
     width: 300,
     height: 250,
+    configKey: "zoneSidebar",
     envKey: "VITE_ADSTERRA_ZONE_SIDEBAR",
-    envKeyAlt: "VITE_ADSTERRA_ZONE_SIDEBAR_2",
+    envKeyAlt: "zoneSidebar2",
   },
-  inline: { width: 468, height: 60, envKey: "VITE_ADSTERRA_ZONE_INLINE" },
+  inline: { width: 468, height: 60, configKey: "zoneInline", envKey: "VITE_ADSTERRA_ZONE_INLINE" },
+};
+
+const ENV_MAP: Record<keyof AdRuntimeConfig, string> = {
+  zoneBanner: "VITE_ADSTERRA_ZONE_BANNER",
+  zoneSidebar: "VITE_ADSTERRA_ZONE_SIDEBAR",
+  zoneSidebar2: "VITE_ADSTERRA_ZONE_SIDEBAR_2",
+  zoneInline: "VITE_ADSTERRA_ZONE_INLINE",
+  popunderScriptUrl: "VITE_ADSTERRA_POPUNDER_SCRIPT_URL",
+  nativeScriptUrl: "VITE_ADSTERRA_NATIVE_SCRIPT_URL",
+  nativeContainerId: "VITE_ADSTERRA_NATIVE_CONTAINER_ID",
+  invokeHost: "VITE_ADSTERRA_INVOKE_HOST",
 };
 
 let premiumUser = false;
 let popunderLoaded = false;
+let runtimeConfig: AdRuntimeConfig | null = null;
+
+export function setAdRuntimeConfig(config: AdRuntimeConfig | null): void {
+  runtimeConfig = config;
+}
+
+export function getAdRuntimeConfig(): AdRuntimeConfig | null {
+  return runtimeConfig;
+}
 
 export function setPremiumUser(isPremium: boolean): void {
   premiumUser = isPremium;
@@ -31,14 +63,27 @@ export function hasAdsConsent(): boolean {
   return getStoredConsent()?.ads === true;
 }
 
+function readEnv(key: string): string | undefined {
+  return (import.meta.env as Record<string, string | undefined>)[key]?.trim() || undefined;
+}
+
+function resolveConfigValue(key: keyof AdRuntimeConfig): string | undefined {
+  const fromRuntime = runtimeConfig?.[key];
+  if (typeof fromRuntime === "string" && fromRuntime.trim()) {
+    return fromRuntime.trim();
+  }
+  const envKey = ENV_MAP[key];
+  return envKey ? readEnv(envKey) : undefined;
+}
+
 /** True when at least one Adsterra zone key is configured. */
 export function isAdsterraConfigured(): boolean {
   return (
-    !!import.meta.env.VITE_ADSTERRA_ZONE_BANNER?.trim() ||
-    !!import.meta.env.VITE_ADSTERRA_ZONE_SIDEBAR?.trim() ||
-    !!import.meta.env.VITE_ADSTERRA_ZONE_SIDEBAR_2?.trim() ||
-    !!import.meta.env.VITE_ADSTERRA_ZONE_INLINE?.trim() ||
-    !!import.meta.env.VITE_ADSTERRA_POPUNDER_SCRIPT_URL?.trim() ||
+    !!resolveConfigValue("zoneBanner") ||
+    !!resolveConfigValue("zoneSidebar") ||
+    !!resolveConfigValue("zoneSidebar2") ||
+    !!resolveConfigValue("zoneInline") ||
+    !!resolveConfigValue("popunderScriptUrl") ||
     hasNativeAdConfigured()
   );
 }
@@ -54,8 +99,8 @@ export function hasNativeAdConfigured(): boolean {
 }
 
 export function getNativeAdConfig(): NativeAdConfig | null {
-  const scriptUrl = readEnv("VITE_ADSTERRA_NATIVE_SCRIPT_URL");
-  const containerId = readEnv("VITE_ADSTERRA_NATIVE_CONTAINER_ID");
+  const scriptUrl = resolveConfigValue("nativeScriptUrl");
+  const containerId = resolveConfigValue("nativeContainerId");
   if (!scriptUrl || !containerId) return null;
   return { scriptUrl, containerId };
 }
@@ -64,21 +109,17 @@ export function getPlacementLayout(type: AdPlacementType) {
   return PLACEMENT_LAYOUT[type];
 }
 
-function readEnv(key: string): string | undefined {
-  return (import.meta.env as Record<string, string | undefined>)[key]?.trim() || undefined;
-}
-
-/** Resolve zone key for a placement; second sidebar rail uses *_SIDEBAR_2 when slotId ends with -2. */
+/** Resolve zone key for a placement; second sidebar rail uses zoneSidebar2 when slotId ends with -2. */
 export function getAdsterraZoneKey(
   type: AdPlacementType,
   slotId?: string
 ): string | undefined {
   const layout = PLACEMENT_LAYOUT[type];
   if (type === "sidebar" && slotId?.endsWith("-2") && layout.envKeyAlt) {
-    const alt = readEnv(layout.envKeyAlt);
+    const alt = resolveConfigValue(layout.envKeyAlt);
     if (alt) return alt;
   }
-  return readEnv(layout.envKey);
+  return resolveConfigValue(layout.configKey);
 }
 
 export function hasAdsterraZone(type: AdPlacementType, slotId?: string): boolean {
@@ -86,7 +127,7 @@ export function hasAdsterraZone(type: AdPlacementType, slotId?: string): boolean
 }
 
 function getInvokeHost(): string {
-  return import.meta.env.VITE_ADSTERRA_INVOKE_HOST?.trim() || "www.highperformanceformat.com";
+  return resolveConfigValue("invokeHost") || "www.highperformanceformat.com";
 }
 
 /** Build isolated iframe HTML so multiple Adsterra units do not clash on `atOptions`. */
@@ -110,7 +151,7 @@ export function buildAdIframeSrcdoc(
 
 /** Load popunder / social-bar script once after ad consent (paste full URL from Adsterra dashboard). */
 export function loadPopunderScript(): void {
-  const src = import.meta.env.VITE_ADSTERRA_POPUNDER_SCRIPT_URL?.trim();
+  const src = resolveConfigValue("popunderScriptUrl");
   if (!src || premiumUser || popunderLoaded || !hasAdsConsent()) return;
   if (document.getElementById("adsterra-popunder-script")) return;
 

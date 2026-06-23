@@ -25,11 +25,12 @@ export const heTranslations = {
 
   admin: {
     title: "לוח ניהול",
-    subtitle: "סטטיסטיקות, משתמשים וכלים",
+    subtitle: "סטטיסטיקות, משתמשים, כלים ופרסום",
     backSite: "חזרה לאתר",
     navOverview: "סקירה",
     navUsers: "משתמשים",
     navTools: "כלים",
+    navAds: "פרסום",
     linkNav: "ניהול",
     needApi: "יש להגדיר VITE_API_URL כדי להשתמש בלוח הניהול.",
     statUsers: "משתמשים רשומים",
@@ -67,6 +68,23 @@ export const heTranslations = {
     colEnabled: "גלוי",
     colFeatured: "מודגש",
     colSort: "מיון",
+    adsHint:
+      "הגדרות Adsterra נשמרות במסד הנתונים ונטענות בזמן ריצה. העתק מפתחות zone מהדשבורד של Adsterra. משתני VITE_* נשארים לפיתוח מקומי בלבד.",
+    adsFieldBanner: "באנר 728×90 (zoneBanner)",
+    adsFieldSidebar: "סרגל צד 300×250 (zoneSidebar)",
+    adsFieldSidebar2: "סרגל צד שני (zoneSidebar2)",
+    adsFieldInline: "באנר מוטמע 468×60 (zoneInline)",
+    adsFieldPopunder: "Popunder — כתובת סקריפט מלאה",
+    adsFieldNativeScript: "Native — כתובת invoke.js",
+    adsFieldNativeContainer: "Native — מזהה container",
+    adsFieldInvokeHost: "Invoke host (אופציונלי)",
+    adsHintBanner: "מפתח hex מ-atOptions ביחידת 728×90.",
+    adsHintSidebar: "מפתח hex לרail סרגל צד ראשון.",
+    adsHintSidebar2: "מפתח hex לרail שני (slotId שמסתיים ב-2).",
+    adsHintInline: "מפתח hex ליחידות inline / vignette.",
+    adsHintPopunder: "הדבק URL מלא מהדשבורד; אופציונלי.",
+    adsHintNative: "שני השדות נדרשים יחד לפרסומת native.",
+    adsHintInvokeHost: "ברירת מחדל: www.highperformanceformat.com",
   },
 
   // Categories

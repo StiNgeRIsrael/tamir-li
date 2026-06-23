@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { LayoutDashboard, Users, Wrench, ArrowLeft } from "lucide-react";
+import { LayoutDashboard, Users, Wrench, Megaphone, ArrowLeft } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { useLocale, localePath } from "@/lib/i18n";
@@ -42,6 +42,10 @@ export function AdminLayout() {
             <NavLink to={localePath("/admin/tools", locale)} className={navCls}>
               <Wrench className="h-4 w-4 shrink-0" />
               {admin.navTools}
+            </NavLink>
+            <NavLink to={localePath("/admin/ads", locale)} className={navCls}>
+              <Megaphone className="h-4 w-4 shrink-0" />
+              {admin.navAds}
             </NavLink>
           </nav>
 

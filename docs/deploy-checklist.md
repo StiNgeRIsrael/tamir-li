@@ -23,7 +23,7 @@ Triggers on push to `main` or manual **workflow_dispatch**.
 | Lockfile or migrations changed | Re-run workflow with **run_server_setup** checked **or** Plesk → `run setup` |
 | Code-only | Auto-restart only — no server `npm install` |
 
-**CI build-time env** (baked into `dist/`): `VITE_SITE_ORIGIN`, `VITE_API_URL` (vars); `VITE_GOOGLE_CLIENT_ID`, `VITE_GTM_ID`, `VITE_ADSTERRA_ZONE_*` (secrets). Add other `VITE_*` to the workflow if needed (`VITE_PAYPAL_CLIENT_ID`, `VITE_GA4_ID`, etc.).
+**CI build-time env** (baked into `dist/`): `VITE_SITE_ORIGIN`, `VITE_API_URL` (vars); `VITE_GOOGLE_CLIENT_ID`, `VITE_GTM_ID` (secrets). Ad zone keys: **prefer `/admin/ads`** (runtime DB) — optional `VITE_ADSTERRA_ZONE_*` secrets as fallback when DB row is empty. Add other `VITE_*` to the workflow if needed (`VITE_PAYPAL_CLIENT_ID`, `VITE_GA4_ID`, etc.).
 
 **CI secrets for deploy/restart:** `PLESK_SSH_HOST` / `PLESK_FTP_HOST`, `PLESK_SSH_USER`, `PLESK_SSH_PASSWORD` (FTP fallbacks OK). Optional vars: `PLESK_HTTPDOCS_DIR` (default `httpdocs/`), `PLESK_NODE_APP_DIR` (default `httpdocs/deploy`), `PLESK_DOMAIN` (default `tamir.li`).
 
@@ -47,15 +47,23 @@ Set before `npm run build` / CI deploy; rebuild required after changes.
 | `VITE_API_URL` | `https://tamir.li` (same-origin monolith) |
 | `VITE_GOOGLE_CLIENT_ID` | OAuth Web client ID (must match Plesk `GOOGLE_CLIENT_ID`) |
 | `VITE_GTM_ID` or `VITE_GA4_ID` | Analytics (not both) |
-| `VITE_ADSTERRA_ZONE_*` | Ad zone keys (free tier) |
+| `VITE_ADSTERRA_ZONE_*` | Optional fallback only — **use `/admin/ads`** for production keys |
 | `VITE_PAYPAL_CLIENT_ID` | Same PayPal app as server (optional; not in workflow by default) |
 | `VITE_STRIPE_PUBLISHABLE_KEY` | Only if `ENABLE_STRIPE=true` on backend |
 
 Do **not** put Adsterra Publisher API keys or server secrets in `VITE_*`.
 
-### Ads — GitHub Actions secrets (build-time)
+### Ads — runtime config (primary)
 
-Add under **Settings → Secrets and variables → Actions** (repo `StiNgeRIsrael/tamir-li`). CI passes these into `npm run build` via [`deploy-plesk.yml`](../.github/workflows/deploy-plesk.yml); empty/missing values bake as `""` in `dist/` and ads stay hidden:
+1. Deploy with `DATABASE_URL` set (migration `20260624120000_ad_settings` auto-runs on restart).
+2. Sign in as admin → **`/admin/ads`** → paste Adsterra zone keys → Save.
+3. Verify `GET /api/ads/config` returns the saved keys (no rebuild needed).
+
+See [adsterra-setup.md](./adsterra-setup.md).
+
+### Ads — GitHub Actions secrets (optional build-time fallback)
+
+Add under **Settings → Secrets and variables → Actions** only if you want baked-in fallback when DB is empty:
 
 - `VITE_ADSTERRA_ZONE_BANNER`, `VITE_ADSTERRA_ZONE_SIDEBAR`, `VITE_ADSTERRA_ZONE_SIDEBAR_2`, `VITE_ADSTERRA_ZONE_INLINE`
 - `VITE_ADSTERRA_POPUNDER_SCRIPT_URL`, `VITE_ADSTERRA_NATIVE_SCRIPT_URL`, `VITE_ADSTERRA_NATIVE_CONTAINER_ID`, `VITE_ADSTERRA_INVOKE_HOST`
@@ -91,7 +99,7 @@ After adding or updating secrets, re-run **Deploy to Plesk** (push to `main` or 
 1. Set **`ADMIN_EMAILS`** in Plesk → Node.js → custom env — comma-separated Google account emails (trimmed, case-insensitive).
 2. On each Google sign-in, the backend upserts a **`UserRole`** row (`role = ADMIN`) when the email matches the list; every user also gets `USER`.
 3. To grant or revoke admin: update `ADMIN_EMAILS`, restart the app, then have the user sign in again — no manual SQL for normal bootstrap.
-4. Verify: sign in → open `/admin` (frontend `AdminGuard`); API routes under `/api/admin/*` require the `ADMIN` role in `UserRole`.
+4. Verify: sign in → open `/admin` (frontend `AdminGuard`); configure ads at `/admin/ads`; API routes under `/api/admin/*` require the `ADMIN` role in `UserRole`.
 
 ## ffmpeg (server-side audio converter)
 
