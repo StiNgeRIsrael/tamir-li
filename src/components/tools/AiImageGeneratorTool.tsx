@@ -2,28 +2,29 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Crown, Sparkles, Loader2, Download, RefreshCw, ImageIcon, Zap, Lock } from "lucide-react";
+import { Crown, Sparkles, Loader2, Download, RefreshCw, ImageIcon } from "lucide-react";
 import { CreditsDisplay, CreditPackages } from "@/components/PremiumCredits";
-import { useT } from "@/lib/i18n";
+import { useT, useLocale, localePath } from "@/lib/i18n";
+import { useSubscription } from "@/hooks/useSubscription";
+import { Link } from "react-router-dom";
 
 type GenerationState = "idle" | "generating" | "done";
 interface GeneratedImage { prompt: string; url: string; timestamp: number; }
 
 export function AiImageGeneratorTool() {
   const t = useT();
+  const { locale } = useLocale();
   const ai = t.aiGenerator;
-  const p = t.premium;
+  const { isPremium, credits } = useSubscription();
   const [prompt, setPrompt] = useState("");
   const [style, setStyle] = useState("realistic");
   const [aspectRatio, setAspectRatio] = useState("1:1");
   const [state, setState] = useState<GenerationState>("idle");
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
   const [showPackages, setShowPackages] = useState(false);
-  const isPremium = false;
-  const credits = 0;
 
   const handleGenerate = () => {
-    if (!prompt.trim() || !isPremium) return;
+    if (!prompt.trim() || credits <= 0) return;
     setState("generating");
     setTimeout(() => {
       setGeneratedImages((prev) => [{ prompt: prompt.trim(), url: "", timestamp: Date.now() }, ...prev]);
@@ -34,36 +35,22 @@ export function AiImageGeneratorTool() {
   const styles = ai.styles || [];
   const ratios = ai.ratios || [];
 
-  if (!isPremium) {
-    return (
-      <div className="space-y-6">
-        <div className="text-center py-10 px-4 bg-muted/50 rounded-2xl border border-border space-y-5">
-          <div className="w-16 h-16 rounded-2xl bg-premium/10 flex items-center justify-center mx-auto"><Sparkles className="w-8 h-8 text-premium" /></div>
-          <h3 className="font-extrabold text-xl text-foreground">{ai.title}</h3>
-          <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">{ai.desc}</p>
-          <div className="bg-card border border-border rounded-xl p-4 max-w-sm mx-auto space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{ai.premiumSub}</span>
-              <span className="text-lg font-extrabold text-premium">{p.price}</span>
-            </div>
-            <ul className="text-xs text-muted-foreground space-y-1.5 text-start">
-              <li className="flex items-center gap-2"><Sparkles className="w-3 h-3 text-premium shrink-0" />{ai.included6}</li>
-              <li className="flex items-center gap-2"><Zap className="w-3 h-3 text-premium shrink-0" />{ai.unlimitedConversions}</li>
-              <li className="flex items-center gap-2"><Lock className="w-3 h-3 text-premium shrink-0" />{ai.noAds}</li>
-            </ul>
-            <Button className="w-full bg-premium text-premium-foreground hover:bg-premium/90 font-bold"><Crown className="w-4 h-4 me-1" />{ai.upgradeToPremium}</Button>
-          </div>
-          <p className="text-xs text-muted-foreground">{ai.canPurchaseMore}</p>
-          <Button variant="link" className="text-primary text-sm" onClick={() => setShowPackages(true)}>{ai.viewCreditPackages}</Button>
-        </div>
-        {showPackages && <CreditPackages onClose={() => setShowPackages(false)} />}
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-5">
       <CreditsDisplay credits={credits} isPremium={isPremium} />
+      {!isPremium && credits <= 0 && (
+        <div className="text-center py-6 px-4 bg-muted/50 rounded-2xl border border-border space-y-4">
+          <Crown className="w-8 h-8 text-premium mx-auto" />
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">{ai.desc}</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Button asChild className="bg-premium text-premium-foreground hover:bg-premium/90 font-bold">
+              <Link to={localePath("/premium", locale)}><Crown className="w-4 h-4 me-1" />{ai.upgradeToPremium}</Link>
+            </Button>
+            <Button variant="outline" onClick={() => setShowPackages(true)}>{ai.viewCreditPackages}</Button>
+          </div>
+        </div>
+      )}
+      {showPackages && <CreditPackages onClose={() => setShowPackages(false)} />}
       <div className="bg-card border border-border rounded-2xl p-4 space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">{ai.describeImage}</label>
