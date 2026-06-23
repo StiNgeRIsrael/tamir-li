@@ -216,6 +216,20 @@ const es: LocalizedContent = {
       { q: "¿A qué formato conviene comprimir?", a: "Para fotos web — WEBP o JPG. Para gráficos con transparencia — PNG comprimido." },
     ],
   },
+  "video-converter": {
+    comparisonHeaders: { format: "Formato", bestFor: "Ideal para", size: "Tamaño", quality: "Calidad" },
+    formatComparison: [
+      { format: "MP4", bestFor: "YouTube, redes sociales, dispositivos", size: "Mediano", quality: "Excelente (H.264/H.265)" },
+      { format: "WEBM", bestFor: "Web, Chrome", size: "Pequeño", quality: "Buena" },
+      { format: "MOV", bestFor: "Edición en Mac", size: "Grande", quality: "Excelente" },
+      { format: "AVI", bestFor: "Compatibilidad antigua", size: "Grande", quality: "Buena" },
+    ],
+    faqs: [
+      { q: "¿Qué formato de vídeo es el más común?", a: "MP4 (H.264) es el estándar para YouTube, WhatsApp, Instagram y dispositivos móviles." },
+      { q: "¿Cuánto tarda la conversión de vídeo?", a: "Depende de la duración y el tamaño del archivo. Clips cortos (menos de un minuto) se convierten en segundos o pocos minutos." },
+      { q: "¿Hay límite de tamaño de archivo?", a: "Plan gratuito: hasta 50 MB por archivo. Premium: hasta 500 MB." },
+    ],
+  },
   "word-to-pdf": {
     faqs: [
       { q: "¿Por qué convertir Word a PDF?", a: "PDF fija el diseño en cualquier dispositivo — perfecto para enviar, imprimir y firmas digitales." },
@@ -259,6 +273,20 @@ const fr: LocalizedContent = {
       { q: "De combien puis-je compresser une image ?", a: "Cela dépend du format d'origine. JPG et WEBP se compressent nettement ; PNG moins, mais le poids peut quand même être réduit." },
       { q: "La compression affecte-t-elle la qualité ?", a: "L'outil équilibre taille et qualité. Pour la plupart des sites web, une compression modérée reste à peine visible." },
       { q: "Vers quel format compresser ?", a: "Pour les photos web — WEBP ou JPG. Pour les graphiques avec transparence — PNG compressé." },
+    ],
+  },
+  "video-converter": {
+    comparisonHeaders: { format: "Format", bestFor: "Idéal pour", size: "Taille", quality: "Qualité" },
+    formatComparison: [
+      { format: "MP4", bestFor: "YouTube, réseaux sociaux, appareils", size: "Moyen", quality: "Excellente (H.264/H.265)" },
+      { format: "WEBM", bestFor: "Web, Chrome", size: "Petit", quality: "Bonne" },
+      { format: "MOV", bestFor: "Montage sur Mac", size: "Grand", quality: "Excellente" },
+      { format: "AVI", bestFor: "Compatibilité ancienne", size: "Grand", quality: "Bonne" },
+    ],
+    faqs: [
+      { q: "Quel format vidéo est le plus courant ?", a: "MP4 (H.264) est la norme pour YouTube, WhatsApp, Instagram et les appareils mobiles." },
+      { q: "Combien de temps dure une conversion vidéo ?", a: "Cela dépend de la durée et de la taille du fichier. Les clips courts (moins d'une minute) se convertissent en quelques secondes à quelques minutes." },
+      { q: "Y a-t-il une limite de taille de fichier ?", a: "Offre gratuite : jusqu'à 50 Mo par fichier. Premium : jusqu'à 500 Mo." },
     ],
   },
   "word-to-pdf": {
@@ -306,6 +334,20 @@ const ru: LocalizedContent = {
       { q: "В какой формат сжимать?", a: "Для веб-фото — WEBP или JPG. Для графики с прозрачностью — сжатый PNG." },
     ],
   },
+  "video-converter": {
+    comparisonHeaders: { format: "Формат", bestFor: "Подходит для", size: "Размер", quality: "Качество" },
+    formatComparison: [
+      { format: "MP4", bestFor: "YouTube, соцсети, устройства", size: "Средний", quality: "Отличное (H.264/H.265)" },
+      { format: "WEBM", bestFor: "Веб, Chrome", size: "Малый", quality: "Хорошее" },
+      { format: "MOV", bestFor: "Монтаж на Mac", size: "Большой", quality: "Отличное" },
+      { format: "AVI", bestFor: "Старая совместимость", size: "Большой", quality: "Хорошее" },
+    ],
+    faqs: [
+      { q: "Какой видеоформат самый распространённый?", a: "MP4 (H.264) — стандарт для YouTube, WhatsApp, Instagram и мобильных устройств." },
+      { q: "Сколько времени занимает конвертация видео?", a: "Зависит от длины и размера файла. Короткие ролики (до минуты) конвертируются за секунды или несколько минут." },
+      { q: "Есть ли ограничение по размеру файла?", a: "Бесплатный план: до 50 МБ на файл. Премиум: до 500 МБ." },
+    ],
+  },
   "word-to-pdf": {
     faqs: [
       { q: "Зачем конвертировать Word в PDF?", a: "PDF сохраняет вёрстку на любом устройстве — идеально для отправки, печати и электронной подписи." },
@@ -351,6 +393,20 @@ const de: LocalizedContent = {
       { q: "In welches Format soll ich komprimieren?", a: "Für Webfotos — WEBP oder JPG. Für Grafiken mit Transparenz — komprimiertes PNG." },
     ],
   },
+  "video-converter": {
+    comparisonHeaders: { format: "Format", bestFor: "Ideal für", size: "Größe", quality: "Qualität" },
+    formatComparison: [
+      { format: "MP4", bestFor: "YouTube, Social Media, Geräte", size: "Mittel", quality: "Ausgezeichnet (H.264/H.265)" },
+      { format: "WEBM", bestFor: "Web, Chrome", size: "Klein", quality: "Gut" },
+      { format: "MOV", bestFor: "Bearbeitung auf Mac", size: "Groß", quality: "Ausgezeichnet" },
+      { format: "AVI", bestFor: "Legacy-Kompatibilität", size: "Groß", quality: "Gut" },
+    ],
+    faqs: [
+      { q: "Welches Videoformat ist am verbreitetsten?", a: "MP4 (H.264) ist der Standard für YouTube, WhatsApp, Instagram und mobile Geräte." },
+      { q: "Wie lange dauert die Videokonvertierung?", a: "Das hängt von Länge und Dateigröße ab. Kurze Clips (unter einer Minute) werden in Sekunden bis wenigen Minuten konvertiert." },
+      { q: "Gibt es ein Dateigrößenlimit?", a: "Kostenloser Plan: bis zu 50 MB pro Datei. Premium: bis zu 500 MB." },
+    ],
+  },
   "word-to-pdf": {
     faqs: [
       { q: "Warum Word in PDF konvertieren?", a: "PDF fixiert das Layout auf jedem Gerät — perfekt zum Senden, Drucken und für digitale Signaturen." },
@@ -394,6 +450,20 @@ const it: LocalizedContent = {
       { q: "Quanto posso comprimere un'immagine?", a: "Dipende dal formato originale. JPG e WEBP si comprimono significativamente; PNG meno, ma il peso può comunque essere ridotto." },
       { q: "La compressione riduce la qualità?", a: "Lo strumento bilancia dimensione e qualità. Per la maggior parte dei siti web, una compressione moderata è appena percettibile." },
       { q: "In quale formato comprimere?", a: "Per foto web — WEBP o JPG. Per grafica con trasparenza — PNG compresso." },
+    ],
+  },
+  "video-converter": {
+    comparisonHeaders: { format: "Formato", bestFor: "Ideale per", size: "Dimensione", quality: "Qualità" },
+    formatComparison: [
+      { format: "MP4", bestFor: "YouTube, social, dispositivi", size: "Medio", quality: "Eccellente (H.264/H.265)" },
+      { format: "WEBM", bestFor: "Web, Chrome", size: "Piccolo", quality: "Buona" },
+      { format: "MOV", bestFor: "Montaggio su Mac", size: "Grande", quality: "Eccellente" },
+      { format: "AVI", bestFor: "Compatibilità legacy", size: "Grande", quality: "Buona" },
+    ],
+    faqs: [
+      { q: "Quale formato video è il più comune?", a: "MP4 (H.264) è lo standard per YouTube, WhatsApp, Instagram e dispositivi mobili." },
+      { q: "Quanto tempo richiede la conversione video?", a: "Dipende dalla durata e dalla dimensione del file. Clip brevi (sotto un minuto) si convertono in secondi o pochi minuti." },
+      { q: "C'è un limite di dimensione del file?", a: "Piano gratuito: fino a 50 MB per file. Premium: fino a 500 MB." },
     ],
   },
   "word-to-pdf": {
