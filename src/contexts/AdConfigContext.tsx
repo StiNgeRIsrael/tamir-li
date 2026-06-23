@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, type ReactNode } from "react";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getApiBaseUrl } from "@/lib/api/client";
 import { setAdRuntimeConfig, type AdRuntimeConfig } from "@/lib/ads/adsterra";
@@ -29,15 +29,13 @@ export function AdConfigProvider({ children }: { children: ReactNode }) {
     retry: 1,
   });
 
-  useEffect(() => {
-    if (!api || isError) {
-      setAdRuntimeConfig(null);
-      return;
-    }
-    if (data) {
-      setAdRuntimeConfig(data);
-    }
+  const resolvedConfig = useMemo((): AdRuntimeConfig | null => {
+    if (!api || isError) return null;
+    return data ?? null;
   }, [api, data, isError]);
+
+  // Sync module cache before children render so AdSlot reads current zones on the same pass.
+  setAdRuntimeConfig(resolvedConfig);
 
   const value = useMemo((): AdConfigContextValue => {
     if (!api) return fallback;

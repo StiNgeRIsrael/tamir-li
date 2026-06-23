@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { useAdConfig } from "@/contexts/AdConfigContext";
 import { useAdsConsent } from "@/hooks/useAdsConsent";
 import {
   getNativeAdConfig,
@@ -27,6 +28,7 @@ function AdFallbackMessage({ label }: { label: string }) {
 export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
+  const { loading: configLoading } = useAdConfig();
   const hasConsent = useAdsConsent();
   const [nativeLoaded, setNativeLoaded] = useState(false);
   const label = t.adLabel || "Ad";
@@ -71,6 +73,10 @@ export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
   }, [showLiveAd, config]);
 
   if (isPremium) return null;
+
+  if (configLoading) return null;
+
+  if (!isAdsterraConfigured()) return null;
 
   if (!showLiveAd) {
     return (

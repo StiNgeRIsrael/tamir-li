@@ -9,6 +9,7 @@ import {
   isAdsterraConfigured,
   triggerPopunderAd,
 } from "@/lib/ads/adsterra";
+import { useAdConfig } from "@/contexts/AdConfigContext";
 import { useAdsConsent } from "@/hooks/useAdsConsent";
 import { useSubscription } from "@/hooks/useSubscription";
 import { showAdVignette } from "@/components/ads/AdVignette";
@@ -62,6 +63,7 @@ function AdFallbackMessage({ label, className }: { label: string; className?: st
 export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
+  const { loading: configLoading } = useAdConfig();
   const hasConsent = useAdsConsent();
   const L = layout[type];
   const label = t.adLabel || "Ad";
@@ -116,6 +118,10 @@ export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
       : L.envVar;
 
   if (isPremium) return null;
+
+  if (configLoading) return null;
+
+  if (!isAdsterraConfigured()) return null;
 
   if (!showLiveAd) {
     return (
