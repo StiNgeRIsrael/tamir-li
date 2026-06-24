@@ -417,9 +417,9 @@ export const enTranslations = {
     readingMinutes: "min read",
   },
   seo: {
-    homeTitle: "Tamir.li — Convert Files Online (Israel)",
+    homeTitle: "Tamir.li — Free Online File Converter (Israel)",
     homeDesc:
-      "Tamir.li means 'convert for me' in Hebrew. Fast, free image, video, audio and document conversion. Drag, pick a format, download. Built with Israeli users in mind.",
+      "Tamir.li — free file converter: JPG, PNG, PDF, MP4, MP3 and more. Drag, pick a format, download. 5 free conversions/day. Hebrew-first, built for Israel.",
   },
   install: {
     title: "Download Tamirly",

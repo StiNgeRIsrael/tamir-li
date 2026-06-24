@@ -400,8 +400,9 @@ export const esTranslations = {
     readingMinutes: "min de lectura",
   },
   seo: {
-    homeTitle: "Tamirly — Conversión de Archivos Online Fácil",
-    homeDesc: "Conversión rápida y gratuita entre formatos de imagen, video, audio y documentos. Arrastra archivos, elige formato, listo.",
+    homeTitle: "Tamir.li — Conversión de Archivos Online Gratis",
+    homeDesc:
+      "Tamir.li — convertidor gratuito: JPG, PNG, PDF, MP4, MP3 y más. Arrastra, elige formato, descarga. 5 conversiones/día gratis. Herramientas en 7 idiomas.",
   },
   install: {
     title: "Descarga Tamirly",

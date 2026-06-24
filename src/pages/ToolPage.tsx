@@ -24,7 +24,7 @@ import { HebOcrTool } from "@/components/tools/HebOcrTool";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowRight, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe, AlertCircle } from "lucide-react";
 import { useLocale, localePath, htmlLangTag } from "@/lib/i18n";
-import { siteUrl } from "@/lib/site";
+import { siteUrl, absoluteImageUrl } from "@/lib/site";
 import { allowMockFileConversion } from "@/lib/feature-flags";
 import { getApiBaseUrl } from "@/lib/api/client";
 import { useToolConfig } from "@/contexts/ToolConfigContext";
@@ -566,10 +566,12 @@ export default function ToolPage() {
         name: pageTitle,
         description: pageDesc,
         url: toolPageUrl,
+        image: absoluteImageUrl(toolCategoryOgImage(tool.category)),
         applicationCategory: "UtilityApplication",
         operatingSystem: "Any",
         offers: { "@type": "Offer", price: "0", priceCurrency: "ILS" },
         inLanguage: htmlLangTag(locale),
+        provider: { "@type": "Organization", name: t.brandName, url: siteUrl("/") },
       },
       {
         "@type": "BreadcrumbList",
@@ -643,6 +645,7 @@ export default function ToolPage() {
         title={pageTitle}
         description={pageDesc}
         ogImage={toolCategoryOgImage(tool.category)}
+        siteName={t.brandName}
         jsonLd={jsonLd}
       />
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-6 lg:py-10 space-y-6 lg:space-y-8">

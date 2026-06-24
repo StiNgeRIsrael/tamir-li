@@ -1,6 +1,6 @@
 import { useMemo, useState, lazy, Suspense } from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import { tools, categoryIcons, getDefaultSlug, type ToolCategory, getToolsByCategory } from "@/lib/tools-data";
 
@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, ArrowRight, Shield, Zap, Globe, CheckCircle2, Image, FileVideo, FileAudio, FileText, LayoutGrid, FileCheck, Gift, Search, X } from "lucide-react";
 
 import { SEOHead } from "@/components/SEOHead";
+import { buildHomeJsonLd } from "@/lib/home-json-ld";
 
 import { useLocale, localePath } from "@/lib/i18n";
 
@@ -88,6 +89,7 @@ const FEATURED_FUNCTIONAL_ORDER = [
 const Index = () => {
 
   const { locale, t, dir } = useLocale();
+  const [searchParams] = useSearchParams();
 
   const { filterTools } = useToolConfig();
 
@@ -95,9 +97,7 @@ const Index = () => {
 
   const Arrow = isRtl ? ArrowLeft : ArrowRight;
 
-
-
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(() => searchParams.get("q") ?? "");
 
   const [activeCategory, setActiveCategory] = useState<ToolCategory | "all">("all");
 
@@ -188,7 +188,23 @@ const Index = () => {
 
   const totalShown = gridTools.length;
 
-
+  const homeJsonLd = useMemo(
+    () =>
+      buildHomeJsonLd({
+        locale,
+        brandName: t.brandName,
+        homeDesc: t.seo?.homeDesc ?? "",
+        faqs: t.faqs,
+        navLabels: {
+          "jpg-to-png": (t.toolNames as Record<string, string>)["jpg-to-png"] ?? "JPG to PNG",
+          "pdf-to-word": (t.toolNames as Record<string, string>)["pdf-to-word"] ?? "PDF to Word",
+          "image-compressor": (t.toolNames as Record<string, string>)["image-compressor"] ?? "Image Compressor",
+          premium: (t.premium as { upgradeTo: string }).upgradeTo,
+          blog: (t.footer as { blogAndGuides: string }).blogAndGuides,
+        },
+      }),
+    [locale, t],
+  );
 
   return (
 
@@ -199,6 +215,10 @@ const Index = () => {
         title={t.seo?.homeTitle ?? ""}
 
         description={t.seo?.homeDesc ?? ""}
+
+        siteName={t.brandName}
+
+        jsonLd={homeJsonLd}
 
       />
 

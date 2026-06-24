@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Tamir.li">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B76F0"/>
+      <stop offset="100%" stop-color="#0DA6D4"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <path fill="#fff" d="M148 136h136l56 56v208c0 19.9-16.1 36-36 36H148c-19.9 0-36-16.1-36-36V172c0-19.9 16.1-36 36-36z"/>
+  <path fill="#B8D9FF" d="M284 136v56h56"/>
+  <rect x="172" y="228" width="120" height="16" rx="8" fill="#0B76F0" opacity="0.35"/>
+  <rect x="172" y="264" width="96" height="16" rx="8" fill="#0B76F0" opacity="0.25"/>
+  <circle cx="356" cy="356" r="68" fill="#F05A28"/>
+  <path fill="#fff" d="M332 356h48v-24h24v72h-24v-24h-48z" transform="rotate(90 356 356)"/>
+</svg>

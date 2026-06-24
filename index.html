@@ -4,16 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <title>תמיר לי | Tamir.li — המרת קבצים חינם בישראל</title>
-    <meta name="description" content="תמיר לי (Tamir.li) — המרה מהירה וחינמית של תמונות, וידאו, אודיו ומסמכים. גרור קבצים, בחר פורמט, וסיימת. ללא תוכנה. מותאם לישראל." />
+    <meta name="description" content="תמיר לי (Tamir.li) — ממיר קבצים חינמי בעברית: JPG, PNG, PDF, MP4, MP3 ועוד. גרור, בחר פורמט, הורד. עד 5 המרות ביום, בלי תוכנה." />
     <meta name="author" content="תמיר לי" />
     <meta name="keywords" content="תמיר לי, Tamir.li, המרת קבצים, המרת תמונות, המרת וידאו, ממיר קבצים חינמי, ישראל" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="theme-color" content="#1e293b" />
+    <meta name="theme-color" content="#0B76F0" />
     <meta name="geo.region" content="IL" />
     <meta name="geo.placename" content="Israel" />
     <meta name="ICBM" content="31.7683, 35.2137" />
     <meta http-equiv="content-language" content="he-IL" />
     <link rel="canonical" href="https://tamir.li/" />
+    <link rel="alternate" hreflang="he-IL" href="https://tamir.li/" />
+    <link rel="alternate" hreflang="en" href="https://tamir.li/en" />
+    <link rel="alternate" hreflang="es" href="https://tamir.li/es" />
+    <link rel="alternate" hreflang="ru" href="https://tamir.li/ru" />
+    <link rel="alternate" hreflang="de" href="https://tamir.li/de" />
+    <link rel="alternate" hreflang="fr" href="https://tamir.li/fr" />
+    <link rel="alternate" hreflang="it" href="https://tamir.li/it" />
+    <link rel="alternate" hreflang="x-default" href="https://tamir.li/" />
 
     <!-- Fonts: preconnect + non-blocking load (replaces CSS @import) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -38,7 +46,7 @@
 
     <!-- Open Graph -->
     <meta property="og:title" content="תמיר לי | Tamir.li — המרת קבצים חינם בישראל" />
-    <meta property="og:description" content="המרה מהירה וחינמית בין פורמטים של תמונות, וידאו, אודיו ומסמכים. פשוט, מאובטח, בעברית." />
+    <meta property="og:description" content="ממיר קבצים חינמי בעברית — JPG, PNG, PDF, MP4, MP3 ועוד. גרור, בחר פורמט, הורד. עד 5 המרות ביום." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://tamir.li/" />
     <meta property="og:locale" content="he_IL" />
@@ -57,10 +65,15 @@
     <meta name="twitter:title" content="תמיר לי | Tamir.li — המרת קבצים חינם בישראל" />
     <meta name="twitter:description" content="המרה מהירה וחינמית בין פורמטים של תמונות, וידאו, אודיו ומסמכים" />
 
+    <!-- Favicons (also in manifest.json) -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="תמיר לי" />
@@ -74,7 +87,12 @@
       "name": "תמיר לי",
       "alternateName": ["Tamir.li", "Tamir Li"],
       "url": "https://tamir.li",
-      "logo": "https://tamir.li/pwa-512x512.png",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://tamir.li/pwa-512x512.png",
+        "width": 512,
+        "height": 512
+      },
       "address": { "@type": "PostalAddress", "addressCountry": "IL" },
       "areaServed": { "@type": "Country", "name": "Israel" }
     }
@@ -88,7 +106,15 @@
       "alternateName": "Tamir.li",
       "url": "https://tamir.li",
       "inLanguage": "he-IL",
-      "publisher": { "@id": "https://tamir.li/#organization" }
+      "publisher": { "@id": "https://tamir.li/#organization" },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://tamir.li/?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
     }
     </script>
     <script type="application/ld+json">

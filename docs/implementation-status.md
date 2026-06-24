@@ -86,7 +86,7 @@ Quick prod probe (2026-06-24): `GET https://tamir.li/health` → JSON `db.ok`, `
 | Download ad gate (2-step) | Vignette or `VITE_AD_CLICK_URL`; skipped for premium | `download-gate.ts` |
 | Cookie consent | Gates analytics + ads | `consent.ts`, `CookieConsent.tsx` |
 | i18n (7 locales) | Hebrew default (no `/he` prefix); RTL for `he` | `i18n.tsx`, `translations/*.ts` |
-| SEO (`SEOHead`, hreflang, OG, JSON-LD) | Per-page metadata; tool FAQ blocks | `SEOHead.tsx`, `ToolSeoBlocks.tsx` |
+| SEO (`SEOHead`, hreflang, OG, JSON-LD) | Per-page metadata; tool FAQ blocks; home `@graph` with SearchAction + SiteNavigationElement; favicons in `public/` | `SEOHead.tsx`, `home-json-ld.ts`, `ToolSeoBlocks.tsx` |
 | Sitemap generation | Every build | `generate-sitemap.ts`, `sitemap-paths.ts` |
 | Admin UI | Overview, users, tools, ads, billing, AI settings | `pages/admin/*`, `AdminGuard.tsx` |
 | PWA + theme + static pages | install, privacy, terms, about, contact | `vite.config.ts`, `pages/*` |

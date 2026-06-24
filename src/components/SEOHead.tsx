@@ -9,6 +9,7 @@ interface SEOHeadProps {
   description: string;
   canonical?: string;
   ogImage?: string;
+  siteName?: string;
   jsonLd?: object;
 }
 
@@ -37,7 +38,7 @@ export function toolCategoryOgImage(category: ToolCategory): string {
   return categoryOgImage(category);
 }
 
-export function SEOHead({ title, description, canonical, ogImage, jsonLd }: SEOHeadProps) {
+export function SEOHead({ title, description, canonical, ogImage, siteName, jsonLd }: SEOHeadProps) {
   const location = useLocation();
   const { locale } = useLocale();
 
@@ -67,6 +68,9 @@ export function SEOHead({ title, description, canonical, ogImage, jsonLd }: SEOH
     };
 
     setMeta("description", description);
+    if (siteName) {
+      setMeta("og:site_name", siteName, true);
+    }
     setMeta("og:title", title, true);
     setMeta("og:description", description, true);
     setMeta("og:url", url, true);
@@ -123,7 +127,7 @@ export function SEOHead({ title, description, canonical, ogImage, jsonLd }: SEOH
     } else {
       existingLd?.remove();
     }
-  }, [title, description, url, imageUrl, jsonLd, basePath, locale]);
+  }, [title, description, url, imageUrl, siteName, jsonLd, basePath, locale]);
 
   return null;
 }

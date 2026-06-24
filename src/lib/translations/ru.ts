@@ -353,8 +353,9 @@ export const ruTranslations = {
     relevantToolsInline: "Подходящие Инструменты", readingMinutes: "мин чтения",
   },
   seo: {
-    homeTitle: "Tamirly — Простая Конвертация Файлов Онлайн",
-    homeDesc: "Быстрая и бесплатная конвертация изображений, видео, аудио и документов.",
+    homeTitle: "Tamir.li — Бесплатный Онлайн Конвертер Файлов",
+    homeDesc:
+      "Tamir.li — бесплатный конвертер: JPG, PNG, PDF, MP4, MP3 и др. Перетащите файл, выберите формат, скачайте. 5 бесплатных конверсий в день.",
   },
   install: { title: "Скачать Tamirly", subtitle: "как приложение", seoTitle: "Скачать Tamirly", seoDesc: "Установите Tamirly как приложение на вашем устройстве." },
   switchLanguage: "Язык",

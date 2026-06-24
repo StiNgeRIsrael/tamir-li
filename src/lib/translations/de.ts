@@ -349,8 +349,9 @@ export const deTranslations = {
     relevantToolsInline: "Relevante Tools auf der Seite", readingMinutes: "Min. Lesezeit",
   },
   seo: {
-    homeTitle: "Tamirly — Einfache Online-Dateikonvertierung",
-    homeDesc: "Schnelle und kostenlose Konvertierung von Bildern, Video, Audio und Dokumenten.",
+    homeTitle: "Tamir.li — Kostenloser Online-Dateikonverter",
+    homeDesc:
+      "Tamir.li — kostenloser Konverter: JPG, PNG, PDF, MP4, MP3 u. a. Datei ziehen, Format wählen, herunterladen. 5 Gratis-Konvertierungen/Tag.",
   },
   install: { title: "Tamirly herunterladen", subtitle: "als App auf Ihrem Gerät", seoTitle: "Tamirly herunterladen", seoDesc: "Installieren Sie Tamirly als App." },
   switchLanguage: "Sprache",
