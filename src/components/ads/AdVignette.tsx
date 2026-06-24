@@ -99,7 +99,8 @@ function AdVignetteOverlay({ request }: { request: VignetteRequest }) {
             <AdSlot
               type="inline"
               slotId={request.slotId ?? "vignette-interstitial"}
-              className="min-h-[200px] h-auto max-w-full"
+              className="max-w-full"
+              eager
             />
           </div>
           {!canClose && (

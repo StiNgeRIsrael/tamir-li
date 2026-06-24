@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useAdConfig } from "@/contexts/AdConfigContext";
@@ -10,6 +10,7 @@ import {
   loadNativeAdScript,
 } from "@/lib/ads/adsterra";
 import { useSubscription } from "@/hooks/useSubscription";
+import { Button } from "@/components/ui/button";
 
 interface AdNativeSlotProps {
   className?: string;
@@ -19,22 +20,18 @@ interface AdNativeSlotProps {
 
 type AdLoadStatus = "loading" | "loaded" | "failed";
 
-function AdFallbackMessage({ label }: { label: string }) {
-  return (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-1 px-3 py-2 text-center">
-      <span className="text-sm font-medium leading-snug text-foreground">{label}</span>
-    </div>
-  );
-}
+const MAX_ATTEMPTS = 2;
+const NATIVE_FAIL_MS = 45_000;
 
 export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
-  // Re-render when /api/ads/config settles so native URL from DB replaces env fallback.
   useAdConfig();
   const hasConsent = useAdsConsent();
   const [adStatus, setAdStatus] = useState<AdLoadStatus>("loading");
+  const [retryKey, setRetryKey] = useState(0);
   const loadedRef = useRef(false);
+  const attemptRef = useRef(0);
   const label = t.adLabel || "Ad";
   const config = getNativeAdConfig();
   const adsConfigured = isAdsterraConfigured();
@@ -42,15 +39,34 @@ export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
   const showLiveAd = clientReady && hasNativeAdConfigured();
   const pendingSlot = clientReady && !hasNativeAdConfigured();
 
+  const retry = useCallback(() => {
+    if (loadedRef.current) return;
+    attemptRef.current = 0;
+    setRetryKey((k) => k + 1);
+    setAdStatus("loading");
+  }, []);
+
   useEffect(() => {
-    if (!showLiveAd || !config) {
-      loadedRef.current = false;
-      setAdStatus("failed");
+    if (!showLiveAd || !config) return;
+
+    if (loadedRef.current) {
+      setAdStatus("loaded");
       return;
     }
 
-    setAdStatus((current) => (loadedRef.current ? "loaded" : "loading"));
+    setAdStatus("loading");
     loadNativeAdScript();
+
+    const scheduleRetryOrFail = () => {
+      if (loadedRef.current) return;
+      if (attemptRef.current < MAX_ATTEMPTS - 1) {
+        attemptRef.current += 1;
+        setRetryKey((k) => k + 1);
+        setAdStatus("loading");
+        return;
+      }
+      setAdStatus("failed");
+    };
 
     const checkFilled = () => {
       const el = document.getElementById(config.containerId);
@@ -66,17 +82,15 @@ export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
     if (el) observer.observe(el, { childList: true, subtree: true });
 
     const failTimer = window.setTimeout(() => {
-      setAdStatus((current) => {
-        if (loadedRef.current || current === "loaded") return "loaded";
-        return current === "loading" ? "failed" : current;
-      });
-    }, 14000);
+      if (loadedRef.current) return;
+      scheduleRetryOrFail();
+    }, NATIVE_FAIL_MS);
 
     return () => {
       observer.disconnect();
       window.clearTimeout(failTimer);
     };
-  }, [showLiveAd, config]);
+  }, [showLiveAd, config, retryKey]);
 
   if (isPremium) return null;
 
@@ -97,7 +111,7 @@ export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
           className
         )}
       >
-        <AdFallbackMessage label={label} />
+        <span className="text-sm font-medium leading-snug text-muted-foreground">{label}</span>
         {pendingSlot && import.meta.env.DEV && (
           <p className="text-[11px] leading-snug text-muted-foreground">
             Adsterra is configured. Create a native unit in the Adsterra dashboard, then set{" "}
@@ -110,7 +124,7 @@ export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
     );
   }
 
-  const showFallbackOverlay = adStatus !== "loaded";
+  const showFailedOverlay = adStatus === "failed";
 
   return (
     <aside
@@ -119,19 +133,25 @@ export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
       data-ad-region="native"
       data-ad-slot-id={slotId}
       data-ad-load-status={adStatus}
+      data-ad-retry-count={retryKey}
       className={cn(
         "ad-slot relative mx-auto w-full min-h-[120px] overflow-hidden rounded-md",
         className
       )}
     >
-      {showFallbackOverlay && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-muted/95 px-2">
-          <AdFallbackMessage label={label} />
+      {showFailedOverlay && (
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-muted/95 px-2 text-center">
+          <span className="text-sm font-medium leading-snug text-foreground">{t.adLoadFailed}</span>
+          <span className="text-xs leading-snug text-muted-foreground">{t.adBlockerHint}</span>
+          <Button type="button" variant="outline" size="sm" onClick={retry}>
+            {t.adRetry}
+          </Button>
         </div>
       )}
       <div
+        key={retryKey}
         id={config!.containerId}
-        className={cn("relative z-10 w-full", showFallbackOverlay && "pointer-events-none opacity-0")}
+        className={cn("relative z-10 w-full", showFailedOverlay && "pointer-events-none opacity-0")}
       />
     </aside>
   );

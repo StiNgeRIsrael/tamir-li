@@ -49,3 +49,14 @@ describe("adsterra runtime config", () => {
     });
   });
 });
+
+describe("buildAdIframeSrcdoc", () => {
+  it("uses 20s timeout and error status instead of blocked on script failure", async () => {
+    const { buildAdIframeSrcdoc, AD_IFRAME_LOAD_TIMEOUT_MS } = await import("@/lib/ads/adsterra");
+    const srcdoc = buildAdIframeSrcdoc("test-key", 728, 90, "home-banner");
+    expect(AD_IFRAME_LOAD_TIMEOUT_MS).toBe(20_000);
+    expect(srcdoc).toContain("notify('error')");
+    expect(srcdoc).not.toContain("notify('blocked')");
+    expect(srcdoc).toContain("20000");
+  });
+});

@@ -365,7 +365,10 @@ export const enTranslations = {
     "text-tools": "Advanced text tool: convert between plain text, Markdown and HTML formats. Includes word and character counting, letter case conversion, space cleaning and more.",
     "ai-image-generator": "Advanced AI image creation tool. Describe the image you want in free text, choose a style and aspect ratio, and the AI will generate an original image in seconds. Available for Premium subscribers only.",
   },
-  adLabel: "Please disable your ad blocker :(",
+  adLabel: "Advertisement",
+  adLoadFailed: "We couldn't load this ad",
+  adBlockerHint: "If you use an ad blocker, try disabling it and retry",
+  adRetry: "Retry",
   adVignette: {
     label: "Advertisement",
     close: "Close",

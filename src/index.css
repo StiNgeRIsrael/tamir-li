@@ -168,7 +168,7 @@
   }
 
   .ad-slot {
-    @apply rounded-md border border-dashed border-border bg-muted/40 flex items-center justify-center text-muted-foreground text-sm min-h-[90px];
+    @apply rounded-md border border-dashed border-border bg-muted/40 text-muted-foreground text-sm;
   }
 
   .premium-banner {

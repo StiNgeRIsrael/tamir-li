@@ -24,8 +24,8 @@ export function DesktopAdRail({ side, slotId, className }: DesktopAdRailProps) {
       aria-label={side === "start" ? "Sidebar advertisement" : "Sidebar advertisement"}
     >
       <div className="sticky top-[3.75rem] space-y-4 py-4">
-        <AdSlot type="sidebar" slotId={id} className="min-h-[250px] h-auto" eager />
-        <AdSlot type="sidebar" slotId={`${id}-2`} className="min-h-[250px] h-auto" eager />
+        <AdSlot type="sidebar" slotId={id} eager />
+        <AdSlot type="sidebar" slotId={`${id}-2`} eager />
       </div>
     </aside>
   );
