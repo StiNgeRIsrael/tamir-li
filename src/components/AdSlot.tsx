@@ -9,6 +9,7 @@ import {
   isAdsterraConfigured,
   triggerPopunderAd,
 } from "@/lib/ads/adsterra";
+import { useAdConfig } from "@/contexts/AdConfigContext";
 import { useAdsConsent } from "@/hooks/useAdsConsent";
 import { useSubscription } from "@/hooks/useSubscription";
 import { showAdVignette } from "@/components/ads/AdVignette";
@@ -64,6 +65,8 @@ function AdFallbackMessage({ label, className }: { label: string; className?: st
 export function AdSlot({ type, className = "", slotId, eager = false }: AdSlotProps) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
+  // Subscribe to runtime config from /api/ads/config (admin DB) without hiding slots while loading.
+  const { config: adRuntimeConfig } = useAdConfig();
   const hasConsent = useAdsConsent();
   const L = layout[type];
   const label = t.adLabel || "Ad";
@@ -80,7 +83,7 @@ export function AdSlot({ type, className = "", slotId, eager = false }: AdSlotPr
   const iframeSrcdoc = useMemo(() => {
     if (!showLiveAd || !zoneKey) return undefined;
     return buildAdIframeSrcdoc(zoneKey, dims.width, dims.height, slotId);
-  }, [showLiveAd, zoneKey, dims.width, dims.height, slotId]);
+  }, [showLiveAd, zoneKey, dims.width, dims.height, slotId, adRuntimeConfig]);
 
   useEffect(() => {
     if (!showLiveAd) {
@@ -111,7 +114,7 @@ export function AdSlot({ type, className = "", slotId, eager = false }: AdSlotPr
       window.removeEventListener("message", onMessage);
       window.clearTimeout(failTimer);
     };
-  }, [showLiveAd, slotId, iframeSrcdoc]);
+  }, [showLiveAd, slotId, iframeSrcdoc, adRuntimeConfig]);
 
   const envHint =
     type === "sidebar" && slotId?.endsWith("-2")
