@@ -11,6 +11,11 @@ Living notes for tamir.li monetization copy. Cycle 1 (June 2026).
 5. **SEO meta unchanged** — `upgradePage.seoTitle` / `seoDesc` keep keyword-rich titles; on-page hero copy is softer.
 6. **Anchor pricing preserved** — ₪150 → ₪19.90 anchor remains on PremiumPage.
 
+## Cycle 1b (ru locale + nav pill)
+
+- `ru.ts`: full cycle-1 tone pass (download gate, sidebar, premium, upgradePage) — was missed in f845229.
+- `UsageNavPill`: Zap icon removed; low-state only at ≤1 remaining; muted styling (no accent alarm).
+
 ## Cycle 1 changes
 
 ### Tone shift (worst "AI slop" removed)
