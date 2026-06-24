@@ -4,7 +4,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { FileDropZone } from "@/components/FileDropZone";
 import { AdSlot } from "@/components/AdSlot";
 import { AdNativeSlot } from "@/components/ads/AdNativeSlot";
-import { PremiumBanner, PremiumLock, ConversionSuccessUsage, UsageLimitNotice } from "@/components/PremiumComponents";
+import { PremiumBanner, PremiumLock, DailyLimitLock, ConversionSuccessUsage, UsageLimitNotice } from "@/components/PremiumComponents";
 import { showAdVignette } from "@/components/ads/AdVignette";
 import { handleGatedDownload, triggerFileDownload, triggerBlobDownload, type DownloadGateState } from "@/lib/ads/download-gate";
 import { Button } from "@/components/ui/button";
@@ -110,6 +110,7 @@ export default function ToolPage() {
   const atUsageLimit = atLimit && !usageUnlocked && !isPremium;
   const showPremiumToolLock = tool?.premium && !isSubPremium && !premiumUnlocked;
   const convertSuccessHandled = useRef(false);
+  const usageRecordedOnServer = useRef(false);
 
   useEffect(() => {
     if (!tool) return;
@@ -151,7 +152,7 @@ export default function ToolPage() {
 
     convertSuccessHandled.current = true;
 
-    const revealSuccess = () => {
+    const revealSuccess = (skipUsageRecord = false) => {
       setShowSuccessPanel(true);
       trackEvent("convert_success", {
         tool_id: tool.id,
@@ -159,15 +160,22 @@ export default function ToolPage() {
         to_format: activeTo,
         file_count: fileItems.length,
       });
-      recordUsage({ toolId: tool.id, fromFormat: activeFrom, toFormat: activeTo }).catch(() => {});
+      if (!skipUsageRecord) {
+        recordUsage({ toolId: tool.id, fromFormat: activeFrom, toFormat: activeTo }).catch(() => {});
+      }
     };
 
+    const skipUsageRecord = usageRecordedOnServer.current;
+    if (skipUsageRecord) usageRecordedOnServer.current = false;
+
     if (isPremium) {
-      revealSuccess();
+      revealSuccess(skipUsageRecord);
       return;
     }
 
-    void showAdVignette({ minMs: 4000, slotId: "convert-success-vignette" }).then(revealSuccess);
+    void showAdVignette({ minMs: 4000, slotId: "convert-success-vignette" }).then(() =>
+      revealSuccess(skipUsageRecord)
+    );
   }, [converted, showSuccessPanel, tool, activeFrom, activeTo, fileItems.length, recordUsage, isPremium]);
 
   const changeFrom = (from: string) => {
@@ -409,6 +417,7 @@ export default function ToolPage() {
         }))
       );
       setConverted(true);
+      usageRecordedOnServer.current = true;
       toast.success(tt.conversionDone);
     } catch (err) {
       const serverDown = isServerUnavailableError(err);
@@ -435,6 +444,7 @@ export default function ToolPage() {
     setDownloadGate({});
     setAllDownloadGate(false);
     setServerUnavailable(false);
+    usageRecordedOnServer.current = false;
   };
 
   const onDownloadFile = async (index: number) => {
@@ -708,7 +718,7 @@ export default function ToolPage() {
             ) : showPremiumToolLock ? (
               <PremiumLock onUnlock={() => setPremiumUnlocked(true)} />
             ) : atUsageLimit ? (
-              <PremiumLock onUnlock={() => setUsageUnlocked(true)} />
+              <DailyLimitLock onUnlock={() => setUsageUnlocked(true)} />
             ) : tool.customComponent === "pdf-manager" ? (
               <PdfManagerTool freemium={customFreemium} />
             ) : tool.customComponent === "text-tools" ? (

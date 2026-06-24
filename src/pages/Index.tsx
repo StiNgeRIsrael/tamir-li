@@ -12,6 +12,7 @@ import { getDerivedHomeStatsFromTools } from "@/lib/public-stats";
 import { cn } from "@/lib/utils";
 import { getFunctionalToolIds, isToolFunctional } from "@/lib/tool-availability";
 import { ToolSoonBadge } from "@/components/ToolSoonBadge";
+import { ToolIconGrid } from "@/components/ToolIconGrid";
 
 const InternalToolLinks = lazy(() =>
   import("@/components/InternalToolLinks").then((m) => ({ default: m.InternalToolLinks }))
@@ -61,7 +62,7 @@ const Index = () => {
   const toolNames = t.toolNames as Record<string, string>;
   const toolDescs = t.toolDescriptions as Record<string, string>;
   const homeSearch = t.homeSearch as { placeholder: string; all: string; noResults: string; results: (n: number) => string };
-  const homePicker = t.homePicker as { title: string; popular: string; allTools: string };
+  const homePicker = t.homePicker as { title: string; popular: string; allTools: string; familyTitle: string };
   const visibleTools = filterTools(tools);
   const featuredTools = useMemo(() => {
     const functional = new Set(getFunctionalToolIds());
@@ -94,6 +95,11 @@ const Index = () => {
   const totalShown = displayCategories.reduce((n, cat) => {
     return n + filterTools(getToolsByCategory(cat)).filter((t) => filteredBySearch.some((f) => f.id === t.id)).length;
   }, 0);
+
+  const gridTools = useMemo(() => {
+    if (activeCategory === "all") return filteredBySearch;
+    return filteredBySearch.filter((tool) => tool.category === activeCategory);
+  }, [filteredBySearch, activeCategory]);
 
   return (
     <AppLayout>
@@ -232,6 +238,14 @@ const Index = () => {
               <p className="text-xs text-muted-foreground">{homeSearch.results(totalShown)}</p>
             )}
           </div>
+
+          {/* Tool family grid — FPC-style icon cards */}
+          {gridTools.length > 0 && (
+            <section className="space-y-3 rounded-lg border border-border bg-card p-4 sm:p-5">
+              <h2 className="text-base font-bold text-foreground sm:text-lg">{homePicker.familyTitle}</h2>
+              <ToolIconGrid tools={gridTools} toolNames={toolNames} locale={locale} />
+            </section>
+          )}
 
           {/* Tools by category — dense list */}
           {displayCategories.map((cat) => {

@@ -155,7 +155,7 @@ export function useUsage() {
     remaining: snapshot.remaining ?? Math.max(0, MAX_DAILY_FREE - snapshot.used),
     isPremium: snapshot.isPremium,
     loading: !!api && isLoading && !isError,
-    atLimit: !snapshot.isPremium && (snapshot.remaining ?? 0) <= 0,
+    atLimit: !snapshot.isPremium && snapshot.used >= MAX_DAILY_FREE,
     recordUsage,
     refetch: () => queryClient.invalidateQueries({ queryKey: ["usage-today", api] }),
   };

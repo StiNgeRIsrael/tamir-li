@@ -160,22 +160,6 @@ router.post('/', optionalAuth, multipartUpload, async (req: Request, res: Respon
       });
     }
 
-    const loggedFileSize =
-      fileSizeBytes ??
-      (files.length > 0 && files[0].size >= 0 ? BigInt(files[0].size) : undefined);
-
-    await prisma.usageLog.create({
-      data: {
-        userId: userId ?? null,
-        sessionId: userId ? null : sessionId,
-        toolId,
-        fromFormat,
-        toFormat,
-        fileSizeBytes: loggedFileSize,
-        isPremium: priority,
-      },
-    });
-
     notifyConversionWorker();
 
     res.status(202).json({

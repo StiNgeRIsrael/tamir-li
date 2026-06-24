@@ -98,6 +98,75 @@ export function PremiumLock({ onUnlock }: { onUnlock?: () => void }) {
   );
 }
 
+/** Shown when the free daily conversion quota (5/day) is exhausted — not for premium-only tools. */
+export function DailyLimitLock({ onUnlock }: { onUnlock?: () => void }) {
+  const { locale, t } = useLocale();
+  const { isPremium } = useSubscription();
+  const p = t.premium;
+  const [adState, setAdState] = useState<"idle" | "watching" | "done">("idle");
+  const [countdown, setCountdown] = useState(15);
+
+  useEffect(() => {
+    if (adState !== "watching") return;
+    if (countdown <= 0) { setAdState("done"); onUnlock?.(); return; }
+    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [adState, countdown, onUnlock]);
+
+  if (isPremium) return null;
+
+  const startAd = () => { setAdState("watching"); setCountdown(15); };
+
+  if (adState === "done") {
+    return (
+      <div className="text-center py-6 px-4 bg-success/5 rounded-xl border border-success/30 animate-fade-in space-y-3">
+        <CheckCircle2 className="w-10 h-10 text-success mx-auto" />
+        <h3 className="font-bold text-lg text-foreground">{p.dailyLimitUnlockTitle}</h3>
+        <p className="text-sm text-muted-foreground">{p.dailyLimitUnlockDesc}</p>
+      </div>
+    );
+  }
+
+  if (adState === "watching") {
+    return (
+      <div className="text-center py-8 px-4 bg-card rounded-xl border border-border animate-fade-in space-y-4">
+        <div className="bg-muted rounded-xl aspect-video max-w-md mx-auto flex flex-col items-center justify-center gap-3 border border-border">
+          <Play className="w-10 h-10 text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">{p.adPlaying}</p>
+        </div>
+        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <Timer className="w-4 h-4" />
+          <span>{p.closeIn(countdown)}</span>
+        </div>
+        <div className="h-1.5 bg-muted rounded-full overflow-hidden max-w-xs mx-auto">
+          <div className="h-full bg-primary rounded-full transition-all duration-1000 ease-linear" style={{ width: `${((15 - countdown) / 15) * 100}%` }} />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-center py-6 px-4 bg-muted/50 rounded-xl border border-border space-y-5">
+      <Crown className="w-10 h-10 text-premium mx-auto" />
+      <h3 className="font-bold text-lg text-foreground">{p.dailyLimitTitle}</h3>
+      <p className="text-sm text-muted-foreground max-w-md mx-auto">{p.dailyLimitDesc}</p>
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <Button onClick={startAd} variant="outline" className="font-bold border-primary/30 hover:bg-primary/5" size="lg">
+          <Eye className="w-4 h-4 me-2" />{p.watchAd}
+        </Button>
+        <span className="text-xs text-muted-foreground">{p.or}</span>
+        <Button asChild className="bg-premium text-premium-foreground hover:bg-premium/90 font-bold" size="lg">
+          <Link to={localePath("/premium", locale)}>
+            <Zap className="w-4 h-4 me-1" />
+            {p.upgradeTo} — <PremiumPriceLabel />
+          </Link>
+        </Button>
+      </div>
+      <p className="text-xs text-muted-foreground">{p.adDuration}</p>
+    </div>
+  );
+}
+
 export function UsageLimitNotice({ used, max }: { used: number; max: number }) {
   const { locale, t } = useLocale();
   const p = t.premium;

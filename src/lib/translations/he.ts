@@ -188,6 +188,7 @@ export const heTranslations = {
     go: "המר",
     popular: "המרות פופולריות",
     allTools: "כל הכלים",
+    familyTitle: "הכירו את משפחת הכלים המלאה שלנו",
   },
   homeStatLabels: {
     tools: "כלים פעילים באתר",
@@ -451,6 +452,10 @@ export const heTranslations = {
     unlockTitle: "מוכן", unlockDesc: "המרת וידאו אחת פתוחה. העלו קובץ.",
     lockTitle: "המרת וידאו — פרימיום",
     lockDesc: "זמין במנוי פרימיום. רוצים לנסות? המרה אחת בחינם — רק רגע פרסומת.",
+    dailyLimitTitle: "המכסה היומית נגמרה",
+    dailyLimitDesc: "כבר ניצלתם את 5 ההמרות החינמיות להיום. רוצים עוד? המרה אחת נוספת אחרי פרסומת קצרה, או פרימיום ללא הגבלה.",
+    dailyLimitUnlockTitle: "מוכן",
+    dailyLimitUnlockDesc: "המרה אחת נוספת פתוחה להיום. העלו קובץ.",
     watchAd: "נסו חינם — רגע פרסומת", or: "או", upgradeBtn: (p: string) => `פרימיום — ${p}`,
     adDuration: "פרסומת קצרה ≈ המרה אחת",
     adPlaying: "רגע...", closeIn: (s: number) => `עוד ${s} שניות`,

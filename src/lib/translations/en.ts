@@ -181,6 +181,7 @@ export const enTranslations = {
     go: "Go",
     popular: "Popular conversions",
     allTools: "All tools",
+    familyTitle: "Meet our full family of tools",
   },
   homeStatLabels: {
     tools: "Tools on the site",
@@ -430,6 +431,10 @@ export const enTranslations = {
     unlockTitle: "Ready", unlockDesc: "One video conversion unlocked. Upload a file.",
     lockTitle: "Video conversion — Premium",
     lockDesc: "Included with Premium. Want to try? One free conversion — just a short ad.",
+    dailyLimitTitle: "Daily limit reached",
+    dailyLimitDesc: "You've used all 5 free conversions for today. Want more? One extra conversion after a short ad, or go Premium for unlimited.",
+    dailyLimitUnlockTitle: "Ready",
+    dailyLimitUnlockDesc: "One more conversion unlocked for today. Upload a file.",
     watchAd: "Try free — short ad", or: "or", upgradeBtn: (p: string) => `Premium — ${p}`,
     adDuration: "Short ad ≈ one conversion",
     adPlaying: "One moment...", closeIn: (s: number) => `${s}s left`,

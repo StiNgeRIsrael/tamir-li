@@ -178,6 +178,7 @@ export const esTranslations = {
     go: "Convertir",
     popular: "Conversiones populares",
     allTools: "Todas las herramientas",
+    familyTitle: "Conozca nuestra familia completa de herramientas",
   },
   homeStatLabels: {
     tools: "Herramientas en el sitio",
@@ -407,6 +408,10 @@ export const esTranslations = {
     unlockTitle: "Listo", unlockDesc: "Una conversión de video desbloqueada. Sube un archivo.",
     lockTitle: "Conversión de video — Premium",
     lockDesc: "Incluido en Premium. ¿Quieres probar? Una conversión gratis — anuncio corto.",
+    dailyLimitTitle: "Límite diario alcanzado",
+    dailyLimitDesc: "Ya usaste las 5 conversiones gratis de hoy. ¿Quieres más? Una conversión extra tras un anuncio corto, o Premium sin límites.",
+    dailyLimitUnlockTitle: "Listo",
+    dailyLimitUnlockDesc: "Una conversión más desbloqueada para hoy. Sube un archivo.",
     watchAd: "Probar gratis — anuncio corto", or: "o", upgradeBtn: (p: string) => `Premium — ${p}`,
     adDuration: "Anuncio corto ≈ una conversión",
     adPlaying: "Un momento...", closeIn: (s: number) => `${s}s restantes`,
