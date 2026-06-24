@@ -147,7 +147,7 @@ Audit date: **2026-06-24**. Status key: **DONE** / **PARTIAL** / **MISSING**.
 - [x] AdSlot re-render when `/api/ads/config` returns DB keys
 - [x] Theme A — Ad & attention (real vignette locks, download gates, processing/success ad slots)
 - [x] `npm test` pass
-- [ ] Commit + push
+- [x] Commit + push
 - [ ] `npm run site:check:prod`
 
 ---
