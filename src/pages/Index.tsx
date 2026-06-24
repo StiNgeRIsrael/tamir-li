@@ -467,15 +467,11 @@ const Index = () => {
 
 
           <ToolIconGrid
-
             tools={gridTools}
-
             locale={locale}
-
             toolNames={toolNames}
-
             title={homePicker.familyTitle}
-
+            className="pt-2"
           />
 
 

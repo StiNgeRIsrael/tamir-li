@@ -140,7 +140,7 @@ See **Blockers** table at top. No code changes until credentials supplied.
 ## Progress log (loop updates)
 
 - [x] **2026-06-24** — Plan created (`docs/monetization-implementation-plan.md`); dynamic loop armed (30m heartbeat).
-- [x] **2026-06-24** — Theme A: real vignette locks (A7/A8), download gates on OCR + AI (A3), processing/success ad slots on custom tools (A4), popunder consent docs (A6)
+- [x] **2026-06-24** — Home tool icon grid: readable labels on pastel cards, centered orphan rows, stronger soon/premium badges.
 - [ ] F3/F4/F7 — client unlock bypass removal (locks show real ads but still grant session unlock)
 - [ ] F2 — server-only usage
 - [ ] B3 — file size enforcement

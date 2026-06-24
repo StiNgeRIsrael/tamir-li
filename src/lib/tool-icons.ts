@@ -1,7 +1,9 @@
-/** Pastel card styles extracted from freepdfconvert.com product-family grid. */
+/** Pastel card styles — light tints on dark page bg; labels use slate-800 (see ToolIconGrid). */
 export type ToolIconStyle = {
   icon: string;
+  /** Card fill — always a light pastel for icon contrast on tamir.li dark theme */
   bg: string;
+  /** Visible border on dark backgrounds */
   border: string;
 };
 
