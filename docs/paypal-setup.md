@@ -109,6 +109,49 @@ Local dev: copy the same keys into `backend/.env` (see `backend/.env.example`). 
 4. Rebuild frontend with production env vars.
 5. Complete PayPal business account verification for Israel.
 
-## 8. Re-enable Stripe (optional)
+## 8. Agent setup (PayPal MCP)
+
+Cursor agents can create PayPal products/plans, list webhooks, and run sandbox billing tasks via the **remote PayPal MCP** (OAuth — no secrets in repo).
+
+1. Project config: `.cursor/mcp.json` (sandbox SSE endpoint).
+2. **Cursor Settings → MCP** → enable **paypal** → **restart Cursor**.
+3. Complete PayPal OAuth in the browser when prompted.
+4. Full guide: [docs/paypal-mcp-setup.md](./paypal-mcp-setup.md).
+
+### Production readiness checklist (for agents with MCP enabled)
+
+Cross-check PayPal Dashboard (live) against `backend/.env.example` and Plesk env. Code references: `backend/src/routes/billing.routes.ts`, `backend/src/lib/billing-shared.ts`, `backend/src/lib/paypal.ts`.
+
+| Item | Env var / endpoint | Expected value |
+|------|-------------------|----------------|
+| Live REST app | `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` | Live app credentials (not sandbox) |
+| API mode | `PAYPAL_MODE` | `live` |
+| Monthly plan ID | `PAYPAL_PLAN_MONTHLY` | `P-...` — **₪19.90/month** ILS (`Tamir.li Premium — Monthly`) |
+| Yearly plan ID | `PAYPAL_PLAN_YEARLY` | `P-...` — **₪191.04/year** ILS (`Tamir.li Premium — Yearly`) |
+| Webhook ID | `PAYPAL_WEBHOOK_ID` | `WH-...` for `https://tamir.li/api/billing/paypal/webhook` |
+| Frontend build | `VITE_PAYPAL_CLIENT_ID` | Same live Client ID (optional today) |
+| CORS / return URLs | `CORS_ORIGIN` | `https://tamir.li` (first origin = PayPal return/cancel) |
+
+**Webhook events the backend handles** (must all be subscribed on the live webhook):
+
+- `BILLING.SUBSCRIPTION.ACTIVATED` — activate premium + grant 6 initial AI credits
+- `BILLING.SUBSCRIPTION.UPDATED` — sync plan/status
+- `BILLING.SUBSCRIPTION.CANCELLED` — mark canceled
+- `BILLING.SUBSCRIPTION.SUSPENDED` — past due
+- `BILLING.SUBSCRIPTION.EXPIRED` — end subscription
+- `BILLING.SUBSCRIPTION.PAYMENT.SUCCEEDED` — log payment; reset monthly credits on renewal (`sequence_number > 1`)
+- `BILLING.SUBSCRIPTION.PAYMENT.FAILED` — mark `PAST_DUE`
+- `PAYMENT.CAPTURE.COMPLETED` — credit packs (`credits_10` … `credits_120`; amounts ₪8 / ₪21 / ₪39 / ₪72 in code)
+
+Credit packs do **not** need PayPal catalog products — orders are created in code with `custom_id` `{userId}|{planKey}`.
+
+**Agent tasks once MCP is connected:**
+
+- [ ] Create live product + monthly/yearly plans with exact ILS pricing above; paste `P-...` IDs into Plesk.
+- [ ] Register live webhook URL with all eight event types; set `PAYPAL_WEBHOOK_ID`.
+- [ ] Verify sandbox end-to-end, then repeat checklist for live before `PAYPAL_MODE=live`.
+- [ ] Confirm `GET /api/billing/status` and checkout redirect work on production.
+
+## 9. Re-enable Stripe (optional)
 
 Set `ENABLE_STRIPE=true` and Stripe env vars per `docs/stripe-setup.md`. Stripe webhook remains at `/api/billing/webhook`.

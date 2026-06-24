@@ -16,8 +16,9 @@ dist-ssr
 .env
 backend/.env
 
-# Cursor local
-.cursor/
+# Cursor local (commit shared MCP config only)
+.cursor/*
+!.cursor/mcp.json
 
 # GSC manual indexing progress (local per machine)
 gsc-indexing-progress.txt
