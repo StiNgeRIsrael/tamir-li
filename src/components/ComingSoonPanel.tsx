@@ -69,7 +69,7 @@ export function ComingSoonPanel({ toolName, toolId }: ComingSoonPanelProps) {
         </p>
       </div>
       {toolAlt && (
-        <div className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm space-y-3 max-w-md w-full">
+        <div className="rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm space-y-3 max-w-md w-full">
           <p className="text-muted-foreground leading-relaxed">{toolAlt.hint}</p>
           <Button size="sm" asChild className="w-full sm:w-auto">
             <Link to={localePath(`/${toolAlt.slug}`, locale)}>{toolAlt.cta}</Link>

@@ -172,16 +172,16 @@ export const itTranslations = {
     conversionServerError: "I nostri server di conversione sono temporaneamente non disponibili — i file non sono stati caricati. Riprova tra qualche minuto, oppure",
     conversionServerErrorContact: "contatta il supporto",
     error: "Errore",
-    comingSoonTitle: "In Arrivo",
+    comingSoonTitle: "Ancora in lavorazione",
     comingSoonMessage: (name: string) =>
       name
-        ? `${name} è in arrivo — stiamo completando l'implementazione. Torna presto o prova uno degli strumenti disponibili.`
-        : "Questo strumento è in arrivo — stiamo completando l'implementazione. Torna presto o prova uno degli strumenti disponibili.",
-    comingSoonAlternatives: "Prova invece",
-    comingSoonPdfWordHint: "Serve un PDF adesso? Converti documenti Word in PDF nel browser con il nostro strumento Word in PDF.",
-    comingSoonPdfWordCta: "Prova Word in PDF",
-    comingSoonVideoHint: "Devi convertire audio adesso? Converti MP3, WAV, AAC e altro con il nostro convertitore audio.",
-    comingSoonVideoCta: "Apri convertitore audio",
+        ? `${name} non è ancora pronto — ci stiamo lavorando. Nel frattempo, uno di questi strumenti può aiutare.`
+        : "Questo strumento non è ancora pronto — ci stiamo lavorando. Nel frattempo, uno di questi strumenti può aiutare.",
+    comingSoonAlternatives: "Strumenti già disponibili",
+    comingSoonPdfWordHint: "Word in PDF è disponibile — conversione diretta nel browser.",
+    comingSoonPdfWordCta: "Word in PDF",
+    comingSoonVideoHint: "Il convertitore audio è attivo — MP3, WAV, AAC e altro.",
+    comingSoonVideoCta: "Convertitore audio",
     basicExportBadge: "Esportazione base",
     basicExportNotice:
       "Questo strumento converte il testo del documento in un PDF semplice nel browser. La formattazione avanzata (titoli, immagini, tabelle) potrebbe non essere conservata — ideale per documenti di testo semplice.",
@@ -386,7 +386,7 @@ export const itTranslations = {
     billedMonthly: "Fatturazione mensile. Cancella quando vuoi.",
     billedYearly: "Fatturazione annuale — ₪191.04/anno (invece di ₪1,800). Cancella quando vuoi.",
     perMonthNote: "/mese",
-    ctaMain: "Prova Premium", checkoutSuccess: "Fatto — Premium attivo.", guarantee: "Politica di rimborso — vedi FAQ",
+    ctaMain: "Prova Premium", checkoutSuccess: "Fatto — Premium attivo.", guarantee: "Annulla quando vuoi — dettagli sotto",
     features: [
       { title: "Senza contare", desc: "Giornata piena di file? Converti quanto serve — senza aspettare domani." },
       { title: "Senza pubblicità", desc: "Meno interruzioni, più tempo per lavorare." },
@@ -395,7 +395,7 @@ export const itTranslations = {
       { title: "Ogni formato", desc: "Immagine, video, audio, documento — stesso posto." },
       { title: "Aiuto più veloce", desc: "Domanda urgente? Rispondiamo per primi." },
     ],
-    comparisonTitle: "Gratuito vs Premium",
+    comparisonTitle: "Cosa include ogni piano",
     comparisonHeaders: { feature: "Funzionalità", free: "Gratuito", premium: "Premium" },
     comparisonRows: [
       { feature: "Conversioni giornaliere", free: "5/giorno", premium: "Illimitate" },
@@ -413,8 +413,8 @@ export const itTranslations = {
       { q: "I crediti restano?", a: "I crediti non utilizzati scadono a fine ciclo." },
       { q: "Come funziona la garanzia?", a: "Offriamo garanzia di rimborso al 100%. Rimborso possibile se non hai usato il servizio nell'ultimo mese, in caso di errori di conversione confermati, o per bug non risolti." },
     ],
-    guaranteeTitle: "Garanzia Rimborso 100%",
-    guaranteeDesc: "Sosteniamo il nostro servizio. Rimborso completo per mancato utilizzo, errori confermati o bug non risolti.",
+    guaranteeTitle: "Non fa per te? Rimborsiamo",
+    guaranteeDesc: "Annulla quando vuoi. Rimborso completo se non hai usato il servizio nell'ultimo mese, o se qualcosa non ha funzionato per colpa nostra.",
     guaranteeItems: ["Nessun utilizzo nell'ultimo mese", "Errori di conversione confermati", "Bug segnalati non risolti"],
     finalCta: "Curioso cosa cambia?", finalDesc: "Abbonamento opzionale. Cancella quando vuoi.",
     orGoHome: "o continua gratis",

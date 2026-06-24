@@ -219,16 +219,16 @@ export const heTranslations = {
     conversionServerError: "שרתי ההמרה שלנו לא זמינים כרגע — הקבצים לא הועלו. נסו שוב בעוד כמה דקות, או",
     conversionServerErrorContact: "פנו לתמיכה",
     error: "שגיאה",
-    comingSoonTitle: "בקרוב",
+    comingSoonTitle: "עדיין בדרך",
     comingSoonMessage: (name: string) =>
       name
-        ? `${name} בדרך — אנחנו מסיימים את הפיתוח. חזרו בקרוב או נסו אחד מהכלים הזמינים.`
-        : "הכלי בדרך — אנחנו מסיימים את הפיתוח. חזרו בקרוב או נסו אחד מהכלים הזמינים.",
-    comingSoonAlternatives: "נסו במקום",
-    comingSoonPdfWordHint: "צריכים PDF עכשיו? המירו מסמכי Word ל-PDF עם הכלי Word ל-PDF שלנו — ישירות בדפדפן.",
-    comingSoonPdfWordCta: "ל-Word ל-PDF",
-    comingSoonVideoHint: "צריכים להמיר אודיו עכשיו? המירו MP3, WAV, AAC ועוד עם ממיר האודיו שלנו.",
-    comingSoonVideoCta: "לממיר אודיו",
+        ? `${name} עדיין לא פה — אנחנו על זה. בינתיים, אחד הכלים האלה יכול לעזור.`
+        : "הכלי הזה עדיין לא פה — אנחנו על זה. בינתיים, אחד הכלים האלה יכול לעזור.",
+    comingSoonAlternatives: "כלים שכבר עובדים",
+    comingSoonPdfWordHint: "Word ל-PDF כבר זמין — המרה ישירות בדפדפן.",
+    comingSoonPdfWordCta: "Word ל-PDF",
+    comingSoonVideoHint: "ממיר האודיו כבר פעיל — MP3, WAV, AAC ועוד.",
+    comingSoonVideoCta: "ממיר אודיו",
     basicExportBadge: "ייצוא בסיסי",
     basicExportNotice:
       "הכלי ממיר את תוכן המסמך ל-PDF פשוט בדפדפן. עיצוב מתקדם (כותרות, תמונות, טבלאות) עשוי לא להישמר — מתאים למסמכי טקסט פשוטים.",
@@ -507,7 +507,7 @@ export const heTranslations = {
     perMonthNote: "/חודש",
     ctaMain: "נסו פרימיום",
     checkoutSuccess: "הכל מוכן — הפרימיום נכנס לתוקף.",
-    guarantee: "מדיניות החזר — ראו שאלות נפוצות",
+    guarantee: "ביטול בכל עת — פרטים למטה",
     features: [
       { title: "בלי לספור", desc: "יום עמוס עם קבצים? המירו כמה שצריך — בלי לחכות למחר." },
       { title: "בלי פרסומות", desc: "פחות הפרעות, יותר זמן לעבודה. בלי פופאפים ובלי באנרים." },
@@ -516,7 +516,7 @@ export const heTranslations = {
       { title: "כל הפורמטים", desc: "תמונה, וידאו, אודיו, מסמך — אותו מקום." },
       { title: "תמיכה מהירה", desc: "שאלה דחופה? נענה קודם." },
     ],
-    comparisonTitle: "חינם מול פרימיום",
+    comparisonTitle: "מה כלול בכל תוכנית",
     comparisonHeaders: { feature: "תכונה", free: "חינם", premium: "פרימיום" },
     comparisonRows: [
       { feature: "המרות יומיות", free: "5 ליום", premium: "ללא הגבלה" },
@@ -534,8 +534,8 @@ export const heTranslations = {
       { q: "קרדיטים שלא השתמשתי נשמרים?", a: "קרדיטים שלא נוצלו פגים בסוף מחזור החיוב." },
       { q: "איך עובדת האחריות להחזר כספי?", a: "אנחנו מציעים אחריות 100% להחזר כספי. זכאים להחזר אם לא השתמשתם בשירות בחודש האחרון, אם המרות נכשלו עקב תקלה מאושרת מצדנו, או אם דיווחתם על באג שלא תוקן בזמן." },
     ],
-    guaranteeTitle: "אחריות 100% להחזר כספי",
-    guaranteeDesc: "אנחנו עומדים מאחורי השירות שלנו. זכאים להחזר מלא אם לא השתמשתם בשירות בחודש האחרון, אם ההמרות נכשלו עקב תקלה מאושרת, או אם דיווחתם על באג שלא תוקן.",
+    guaranteeTitle: "לא מתאים? נחזיר",
+    guaranteeDesc: "אפשר לבטל מתי שרוצים. מגיע החזר אם לא השתמשתם בחודש האחרון, או אם משהו לא עבד בגלל תקלה שלנו.",
     guaranteeItems: [
       "ללא שימוש בחודש האחרון",
       "כשלונות המרה שאושרו על ידי הצוות שלנו",

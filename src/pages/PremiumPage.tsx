@@ -64,7 +64,7 @@ export default function PremiumPage() {
     trackEvent("begin_checkout", { plan, source });
 
     if (!user) {
-      toast.error(auth?.signInRequired ?? "Sign in to upgrade");
+      toast.error(auth?.signInRequired ?? "Sign in to continue");
       return;
     }
 
@@ -151,7 +151,6 @@ export default function PremiumPage() {
               onClick={() => startCheckout("hero")}
               disabled={checkoutLoading}
             >
-              <Zap className="w-5 h-5 me-2" />
               {u.ctaMain}
             </Button>
             <p className="text-xs text-muted-foreground flex items-center justify-center gap-1.5">
@@ -282,8 +281,7 @@ export default function PremiumPage() {
               onClick={() => startCheckout("footer")}
               disabled={checkoutLoading}
             >
-              <Zap className="w-5 h-5 me-2" />
-              {u.ctaMain} — <span className="line-through opacity-70 font-normal">{displayAnchorPrice}</span> {displayPrice}{displayPeriod}
+              {u.ctaMain}
             </Button>
             <p className="text-xs text-muted-foreground">
               <Link to={localePath("/", locale)} className="text-primary hover:underline">{u.orGoHome}</Link>

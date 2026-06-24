@@ -192,16 +192,16 @@ export const esTranslations = {
     conversionServerError: "Nuestros servidores de conversión no están disponibles temporalmente — tus archivos no se subieron. Inténtalo de nuevo en unos minutos, o",
     conversionServerErrorContact: "contacta con soporte",
     error: "Error",
-    comingSoonTitle: "Próximamente",
+    comingSoonTitle: "Aún en desarrollo",
     comingSoonMessage: (name: string) =>
       name
-        ? `${name} está en camino — estamos terminando la implementación. Vuelve pronto o prueba una de nuestras herramientas disponibles.`
-        : "Esta herramienta está en camino — estamos terminando la implementación. Vuelve pronto o prueba una de nuestras herramientas disponibles.",
-    comingSoonAlternatives: "Prueba estas alternativas",
-    comingSoonPdfWordHint: "¿Necesitas PDF ahora? Convierte documentos Word a PDF en el navegador con nuestra herramienta Word a PDF.",
-    comingSoonPdfWordCta: "Probar Word a PDF",
-    comingSoonVideoHint: "¿Necesitas convertir audio ahora? Convierte MP3, WAV, AAC y más con nuestro conversor de audio.",
-    comingSoonVideoCta: "Abrir conversor de audio",
+        ? `${name} aún no está listo — estamos en ello. Mientras tanto, una de estas herramientas puede servir.`
+        : "Esta herramienta aún no está lista — estamos en ello. Mientras tanto, una de estas herramientas puede servir.",
+    comingSoonAlternatives: "Herramientas que ya funcionan",
+    comingSoonPdfWordHint: "Word a PDF ya está disponible — convierte directo en el navegador.",
+    comingSoonPdfWordCta: "Word a PDF",
+    comingSoonVideoHint: "El conversor de audio ya está activo — MP3, WAV, AAC y más.",
+    comingSoonVideoCta: "Conversor de audio",
     basicExportBadge: "Exportación básica",
     basicExportNotice:
       "Esta herramienta convierte el texto del documento a un PDF simple en el navegador. El diseño avanzado (títulos, imágenes, tablas) puede no conservarse — ideal para documentos de texto plano.",
@@ -442,7 +442,7 @@ export const esTranslations = {
     billedMonthly: "Facturación mensual. Cancela cuando quieras.",
     billedYearly: "Facturación anual a ₪191.04/año (antes ₪1,800). Cancela cuando quieras.",
     perMonthNote: "/mes",
-    ctaMain: "Probar Premium", checkoutSuccess: "Listo — Premium activo.", guarantee: "Política de reembolso — ver FAQ",
+    ctaMain: "Probar Premium", checkoutSuccess: "Listo — Premium activo.", guarantee: "Cancela cuando quieras — detalles abajo",
     features: [
       { title: "Sin contar", desc: "¿Día con muchos archivos? Convierte lo que necesites — sin esperar a mañana." },
       { title: "Sin anuncios", desc: "Menos interrupciones, más tiempo para trabajar." },
@@ -451,7 +451,7 @@ export const esTranslations = {
       { title: "Todos los formatos", desc: "Imagen, video, audio, documento — mismo lugar." },
       { title: "Ayuda más rápida", desc: "¿Pregunta urgente? Respondemos primero." },
     ],
-    comparisonTitle: "Gratis vs Premium",
+    comparisonTitle: "Qué incluye cada plan",
     comparisonHeaders: { feature: "Función", free: "Gratis", premium: "Premium" },
     comparisonRows: [
       { feature: "Conversiones Diarias", free: "5/día", premium: "Ilimitadas" },
@@ -469,8 +469,8 @@ export const esTranslations = {
       { q: "¿Los créditos se mantienen?", a: "Los créditos no utilizados expiran al final del ciclo." },
       { q: "¿Cómo funciona la garantía?", a: "Ofrecemos garantía de devolución del 100%. Puedes solicitar un reembolso si no usaste el servicio en el último mes, si las conversiones fallaron por un problema confirmado, o si reportaste un bug que no se resolvió a tiempo." },
     ],
-    guaranteeTitle: "Garantía de Devolución del 100%",
-    guaranteeDesc: "Respaldamos nuestro servicio. Tienes derecho a un reembolso completo si no usaste el servicio en el último mes, si tus conversiones fallaron por un problema confirmado, o si reportaste un bug sin resolver.",
+    guaranteeTitle: "¿No encaja? Te devolvemos",
+    guaranteeDesc: "Cancela cuando quieras. Reembolso completo si no usaste el servicio el mes pasado, o si algo falló por nuestra parte.",
     guaranteeItems: ["Sin uso en el último mes", "Fallos de conversión confirmados", "Bugs reportados sin resolver"],
     finalCta: "¿Curioso qué cambia?", finalDesc: "Suscripción opcional. Cancela cuando quieras.",
     orGoHome: "o seguir gratis",

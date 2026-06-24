@@ -11,6 +11,13 @@ Living notes for tamir.li monetization copy. Cycle 1 (June 2026).
 5. **SEO meta unchanged** — `upgradePage.seoTitle` / `seoDesc` keep keyword-rich titles; on-page hero copy is softer.
 6. **Anchor pricing preserved** — ₪150 → ₪19.90 anchor remains on PremiumPage.
 
+## Cycle 4 (ComingSoonPanel + PremiumPage)
+
+- `ComingSoonPanel`: alt-tool box uses muted border (no primary accent).
+- `PremiumPage`: Zap icons removed from CTAs; footer CTA no longer repeats strikethrough price.
+- `tool.comingSoon*` (7 locales): warmer "still building" tone; factual alt-tool hints (no "Need X now?").
+- `upgradePage.comparisonTitle`, `guaranteeTitle`, `guaranteeDesc`, `guarantee` — softer, less sales framing; SEO meta unchanged.
+
 ## Cycle 1b (ru locale + nav pill)
 
 - `ru.ts`: full cycle-1 tone pass (download gate, sidebar, premium, upgradePage) — was missed in f845229.

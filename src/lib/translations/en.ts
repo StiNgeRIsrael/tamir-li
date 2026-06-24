@@ -210,16 +210,16 @@ export const enTranslations = {
     conversionServerError: "Our conversion servers are temporarily unavailable — your files were not uploaded. Please try again in a few minutes, or",
     conversionServerErrorContact: "contact support",
     error: "Error",
-    comingSoonTitle: "Coming Soon",
+    comingSoonTitle: "Still building",
     comingSoonMessage: (name: string) =>
       name
-        ? `${name} is on the way — we're finishing the implementation. Check back soon or try one of our available tools.`
-        : "This tool is on the way — we're finishing the implementation. Check back soon or try one of our available tools.",
-    comingSoonAlternatives: "Try these instead",
-    comingSoonPdfWordHint: "Need PDF output now? Convert Word documents to PDF in the browser with our Word to PDF tool.",
-    comingSoonPdfWordCta: "Try Word to PDF",
-    comingSoonVideoHint: "Need to convert audio now? Convert MP3, WAV, AAC, and more with our Audio Converter.",
-    comingSoonVideoCta: "Open Audio Converter",
+        ? `${name} isn't ready yet — we're on it. Meanwhile, one of these might help.`
+        : "This tool isn't ready yet — we're on it. Meanwhile, one of these might help.",
+    comingSoonAlternatives: "Tools that work today",
+    comingSoonPdfWordHint: "Word to PDF is live — convert right in the browser.",
+    comingSoonPdfWordCta: "Word to PDF",
+    comingSoonVideoHint: "Audio Converter is live — MP3, WAV, AAC, and more.",
+    comingSoonVideoCta: "Audio Converter",
     basicExportBadge: "Basic export",
     basicExportNotice:
       "This tool converts document text to a simple PDF in your browser. Advanced layout (headings, images, tables) may not be preserved — best for plain-text documents.",
@@ -486,7 +486,7 @@ export const enTranslations = {
     perMonthNote: "/mo",
     ctaMain: "Try Premium",
     checkoutSuccess: "All set — Premium is active.",
-    guarantee: "Refund policy — see FAQ below",
+    guarantee: "Cancel anytime — details below",
     features: [
       { title: "No counting", desc: "Heavy file day? Convert as much as you need — no waiting for tomorrow." },
       { title: "No ads", desc: "Fewer interruptions, more time for the work. No popups, no banners." },
@@ -495,7 +495,7 @@ export const enTranslations = {
       { title: "Every format", desc: "Image, video, audio, document — same place." },
       { title: "Faster help", desc: "Urgent question? We reply first." },
     ],
-    comparisonTitle: "Free vs Premium",
+    comparisonTitle: "What's in each plan",
     comparisonHeaders: { feature: "Feature", free: "Free", premium: "Premium" },
     comparisonRows: [
       { feature: "Daily Conversions", free: "5/day", premium: "Unlimited" },
@@ -513,8 +513,8 @@ export const enTranslations = {
       { q: "Do I keep my AI credits if I cancel?", a: "Unused credits expire at the end of your billing cycle." },
       { q: "How does the money-back guarantee work?", a: "We offer a 100% money-back guarantee. You qualify for a refund if you haven't used the service in the past month, if conversions fail due to a confirmed issue on our end, or if you report a bug that we can't fix promptly. The refund amount is determined based on your plan and circumstances." },
     ],
-    guaranteeTitle: "100% Money-Back Guarantee",
-    guaranteeDesc: "We stand by our service. You're eligible for a full refund if you haven't used the service in the past month, if your conversions fail due to a confirmed issue, or if you report a bug that isn't fixed promptly.",
+    guaranteeTitle: "Not a fit? We'll refund",
+    guaranteeDesc: "Cancel anytime. Full refund if you didn't use the service last month, or if something broke on our end.",
     guaranteeItems: [
       "No usage in the last month",
       "Conversion failures confirmed by our team",

@@ -172,16 +172,16 @@ export const frTranslations = {
     conversionServerError: "Nos serveurs de conversion sont temporairement indisponibles — vos fichiers n'ont pas été téléversés. Réessayez dans quelques minutes, ou",
     conversionServerErrorContact: "contactez le support",
     error: "Erreur",
-    comingSoonTitle: "Bientôt",
+    comingSoonTitle: "Encore en cours",
     comingSoonMessage: (name: string) =>
       name
-        ? `${name} arrive bientôt — nous finalisons l'implémentation. Revenez bientôt ou essayez un outil disponible.`
-        : "Cet outil arrive bientôt — nous finalisons l'implémentation. Revenez bientôt ou essayez un outil disponible.",
-    comingSoonAlternatives: "Essayez plutôt",
-    comingSoonPdfWordHint: "Besoin d'un PDF maintenant ? Convertissez vos documents Word en PDF dans le navigateur avec notre outil Word vers PDF.",
-    comingSoonPdfWordCta: "Essayer Word vers PDF",
-    comingSoonVideoHint: "Besoin de convertir de l'audio maintenant ? Convertissez MP3, WAV, AAC et plus avec notre convertisseur audio.",
-    comingSoonVideoCta: "Ouvrir le convertisseur audio",
+        ? `${name} n'est pas encore prêt — on y travaille. En attendant, l'un de ces outils peut aider.`
+        : "Cet outil n'est pas encore prêt — on y travaille. En attendant, l'un de ces outils peut aider.",
+    comingSoonAlternatives: "Outils déjà disponibles",
+    comingSoonPdfWordHint: "Word vers PDF est disponible — conversion directe dans le navigateur.",
+    comingSoonPdfWordCta: "Word vers PDF",
+    comingSoonVideoHint: "Le convertisseur audio est actif — MP3, WAV, AAC et plus.",
+    comingSoonVideoCta: "Convertisseur audio",
     basicExportBadge: "Export basique",
     basicExportNotice:
       "Cet outil convertit le texte du document en PDF simple dans le navigateur. La mise en page avancée (titres, images, tableaux) peut ne pas être conservée — idéal pour les documents texte simples.",
@@ -386,7 +386,7 @@ export const frTranslations = {
     billedMonthly: "Facturation mensuelle. Annulez quand vous voulez.",
     billedYearly: "Facturation annuelle — ₪191.04/an (au lieu de ₪1,800). Annulez quand vous voulez.",
     perMonthNote: "/mois",
-    ctaMain: "Essayer Premium", checkoutSuccess: "C'est bon — Premium est actif.", guarantee: "Politique de remboursement — voir FAQ",
+    ctaMain: "Essayer Premium", checkoutSuccess: "C'est bon — Premium est actif.", guarantee: "Annulez quand vous voulez — détails ci-dessous",
     features: [
       { title: "Sans compter", desc: "Journée chargée ? Convertissez autant que nécessaire — sans attendre demain." },
       { title: "Sans pub", desc: "Moins d'interruptions, plus de temps pour travailler." },
@@ -395,7 +395,7 @@ export const frTranslations = {
       { title: "Tous formats", desc: "Image, vidéo, audio, document — même endroit." },
       { title: "Aide rapide", desc: "Question urgente ? On répond en premier." },
     ],
-    comparisonTitle: "Gratuit vs Premium",
+    comparisonTitle: "Ce que contient chaque formule",
     comparisonHeaders: { feature: "Fonctionnalité", free: "Gratuit", premium: "Premium" },
     comparisonRows: [
       { feature: "Conversions quotidiennes", free: "5/jour", premium: "Illimitées" },
@@ -413,8 +413,8 @@ export const frTranslations = {
       { q: "Crédits conservés ?", a: "Les crédits non utilisés expirent à la fin du cycle." },
       { q: "Comment fonctionne la garantie ?", a: "Nous offrons une garantie de remboursement à 100%. Remboursement possible si vous n'avez pas utilisé le service le mois dernier, en cas d'échec de conversion confirmé, ou pour un bug non résolu." },
     ],
-    guaranteeTitle: "Garantie de Remboursement 100%",
-    guaranteeDesc: "Nous soutenons notre service. Remboursement intégral en cas de non-utilisation, d'erreurs confirmées ou de bugs non résolus.",
+    guaranteeTitle: "Pas adapté ? On rembourse",
+    guaranteeDesc: "Annulez quand vous voulez. Remboursement intégral si vous n'avez pas utilisé le service le mois dernier, ou si quelque chose a échoué de notre côté.",
     guaranteeItems: ["Pas d'utilisation le mois dernier", "Échecs de conversion confirmés", "Bugs signalés non résolus"],
     finalCta: "Curieux de voir la différence ?", finalDesc: "Abonnement optionnel. Annulez quand vous voulez.",
     orGoHome: "ou continuer gratuitement",

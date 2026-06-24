@@ -172,16 +172,16 @@ export const deTranslations = {
     conversionServerError: "Unsere Konvertierungsserver sind vorübergehend nicht erreichbar — Ihre Dateien wurden nicht hochgeladen. Bitte versuchen Sie es in ein paar Minuten erneut oder",
     conversionServerErrorContact: "kontaktieren Sie den Support",
     error: "Fehler",
-    comingSoonTitle: "Demnächst",
+    comingSoonTitle: "Noch in Arbeit",
     comingSoonMessage: (name: string) =>
       name
-        ? `${name} kommt bald — wir finalisieren die Implementierung. Schauen Sie bald wieder vorbei oder probieren Sie ein verfügbares Tool.`
-        : "Dieses Tool kommt bald — wir finalisieren die Implementierung. Schauen Sie bald wieder vorbei oder probieren Sie ein verfügbares Tool.",
-    comingSoonAlternatives: "Stattdessen ausprobieren",
-    comingSoonPdfWordHint: "Brauchen Sie jetzt PDF? Konvertieren Sie Word-Dokumente im Browser mit unserem Word-zu-PDF-Tool.",
-    comingSoonPdfWordCta: "Word zu PDF ausprobieren",
-    comingSoonVideoHint: "Audio jetzt konvertieren? MP3, WAV, AAC und mehr mit unserem Audiokonverter.",
-    comingSoonVideoCta: "Audiokonverter öffnen",
+        ? `${name} ist noch nicht fertig — wir arbeiten daran. In der Zwischenzeit könnte eines dieser Tools helfen.`
+        : "Dieses Tool ist noch nicht fertig — wir arbeiten daran. In der Zwischenzeit könnte eines dieser Tools helfen.",
+    comingSoonAlternatives: "Tools, die schon funktionieren",
+    comingSoonPdfWordHint: "Word zu PDF ist verfügbar — direkt im Browser konvertieren.",
+    comingSoonPdfWordCta: "Word zu PDF",
+    comingSoonVideoHint: "Audiokonverter ist aktiv — MP3, WAV, AAC und mehr.",
+    comingSoonVideoCta: "Audiokonverter",
     basicExportBadge: "Basis-Export",
     basicExportNotice:
       "Dieses Tool wandelt Dokumenttext im Browser in ein einfaches PDF um. Erweiterte Formatierung (Überschriften, Bilder, Tabellen) bleibt möglicherweise nicht erhalten — am besten für einfache Textdokumente.",
@@ -386,7 +386,7 @@ export const deTranslations = {
     billedMonthly: "Monatliche Abrechnung. Jederzeit kündbar.",
     billedYearly: "Jährliche Abrechnung — ₪191.04/Jahr (statt ₪1,800). Jederzeit kündbar.",
     perMonthNote: "/Mo",
-    ctaMain: "Premium testen", checkoutSuccess: "Alles klar — Premium ist aktiv.", guarantee: "Erstattungsrichtlinie — siehe FAQ",
+    ctaMain: "Premium testen", checkoutSuccess: "Alles klar — Premium ist aktiv.", guarantee: "Jederzeit kündbar — Details unten",
     features: [
       { title: "Ohne Zählen", desc: "Voller Dateitag? Konvertieren Sie so viel Sie brauchen — ohne auf morgen zu warten." },
       { title: "Ohne Werbung", desc: "Weniger Unterbrechungen, mehr Zeit für die Arbeit." },
@@ -395,7 +395,7 @@ export const deTranslations = {
       { title: "Alle Formate", desc: "Bild, Video, Audio, Dokument — ein Ort." },
       { title: "Schnellere Hilfe", desc: "Dringende Frage? Wir antworten zuerst." },
     ],
-    comparisonTitle: "Kostenlos vs Premium",
+    comparisonTitle: "Was in jedem Plan enthalten ist",
     comparisonHeaders: { feature: "Funktion", free: "Kostenlos", premium: "Premium" },
     comparisonRows: [
       { feature: "Tägliche Konvertierungen", free: "5/Tag", premium: "Unbegrenzt" },
@@ -413,8 +413,8 @@ export const deTranslations = {
       { q: "Credits bei Kündigung?", a: "Ungenutzte Credits verfallen am Zyklusende." },
       { q: "Wie funktioniert die Garantie?", a: "Wir bieten eine 100% Geld-zurück-Garantie. Erstattung möglich, wenn Sie den Dienst im letzten Monat nicht genutzt haben, bei bestätigten Konvertierungsfehlern, oder bei nicht behobenen Bugs." },
     ],
-    guaranteeTitle: "100% Geld-zurück-Garantie",
-    guaranteeDesc: "Wir stehen hinter unserem Service. Vollständige Erstattung bei Nichtnutzung, bestätigten Fehlern oder ungelösten Bugs.",
+    guaranteeTitle: "Passt nicht? Geld zurück",
+    guaranteeDesc: "Jederzeit kündbar. Volle Erstattung, wenn Sie den Dienst im letzten Monat nicht genutzt haben oder etwas bei uns nicht funktioniert hat.",
     guaranteeItems: ["Keine Nutzung im letzten Monat", "Bestätigte Konvertierungsfehler", "Nicht behobene Bugs"],
     finalCta: "Neugierig, was sich ändert?", finalDesc: "Optionales Abo. Jederzeit kündbar.",
     orGoHome: "oder kostenlos weitermachen",
