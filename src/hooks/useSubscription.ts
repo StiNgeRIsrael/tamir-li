@@ -56,6 +56,19 @@ async function postCheckout(api: string, plan: CheckoutPlan): Promise<string> {
   return body.url;
 }
 
+async function postActivateSubscription(api: string, subscriptionId: string): Promise<void> {
+  const res = await fetch(`${api}/api/billing/paypal/activate-subscription`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+    body: JSON.stringify({ subscriptionId }),
+  });
+  const body = (await res.json().catch(() => ({}))) as { message?: string };
+  if (!res.ok) {
+    throw new Error(body.message || "Could not activate subscription");
+  }
+}
+
 async function postCaptureOrder(api: string, orderId: string): Promise<void> {
   const res = await fetch(`${api}/api/billing/paypal/capture-order`, {
     method: "POST",
@@ -147,6 +160,15 @@ export function useSubscription() {
     [api, queryClient]
   );
 
+  const activateSubscription = useCallback(
+    async (subscriptionId: string) => {
+      if (!api) throw new Error("API not configured");
+      await postActivateSubscription(api, subscriptionId);
+      await queryClient.invalidateQueries({ queryKey: ["billing-status", api] });
+    },
+    [api, queryClient]
+  );
+
   const refetch = useCallback(
     () => queryClient.invalidateQueries({ queryKey: ["billing-status", api] }),
     [queryClient, api]
@@ -163,6 +185,7 @@ export function useSubscription() {
     openPortal,
     portalLoading: portalMutation.isPending,
     captureOrder,
+    activateSubscription,
     refetch,
   };
 }

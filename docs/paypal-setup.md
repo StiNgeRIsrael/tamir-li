@@ -82,10 +82,24 @@ Set these in **Plesk → Node.js → Custom environment variables** (application
 
 Local dev: copy the same keys into `backend/.env` (see `backend/.env.example`). Do **not** commit secrets or rewrite production `.env` from the repo.
 
+### Sandbox env worksheet (paste into Plesk / `backend/.env` — do not commit filled values)
+
+| Variable | Sandbox value (you fill in) | Notes |
+|----------|----------------------------|-------|
+| `PAYPAL_CLIENT_ID` | | REST app → Sandbox → Client ID |
+| `PAYPAL_CLIENT_SECRET` | | Show once in dashboard |
+| `PAYPAL_MODE` | `sandbox` | |
+| `PAYPAL_PLAN_MONTHLY` | `P-...` | **₪19.90/month** ILS — `Tamir.li Premium — Monthly` |
+| `PAYPAL_PLAN_YEARLY` | `P-...` | **₪191.04/year** ILS — `Tamir.li Premium — Yearly` |
+| `PAYPAL_WEBHOOK_ID` | `WH-...` | Webhook URL: `https://<your-tunnel-or-staging>/api/billing/paypal/webhook` |
+
+Create plans via PayPal Dashboard or PayPal MCP (see [paypal-mcp-setup.md §9](./paypal-mcp-setup.md#9-sandbox-plan-creation-after-oauth)).
+
 ## 5. API flow
 
 - `POST /api/billing/checkout` (auth) → PayPal approval URL
 - User approves on PayPal → redirect to `/premium?checkout=success&plan=...`
+- Subscriptions: PayPal adds `subscription_id`; frontend calls `POST /api/billing/paypal/activate-subscription` (webhook also syncs)
 - Credit packs: PayPal adds `token` (order ID); frontend calls `POST /api/billing/paypal/capture-order`
 - `GET /api/billing/status` → `{ isPremium, plan, credits, provider }`
 - `POST /api/billing/portal` → PayPal AutoPay management URL

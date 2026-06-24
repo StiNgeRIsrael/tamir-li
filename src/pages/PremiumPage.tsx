@@ -77,7 +77,7 @@ export default function PremiumPage() {
 
   const auth = t.auth as { signInRequired?: string } | undefined;
 
-  const { checkout, checkoutLoading, refetch, captureOrder, isPremium } =
+  const { checkout, checkoutLoading, refetch, captureOrder, activateSubscription, isPremium } =
     useSubscription();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -143,6 +143,8 @@ export default function PremiumPage() {
 
     const paypalToken = searchParams.get("token");
 
+    const subscriptionId = searchParams.get("subscription_id");
+
     const finishCheckout = async () => {
       if (checkoutResult === "success") {
         if (paypalToken && plan?.startsWith("credits_")) {
@@ -151,6 +153,15 @@ export default function PremiumPage() {
           } catch {
             /* webhook may have already captured */
           }
+        } else if (
+          subscriptionId &&
+          (plan === "monthly" || plan === "yearly")
+        ) {
+          try {
+            await activateSubscription(subscriptionId);
+          } catch {
+            /* webhook may have already synced */
+          }
         }
 
         trackEvent(ANALYTICS_EVENTS.PURCHASE, {
@@ -158,7 +169,7 @@ export default function PremiumPage() {
 
           source: "paypal_return",
 
-          transaction_id: paypalToken ?? undefined,
+          transaction_id: paypalToken ?? subscriptionId ?? undefined,
 
           ...getPlanEcommerceParams(plan ?? undefined),
         });
@@ -174,7 +185,7 @@ export default function PremiumPage() {
     };
 
     void finishCheckout();
-  }, [searchParams, setSearchParams, refetch, captureOrder, u.checkoutSuccess]);
+  }, [searchParams, setSearchParams, refetch, captureOrder, activateSubscription, u.checkoutSuccess]);
 
   const handleExitIntent = useCallback(
     (e: MouseEvent) => {

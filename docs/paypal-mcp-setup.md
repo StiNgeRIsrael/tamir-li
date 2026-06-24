@@ -103,3 +103,38 @@ Set `PAYPAL_ENVIRONMENT` to `PRODUCTION` only for live API work. You can also pa
 ## 8. Next agent session checklist (billing integration)
 
 Once MCP is live, an agent can cross-check PayPal Dashboard vs code. See [paypal-setup.md § Agent setup](./paypal-setup.md#agent-setup-paypal-mcp) for the production readiness checklist (plan IDs, webhook events, env vars).
+
+## 9. Sandbox plan creation (after OAuth)
+
+**Status:** PayPal MCP must show as **connected** in Cursor Settings → MCP (tool descriptors under workspace `mcps/paypal/tools/`). If that folder is missing, complete steps in §2 first — agents cannot create catalog objects until OAuth succeeds.
+
+### User steps (one-time)
+
+1. **Cursor Settings → MCP** → enable **paypal** → fully quit and restart Cursor.
+2. When the browser opens, log in to **PayPal Sandbox** and consent.
+3. Restart Cursor once more if tools still do not appear.
+4. Re-run the billing agent task or ask: *"Create Tamir.li Premium sandbox product and monthly/yearly ILS plans."*
+
+### Agent runbook (MCP connected)
+
+Ask the agent to create:
+
+| Object | Name | Pricing |
+|--------|------|---------|
+| Product | `Tamir.li Premium` | Subscription |
+| Plan (monthly) | `Tamir.li Premium — Monthly` | **₪19.90** / month, ILS, infinite cycles |
+| Plan (yearly) | `Tamir.li Premium — Yearly` | **₪191.04** / year, ILS, infinite cycles |
+
+Then:
+
+1. Copy each **Plan ID** (`P-...`) into Plesk / local `backend/.env` as `PAYPAL_PLAN_MONTHLY` and `PAYPAL_PLAN_YEARLY` (never commit real IDs with live credentials).
+2. Register sandbox webhook `https://<host>/api/billing/paypal/webhook` with all eight event types from [paypal-setup.md §3](./paypal-setup.md#3-webhook-endpoint); set `PAYPAL_WEBHOOK_ID`.
+3. Smoke test: sign in → `/premium` → monthly checkout → approve in sandbox → return URL should include `subscription_id` → `GET /api/billing/status` shows `isPremium: true`.
+
+### Manual fallback (no MCP)
+
+PayPal Developer Dashboard → **Subscriptions** → create product + two ILS plans with the prices above → copy `P-...` plan IDs into env. Same webhook and smoke-test steps apply.
+
+### Windows OAuth troubleshooting
+
+If OAuth fails after two restarts, clear cached auth and retry (see §6).

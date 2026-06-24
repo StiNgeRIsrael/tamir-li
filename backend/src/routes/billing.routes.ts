@@ -313,6 +313,37 @@ router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
   }
 });
 
+router.post('/paypal/activate-subscription', requireAuth, async (req: Request, res: Response) => {
+  if (billingUnavailable(res)) return;
+
+  try {
+    const subscriptionId = String(req.body?.subscriptionId ?? '').trim();
+    if (!subscriptionId) {
+      res.status(400).json({ error: 'INVALID_SUBSCRIPTION', message: 'Missing subscriptionId' });
+      return;
+    }
+
+    const paypalSub = await getPayPalSubscription(subscriptionId);
+    if (paypalSub.custom_id !== req.userId) {
+      res.status(403).json({
+        error: 'FORBIDDEN',
+        message: 'Subscription does not belong to this user',
+      });
+      return;
+    }
+
+    await syncSubscriptionFromPayPal(paypalSub, req.userId!);
+
+    res.json({
+      activated: true,
+      status: mapPayPalSubscriptionStatus(paypalSub.status).toLowerCase(),
+    });
+  } catch (e) {
+    console.error('[billing/paypal/activate-subscription]', e);
+    res.status(500).json({ error: 'ACTIVATION_FAILED', message: 'Could not activate subscription' });
+  }
+});
+
 router.post('/paypal/capture-order', requireAuth, async (req: Request, res: Response) => {
   if (billingUnavailable(res)) return;
 
