@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const cssPath = path.join(__dirname, "../.screenshots/fpc-main.css");
-const outDir = path.join(__dirname, "../public/icons/tools");
+const outDir = path.join(__dirname, "../public/tool-icons");
 
 const css = fs.readFileSync(cssPath, "utf8");
 
@@ -25,7 +25,7 @@ for (const [className, dataUri] of Object.entries(found)) {
   const decoded = decodeURIComponent(dataUri.replace(/^data:image\/svg\+xml(;charset=UTF-8)?,/, ""));
   const fileName = className.replace(/^img-/, "") + ".svg";
   fs.writeFileSync(path.join(outDir, fileName), decoded, "utf8");
-  manifest[className] = `/icons/tools/${fileName}`;
+  manifest[className] = `/tool-icons/${fileName}`;
 }
 
 fs.writeFileSync(

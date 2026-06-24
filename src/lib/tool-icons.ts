@@ -5,7 +5,7 @@ export type ToolIconStyle = {
   border: string;
 };
 
-const ICON_BASE = "/icons/tools";
+const ICON_BASE = "/tool-icons";
 
 /** Style groups keyed by icon slug (filename without .svg). */
 const STYLE_BY_ICON: Record<string, Omit<ToolIconStyle, "icon">> = {
