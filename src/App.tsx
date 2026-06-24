@@ -29,6 +29,7 @@ import AdminOverview from "@/pages/admin/AdminOverview";
 import AdminUsers from "@/pages/admin/AdminUsers";
 import AdminTools from "@/pages/admin/AdminTools";
 import AdminAds from "@/pages/admin/AdminAds";
+import AdminBilling from "@/pages/admin/AdminBilling";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +68,7 @@ const getAppRoutes = (explicitLocale?: Locale) => (
       <Route index element={<AdminOverview />} />
       <Route path="users" element={<AdminUsers />} />
       <Route path="tools" element={<AdminTools />} />
+      <Route path="billing" element={<AdminBilling />} />
       <Route path="ads" element={<AdminAds />} />
     </Route>
     <Route path=":slug" element={<ToolPageRoute />} />

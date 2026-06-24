@@ -3,6 +3,12 @@ import { prisma } from './prisma';
 
 export const MONTHLY_AI_CREDITS = 6;
 
+/** MRR estimate per plan (agorot) — aligned with upgradePage pricing copy */
+export const SUBSCRIPTION_MRR_AGOROT = {
+  MONTHLY: 1990,
+  YEARLY: 1592,
+} as const;
+
 export const CREDIT_PLANS = {
   credits_10: { credits: 10, amountIls: '8.00', label: 'AI Credits — 10' },
   credits_30: { credits: 30, amountIls: '21.00', label: 'AI Credits — 30' },

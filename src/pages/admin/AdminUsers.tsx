@@ -36,6 +36,12 @@ type AdminUserRow = {
   displayName: string | null;
   roles: Role[];
   createdAt: string;
+  subscription: {
+    status: string;
+    plan: string;
+    isPremium: boolean;
+    cancelAtPeriodEnd: boolean;
+  } | null;
 };
 
 export default function AdminUsers() {
@@ -131,10 +137,11 @@ export default function AdminUsers() {
         <Table className="table-fixed">
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[40%]">{admin.colEmail}</TableHead>
-              <TableHead className="w-[30%]">{admin.colRoles}</TableHead>
-              <TableHead className="w-24 text-center">{admin.colBlocked}</TableHead>
-              <TableHead className="w-32 text-end">{admin.colActions}</TableHead>
+              <TableHead className="w-[32%]">{admin.colEmail}</TableHead>
+              <TableHead className="w-[18%]">{admin.colSubscription}</TableHead>
+              <TableHead className="w-[22%]">{admin.colRoles}</TableHead>
+              <TableHead className="w-20 text-center">{admin.colBlocked}</TableHead>
+              <TableHead className="w-28 text-end">{admin.colActions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -144,6 +151,17 @@ export default function AdminUsers() {
                   <div className="font-medium text-sm">{u.email}</div>
                   {u.displayName && (
                     <div className="text-xs text-muted-foreground">{u.displayName}</div>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {u.subscription?.isPremium ? (
+                    <Badge className="text-[10px]">{admin.premiumBadge}</Badge>
+                  ) : u.subscription ? (
+                    <Badge variant="outline" className="text-[10px] font-mono">
+                      {u.subscription.status}
+                    </Badge>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
                   )}
                 </TableCell>
                 <TableCell>

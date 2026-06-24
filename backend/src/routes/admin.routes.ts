@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
-import { Prisma, RoleType } from '@prisma/client';
+import { PaymentStatus, Prisma, RoleType, SubscriptionStatus } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { requireAuth } from '../middleware/auth.middleware';
 import { requireRoles } from '../middleware/admin.middleware';
 import { KNOWN_TOOL_IDS, TOOL_CATALOG_META, type KnownToolId } from '../data/tool-catalog';
+import { isActivePremium, SUBSCRIPTION_MRR_AGOROT } from '../lib/billing-shared';
 import {
   ensureAdSettings,
   parseAdSettingsPatch,
@@ -18,12 +19,27 @@ const router = Router();
 router.use(requireAuth);
 router.use(requireRoles(RoleType.ADMIN));
 
+function inferPaymentProvider(p: {
+  stripePaymentIntentId: string | null;
+  paypalTransactionId: string | null;
+  metadata: unknown;
+}): 'STRIPE' | 'PAYPAL' | null {
+  if (p.stripePaymentIntentId) return 'STRIPE';
+  if (p.paypalTransactionId) return 'PAYPAL';
+  const meta = p.metadata as { provider?: string } | null;
+  if (meta?.provider === 'stripe') return 'STRIPE';
+  if (meta?.provider === 'paypal') return 'PAYPAL';
+  return null;
+}
+
 router.get('/stats', async (_req: Request, res: Response) => {
   try {
     const now = new Date();
     const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    const activeSubStatuses = [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIALING];
 
     const [
       usersTotal,
@@ -35,6 +51,8 @@ router.get('/stats', async (_req: Request, res: Response) => {
       jobsByStatus,
       topTools,
       recentUsage,
+      activeSubscriptions,
+      failedPayments,
     ] = await Promise.all([
       prisma.user.count(),
       prisma.user.count({ where: { blocked: true } }),
@@ -60,7 +78,20 @@ router.get('/stats', async (_req: Request, res: Response) => {
           user: { select: { email: true } },
         },
       }),
+      prisma.subscription.findMany({
+        where: { status: { in: activeSubStatuses } },
+        select: { plan: true, status: true, currentPeriodEnd: true },
+      }),
+      prisma.payment.count({ where: { status: PaymentStatus.FAILED } }),
     ]);
+
+    const premiumActive = activeSubscriptions.filter((s) =>
+      isActivePremium(s.status, s.currentPeriodEnd)
+    );
+    const mrrEstimateAgorot = premiumActive.reduce(
+      (sum, s) => sum + SUBSCRIPTION_MRR_AGOROT[s.plan],
+      0
+    );
 
     res.json({
       users: { total: usersTotal, blocked: usersBlocked, newLast7Days: usersNewWeek },
@@ -85,6 +116,12 @@ router.get('/stats', async (_req: Request, res: Response) => {
         sessionId: u.sessionId,
         fileSizeBytes: u.fileSizeBytes !== null ? String(u.fileSizeBytes) : null,
       })),
+      billing: {
+        activeSubscriptions: premiumActive.length,
+        mrrEstimateAgorot,
+        failedPayments,
+        currency: 'ils',
+      },
     });
   } catch (e) {
     console.error('[admin/stats]', e);
@@ -117,6 +154,14 @@ router.get('/users', async (req: Request, res: Response) => {
         include: {
           profile: true,
           roles: true,
+          subscription: {
+            select: {
+              status: true,
+              plan: true,
+              currentPeriodEnd: true,
+              cancelAtPeriodEnd: true,
+            },
+          },
         },
       }),
     ]);
@@ -134,6 +179,17 @@ router.get('/users', async (req: Request, res: Response) => {
         locale: u.profile?.locale ?? 'he',
         roles: u.roles.map((r) => r.role),
         createdAt: u.createdAt,
+        subscription: u.subscription
+          ? {
+              status: u.subscription.status,
+              plan: u.subscription.plan,
+              isPremium: isActivePremium(
+                u.subscription.status,
+                u.subscription.currentPeriodEnd
+              ),
+              cancelAtPeriodEnd: u.subscription.cancelAtPeriodEnd,
+            }
+          : null,
       })),
     });
   } catch (e) {
@@ -344,6 +400,146 @@ router.patch('/tools/:toolId', async (req: Request, res: Response) => {
   } catch (e) {
     console.error('[admin/tools patch]', e);
     res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not update tool' });
+  }
+});
+
+router.get('/billing/stats', async (_req: Request, res: Response) => {
+  try {
+    const activeStatuses = [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIALING];
+
+    const [activeRows, failedPayments, canceledSubscriptions, succeededLast30] =
+      await Promise.all([
+        prisma.subscription.findMany({
+          where: { status: { in: activeStatuses } },
+          select: { plan: true, status: true, currentPeriodEnd: true },
+        }),
+        prisma.payment.count({ where: { status: PaymentStatus.FAILED } }),
+        prisma.subscription.count({ where: { status: SubscriptionStatus.CANCELED } }),
+        prisma.payment.aggregate({
+          where: {
+            status: PaymentStatus.SUCCEEDED,
+            createdAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+          },
+          _sum: { amount: true },
+        }),
+      ]);
+
+    const premiumActive = activeRows.filter((s) =>
+      isActivePremium(s.status, s.currentPeriodEnd)
+    );
+    const mrrEstimateAgorot = premiumActive.reduce(
+      (sum, s) => sum + SUBSCRIPTION_MRR_AGOROT[s.plan],
+      0
+    );
+
+    res.json({
+      activeSubscriptions: premiumActive.length,
+      canceledSubscriptions,
+      failedPayments,
+      mrrEstimateAgorot,
+      revenueLast30DaysAgorot: succeededLast30._sum.amount ?? 0,
+      currency: 'ils',
+    });
+  } catch (e) {
+    console.error('[admin/billing/stats]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not load billing stats' });
+  }
+});
+
+router.get('/billing/payments', async (req: Request, res: Response) => {
+  try {
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const pageSize = Math.min(50, Math.max(1, Number(req.query.pageSize) || 25));
+    const skip = (page - 1) * pageSize;
+
+    const [total, rows] = await Promise.all([
+      prisma.payment.count(),
+      prisma.payment.findMany({
+        skip,
+        take: pageSize,
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { email: true } } },
+      }),
+    ]);
+
+    res.json({
+      page,
+      pageSize,
+      total,
+      payments: rows.map((p) => ({
+        id: p.id,
+        amount: p.amount,
+        currency: p.currency,
+        status: p.status,
+        type: p.type,
+        provider: inferPaymentProvider(p),
+        userEmail: p.user.email,
+        createdAt: p.createdAt,
+      })),
+    });
+  } catch (e) {
+    console.error('[admin/billing/payments]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not list payments' });
+  }
+});
+
+router.get('/billing/subscriptions', async (req: Request, res: Response) => {
+  try {
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const pageSize = Math.min(50, Math.max(1, Number(req.query.pageSize) || 25));
+    const skip = (page - 1) * pageSize;
+    const filter = typeof req.query.filter === 'string' ? req.query.filter : 'all';
+
+    const where: Prisma.SubscriptionWhereInput = {};
+    if (filter === 'active') {
+      where.status = { in: [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIALING] };
+    } else if (filter === 'canceled') {
+      where.status = SubscriptionStatus.CANCELED;
+    } else {
+      where.status = {
+        in: [
+          SubscriptionStatus.ACTIVE,
+          SubscriptionStatus.TRIALING,
+          SubscriptionStatus.CANCELED,
+          SubscriptionStatus.PAST_DUE,
+          SubscriptionStatus.UNPAID,
+        ],
+      };
+    }
+
+    const [total, rows] = await Promise.all([
+      prisma.subscription.count({ where }),
+      prisma.subscription.findMany({
+        where,
+        skip,
+        take: pageSize,
+        orderBy: { updatedAt: 'desc' },
+        include: { user: { select: { email: true } } },
+      }),
+    ]);
+
+    res.json({
+      page,
+      pageSize,
+      total,
+      filter,
+      subscriptions: rows.map((s) => ({
+        id: s.id,
+        userEmail: s.user.email,
+        plan: s.plan,
+        status: s.status,
+        provider: s.paymentProvider,
+        isPremium: isActivePremium(s.status, s.currentPeriodEnd),
+        currentPeriodStart: s.currentPeriodStart,
+        currentPeriodEnd: s.currentPeriodEnd,
+        cancelAtPeriodEnd: s.cancelAtPeriodEnd,
+        createdAt: s.createdAt,
+        updatedAt: s.updatedAt,
+      })),
+    });
+  } catch (e) {
+    console.error('[admin/billing/subscriptions]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not list subscriptions' });
   }
 });
 
