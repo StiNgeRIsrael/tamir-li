@@ -68,9 +68,7 @@ export function HebOcrTool() {
     const isProcessing = status === "uploading" || status === "processing";
     const downloadLabel = isPremium
         ? "הורד מסמך וורד"
-        : downloadGate
-            ? "הורד עכשיו"
-            : "צפה בפרסומת להורדה";
+        : t.tool.download;
 
     return (
         <div className="space-y-6 animate-fade-in">

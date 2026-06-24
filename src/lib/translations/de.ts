@@ -325,9 +325,7 @@ export const deTranslations = {
   adVignette: {
     label: "Werbung",
     close: "Schließen",
-    wait: "Bitte einen Moment warten…",
-    processing: "Datei wird vorbereitet…",
-    ready: "Fertig",
+    ready: "Weiter",
   },
   sidebarHome: "Startseite",
   sidebarUpgrade: "Premium",

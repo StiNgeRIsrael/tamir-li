@@ -82,9 +82,7 @@ export function TextToolsComponent({ freemium }: Props) {
 
   const downloadLabel = isPremium
     ? textT.downloadAs(outputFormat === "html" ? "HTML" : outputFormat === "markdown" ? "MD" : "TXT")
-    : downloadGate
-      ? tt.downloadNow
-      : tt.watchAdToDownload;
+    : tt.download;
 
   return (
     <div className="space-y-5">

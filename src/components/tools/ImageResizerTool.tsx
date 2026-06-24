@@ -227,9 +227,7 @@ export function ImageResizerTool({ freemium }: Props) {
 
   const downloadLabel = isPremium
     ? r.downloadImage(formatFileSize(resultSize))
-    : downloadGate
-      ? tt.downloadNow
-      : tt.watchAdToDownload;
+    : tt.download;
 
   const resizeModes = [
     { value: "fit" as const, label: r.fit, desc: r.fitDesc, icon: Shrink },

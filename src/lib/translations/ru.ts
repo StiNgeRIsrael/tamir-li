@@ -329,9 +329,7 @@ export const ruTranslations = {
   adVignette: {
     label: "Реклама",
     close: "Закрыть",
-    wait: "Пожалуйста, подождите…",
-    processing: "Подготовка файла…",
-    ready: "Готово",
+    ready: "Продолжить",
   },
   sidebarHome: "Главная",
   sidebarUpgrade: "Премиум",

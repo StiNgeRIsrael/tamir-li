@@ -179,9 +179,7 @@ export function ImageCompressorTool({ freemium }: Props) {
 
   const downloadLabel = isPremium
     ? c.download(formatFileSize(resultSize))
-    : downloadGate
-      ? tt.downloadNow
-      : tt.watchAdToDownload;
+    : tt.download;
 
   const displaySrc = resultUrl || preview;
 

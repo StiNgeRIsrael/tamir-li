@@ -117,7 +117,7 @@ export function PdfManagerTool({ freemium }: Props) {
     setMergedUrl(null); setDownloadGate(false);
   };
 
-  const downloadLabel = isPremium ? pm.downloadPdf : downloadGate ? tt.downloadNow : tt.watchAdToDownload;
+  const downloadLabel = isPremium ? pm.downloadPdf : tt.download;
 
   if (mergedUrl) return (
     <div className="space-y-4 animate-fade-in">

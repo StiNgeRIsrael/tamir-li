@@ -380,9 +380,7 @@ export const enTranslations = {
   adVignette: {
     label: "Advertisement",
     close: "Close",
-    wait: "Please wait a moment…",
-    processing: "Preparing your file…",
-    ready: "Ready",
+    ready: "Continue",
   },
   sidebarHome: "Home",
   sidebarUpgrade: "Premium",

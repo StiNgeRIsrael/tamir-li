@@ -23,6 +23,13 @@ Living notes for tamir.li monetization copy. Cycle 1 (June 2026).
 - `ru.ts`: full cycle-1 tone pass (download gate, sidebar, premium, upgradePage) — was missed in f845229.
 - `UsageNavPill`: Zap icon removed; low-state only at ≤1 remaining; muted styling (no accent alarm).
 
+## Cycle 5 (Download gate copy)
+
+- Download buttons always show `tool.download` — no "watch ad", "download now", or step hints.
+- Removed `DownloadGateIndicator` and keys: `watchAdToDownload`, `downloadNow`, `downloadGateHint`, `downloadGateProgress`, `downloadGateStep*`.
+- `adVignette`: progress bar + Continue/Ready button only — removed `wait` and `processing` instructional strings.
+- Two-step ad → download mechanics unchanged (`download-gate.ts`, `runGatedDownload`).
+
 ## Cycle 1 changes
 
 ### Tone shift (worst "AI slop" removed)
@@ -32,12 +39,13 @@ Living notes for tamir.li monetization copy. Cycle 1 (June 2026).
 | "Unlimited Conversions. Zero Ads." | "Quiet work. No interruptions." |
 | "Upgrade Now — ₪19.90" | "Try Premium" / "Premium — ₪19.90" |
 | "Almost done? Upgrade…" | "Running low today — ₪19.90 lifts the cap" |
-| "Step 1 — Watch ad" | "First tap — quick pause" |
+| "Step 1 — Watch ad" | *(removed — button says Download only)* |
 | Sidebar "Upgrade to Premium • No ads • Unlimited" | "Premium" / "Busy day? Skip the queue" |
 
 ### Keys touched (all 7 locales: he, en, de, es, fr, it, ru)
 
-- `tool.watchAdToDownload`, `downloadNow`, `downloadGateHint`
+- `tool.download` (he: הורדה)
+- `adVignette.ready`, `adVignette` simplified (removed `wait`, `processing`)
 - `tool.seoFormats` (he, en)
 - `sidebarUpgrade`, `sidebarNoAds`
 - `footer.seoText3` (he, en)

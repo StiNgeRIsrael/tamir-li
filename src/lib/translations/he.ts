@@ -391,9 +391,7 @@ export const heTranslations = {
   adVignette: {
     label: "פרסומת",
     close: "סגור",
-    wait: "אנא המתינו רגע…",
-    processing: "מכין את הקובץ שלך…",
-    ready: "מוכן",
+    ready: "המשך",
   },
   sidebarHome: "דף הבית",
   sidebarUpgrade: "פרימיום",

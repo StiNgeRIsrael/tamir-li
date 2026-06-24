@@ -363,9 +363,7 @@ export const esTranslations = {
   adVignette: {
     label: "Anuncio",
     close: "Cerrar",
-    wait: "Por favor espera un momento…",
-    processing: "Preparando tu archivo…",
-    ready: "Listo",
+    ready: "Continuar",
   },
   sidebarHome: "Inicio",
   sidebarUpgrade: "Premium",

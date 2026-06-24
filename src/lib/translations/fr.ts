@@ -325,9 +325,7 @@ export const frTranslations = {
   adVignette: {
     label: "Publicité",
     close: "Fermer",
-    wait: "Veuillez patienter un instant…",
-    processing: "Préparation de votre fichier…",
-    ready: "Prêt",
+    ready: "Continuer",
   },
   sidebarHome: "Accueil",
   sidebarUpgrade: "Premium",

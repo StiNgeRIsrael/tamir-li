@@ -40,7 +40,6 @@ import { usesClientDocumentConversion } from "@/lib/document-convert";
 import { convertWordFileToPdf } from "@/lib/word-to-pdf";
 import { isServerUnavailableError } from "@/lib/conversion-errors";
 import { ComingSoonPanel } from "@/components/ComingSoonPanel";
-import { DownloadGateIndicator } from "@/components/ads/DownloadGateIndicator";
 import { filterFilesForTier, maxBatchFiles, type FileRejectReason } from "@/lib/freemium-limits";
 
 const categoryHeaderIcon: Record<ToolCategory, string> = {
@@ -784,7 +783,7 @@ export default function ToolPage() {
                         onClick={() => onDownloadFile(index)}
                       >
                         <Download className="w-3.5 h-3.5 ml-1" />
-                        {isPremium ? tt.download : downloadGate[index] ? tt.downloadNow : tt.watchAdToDownload}
+                        {tt.download}
                       </Button>
                     </div>
                   );
@@ -792,18 +791,12 @@ export default function ToolPage() {
                 <div className="flex flex-col gap-2 pt-3 sm:flex-row sm:items-center sm:justify-between">
                   <Button variant="outline" onClick={handleReset}>{tt.moreConversion}</Button>
                   <div className="flex flex-col items-stretch gap-2 sm:items-end">
-                    {!isPremium && (
-                      <DownloadGateIndicator
-                        step1Done={allDownloadGate}
-                        className="sm:max-w-xs"
-                      />
-                    )}
                     <Button
                       className={allDownloadGate ? "bg-success text-success-foreground hover:bg-success/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}
                       onClick={onDownloadAll}
                     >
                       <Download className="w-4 h-4 ml-2" />
-                      {isPremium ? tt.downloadAll : allDownloadGate ? tt.downloadAll : tt.watchAdToDownload}
+                      {tt.downloadAll}
                     </Button>
                   </div>
                 </div>

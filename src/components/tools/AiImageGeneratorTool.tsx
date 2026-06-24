@@ -174,7 +174,7 @@ export function AiImageGeneratorTool() {
                       onClick={() => void handleDownload(img)}
                     >
                       <Download className="w-3.5 h-3.5 me-1" />
-                      {isPremium || downloadGates[img.timestamp] ? ai.downloadImage : tt.watchAdToDownload}
+                      {isPremium || downloadGates[img.timestamp] ? ai.downloadImage : tt.download}
                     </Button>
                   ) : (
                     <Button size="sm" className="flex-1" disabled><Download className="w-3.5 h-3.5 me-1" />{ai.downloadImage}</Button>
