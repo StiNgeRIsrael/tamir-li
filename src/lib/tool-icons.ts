@@ -1,52 +1,58 @@
-/** Pastel card styles — light tints on dark page bg; labels use slate-800 (see ToolIconGrid). */
+/** Theme-aware accent groups for ToolIconGrid cards (icon well + border tint). */
+export type ToolIconAccent =
+  | "document"
+  | "spreadsheet"
+  | "presentation"
+  | "image"
+  | "security"
+  | "utility"
+  | "neutral";
+
 export type ToolIconStyle = {
   icon: string;
-  /** Card fill — always a light pastel for icon contrast on tamir.li dark theme */
-  bg: string;
-  /** Visible border on dark backgrounds */
-  border: string;
+  accent: ToolIconAccent;
 };
 
 const ICON_BASE = "/tool-icons";
 
 /** Style groups keyed by icon slug (filename without .svg). */
-const STYLE_BY_ICON: Record<string, Omit<ToolIconStyle, "icon">> = {
-  "word-to-pdf": { bg: "#f2f9fe", border: "#d7e3ec" },
-  "pdf-to-word": { bg: "#f2f9fe", border: "#d7e3ec" },
-  "file-docx": { bg: "#f2f9fe", border: "#d7e3ec" },
-  "excel-to-pdf": { bg: "#f9fefb", border: "#d9efe2" },
-  "pdf-to-excel": { bg: "#f9fefb", border: "#d9efe2" },
-  "file-xlsx": { bg: "#f9fefb", border: "#d9efe2" },
-  "powerpoint-to-pdf": { bg: "#fffcfa", border: "#f0e3db" },
-  "pdf-to-powerpoint": { bg: "#fffcfa", border: "#f0e3db" },
-  "file-pptx": { bg: "#fffcfa", border: "#f0e3db" },
-  "jpg-to-pdf": { bg: "#fdf8ff", border: "#eee2f3" },
-  "pdf-to-jpg": { bg: "#fdf8ff", border: "#eee2f3" },
-  "pdf-to-png": { bg: "#fdf8ff", border: "#eee2f3" },
-  "extract-pdf-images": { bg: "#fdf8ff", border: "#eee2f3" },
-  "file-tiff": { bg: "#fdf8ff", border: "#eee2f3" },
-  "openoffice-to-pdf": { bg: "#f8fcff", border: "#d9e6ee" },
-  "autocad-to-pdf": { bg: "#fff5f8", border: "#f4e4e9" },
-  "ebook-to-pdf": { bg: "#fffdfa", border: "#f3efeb" },
-  "iworks-to-pdf": { bg: "#f7f9fb", border: "#e9edf1" },
-  "pdf-merge": { bg: "#fffcf9", border: "#f3efeb" },
-  "pdf-split": { bg: "#fffcf9", border: "#f3efeb" },
-  "pdf-protect": { bg: "#fafffe", border: "#daeae7" },
-  "unlock-pdf": { bg: "#fafffe", border: "#daeae7" },
-  "pdf-redact": { bg: "#fafffe", border: "#daeae7" },
-  "pdf-converter": { bg: "#faf6f6", border: "#f7ecec" },
-  "pdf-compress": { bg: "#faf6f6", border: "#f7ecec" },
-  "pdf-delete-pages": { bg: "#faf6f6", border: "#f7ecec" },
-  "rotate-pdf": { bg: "#faf6f6", border: "#f7ecec" },
-  "repair-pdf": { bg: "#faf6f6", border: "#f7ecec" },
-  "pdf-flatten": { bg: "#faf6f6", border: "#f7ecec" },
-  "pdf-print": { bg: "#faf6f6", border: "#f7ecec" },
-  "pdf-to-pdfa": { bg: "#f7fcff", border: "#d3dfe7" },
-  "file-pdf": { bg: "#faf6f6", border: "#f7ecec" },
-  dots: { bg: "#f7f9fb", border: "#e9edf1" },
+const STYLE_BY_ICON: Record<string, ToolIconAccent> = {
+  "word-to-pdf": "document",
+  "pdf-to-word": "document",
+  "file-docx": "document",
+  "excel-to-pdf": "spreadsheet",
+  "pdf-to-excel": "spreadsheet",
+  "file-xlsx": "spreadsheet",
+  "powerpoint-to-pdf": "presentation",
+  "pdf-to-powerpoint": "presentation",
+  "file-pptx": "presentation",
+  "jpg-to-pdf": "image",
+  "pdf-to-jpg": "image",
+  "pdf-to-png": "image",
+  "extract-pdf-images": "image",
+  "file-tiff": "image",
+  "openoffice-to-pdf": "utility",
+  "autocad-to-pdf": "image",
+  "ebook-to-pdf": "document",
+  "iworks-to-pdf": "utility",
+  "pdf-merge": "document",
+  "pdf-split": "document",
+  "pdf-protect": "security",
+  "unlock-pdf": "security",
+  "pdf-redact": "security",
+  "pdf-converter": "document",
+  "pdf-compress": "utility",
+  "pdf-delete-pages": "utility",
+  "rotate-pdf": "utility",
+  "repair-pdf": "utility",
+  "pdf-flatten": "utility",
+  "pdf-print": "utility",
+  "pdf-to-pdfa": "document",
+  "file-pdf": "document",
+  dots: "neutral",
 };
 
-const DEFAULT_STYLE = STYLE_BY_ICON["pdf-converter"];
+const DEFAULT_ACCENT: ToolIconAccent = "document";
 
 /** Maps each tool id in tools-data.ts to the best matching extracted icon. */
 const TOOL_ICON_SLUG: Record<string, string> = {
@@ -65,11 +71,52 @@ const TOOL_ICON_SLUG: Record<string, string> = {
   "ai-image-generator": "extract-pdf-images",
 };
 
+export const TOOL_ICON_ACCENT_CLASSES: Record<
+  ToolIconAccent,
+  { well: string; border: string; hoverBorder: string }
+> = {
+  document: {
+    well: "bg-[hsl(var(--tool-document)/0.14)] dark:bg-[hsl(var(--tool-document)/0.2)]",
+    border: "border-[hsl(var(--tool-document)/0.32)] dark:border-[hsl(var(--tool-document)/0.38)]",
+    hoverBorder: "hover:border-[hsl(var(--tool-document)/0.55)]",
+  },
+  spreadsheet: {
+    well: "bg-[hsl(var(--success)/0.12)] dark:bg-[hsl(var(--success)/0.18)]",
+    border: "border-[hsl(var(--success)/0.28)] dark:border-[hsl(var(--success)/0.34)]",
+    hoverBorder: "hover:border-[hsl(var(--success)/0.5)]",
+  },
+  presentation: {
+    well: "bg-[hsl(var(--accent)/0.12)] dark:bg-[hsl(var(--accent)/0.18)]",
+    border: "border-[hsl(var(--accent)/0.3)] dark:border-[hsl(var(--accent)/0.36)]",
+    hoverBorder: "hover:border-[hsl(var(--accent)/0.52)]",
+  },
+  image: {
+    well: "bg-[hsl(var(--tool-image)/0.14)] dark:bg-[hsl(var(--tool-image)/0.2)]",
+    border: "border-[hsl(var(--tool-image)/0.32)] dark:border-[hsl(var(--tool-image)/0.38)]",
+    hoverBorder: "hover:border-[hsl(var(--tool-image)/0.55)]",
+  },
+  security: {
+    well: "bg-[hsl(var(--primary)/0.1)] dark:bg-[hsl(var(--primary)/0.16)]",
+    border: "border-[hsl(var(--primary)/0.28)] dark:border-[hsl(var(--primary)/0.34)]",
+    hoverBorder: "hover:border-[hsl(var(--primary)/0.5)]",
+  },
+  utility: {
+    well: "bg-muted/70 dark:bg-muted/50",
+    border: "border-border",
+    hoverBorder: "hover:border-primary/40",
+  },
+  neutral: {
+    well: "bg-muted/60 dark:bg-muted/40",
+    border: "border-border",
+    hoverBorder: "hover:border-primary/35",
+  },
+};
+
 export function getToolIconStyle(toolId: string): ToolIconStyle {
   const slug = TOOL_ICON_SLUG[toolId] ?? "dots";
-  const style = STYLE_BY_ICON[slug] ?? DEFAULT_STYLE;
+  const accent = STYLE_BY_ICON[slug] ?? DEFAULT_ACCENT;
   return {
     icon: `${ICON_BASE}/${slug}.svg`,
-    ...style,
+    accent,
   };
 }

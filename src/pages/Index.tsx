@@ -208,7 +208,7 @@ const Index = () => {
 
         {/* Hero */}
 
-        <section className="border-b border-border bg-card px-4 py-7 sm:px-6 sm:py-8 lg:py-10">
+        <section className="border-b border-border/80 bg-card/75 px-4 py-7 backdrop-blur-sm sm:px-6 sm:py-8 lg:py-10">
 
           <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
 

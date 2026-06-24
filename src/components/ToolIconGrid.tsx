@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import type { Tool } from "@/lib/tools-data";
 import { getDefaultSlug } from "@/lib/tools-data";
-import { getToolIconStyle } from "@/lib/tool-icons";
+import { getToolIconStyle, TOOL_ICON_ACCENT_CLASSES } from "@/lib/tool-icons";
 import { localePath } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -28,7 +28,8 @@ export function ToolIconGrid({ tools, locale, toolNames, title, className }: Too
       <h2 className="text-center text-base font-bold text-foreground sm:text-lg">{title}</h2>
       <div className="flex flex-wrap justify-center gap-3">
         {tools.map((tool) => {
-          const { icon, bg, border } = getToolIconStyle(tool.id);
+          const { icon, accent } = getToolIconStyle(tool.id);
+          const accentStyle = TOOL_ICON_ACCENT_CLASSES[accent];
           const functional = isToolFunctional(tool.id);
           const label = toolNames[tool.id] || tool.name;
 
@@ -36,7 +37,8 @@ export function ToolIconGrid({ tools, locale, toolNames, title, className }: Too
             <>
               <div
                 className={cn(
-                  "flex h-12 w-12 shrink-0 items-center justify-center rounded-lg",
+                  "flex h-12 w-12 shrink-0 items-center justify-center rounded-lg ring-1 ring-black/[0.04] dark:ring-white/[0.08]",
+                  accentStyle.well,
                   !functional && "opacity-80 saturate-75"
                 )}
               >
@@ -45,15 +47,15 @@ export function ToolIconGrid({ tools, locale, toolNames, title, className }: Too
                   alt=""
                   width={44}
                   height={44}
-                  className="h-11 w-11 object-contain"
+                  className="h-11 w-11 object-contain drop-shadow-sm"
                   loading="lazy"
                   decoding="async"
                 />
               </div>
               <span
                 className={cn(
-                  "mt-2.5 line-clamp-2 text-center text-xs font-medium leading-snug sm:text-sm",
-                  "text-slate-800 dark:text-slate-900"
+                  "mt-2.5 line-clamp-2 text-center text-xs font-medium leading-snug text-card-foreground sm:text-sm",
+                  !functional && "text-muted-foreground"
                 )}
               >
                 {label}
@@ -76,12 +78,14 @@ export function ToolIconGrid({ tools, locale, toolNames, title, className }: Too
 
           const cardClass = cn(
             CARD_WIDTH,
-            "group relative flex min-h-[7.75rem] flex-col items-center justify-start rounded-xl border px-2 pb-3 pt-5",
+            "group relative flex min-h-[7.75rem] flex-col items-center justify-start rounded-xl border bg-card px-2 pb-3 pt-5",
             "shadow-sm ring-1 ring-black/[0.03] dark:ring-white/[0.06]",
-            "transition-[border-color,box-shadow] duration-200",
+            "bg-gradient-to-b from-card to-card/90",
+            accentStyle.border,
+            "transition-[border-color,box-shadow,transform] duration-200",
             functional
-              ? "cursor-pointer hover:!border-primary/40 hover:shadow-md"
-              : "cursor-not-allowed"
+              ? cn("cursor-pointer hover:shadow-md hover:-translate-y-0.5", accentStyle.hoverBorder)
+              : "cursor-not-allowed opacity-90"
           );
 
           if (functional) {
@@ -90,7 +94,6 @@ export function ToolIconGrid({ tools, locale, toolNames, title, className }: Too
                 key={tool.id}
                 to={localePath(`/${getDefaultSlug(tool)}`, locale)}
                 className={cardClass}
-                style={{ backgroundColor: bg, borderColor: border }}
               >
                 {card}
               </Link>
@@ -98,12 +101,7 @@ export function ToolIconGrid({ tools, locale, toolNames, title, className }: Too
           }
 
           return (
-            <div
-              key={tool.id}
-              className={cardClass}
-              style={{ backgroundColor: bg, borderColor: border }}
-              aria-disabled="true"
-            >
+            <div key={tool.id} className={cardClass} aria-disabled="true">
               {card}
             </div>
           );
