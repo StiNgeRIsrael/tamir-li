@@ -1,12 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { tools, categoryIcons, getDefaultSlug, type ToolCategory, getToolsByCategory } from "@/lib/tools-data";
 import { useToolConfig } from "@/contexts/ToolConfigContext";
 import { AppLayout } from "@/components/AppLayout";
 import { AdSlot } from "@/components/AdSlot";
-import { AdNativeSlot } from "@/components/ads/AdNativeSlot";
-import { PremiumBanner } from "@/components/PremiumComponents";
-import { InternalToolLinks } from "@/components/InternalToolLinks";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, ArrowRight, Crown, Shield, Zap, Globe, CheckCircle2, Image, FileVideo, FileAudio, FileText, LayoutGrid, FileType2, Layers, Gift, Search, X } from "lucide-react";
 import { SEOHead } from "@/components/SEOHead";
@@ -15,6 +12,16 @@ import { getDerivedHomeStatsFromTools } from "@/lib/public-stats";
 import { cn } from "@/lib/utils";
 import { getFunctionalToolIds, isToolFunctional } from "@/lib/tool-availability";
 import { ToolSoonBadge } from "@/components/ToolSoonBadge";
+
+const InternalToolLinks = lazy(() =>
+  import("@/components/InternalToolLinks").then((m) => ({ default: m.InternalToolLinks }))
+);
+const PremiumBanner = lazy(() =>
+  import("@/components/PremiumComponents").then((m) => ({ default: m.PremiumBanner }))
+);
+const AdNativeSlot = lazy(() =>
+  import("@/components/ads/AdNativeSlot").then((m) => ({ default: m.AdNativeSlot }))
+);
 
 const categories: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
 const categoryColors: Record<ToolCategory, string> = {
@@ -102,7 +109,7 @@ const Index = () => {
             <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-8">
               <div className={`space-y-2 text-center ${isRtl ? "lg:text-right" : "lg:text-left"}`}>
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t.hero.badge}</p>
-                <h1 className="mx-auto max-w-xl text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:mx-0 lg:max-w-2xl lg:text-4xl">
+                <h1 className="mx-auto max-w-xl text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl lg:mx-0 lg:max-w-2xl lg:text-4xl min-h-[2.5rem] sm:min-h-[2.75rem] lg:min-h-[2.5rem]">
                   {t.hero.title}{" "}
                   <span className="text-primary">{t.hero.titleHighlight}</span>
                 </h1>
@@ -310,9 +317,13 @@ const Index = () => {
             <p className="text-center text-sm text-muted-foreground py-8">{homeSearch.noResults}</p>
           )}
 
-          <InternalToolLinks />
+          <Suspense fallback={null}>
+            <InternalToolLinks />
+          </Suspense>
 
-          <PremiumBanner />
+          <Suspense fallback={null}>
+            <PremiumBanner />
+          </Suspense>
 
           {/* Why choose us */}
           <section className="space-y-3">
@@ -366,7 +377,9 @@ const Index = () => {
           </section>
 
           <AdSlot type="inline" slotId="home-mid-inline" />
-          <AdNativeSlot slotId="home-mid-native" className="mt-4" />
+          <Suspense fallback={null}>
+            <AdNativeSlot slotId="home-mid-native" className="mt-4" />
+          </Suspense>
 
           {/* FAQ */}
           <section className="space-y-3" itemScope itemType="https://schema.org/FAQPage">

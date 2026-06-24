@@ -170,6 +170,8 @@ export function TopNavbar() {
                 size="icon"
                 className="lg:hidden h-8 w-8"
                 onClick={() => setMenuOpen(!menuOpen)}
+                aria-label={menuOpen ? t.closeMenu : t.openMenu}
+                aria-expanded={menuOpen}
               >
                 {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </Button>

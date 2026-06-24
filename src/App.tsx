@@ -1,3 +1,4 @@
+import { lazy, Suspense, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,16 +8,6 @@ import { ThemeProvider } from "next-themes";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { LocaleProvider, NON_HE_LOCALES, type Locale } from "@/lib/i18n";
 import Index from "./pages/Index";
-import ToolPage from "./pages/ToolPage";
-import InstallPage from "./pages/InstallPage";
-import PremiumPage from "./pages/PremiumPage";
-import BlogIndex from "./pages/BlogIndex";
-import BlogPost from "./pages/BlogPost";
-import NotFound from "./pages/NotFound";
-import PrivacyPage from "./pages/PrivacyPage";
-import TermsPage from "./pages/TermsPage";
-import AboutPage from "./pages/AboutPage";
-import ContactPage from "./pages/ContactPage";
 import { AnalyticsPageTracker } from "@/components/AnalyticsPageTracker";
 import { CookieConsent } from "@/components/CookieConsent";
 import { AdVignetteHost } from "@/components/ads/AdVignette";
@@ -25,18 +16,45 @@ import { ToolConfigProvider } from "@/contexts/ToolConfigContext";
 import { AdConfigProvider } from "@/contexts/AdConfigContext";
 import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import AdminOverview from "@/pages/admin/AdminOverview";
-import AdminUsers from "@/pages/admin/AdminUsers";
-import AdminTools from "@/pages/admin/AdminTools";
-import AdminAds from "@/pages/admin/AdminAds";
-import AdminBilling from "@/pages/admin/AdminBilling";
+
+const ToolPage = lazy(() => import("./pages/ToolPage"));
+const InstallPage = lazy(() => import("./pages/InstallPage"));
+const PremiumPage = lazy(() => import("./pages/PremiumPage"));
+const BlogIndex = lazy(() => import("./pages/BlogIndex"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+const AdminOverview = lazy(() => import("@/pages/admin/AdminOverview"));
+const AdminUsers = lazy(() => import("@/pages/admin/AdminUsers"));
+const AdminTools = lazy(() => import("@/pages/admin/AdminTools"));
+const AdminAds = lazy(() => import("@/pages/admin/AdminAds"));
+const AdminBilling = lazy(() => import("@/pages/admin/AdminBilling"));
 
 const queryClient = new QueryClient();
+
+function RouteFallback() {
+  return (
+    <div className="flex min-h-[30vh] items-center justify-center" role="status" aria-live="polite">
+      <div className="h-7 w-7 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+    </div>
+  );
+}
 
 /** Remount tool page when slug changes so SPA navigations reset local state. */
 function ToolPageRoute() {
   const { slug } = useParams();
-  return <ToolPage key={slug} />;
+  return (
+    <Suspense fallback={<RouteFallback />}>
+      <ToolPage key={slug} />
+    </Suspense>
+  );
+}
+
+function LazyPage({ children }: { children: ReactNode }) {
+  return <Suspense fallback={<RouteFallback />}>{children}</Suspense>;
 }
 
 function LocaleLayout({ explicitLocale }: { explicitLocale?: Locale }) {
@@ -50,13 +68,14 @@ function LocaleLayout({ explicitLocale }: { explicitLocale?: Locale }) {
 const getAppRoutes = (explicitLocale?: Locale) => (
   <Route element={<LocaleLayout explicitLocale={explicitLocale} />}>
     <Route index element={<Index />} />
-    <Route path="install" element={<InstallPage />} />
-    <Route path="premium" element={<PremiumPage />} />
-    <Route path="blog" element={<BlogIndex />} />
-    <Route path="blog/:slug" element={<BlogPost />} />    <Route path="privacy" element={<PrivacyPage />} />
-    <Route path="terms" element={<TermsPage />} />
-    <Route path="about" element={<AboutPage />} />
-    <Route path="contact" element={<ContactPage />} />
+    <Route path="install" element={<LazyPage><InstallPage /></LazyPage>} />
+    <Route path="premium" element={<LazyPage><PremiumPage /></LazyPage>} />
+    <Route path="blog" element={<LazyPage><BlogIndex /></LazyPage>} />
+    <Route path="blog/:slug" element={<LazyPage><BlogPost /></LazyPage>} />
+    <Route path="privacy" element={<LazyPage><PrivacyPage /></LazyPage>} />
+    <Route path="terms" element={<LazyPage><TermsPage /></LazyPage>} />
+    <Route path="about" element={<LazyPage><AboutPage /></LazyPage>} />
+    <Route path="contact" element={<LazyPage><ContactPage /></LazyPage>} />
     <Route
       path="admin"
       element={
@@ -65,14 +84,14 @@ const getAppRoutes = (explicitLocale?: Locale) => (
         </AdminGuard>
       }
     >
-      <Route index element={<AdminOverview />} />
-      <Route path="users" element={<AdminUsers />} />
-      <Route path="tools" element={<AdminTools />} />
-      <Route path="billing" element={<AdminBilling />} />
-      <Route path="ads" element={<AdminAds />} />
+      <Route index element={<LazyPage><AdminOverview /></LazyPage>} />
+      <Route path="users" element={<LazyPage><AdminUsers /></LazyPage>} />
+      <Route path="tools" element={<LazyPage><AdminTools /></LazyPage>} />
+      <Route path="billing" element={<LazyPage><AdminBilling /></LazyPage>} />
+      <Route path="ads" element={<LazyPage><AdminAds /></LazyPage>} />
     </Route>
     <Route path=":slug" element={<ToolPageRoute />} />
-    <Route path="*" element={<NotFound />} />
+    <Route path="*" element={<LazyPage><NotFound /></LazyPage>} />
   </Route>
 );
 

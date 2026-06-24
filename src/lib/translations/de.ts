@@ -9,6 +9,7 @@ export const deTranslations = {
   auth: {
     signOut: "Sign out",
     account: "Account",
+    accountMenu: "Kontomenü",
     signInWithGoogle: "Mit Google anmelden",
     signInFailed: "Sign-in failed. Try again.",
     signInRequired: "Sign in to continue",
@@ -311,6 +312,9 @@ export const deTranslations = {
   },
   install: { title: "Tamirly herunterladen", subtitle: "als App auf Ihrem Gerät", seoTitle: "Tamirly herunterladen", seoDesc: "Installieren Sie Tamirly als App." },
   switchLanguage: "Sprache",
+  toggleTheme: "Hell-/Dunkelmodus umschalten",
+  openMenu: "Navigationsmenü öffnen",
+  closeMenu: "Navigationsmenü schließen",
   notFound: { title: "404", text: "Seite nicht gefunden", backHome: "Zur Startseite" },
   premium: {
     price: "₪19.90/Monat", upgradeTo: "Premium",

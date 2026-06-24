@@ -15,7 +15,7 @@ import { GoogleLoginButton } from "@/components/GoogleLoginButton";
 export function UserAuthSection({ compact }: { compact?: boolean }) {
   const { user, loading, apiAvailable, googleConfigured, signOut } = useAuth();
   const { t } = useLocale();
-  const auth = t.auth as { signOut?: string; account?: string } | undefined;
+  const auth = t.auth as { signOut?: string; account?: string; accountMenu?: string } | undefined;
 
   if (!apiAvailable || !googleConfigured) return null;
 
@@ -28,7 +28,12 @@ export function UserAuthSection({ compact }: { compact?: boolean }) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="gap-2 px-2 h-9 shrink-0">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-2 px-2 h-9 shrink-0"
+            aria-label={auth?.accountMenu ?? auth?.account ?? "Account"}
+          >
             <Avatar className="h-7 w-7">
               {user.avatarUrl ? <AvatarImage src={user.avatarUrl} alt="" /> : null}
               <AvatarFallback className="text-xs">{initial}</AvatarFallback>

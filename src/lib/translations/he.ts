@@ -11,6 +11,7 @@ export const heTranslations = {
   auth: {
     signOut: "התנתקות",
     account: "חשבון",
+    accountMenu: "תפריט חשבון",
     signInWithGoogle: "התחברות עם Google",
     signInFailed: "ההתחברות נכשלה. נסו שוב.",
     signInDbUnavailable: "ההתחברות אינה זמינה כרגע (מסד הנתונים לא מחובר). נסו שוב מאוחר יותר.",
@@ -411,6 +412,9 @@ export const heTranslations = {
 
   // Language switcher
   switchLanguage: "שפה",
+  toggleTheme: "החלף ערכת נושא",
+  openMenu: "פתיחת תפריט ניווט",
+  closeMenu: "סגירת תפריט ניווט",
   notFound: { title: "404", text: "אופס! העמוד לא נמצא", backHome: "חזור לדף הבית" },
   premium: {
     price: "₪19.90/חודש", upgradeTo: "פרימיום",

@@ -9,6 +9,7 @@ export const ruTranslations = {
   auth: {
     signOut: "Sign out",
     account: "Account",
+    accountMenu: "Меню аккаунта",
     signInWithGoogle: "Войти через Google",
     signInFailed: "Sign-in failed. Try again.",
     signInRequired: "Sign in to continue",
@@ -315,6 +316,9 @@ export const ruTranslations = {
   },
   install: { title: "Скачать Tamirly", subtitle: "как приложение", seoTitle: "Скачать Tamirly", seoDesc: "Установите Tamirly как приложение на вашем устройстве." },
   switchLanguage: "Язык",
+  toggleTheme: "Переключить светлую/тёмную тему",
+  openMenu: "Открыть меню навигации",
+  closeMenu: "Закрыть меню навигации",
   notFound: { title: "404", text: "Упс! Страница не найдена", backHome: "На Главную" },
   premium: {
     price: "₪19.90/мес", upgradeTo: "Премиум",

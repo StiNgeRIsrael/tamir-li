@@ -9,6 +9,7 @@ export const esTranslations = {
   auth: {
     signOut: "Sign out",
     account: "Account",
+    accountMenu: "Menú de cuenta",
     signInWithGoogle: "Iniciar sesión con Google",
     signInFailed: "Sign-in failed. Try again.",
     signInRequired: "Sign in to continue",
@@ -367,6 +368,9 @@ export const esTranslations = {
     seoDesc: "Instala Tamirly como app en tu dispositivo — acceso rápido a conversión de archivos desde tu pantalla de inicio.",
   },
   switchLanguage: "Idioma",
+  toggleTheme: "Cambiar tema claro/oscuro",
+  openMenu: "Abrir menú de navegación",
+  closeMenu: "Cerrar menú de navegación",
   notFound: { title: "404", text: "¡Ups! Página no encontrada", backHome: "Volver al Inicio" },
   premium: {
     price: "₪19.90/mes", upgradeTo: "Premium",
