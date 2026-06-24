@@ -91,7 +91,7 @@ export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotPro
         data-ad-region={type}
         data-ad-slot-id={slotId}
         data-adsterra-pending={pendingSlot ? "zone-key" : undefined}
-        className={cn("ad-slot mx-auto flex w-full max-w-full flex-col", className)}
+        className={cn("ad-slot ad-slot--pending mx-auto flex w-full max-w-full flex-col", className)}
         style={aspectStyle}
       >
         <span className="flex h-full w-full items-center justify-center px-3 py-2 text-sm font-medium leading-snug text-muted-foreground">
@@ -119,10 +119,15 @@ export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotPro
       data-ad-load-status={adStatus}
       data-ad-retry-count={retryKey}
       data-ad-scale={scale.toFixed(3)}
-      className={cn("ad-slot relative mx-auto block w-full max-w-full overflow-hidden", className)}
-      style={aspectStyle}
+      className={cn("ad-slot ad-slot--live mx-auto flex w-full max-w-full flex-col", className)}
     >
-      <div className="relative h-full w-full overflow-hidden">
+      <span className="px-2 pb-1 pt-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
+      <div
+        className="relative w-full min-h-0 flex-1 overflow-hidden rounded-[inherit] bg-muted/60 ring-1 ring-border/50"
+        style={aspectStyle}
+      >
         {showFailedOverlay && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-muted/95 px-2 text-center">
             <span className="text-sm font-medium leading-snug text-foreground">{t.adLoadFailed}</span>

@@ -200,8 +200,12 @@
     @apply border-primary/50 bg-primary/5;
   }
 
-  .ad-slot {
+  .ad-slot--pending {
     @apply rounded-md border border-dashed border-border bg-muted/40 text-muted-foreground text-sm;
+  }
+
+  .ad-slot--live {
+    @apply rounded-md border border-border bg-card;
   }
 
   .premium-banner {

@@ -340,10 +340,6 @@ const Index = () => {
 
 
 
-          <AdSlot type="banner" slotId="home-top-banner" />
-
-
-
           {/* Search + filter */}
 
           <div id="home-tools" className="space-y-2.5 scroll-mt-16">
@@ -474,7 +470,7 @@ const Index = () => {
             className="pt-2"
           />
 
-
+          <AdSlot type="banner" slotId="home-top-banner" />
 
           {totalShown === 0 && (
 
