@@ -51,6 +51,10 @@ export function useAdIframeLoad(active: boolean, messageSlot: string, slotIdenti
     }
 
     setAdStatus("loading");
+  }, [active, slotIdentity, retryKey]);
+
+  useEffect(() => {
+    if (!active || loadedRef.current) return;
 
     const scheduleRetryOrFail = () => {
       if (loadedRef.current) return;

@@ -133,7 +133,7 @@ export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotPro
           </div>
         )}
         <iframe
-          key={retryKey}
+          key={adStatus === "loaded" ? slotIdentity : `${slotIdentity}-r${retryKey}`}
           title={label}
           srcDoc={iframeSrcdoc}
           loading={eager ? "eager" : "lazy"}

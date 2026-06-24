@@ -60,7 +60,7 @@ describe("buildAdIframeSrcdoc", () => {
     expect(srcdoc).toContain("20000");
   });
 
-  it("includes stretch CSS and mutation observer for full-width creatives", async () => {
+  it("includes stretch CSS and bounded observer for full-width creatives", async () => {
     const { buildAdIframeSrcdoc, AD_IFRAME_STRETCH_CSS, AD_IFRAME_STRETCH_SCRIPT } = await import(
       "@/lib/ads/adsterra"
     );
@@ -68,6 +68,9 @@ describe("buildAdIframeSrcdoc", () => {
     expect(srcdoc).toContain(AD_IFRAME_STRETCH_CSS);
     expect(srcdoc).toContain(AD_IFRAME_STRETCH_SCRIPT);
     expect(srcdoc).toContain("MutationObserver");
+    expect(srcdoc).toContain("obs.disconnect()");
+    expect(srcdoc).not.toContain("subtree:true");
+    expect(srcdoc).not.toContain("querySelectorAll");
     expect(srcdoc).toContain("min-width:100%");
   });
 });

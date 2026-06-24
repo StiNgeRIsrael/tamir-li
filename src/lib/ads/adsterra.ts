@@ -139,8 +139,11 @@ export const AD_IFRAME_STRETCH_CSS =
   "body>*:not(script){display:block!important;width:100%!important;height:100%!important;max-width:none!important;min-width:100%!important;}" +
   "body iframe{border:0!important;width:100%!important;height:100%!important;}";
 
-/** Re-stretch when invoke.js injects nested iframes/divs after load. */
-export const AD_IFRAME_STRETCH_SCRIPT = `(function(){function stretch(){document.body.style.width='100%';document.body.style.height='100%';var nodes=document.body.querySelectorAll('iframe,div,ins,a,img');for(var i=0;i<nodes.length;i++){var el=nodes[i];el.style.setProperty('width','100%','important');el.style.setProperty('height','100%','important');el.style.setProperty('max-width','100%','important');if(el.tagName==='IFRAME'){el.style.setProperty('border','0','important');}}}stretch();try{new MutationObserver(stretch).observe(document.body,{childList:true,subtree:true});}catch(e){}[50,250,750,2000,4000].forEach(function(ms){setTimeout(stretch,ms);});})();`;
+/**
+ * Stretch only direct body children during initial inject — never rewrite nested ad iframes.
+ * A subtree-wide MutationObserver was breaking creatives when networks mutated DOM on scroll.
+ */
+export const AD_IFRAME_STRETCH_SCRIPT = `(function(){var done=false;function stretch(){if(done)return;document.body.style.width='100%';document.body.style.height='100%';for(var i=0;i<document.body.children.length;i++){var el=document.body.children[i];if(el.tagName==='SCRIPT')continue;el.style.setProperty('width','100%','important');el.style.setProperty('max-width','100%','important');el.style.setProperty('min-width','100%','important');el.style.setProperty('display','block','important');if(el.tagName==='IFRAME'){el.style.setProperty('border','0','important');}}}stretch();var t;function debounced(){clearTimeout(t);t=setTimeout(stretch,80);}var obs;try{obs=new MutationObserver(debounced);obs.observe(document.body,{childList:true});setTimeout(function(){done=true;if(obs)obs.disconnect();},6000);}catch(e){}[50,250,750,2000].forEach(function(ms){setTimeout(stretch,ms);});})();`;
 
 /** Build isolated iframe HTML so multiple Adsterra units do not clash on `atOptions`. */
 export function buildAdIframeSrcdoc(
