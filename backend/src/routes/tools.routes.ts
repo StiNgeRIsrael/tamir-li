@@ -26,8 +26,11 @@ function buildToolConfigResponse(rows: ToolConfigRow[]) {
   return { tools };
 }
 
+const CONFIG_CACHE_CONTROL = 'public, max-age=60, stale-while-revalidate=300';
+
 /** הגדרות תצוגה ציבוריות (בלי אימות) — לא תוכן רגיש */
 router.get('/config', async (_req: Request, res: Response) => {
+  res.set('Cache-Control', CONFIG_CACHE_CONTROL);
   try {
     const rows = await prisma.toolConfig.findMany();
     res.json(buildToolConfigResponse(rows));

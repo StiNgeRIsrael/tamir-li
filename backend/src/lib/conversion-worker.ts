@@ -12,6 +12,8 @@ import { ensureJobDir, outputFilePath } from './conversion-storage';
 const POLL_FAST_MS = 5000;
 const POLL_IDLE_MS = 30_000;
 const CLEANUP_INTERVAL_MS = 30 * 60 * 1000;
+/** Cap jobs per tick so ffmpeg-heavy bursts do not starve the event loop. */
+const MAX_JOBS_PER_TICK = 10;
 
 const AUDIO_TOOL_ID = 'audio-converter';
 
@@ -257,9 +259,19 @@ function scheduleWorkerTick(): void {
   timer = setTimeout(workerTick, pollMs);
 }
 
+/** Process up to MAX_JOBS_PER_TICK pending jobs before the next poll. */
+async function drainPendingJobs(): Promise<boolean> {
+  let processedAny = false;
+  for (let i = 0; i < MAX_JOBS_PER_TICK; i++) {
+    if (!(await processNextJob())) break;
+    processedAny = true;
+  }
+  return processedAny;
+}
+
 function workerTick(): void {
   maybeRunCleanup();
-  void processNextJob()
+  void drainPendingJobs()
     .then((hadJob) => {
       pollMs = hadJob ? POLL_FAST_MS : POLL_IDLE_MS;
       scheduleWorkerTick();
