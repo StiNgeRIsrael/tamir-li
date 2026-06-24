@@ -247,12 +247,6 @@ export const itTranslations = {
     secureBadge: "Sicuro", fastBadge: "Veloce", onlineBadge: "Online", freeBadge: "Gratis",
     moreConversions: "Altre Conversioni", conversionDone: "Conversione Completata!",
     download: "Scarica", downloadAll: "Scarica Tutto",
-    watchAdToDownload: "Scarica file",
-    downloadNow: "Scarica ora",
-    downloadGateHint: "Ancora un clic",
-    downloadGateProgress: (step: number) => `Passo ${step} di 2`,
-    downloadGateStep1Desc: "File pronto",
-    downloadGateStep2Desc: "Pronto per il download",
     convertingPremiumHint: "Premium = niente annunci in attesa e al download. Il tempo di conversione resta uguale.",
     preparingDownload: "Preparazione del download…",
     moreConversion: "Altra Conversione", addFiles: "Aggiungi File",
@@ -328,6 +322,13 @@ export const itTranslations = {
   adLoadFailed: "Impossibile caricare questo annuncio",
   adBlockerHint: "Se usi un blocco annunci, disattivalo e riprova",
   adRetry: "Riprova",
+  adVignette: {
+    label: "Annuncio",
+    close: "Chiudi",
+    wait: "Attendi un momento…",
+    processing: "Preparazione del file…",
+    ready: "Pronto",
+  },
   sidebarHome: "Home",
   sidebarUpgrade: "Premium",
   sidebarNoAds: "Giornata piena? Senza coda",
@@ -542,6 +543,8 @@ export const itTranslations = {
 
   pwaUpdate: {
     message: "Nuova versione disponibile — aggiorna la pagina",
+    messageCountdown: (seconds: number) =>
+      seconds > 0 ? `Nuova versione — aggiornamento automatico tra ${seconds}...` : "Aggiornamento...",
     refresh: "Aggiorna",
     dismiss: "Più tardi",
   },

@@ -275,12 +275,6 @@ export const enTranslations = {
     download: "Download",
     downloadAll: "Download All",
     loading: "Loading…",
-    watchAdToDownload: "Download file",
-    downloadNow: "Download now",
-    downloadGateHint: "One more tap",
-    downloadGateProgress: (step: number) => `Step ${step} of 2`,
-    downloadGateStep1Desc: "Your file is ready",
-    downloadGateStep2Desc: "Ready to download",
     convertingPremiumHint: "Premium skips ads while you wait and download. Conversion time stays the same.",
     preparingDownload: "Preparing your download…",
     moreConversion: "Convert More",
@@ -387,6 +381,8 @@ export const enTranslations = {
     label: "Advertisement",
     close: "Close",
     wait: "Please wait a moment…",
+    processing: "Preparing your file…",
+    ready: "Ready",
   },
   sidebarHome: "Home",
   sidebarUpgrade: "Premium",
@@ -654,6 +650,8 @@ export const enTranslations = {
 
   pwaUpdate: {
     message: "New version available — refresh to update",
+    messageCountdown: (seconds: number) =>
+      seconds > 0 ? `New version — auto-refresh in ${seconds}...` : "Refreshing...",
     refresh: "Refresh",
     dismiss: "Later",
   },

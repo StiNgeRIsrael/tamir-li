@@ -264,12 +264,6 @@ export const esTranslations = {
     conversionDone: "¡Conversión Completada!",
     download: "Descargar",
     downloadAll: "Descargar Todo",
-    watchAdToDownload: "Descargar archivo",
-    downloadNow: "Descargar ahora",
-    downloadGateHint: "Un toque más",
-    downloadGateProgress: (step: number) => `Paso ${step} de 2`,
-    downloadGateStep1Desc: "Archivo listo",
-    downloadGateStep2Desc: "Listo para descargar",
     convertingPremiumHint: "Premium = sin anuncios mientras esperas y descargas. El tiempo de conversión es el mismo.",
     preparingDownload: "Preparando tu descarga…",
     moreConversion: "Convertir Más",
@@ -366,6 +360,13 @@ export const esTranslations = {
   adLoadFailed: "No pudimos cargar este anuncio",
   adBlockerHint: "Si usas un bloqueador de anuncios, desactívalo e inténtalo de nuevo",
   adRetry: "Reintentar",
+  adVignette: {
+    label: "Anuncio",
+    close: "Cerrar",
+    wait: "Por favor espera un momento…",
+    processing: "Preparando tu archivo…",
+    ready: "Listo",
+  },
   sidebarHome: "Inicio",
   sidebarUpgrade: "Premium",
   sidebarNoAds: "¿Día ajetreado? Sin cola",
@@ -598,6 +599,8 @@ export const esTranslations = {
 
   pwaUpdate: {
     message: "Nueva versión disponible — actualiza para obtenerla",
+    messageCountdown: (seconds: number) =>
+      seconds > 0 ? `Nueva versión — actualización automática en ${seconds}...` : "Actualizando...",
     refresh: "Actualizar",
     dismiss: "Más tarde",
   },

@@ -247,12 +247,6 @@ export const deTranslations = {
     secureBadge: "Sicher", fastBadge: "Schnell", onlineBadge: "Online", freeBadge: "Kostenlos",
     moreConversions: "Mehr Konvertierungen", conversionDone: "Konvertierung Abgeschlossen!",
     download: "Herunterladen", downloadAll: "Alle Herunterladen",
-    watchAdToDownload: "Datei herunterladen",
-    downloadNow: "Jetzt herunterladen",
-    downloadGateHint: "Noch ein Klick",
-    downloadGateProgress: (step: number) => `Schritt ${step} von 2`,
-    downloadGateStep1Desc: "Datei ist bereit",
-    downloadGateStep2Desc: "Bereit zum Download",
     convertingPremiumHint: "Premium = keine Werbung beim Warten und Download. Die Konvertierungszeit bleibt gleich.",
     preparingDownload: "Download wird vorbereitet…",
     moreConversion: "Weitere", addFiles: "Dateien Hinzufügen",
@@ -328,6 +322,13 @@ export const deTranslations = {
   adLoadFailed: "Diese Anzeige konnte nicht geladen werden",
   adBlockerHint: "Wenn ein Werbeblocker aktiv ist, deaktivieren Sie ihn und versuchen Sie es erneut",
   adRetry: "Erneut versuchen",
+  adVignette: {
+    label: "Werbung",
+    close: "Schließen",
+    wait: "Bitte einen Moment warten…",
+    processing: "Datei wird vorbereitet…",
+    ready: "Fertig",
+  },
   sidebarHome: "Startseite",
   sidebarUpgrade: "Premium",
   sidebarNoAds: "Voller Tag? Ohne Warteschlange",
@@ -542,6 +543,8 @@ export const deTranslations = {
 
   pwaUpdate: {
     message: "Neue Version verfügbar — Seite aktualisieren",
+    messageCountdown: (seconds: number) =>
+      seconds > 0 ? `Neue Version — automatische Aktualisierung in ${seconds}...` : "Wird aktualisiert...",
     refresh: "Aktualisieren",
     dismiss: "Später",
   },

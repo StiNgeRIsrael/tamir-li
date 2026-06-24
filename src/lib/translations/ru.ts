@@ -250,12 +250,6 @@ export const ruTranslations = {
     moreConversions: "Ещё Конвертации",
     conversionDone: "Конвертация Завершена!",
     download: "Скачать", downloadAll: "Скачать Все",
-    watchAdToDownload: "Скачать файл",
-    downloadNow: "Скачать сейчас",
-    downloadGateHint: "Ещё один клик",
-    downloadGateProgress: (step: number) => `Шаг ${step} из 2`,
-    downloadGateStep1Desc: "Файл готов",
-    downloadGateStep2Desc: "Готово к скачиванию",
     convertingPremiumHint: "Premium = без рекламы в ожидании и при скачивании. Время конвертации не меняется.",
     preparingDownload: "Подготовка загрузки…",
     moreConversion: "Ещё", addFiles: "Добавить Файлы",
@@ -332,6 +326,13 @@ export const ruTranslations = {
   adLoadFailed: "Не удалось загрузить рекламу",
   adBlockerHint: "Если включён блокировщик рекламы, отключите его и повторите попытку",
   adRetry: "Повторить",
+  adVignette: {
+    label: "Реклама",
+    close: "Закрыть",
+    wait: "Пожалуйста, подождите…",
+    processing: "Подготовка файла…",
+    ready: "Готово",
+  },
   sidebarHome: "Главная",
   sidebarUpgrade: "Премиум",
   sidebarNoAds: "Загруженный день? Без очереди",
@@ -546,6 +547,8 @@ export const ruTranslations = {
 
   pwaUpdate: {
     message: "Доступна новая версия — обновите страницу",
+    messageCountdown: (seconds: number) =>
+      seconds > 0 ? `Новая версия — автообновление через ${seconds}...` : "Обновление...",
     refresh: "Обновить",
     dismiss: "Позже",
   },

@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
+import { CheckCircle2, X } from "lucide-react";
 import { AdSlot } from "@/components/AdSlot";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { useLocale } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useOrganicProgress } from "@/hooks/useOrganicProgress";
+import { enTranslations } from "@/lib/translations/en";
 import { cn } from "@/lib/utils";
 
 export type AdVignetteOptions = {
@@ -24,7 +27,7 @@ function notify(req: VignetteRequest | null) {
   listeners.forEach((fn) => fn(req));
 }
 
-/** Show full-screen ad vignette; resolves when dismissed (after min display time). */
+/** Show full-screen ad vignette; resolves when user dismisses after progress completes. */
 export function showAdVignette(options: AdVignetteOptions = {}): Promise<void> {
   return new Promise((resolve) => {
     notify({ ...options, resolve });
@@ -35,34 +38,28 @@ function AdVignetteOverlay({ request }: { request: VignetteRequest }) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
   const minMs = request.minMs ?? 4000;
-  const [canClose, setCanClose] = useState(false);
+  const vignette = { ...enTranslations.adVignette, ...t.adVignette };
+  const { progress, complete } = useOrganicProgress(minMs);
   const [visible, setVisible] = useState(true);
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => setCanClose(true), minMs);
-    return () => window.clearTimeout(timer);
-  }, [minMs]);
-
   const dismiss = useCallback(() => {
-    if (!canClose) return;
+    if (!complete) return;
     setVisible(false);
     window.setTimeout(() => {
       request.resolve();
       notify(null);
     }, 200);
-  }, [canClose, request]);
+  }, [complete, request]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && canClose) dismiss();
+      if (e.key === "Escape" && complete) dismiss();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [canClose, dismiss]);
+  }, [complete, dismiss]);
 
   if (isPremium || !visible) return null;
-
-  const vignette = t.adVignette as { close: string; wait: string; label: string };
 
   return createPortal(
     <div
@@ -73,23 +70,21 @@ function AdVignetteOverlay({ request }: { request: VignetteRequest }) {
       role="dialog"
       aria-modal="true"
       aria-label={vignette.label}
+      aria-busy={!complete}
     >
       <div
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        onClick={canClose ? dismiss : undefined}
+        onClick={complete ? dismiss : undefined}
       />
       <div className="relative z-10 w-full max-w-lg animate-in fade-in zoom-in-95 duration-200">
-        <div className="rounded-md border border-border/60 bg-card shadow-2xl overflow-hidden">
-          <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
-            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {vignette.label}
-            </span>
+        <div className="overflow-hidden rounded-md border border-border/60 bg-card shadow-2xl">
+          <div className="flex items-center justify-end border-b border-border px-4 py-2.5">
             <Button
               variant="ghost"
               size="icon"
               className="h-7 w-7"
               onClick={dismiss}
-              disabled={!canClose}
+              disabled={!complete}
               aria-label={vignette.close}
             >
               <X className="h-4 w-4" />
@@ -103,9 +98,22 @@ function AdVignetteOverlay({ request }: { request: VignetteRequest }) {
               eager
             />
           </div>
-          {!canClose && (
-            <p className="pb-3 text-center text-xs text-muted-foreground">{vignette.wait}</p>
-          )}
+          <div className="space-y-3 border-t border-border/60 px-4 pb-4 pt-3">
+            <Progress
+              value={progress}
+              className="h-2 bg-muted [&>div]:!transition-none"
+              aria-valuenow={Math.round(progress)}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={vignette.label}
+            />
+            {complete && (
+              <Button className="w-full cursor-pointer gap-2" onClick={dismiss}>
+                <CheckCircle2 className="h-4 w-4" />
+                {vignette.ready}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>,
