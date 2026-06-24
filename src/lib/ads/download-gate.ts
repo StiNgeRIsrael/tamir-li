@@ -1,4 +1,4 @@
-import { trackEvent } from "@/lib/analytics/events";
+import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
 import { showAdVignette } from "@/components/ads/AdVignette";
 
 import { formatToExtension } from "@/lib/image-convert";
@@ -48,7 +48,7 @@ export async function handleGatedDownload(
   }
 
   const adUrl = import.meta.env.VITE_AD_CLICK_URL?.trim();
-  trackEvent("ad_click_download", { file_index: fileIndex, method: adUrl ? "popup" : "vignette" });
+  trackEvent(ANALYTICS_EVENTS.AD_CLICK_DOWNLOAD, { file_index: fileIndex, method: adUrl ? "popup" : "vignette" });
 
   if (adUrl) {
     window.open(adUrl, "_blank", "noopener,noreferrer");

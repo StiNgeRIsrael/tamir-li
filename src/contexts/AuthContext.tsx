@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { getApiBaseUrl, probeApiReachable, responseLooksLikeJson } from "@/lib/api/client";
+import { ANALYTICS_EVENTS, setAnalyticsUserId, trackEvent } from "@/lib/analytics/events";
 
 const STORAGE_KEY = "tamir_auth_token";
 
@@ -117,6 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
         setUser(json.user);
+        setAnalyticsUserId(json.user.id);
       } catch {
         if (!cancelled) setUser(null);
       } finally {
@@ -142,6 +144,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const body = (await res.json().catch(() => ({}))) as {
         token?: string;
         user?: AuthUser;
+        isNewUser?: boolean;
         message?: string;
         error?: string;
       };
@@ -151,11 +154,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!body.token || !body.user) throw new Error("INVALID_RESPONSE");
       persistToken(body.token);
       setUser(body.user);
+      trackEvent(body.isNewUser ? ANALYTICS_EVENTS.SIGN_UP : ANALYTICS_EVENTS.LOGIN, {
+        method: "google",
+      });
+      setAnalyticsUserId(body.user.id);
     },
     [apiBase, persistToken]
   );
 
   const signOut = useCallback(() => {
+    trackEvent(ANALYTICS_EVENTS.SIGN_OUT, { method: "google" });
+    setAnalyticsUserId(null);
     persistToken(null);
     setUser(null);
   }, [persistToken]);

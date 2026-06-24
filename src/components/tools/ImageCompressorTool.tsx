@@ -10,6 +10,7 @@ import {
   type CustomToolFreemiumProps,
   onCustomToolSuccess,
   runGatedDownload,
+  trackCustomToolStart,
 } from "@/lib/custom-tool-freemium";
 
 function formatFileSize(bytes: number) {
@@ -54,6 +55,7 @@ export function ImageCompressorTool({ freemium }: Props) {
 
   const handleCompress = useCallback(async () => {
     if (!file || atUsageLimit) return;
+    if (freemium?.toolId) trackCustomToolStart(freemium.toolId);
     setProcessing(true);
     const img = new Image();
     img.onload = () => {
@@ -67,7 +69,7 @@ export function ImageCompressorTool({ freemium }: Props) {
           setResultUrl(URL.createObjectURL(blob));
           setResultSize(blob.size);
           if (freemium) {
-            await onCustomToolSuccess(freemium.isPremium, freemium.recordUsage);
+            await onCustomToolSuccess(freemium.isPremium, freemium.recordUsage, freemium.toolId);
           }
         }
         setProcessing(false);
@@ -85,7 +87,9 @@ export function ImageCompressorTool({ freemium }: Props) {
       a.download = `compressed_${file.name.replace(/\.[^.]+$/, "")}.${ext}`;
       a.click();
     };
-    const { triggered, gateOpen } = await runGatedDownload(downloadGate, isPremium, downloadFn);
+    const { triggered, gateOpen } = await runGatedDownload(downloadGate, isPremium, downloadFn, {
+      toolId: freemium?.toolId,
+    });
     setDownloadGate(gateOpen);
     if (!triggered) return;
   };

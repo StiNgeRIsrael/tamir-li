@@ -165,6 +165,7 @@ router.post('/google', async (req: Request, res: Response) => {
 
     res.json({
       token,
+      isNewUser: !existing,
       user: {
         id: user.id,
         email: user.email,

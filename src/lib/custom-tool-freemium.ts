@@ -1,5 +1,35 @@
-import { trackEvent } from "@/lib/analytics/events";
+import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
 import { showAdVignette } from "@/components/ads/AdVignette";
+import { isAdsterraConfigured } from "@/lib/ads/adsterra";
+
+/** True when a real ad surface exists (Adsterra zones or click-through URL). */
+export function hasAdSurface(): boolean {
+  return isAdsterraConfigured() || !!import.meta.env.VITE_AD_CLICK_URL?.trim();
+}
+
+/**
+ * Require an ad view before granting a freemium unlock.
+ * Returns false when no ad surface is configured.
+ */
+export async function requireAdViewForUnlock(slotId: string): Promise<boolean> {
+  if (!hasAdSurface()) return false;
+
+  const adUrl = import.meta.env.VITE_AD_CLICK_URL?.trim();
+  const method = isAdsterraConfigured() ? "vignette" : adUrl ? "popup" : "vignette";
+  trackEvent(ANALYTICS_EVENTS.AD_CLICK_DOWNLOAD, { method, source: slotId });
+
+  if (isAdsterraConfigured()) {
+    await showAdVignette({ minMs: 4000, slotId });
+    return true;
+  }
+
+  if (adUrl) {
+    window.open(adUrl, "_blank", "noopener,noreferrer");
+    return true;
+  }
+
+  return false;
+}
 
 export type CustomToolFreemiumProps = {
   toolId: string;
@@ -10,11 +40,20 @@ export type CustomToolFreemiumProps = {
   recordUsage: () => Promise<unknown>;
 };
 
+/** Fire at the start of a custom-tool operation. */
+export function trackCustomToolStart(toolId: string): void {
+  trackEvent(ANALYTICS_EVENTS.CONVERT_START, { tool_id: toolId, source: "custom_tool" });
+}
+
 /** After a custom tool operation succeeds: vignette (free) then record usage. */
 export async function onCustomToolSuccess(
   isPremium: boolean,
-  recordUsage: () => Promise<unknown>
+  recordUsage: () => Promise<unknown>,
+  toolId?: string
 ): Promise<void> {
+  if (toolId) {
+    trackEvent(ANALYTICS_EVENTS.CONVERT_SUCCESS, { tool_id: toolId, source: "custom_tool" });
+  }
   const reveal = () => {
     void recordUsage().catch(() => {});
   };
@@ -30,15 +69,27 @@ export async function onCustomToolSuccess(
 export async function runGatedDownload(
   gateOpen: boolean,
   isPremium: boolean,
-  downloadFn: () => void
+  downloadFn: () => void,
+  options?: { toolId?: string; fileIndex?: number }
 ): Promise<{ triggered: boolean; gateOpen: boolean }> {
   if (isPremium || gateOpen) {
     downloadFn();
+    if (options?.toolId) {
+      trackEvent(ANALYTICS_EVENTS.FILE_DOWNLOAD, {
+        tool_id: options.toolId,
+        file_index: options.fileIndex ?? 0,
+        source: "custom_tool",
+      });
+    }
     return { triggered: true, gateOpen };
   }
 
   const adUrl = import.meta.env.VITE_AD_CLICK_URL?.trim();
-  trackEvent("ad_click_download", { file_index: 0, method: adUrl ? "popup" : "vignette" });
+  trackEvent(ANALYTICS_EVENTS.AD_CLICK_DOWNLOAD, {
+    file_index: options?.fileIndex ?? 0,
+    method: adUrl ? "popup" : "vignette",
+    tool_id: options?.toolId,
+  });
 
   if (adUrl) {
     window.open(adUrl, "_blank", "noopener,noreferrer");

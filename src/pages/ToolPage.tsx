@@ -4,7 +4,8 @@ import { AppLayout } from "@/components/AppLayout";
 import { FileDropZone } from "@/components/FileDropZone";
 import { AdSlot } from "@/components/AdSlot";
 import { AdNativeSlot } from "@/components/ads/AdNativeSlot";
-import { PremiumBanner, PremiumLock, DailyLimitLock, ConversionSuccessUsage, UsageLimitNotice } from "@/components/PremiumComponents";
+import { PremiumBanner, PremiumLock, DailyLimitLock, ConversionSuccessUsage, UsageLimitNotice, FreePremiumComparison } from "@/components/PremiumComponents";
+import { InternalToolLinks } from "@/components/InternalToolLinks";
 import { showAdVignette } from "@/components/ads/AdVignette";
 import { handleGatedDownload, triggerFileDownload, triggerBlobDownload, type DownloadGateState } from "@/lib/ads/download-gate";
 import { Button } from "@/components/ui/button";
@@ -28,11 +29,11 @@ import { allowMockFileConversion } from "@/lib/feature-flags";
 import { getApiBaseUrl } from "@/lib/api/client";
 import { useToolConfig } from "@/contexts/ToolConfigContext";
 import { toast } from "sonner";
-import { trackEvent } from "@/lib/analytics/events";
+import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
 import { useUsage } from "@/hooks/useUsage";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useConversionJob } from "@/hooks/useConversionJob";
-import { isAdsterraConfigured } from "@/lib/ads/adsterra";
+import { hasAdSurface } from "@/lib/custom-tool-freemium";
 import { isToolFunctional } from "@/lib/tool-availability";
 import { convertImageFile, isOutputFormatSupported, usesClientImageConversion } from "@/lib/image-convert";
 import { usesClientDocumentConversion } from "@/lib/document-convert";
@@ -114,13 +115,11 @@ export default function ToolPage() {
 
   useEffect(() => {
     if (!tool) return;
-    trackEvent("tool_view", { tool_id: tool.id, slug: slug ?? "" });
+    trackEvent(ANALYTICS_EVENTS.TOOL_VIEW, { tool_id: tool.id, slug: slug ?? "" });
 
     if (isPremium) return;
 
-    const hasAdSurface =
-      isAdsterraConfigured() || !!import.meta.env.VITE_AD_CLICK_URL?.trim();
-    if (!hasAdSurface) return;
+    if (!hasAdSurface()) return;
 
     const key = `tamir_tool_vignette_${tool.id}`;
     if (sessionStorage.getItem(key)) return;
@@ -135,12 +134,12 @@ export default function ToolPage() {
 
   useEffect(() => {
     if (!tool?.premium || premiumUnlocked || isSubPremium) return;
-    trackEvent("paywall_hit", { tool_id: tool.id, type: "premium_tool" });
+    trackEvent(ANALYTICS_EVENTS.PAYWALL_HIT, { tool_id: tool.id, type: "premium_tool" });
   }, [tool, premiumUnlocked, isSubPremium]);
 
   useEffect(() => {
     if (!tool || isPremium || usageUnlocked || !atLimit) return;
-    trackEvent("paywall_hit", { tool_id: tool.id, type: "daily_limit" });
+    trackEvent(ANALYTICS_EVENTS.PAYWALL_HIT, { tool_id: tool.id, type: "daily_limit" });
   }, [tool, isPremium, usageUnlocked, atLimit]);
 
   useEffect(() => {
@@ -154,7 +153,7 @@ export default function ToolPage() {
 
     const revealSuccess = (skipUsageRecord = false) => {
       setShowSuccessPanel(true);
-      trackEvent("convert_success", {
+      trackEvent(ANALYTICS_EVENTS.CONVERT_SUCCESS, {
         tool_id: tool.id,
         from_format: activeFrom,
         to_format: activeTo,
@@ -200,7 +199,7 @@ export default function ToolPage() {
 
   const handleFilesSelected = useCallback(async (files: File[]) => {
     if (tool) {
-      trackEvent("file_upload", { tool_id: tool.id, file_count: files.length });
+      trackEvent(ANALYTICS_EVENTS.FILE_UPLOAD, { tool_id: tool.id, file_count: files.length });
     }
     const newItems: FileWithFormat[] = await Promise.all(
       files.map(async (file) => ({
@@ -228,7 +227,7 @@ export default function ToolPage() {
   const allHaveFormat = fileItems.length > 0 && fileItems.every((f) => f.outputFormat);
 
   const runMockConversion = () => {
-    trackEvent("convert_start", {
+    trackEvent(ANALYTICS_EVENTS.CONVERT_START, {
       tool_id: tool!.id,
       from_format: activeFrom,
       to_format: activeTo,
@@ -269,12 +268,12 @@ export default function ToolPage() {
     if (!allHaveFormat || !tool) return;
 
     if (atUsageLimit) {
-      trackEvent("paywall_hit", { tool_id: tool.id, type: "daily_limit" });
+      trackEvent(ANALYTICS_EVENTS.PAYWALL_HIT, { tool_id: tool.id, type: "daily_limit" });
       return;
     }
 
     if (usesClientImageConversion(tool.id, tool.fromFormats, tool.toFormats)) {
-      trackEvent("convert_start", {
+      trackEvent(ANALYTICS_EVENTS.CONVERT_START, {
         tool_id: tool.id,
         from_format: activeFrom,
         to_format: activeTo,
@@ -320,7 +319,7 @@ export default function ToolPage() {
     }
 
     if (usesClientDocumentConversion(tool.id)) {
-      trackEvent("convert_start", {
+      trackEvent(ANALYTICS_EVENTS.CONVERT_START, {
         tool_id: tool.id,
         from_format: activeFrom,
         to_format: activeTo,
@@ -381,7 +380,7 @@ export default function ToolPage() {
       return;
     }
 
-    trackEvent("convert_start", {
+    trackEvent(ANALYTICS_EVENTS.CONVERT_START, {
       tool_id: tool.id,
       from_format: activeFrom,
       to_format: activeTo,
@@ -460,7 +459,7 @@ export default function ToolPage() {
     );
     setDownloadGate(nextState);
     if (triggered) {
-      trackEvent("file_download", { tool_id: tool!.id, file_index: index });
+      trackEvent(ANALYTICS_EVENTS.FILE_DOWNLOAD, { tool_id: tool!.id, file_index: index });
     }
   };
 
@@ -474,12 +473,12 @@ export default function ToolPage() {
           triggerFileDownload(item.file, item.outputFormat);
         }
       });
-      trackEvent("file_download_all", { tool_id: tool!.id, file_count: fileItems.length });
+      trackEvent(ANALYTICS_EVENTS.FILE_DOWNLOAD_ALL, { tool_id: tool!.id, file_count: fileItems.length });
       return;
     }
 
     const adUrl = import.meta.env.VITE_AD_CLICK_URL?.trim();
-    trackEvent("ad_click_download", { file_index: -1, method: adUrl ? "popup" : "vignette" });
+    trackEvent(ANALYTICS_EVENTS.AD_CLICK_DOWNLOAD, { file_index: -1, method: adUrl ? "popup" : "vignette" });
     if (adUrl) {
       window.open(adUrl, "_blank", "noopener,noreferrer");
     } else {
@@ -1023,7 +1022,11 @@ export default function ToolPage() {
           {!isCustom && <p>{tt.seoFormats(tool.fromFormats, tool.toFormats)}</p>}
         </section>
 
+        <FreePremiumComparison />
+
         {TOP_TOOL_IDS.includes(tool.id) && <ToolSeoBlocks toolId={tool.id} />}
+
+        <InternalToolLinks />
 
         <AdSlot type="inline" slotId="tool-bottom" />
       </div>

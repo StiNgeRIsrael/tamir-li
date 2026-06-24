@@ -12,6 +12,8 @@ export const ANALYTICS_EVENTS = {
   PAYWALL_HIT: "paywall_hit",
   UPGRADE_CLICK: "upgrade_click",
   BEGIN_CHECKOUT: "begin_checkout",
+  /** GA4 recommended — pricing / promo impression */
+  VIEW_PROMOTION: "view_promotion",
   PURCHASE: "purchase",
   FILE_DOWNLOAD: "file_download",
   FILE_DOWNLOAD_ALL: "file_download_all",
@@ -49,7 +51,8 @@ export function trackEvent(name: AnalyticsEventName, params: AnalyticsEventParam
 }
 
 /** SPA page_view — fired on route changes after analytics consent. */
-export function trackPageView(params: AnalyticsEventParams = {}): void {  trackEvent(ANALYTICS_EVENTS.PAGE_VIEW, params);
+export function trackPageView(params: AnalyticsEventParams = {}): void {
+  trackEvent(ANALYTICS_EVENTS.PAGE_VIEW, params);
 }
 
 /** Set GA4 user_id for cross-session stitching (after consent + sign-in). */

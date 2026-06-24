@@ -10,6 +10,7 @@ import {
   type CustomToolFreemiumProps,
   onCustomToolSuccess,
   runGatedDownload,
+  trackCustomToolStart,
 } from "@/lib/custom-tool-freemium";
 
 interface PdfPage { pdfIndex: number; pageIndex: number; rotation: number; }
@@ -76,6 +77,7 @@ export function PdfManagerTool({ freemium }: Props) {
 
   const mergeAndDownload = async () => {
     if (atUsageLimit) return;
+    if (freemium?.toolId) trackCustomToolStart(freemium.toolId);
     setMerging(true);
     try {
       const mergedPdf = await PDFDocument.create();
@@ -87,7 +89,7 @@ export function PdfManagerTool({ freemium }: Props) {
       const bytes = await mergedPdf.save();
       setMergedUrl(URL.createObjectURL(new Blob([bytes as unknown as BlobPart], { type: "application/pdf" })));
       if (freemium) {
-        await onCustomToolSuccess(freemium.isPremium, freemium.recordUsage);
+        await onCustomToolSuccess(freemium.isPremium, freemium.recordUsage, freemium.toolId);
       }
     } catch (err) { console.error("PDF merge error:", err); }
     setMerging(false);
@@ -101,7 +103,9 @@ export function PdfManagerTool({ freemium }: Props) {
       a.download = "merged.pdf";
       a.click();
     };
-    const { triggered, gateOpen } = await runGatedDownload(downloadGate, isPremium, downloadFn);
+    const { triggered, gateOpen } = await runGatedDownload(downloadGate, isPremium, downloadFn, {
+      toolId: freemium?.toolId,
+    });
     setDownloadGate(gateOpen);
     if (!triggered) return;
   };

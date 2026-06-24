@@ -10,6 +10,7 @@ import {
   type CustomToolFreemiumProps,
   onCustomToolSuccess,
   runGatedDownload,
+  trackCustomToolStart,
 } from "@/lib/custom-tool-freemium";
 
 type ResizeMode = "fit" | "fill" | "stretch";
@@ -169,6 +170,7 @@ export function ImageResizerTool({ freemium }: Props) {
 
   const handleResize = async () => {
     if (!file || !width || !height || atUsageLimit) return;
+    if (freemium?.toolId) trackCustomToolStart(freemium.toolId);
     setProcessing(true);
     const img = sourceImageRef.current ?? new Image();
     const runExport = () => {
@@ -182,7 +184,7 @@ export function ImageResizerTool({ freemium }: Props) {
           setResultUrl(URL.createObjectURL(blob));
           setResultSize(blob.size);
           if (freemium) {
-            await onCustomToolSuccess(freemium.isPremium, freemium.recordUsage);
+            await onCustomToolSuccess(freemium.isPremium, freemium.recordUsage, freemium.toolId);
           }
         }
         setProcessing(false);
@@ -205,7 +207,9 @@ export function ImageResizerTool({ freemium }: Props) {
       a.download = `resized_${width}x${height}.${file.name.split(".").pop() || "jpg"}`;
       a.click();
     };
-    const { triggered, gateOpen } = await runGatedDownload(downloadGate, isPremium, downloadFn);
+    const { triggered, gateOpen } = await runGatedDownload(downloadGate, isPremium, downloadFn, {
+      toolId: freemium?.toolId,
+    });
     setDownloadGate(gateOpen);
     if (!triggered) return;
   };

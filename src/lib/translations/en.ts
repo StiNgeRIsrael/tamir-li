@@ -649,7 +649,7 @@ export const enTranslations = {
       {
         heading: "Cookies and tracking",
         body: [
-          "We use Google Analytics 4 (via Google Tag Manager) for anonymous usage analytics — only after you consent.",
+          "We use Google Analytics 4 (direct gtag.js, measurement ID G-EBE6D6BPZ0) for anonymous usage analytics — only after you consent.",
           "We use Adsterra to show ads to free-tier users — only after you consent to advertising cookies.",
           "Essential cookies (security, preferences) are required for the site to function and do not require separate consent.",
         ],

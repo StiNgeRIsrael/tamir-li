@@ -12,6 +12,7 @@ import {
   type CustomToolFreemiumProps,
   onCustomToolSuccess,
   runGatedDownload,
+  trackCustomToolStart,
 } from "@/lib/custom-tool-freemium";
 
 type TextFormat = "plain" | "markdown" | "html";
@@ -59,8 +60,9 @@ export function TextToolsComponent({ freemium }: Props) {
 
   const handleDownload = async () => {
     if (!output || atUsageLimit) return;
+    if (freemium?.toolId) trackCustomToolStart(freemium.toolId);
     if (freemium && !usageRecorded) {
-      await onCustomToolSuccess(freemium.isPremium, freemium.recordUsage);
+      await onCustomToolSuccess(freemium.isPremium, freemium.recordUsage, freemium.toolId);
       setUsageRecorded(true);
     }
     const ext = outputFormat === "html" ? "html" : outputFormat === "markdown" ? "md" : "txt";
@@ -71,7 +73,9 @@ export function TextToolsComponent({ freemium }: Props) {
       a.download = `converted.${ext}`;
       a.click();
     };
-    const { triggered, gateOpen } = await runGatedDownload(downloadGate, isPremium, downloadFn);
+    const { triggered, gateOpen } = await runGatedDownload(downloadGate, isPremium, downloadFn, {
+      toolId: freemium?.toolId,
+    });
     setDownloadGate(gateOpen);
     if (!triggered) return;
   };

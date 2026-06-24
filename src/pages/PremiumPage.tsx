@@ -8,7 +8,8 @@ import {
   ImageIcon, Gauge, FileStack, Headphones, ChevronDown, ShieldCheck
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { trackEvent } from "@/lib/analytics/events";
+import { trackEvent, ANALYTICS_EVENTS } from "@/lib/analytics/events";
+import { getPlanEcommerceParams } from "@/lib/analytics/purchase";
 import { useSubscription, type CheckoutPlan } from "@/hooks/useSubscription";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -46,7 +47,12 @@ export default function PremiumPage() {
             /* webhook may have already captured */
           }
         }
-        trackEvent("purchase", { plan: plan ?? undefined, source: "paypal_return" });
+        trackEvent(ANALYTICS_EVENTS.PURCHASE, {
+          plan: plan ?? undefined,
+          source: "paypal_return",
+          transaction_id: paypalToken ?? undefined,
+          ...getPlanEcommerceParams(plan ?? undefined),
+        });
         refetch();
         toast.success(u.checkoutSuccess ?? "Welcome to Premium!");
         setSearchParams({}, { replace: true });
@@ -60,8 +66,9 @@ export default function PremiumPage() {
 
   const startCheckout = async (source: string) => {
     const plan: CheckoutPlan = isYearly ? "yearly" : "monthly";
-    trackEvent("upgrade_click", { plan, source });
-    trackEvent("begin_checkout", { plan, source });
+    const ecommerce = getPlanEcommerceParams(plan);
+    trackEvent(ANALYTICS_EVENTS.UPGRADE_CLICK, { plan, source });
+    trackEvent(ANALYTICS_EVENTS.BEGIN_CHECKOUT, { plan, source, ...ecommerce });
 
     if (!user) {
       toast.error(auth?.signInRequired ?? "Sign in to continue");

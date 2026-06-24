@@ -11,6 +11,9 @@ import { getApiBaseUrl } from "@/lib/api/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
+import { AdSlot } from "@/components/AdSlot";
+import { runGatedDownload } from "@/lib/custom-tool-freemium";
 
 type GenerationState = "idle" | "generating" | "done";
 interface GeneratedImage { prompt: string; url: string; timestamp: number; }
@@ -28,6 +31,23 @@ export function AiImageGeneratorTool() {
   const [state, setState] = useState<GenerationState>("idle");
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
   const [showPackages, setShowPackages] = useState(false);
+  const [downloadGates, setDownloadGates] = useState<Record<number, boolean>>({});
+
+  const handleDownload = async (img: GeneratedImage) => {
+    if (!img.url) return;
+    const gateOpen = downloadGates[img.timestamp] ?? false;
+    const downloadFn = () => {
+      const a = document.createElement("a");
+      a.href = img.url;
+      a.download = `ai-image-${img.timestamp}.png`;
+      a.click();
+    };
+    const { triggered, gateOpen: nextGate } = await runGatedDownload(gateOpen, isPremium, downloadFn, {
+      toolId: "ai-image-generator",
+    });
+    setDownloadGates((prev) => ({ ...prev, [img.timestamp]: nextGate }));
+    if (!triggered) return;
+  };
 
   const handleGenerate = async () => {
     if (!prompt.trim() || credits <= 0) return;
@@ -38,6 +58,11 @@ export function AiImageGeneratorTool() {
     }
 
     setState("generating");
+    trackEvent(ANALYTICS_EVENTS.AI_GENERATE_START, {
+      tool_id: "ai-image-generator",
+      style,
+      aspect_ratio: aspectRatio,
+    });
     try {
       const res = await fetch(`${base}/api/ai/generate-image`, {
         method: "POST",
@@ -68,6 +93,11 @@ export function AiImageGeneratorTool() {
       }
       qc.invalidateQueries({ queryKey: ["subscription"] });
       setState("done");
+      trackEvent(ANALYTICS_EVENTS.AI_GENERATE_SUCCESS, {
+        tool_id: "ai-image-generator",
+        style,
+        aspect_ratio: aspectRatio,
+      });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Generation failed");
       setState("idle");
@@ -118,6 +148,7 @@ export function AiImageGeneratorTool() {
         <div className="bg-card border border-border rounded-2xl p-8 text-center space-y-4 animate-fade-in">
           <div className="w-20 h-20 rounded-2xl bg-premium/10 flex items-center justify-center mx-auto animate-pulse"><Sparkles className="w-10 h-10 text-premium" /></div>
           <p className="text-sm text-muted-foreground">{ai.aiCreating}</p>
+          {!isPremium && <AdSlot type="inline" slotId="tool-ai-gen-processing" className="mx-auto max-w-lg" eager />}
         </div>
       )}
       {generatedImages.length > 0 && state !== "generating" && (
