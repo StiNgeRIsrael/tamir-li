@@ -1,6 +1,6 @@
 # Google Analytics setup for Tamir.li
 
-Production uses **direct GA4** via `gtag.js` and measurement ID **`G-EBE6D6BPZ0`**. The codebase wires **Google Consent Mode v2**: gtag loads on app boot, storage defaults to denied, and the cookie banner unlocks full measurement on accept. SPA `page_view` and funnel events fire immediately (cookieless pings while denied).
+Production uses **direct GA4** via `gtag.js` and measurement ID **`G-EBE6D6BPZ0`**. The codebase wires **Google Consent Mode v2**: `index.html` sets a gtag stub and denied defaults on boot; **`gtag.js` loads only after analytics consent** via `initGA4()` in `consent.ts`. SPA `page_view` and funnel events fire only once GA4 is active (after accept, or on return visits with stored consent).
 
 > **Do not enable both `VITE_GTM_ID` and `VITE_GA4_ID`** — that double-counts. Use direct GA4 **or** GTM, not both.
 
@@ -26,14 +26,14 @@ On **Plesk Node.js**: add `VITE_GA4_ID=G-EBE6D6BPZ0` to the environment variable
 
 ## How consent works
 
-1. `index.html` sets Consent Mode v2 defaults (`analytics_storage: denied`, `ad_storage: denied`, `wait_for_update: 500`) before any Google scripts load.
-2. `main.tsx` calls `bootAnalytics()` — when `VITE_GA4_ID` is set (and `VITE_GTM_ID` is not), `gtag.js` injects immediately.
-3. Cookie banner (`CookieConsent`) calls `saveConsent(analytics, ads)` → `gtag('consent', 'update', …)`.
-4. **Before accept:** GA4 sends cookieless pings and modeled data; no analytics cookies.
-5. **After accept:** `analytics_storage: granted` — full cookies, user stitching (`user_id`), and enhanced signals.
+1. `index.html` sets Consent Mode v2 defaults (`analytics_storage: denied`, `ad_storage: denied`, `wait_for_update: 500`) and a gtag stub before any Google scripts load.
+2. `main.tsx` calls `applyStoredConsent()` on boot — if the user previously accepted analytics, `initGA4()` injects `gtag.js` immediately.
+3. Cookie banner (`CookieConsent`) calls `saveConsent(analytics, ads)` → `updateConsentMode()` and, when `analytics: true`, `initGA4()` (direct GA4) or `initGTM()` (GTM path).
+4. **Before accept:** no `gtag.js` request; no GA4 measurement.
+5. **After accept:** `gtag.js` loads (`#ga4-script`), `analytics_storage: granted` — full cookies, user stitching (`user_id`), and enhanced signals.
 6. **Adsterra** scripts load only when `ads: true` (`ad_storage` granted) — unchanged.
-7. SPA route changes fire `page_view` on every navigation via `AnalyticsPageTracker` (works in both denied and granted states).
-8. **GTM path** (`VITE_GTM_ID` only): container still loads after analytics consent (not on boot).
+7. SPA route changes fire `page_view` on every navigation via `AnalyticsPageTracker` once analytics is active.
+8. **GTM path** (`VITE_GTM_ID` only): container loads after analytics consent via `initGTM()` — same gate as direct GA4.
 
 ---
 
@@ -85,15 +85,15 @@ Direct `gtag` config uses `send_page_view: false` (SPA sends manual `page_view`)
 
 1. Install [Google Analytics Debugger](https://chrome.google.com/webstore/detail/google-analytics-debugger/) Chrome extension.
 2. Set `VITE_GA4_ID=G-EBE6D6BPZ0` locally (`.env.development.local`).
-3. Run `npm run dev`, open the site — **before** accepting cookies, check Network for `google-analytics.com/g/collect` (cookieless pings).
-4. Accept cookies → `analytics_storage: granted`; confirm richer events in DebugView.
-5. Browser console: `dataLayer` shows events immediately after gtag loads.
+3. Run `npm run dev`, open the site — **before** accepting cookies, confirm Network has **no** `googletagmanager.com/gtag/js` request and no `#ga4-script` in the DOM.
+4. Accept cookies → `gtag.js` loads, `analytics_storage: granted`; confirm events in DebugView.
+5. Browser console: `dataLayer` shows events after `initGA4()` runs (on accept or stored consent).
 
 ### Checklist
 
 - [ ] Consent defaults show `analytics_storage: denied` before accept
-- [ ] `gtag.js` loads on page load (`ga4-script` in DOM) — not waiting for banner
-- [ ] Cookieless `page_view` / pings before accept
+- [ ] No `gtag.js` / `#ga4-script` before accept
+- [ ] After accept, `googletagmanager.com/gtag/js?id=G-EBE6D6BPZ0` loads and `#ga4-script` appears
 - [ ] After accept, full measurement + `user_id` on sign-in
 - [ ] `tool_view`, `file_upload`, `convert_start`, `convert_success` on a tool
 - [ ] `paywall_hit`, `upgrade_click`, `view_promotion`, `begin_checkout` on premium flow
@@ -113,8 +113,8 @@ If you prefer GTM, set `VITE_GTM_ID` and **unset** `VITE_GA4_ID`. Configure GA4 
 | File | Role |
 |------|------|
 | `index.html` | Consent Mode v2 defaults |
-| `src/main.tsx` | `bootAnalytics()` then `applyStoredConsent()` on app boot |
-| `src/lib/analytics/gtm.ts` | `bootAnalytics()` (GA4 on load), GTM after consent, `updateConsentMode` |
+| `src/main.tsx` | `applyStoredConsent()` on app boot (may call `initGA4()` if consent stored) |
+| `src/lib/analytics/gtm.ts` | `initGA4()` (direct GA4 after consent), `initGTM()`, `updateConsentMode` |
 | `src/lib/analytics/events.ts` | `trackEvent` — fires when GA4/GTM active (cookieless OK) |
 | `src/lib/analytics/purchase.ts` | Ecommerce `value` / `items` for checkout events |
 | `src/lib/ads/consent.ts` | Cookie persistence, script loading |
