@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Menu, X, Download, ChevronDown, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -31,6 +31,26 @@ export function TopNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openCat, setOpenCat] = useState<ToolCategory | null>(null);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const closeCatTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const openCategory = useCallback((cat: ToolCategory) => {
+    if (closeCatTimer.current) {
+      clearTimeout(closeCatTimer.current);
+      closeCatTimer.current = null;
+    }
+    setOpenCat(cat);
+  }, []);
+
+  const scheduleCloseCategory = useCallback(() => {
+    if (closeCatTimer.current) clearTimeout(closeCatTimer.current);
+    closeCatTimer.current = setTimeout(() => setOpenCat(null), 150);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (closeCatTimer.current) clearTimeout(closeCatTimer.current);
+    };
+  }, []);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -81,10 +101,14 @@ export function TopNavbar() {
                 if (catTools.length === 0) return null;
 
                 return (
-                  <div key={cat} className="relative">
+                  <div
+                    key={cat}
+                    className="relative"
+                    onMouseEnter={() => openCategory(cat)}
+                    onMouseLeave={scheduleCloseCategory}
+                  >
                     <button
                       onClick={() => setOpenCat(isOpen ? null : cat)}
-                      onMouseEnter={() => setOpenCat(cat)}
                       className={`flex items-center gap-1.5 px-2.5 py-1.5 text-sm font-medium transition-colors border-b-2 ${
                         isOpen
                           ? "border-primary text-primary"
@@ -98,10 +122,14 @@ export function TopNavbar() {
 
                     {isOpen && (
                       <div
-                        className="absolute top-full mt-0 w-64 border border-border bg-card shadow-md py-1 z-50"
-                        style={locale === "he" ? { right: 0 } : { left: 0 }}
-                        onMouseLeave={() => setOpenCat(null)}
+                        className={cn(
+                          "absolute top-full w-64 z-50",
+                          locale === "he" ? "right-0" : "left-0",
+                        )}
                       >
+                        {/* Invisible bridge so cursor can cross the trigger/dropdown gap */}
+                        <div className="h-1.5" aria-hidden="true" />
+                        <div className="border border-border bg-card shadow-md py-1 -mt-1.5">
                         {catTools.map((tool) => {
                           const TIcon = tool.icon;
                           const functional = isToolFunctional(tool.id);
@@ -135,6 +163,7 @@ export function TopNavbar() {
                             </div>
                           );
                         })}
+                        </div>
                       </div>
                     )}
                   </div>
