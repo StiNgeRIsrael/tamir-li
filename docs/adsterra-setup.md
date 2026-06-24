@@ -59,7 +59,27 @@ GitHub Actions can still pass `VITE_ADSTERRA_*` into `npm run build` via [`deplo
 
 ## 5. ads.txt
 
-Replace `public/ads.txt` with the authorization line(s) from Adsterra (Partner Care or dashboard). Deploy so `https://tamir.li/ads.txt` is reachable.
+Ad networks verify authorized sellers via `https://tamir.li/ads.txt`. Until you paste your real line, the repo ships a **comment-only placeholder** in `public/ads.txt` — ads may still serve, but authorization is incomplete.
+
+### Get your line from Adsterra
+
+1. Log in at [adsterra.com](https://adsterra.com) → **Websites** → select `tamir.li`.
+2. Open **ads.txt** (or ask Partner Care for the authorization record).
+3. Copy the line(s) they provide. Typical format:
+
+   ```
+   adsterra.com, YOUR_PUBLISHER_ID, DIRECT
+   ```
+
+   `YOUR_PUBLISHER_ID` is a long hex string assigned to your account — **do not guess or invent one**.
+
+### Deploy on Plesk
+
+1. Edit `public/ads.txt` locally: **remove all comment lines** and leave only the real line(s) from the dashboard.
+2. Commit and deploy (or paste the same content into `httpdocs/deploy/public/ads.txt` on the server).
+3. Verify: `curl -s https://tamir.li/ads.txt` returns your `adsterra.com, …, DIRECT` line with `Content-Type: text/plain`.
+
+If you rotate publisher IDs, update `ads.txt` and redeploy — no app restart required.
 
 ## 6. How placements work in the app
 

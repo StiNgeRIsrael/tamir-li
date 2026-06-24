@@ -33,7 +33,7 @@ Audit date: **2026-06-24**. Status key: **DONE** / **PARTIAL** / **MISSING**.
 | Daily limit frontend sync | **DONE** | Same constant in `src/hooks/useUsage.ts` |
 | Server-side enforcement | **DONE** | `POST /api/usage/record` + conversion queue `checkLimitAndRecordUsage` |
 | localStorage fallback | **PARTIAL** | Bypasses server when API down — acceptable for UX, weak for abuse |
-| Custom tools skip limits | **PARTIAL** | Image/PDF/text tools don't call `recordUsage` — SEO traffic can convert unlimited |
+| Custom tools skip limits | **PARTIAL** → **DONE** (2026-06-24) | Image/PDF/text tools call `recordUsage` via `onCustomToolSuccess` after vignette |
 | Premium subscription check | **DONE** | `GET /api/billing/status` → `useSubscription` → ads + limits |
 | Premium tool lock | **PARTIAL** | `PremiumLock` is 15s fake ad timer, **not** tied to `isPremium` on generic `ToolPage` |
 | PayPal checkout (monthly/yearly/credits) | **DONE** | `POST /api/billing/checkout`, capture, webhooks in `billing.routes.ts` |

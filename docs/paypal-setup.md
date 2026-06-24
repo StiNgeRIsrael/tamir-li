@@ -14,14 +14,16 @@ Stripe is disabled by default (`ENABLE_STRIPE` is not set). See `docs/stripe-set
 
 1. Dashboard → **Subscriptions** (or Products & Plans).
 2. Create a **Product**: e.g. `Tamir.li Premium`.
-3. Create two **Plans** (ILS currency recommended):
+3. Create two **Plans** in **ILS** — amounts must match site copy in `upgradePage` translations:
 
-| Plan key (API) | Billing cycle | Suggested name | Env var |
-|----------------|---------------|----------------|---------|
-| `monthly` | Monthly | Tamir.li Premium — Monthly | `PAYPAL_PLAN_MONTHLY` |
-| `yearly` | Yearly | Tamir.li Premium — Yearly | `PAYPAL_PLAN_YEARLY` |
+| Plan key (API) | Billing cycle | PayPal price (ILS) | Site copy | Env var |
+|----------------|---------------|--------------------|-----------|---------|
+| `monthly` | Monthly | **₪19.90** / month | `priceMonthly: "₪19.90"` (anchor ₪150) | `PAYPAL_PLAN_MONTHLY` |
+| `yearly` | Yearly | **₪191.04** / year (≈ ₪15.92/mo, 20% off) | `priceYearly: "₪191.04"` | `PAYPAL_PLAN_YEARLY` |
 
-Copy each **Plan ID** (`P-...`) into backend env (Plesk).
+Suggested plan names: `Tamir.li Premium — Monthly`, `Tamir.li Premium — Yearly`.
+
+Copy each **Plan ID** (`P-...`) from the PayPal dashboard into Plesk backend env (see checklist below).
 
 Credit packs do **not** need PayPal products — amounts are set in code (₪8 / ₪21 / ₪39 / ₪72).
 
@@ -46,21 +48,39 @@ Copy the webhook **ID** into `PAYPAL_WEBHOOK_ID`.
 
 **Local testing:** use [ngrok](https://ngrok.com/) or PayPal webhook simulator pointing to `http://localhost:5000/api/billing/paypal/webhook`.
 
-## 4. Environment variables (Plesk / `backend/.env`)
+## 4. Plesk production checklist
 
-| Variable | Where | Example / notes |
-|----------|-------|-----------------|
-| `PAYPAL_CLIENT_ID` | Backend | Sandbox Client ID from app |
-| `PAYPAL_CLIENT_SECRET` | Backend | Sandbox Secret |
-| `PAYPAL_WEBHOOK_ID` | Backend | Webhook ID (`WH-...` or dashboard ID) |
-| `PAYPAL_MODE` | Backend | `sandbox` or `live` |
-| `PAYPAL_PLAN_MONTHLY` | Backend | `P-...` monthly plan ID |
-| `PAYPAL_PLAN_YEARLY` | Backend | `P-...` yearly plan ID |
-| `CORS_ORIGIN` | Backend | `https://tamir.li` (first origin = checkout return URLs) |
-| `VITE_API_URL` | Frontend build | `https://tamir.li` |
-| `VITE_PAYPAL_CLIENT_ID` | Frontend (optional) | Same Client ID if using JS SDK later |
+Set these in **Plesk → Node.js → Custom environment variables** (application root `httpdocs/deploy`). Backend reads `PAYPAL_*` at runtime; frontend `VITE_*` vars are baked in at **build time** (GitHub Actions or local `npm run build`).
 
-Do **not** commit secrets. Do not rewrite production `backend/.env` from the repo.
+### Backend (required for billing)
+
+| Variable | Value | Notes |
+|----------|-------|-------|
+| `PAYPAL_CLIENT_ID` | Live REST app Client ID | From PayPal Developer → Apps & Credentials → **Live** |
+| `PAYPAL_CLIENT_SECRET` | Live secret | Never expose in `VITE_*` or frontend |
+| `PAYPAL_MODE` | `live` | Use `sandbox` only for staging |
+| `PAYPAL_WEBHOOK_ID` | `WH-...` or dashboard webhook ID | Webhook URL: `https://tamir.li/api/billing/paypal/webhook` |
+| `PAYPAL_PLAN_MONTHLY` | `P-...` | Plan priced at **₪19.90/month** ILS |
+| `PAYPAL_PLAN_YEARLY` | `P-...` | Plan priced at **₪191.04/year** ILS (20% off monthly) |
+| `CORS_ORIGIN` | `https://tamir.li` | First origin = PayPal return/cancel URLs |
+| `DATABASE_URL` | MySQL connection string | Subscriptions stored in Prisma |
+
+### Frontend build (GitHub Actions secrets or build host)
+
+| Variable | Value | Notes |
+|----------|-------|-------|
+| `VITE_API_URL` | `https://tamir.li` | Required for usage limits + checkout API |
+| `VITE_SITE_ORIGIN` | `https://tamir.li` | Canonical URLs, SEO |
+| `VITE_PAYPAL_CLIENT_ID` | Same as `PAYPAL_CLIENT_ID` | Optional today; same live Client ID if enabled later |
+
+### Verify after deploy
+
+- [ ] `GET https://tamir.li/api/billing/status` (with auth) returns JSON — not 501.
+- [ ] Premium page → Monthly shows **₪19.90**; checkout redirects to PayPal (not “plan not configured”).
+- [ ] After sandbox/live test purchase, webhook fires `BILLING.SUBSCRIPTION.ACTIVATED` and `isPremium: true`.
+- [ ] `PAYPAL_PLAN_MONTHLY` / `PAYPAL_PLAN_YEARLY` IDs match the **ILS amounts** in the table above.
+
+Local dev: copy the same keys into `backend/.env` (see `backend/.env.example`). Do **not** commit secrets or rewrite production `.env` from the repo.
 
 ## 5. API flow
 

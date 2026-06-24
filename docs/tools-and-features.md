@@ -38,7 +38,7 @@ For a full code audit (complete / partial / stub), see [implementation-status.md
 |--------|---------|
 | **Client real** | Conversion runs in the browser; output file is genuinely transformed |
 | **Mock** | UI simulates progress; download re-exports the **source** file with a new extension (`triggerFileDownload` in `src/lib/ads/download-gate.ts`) |
-| **API stub** | Frontend calls `POST /api/conversions` → **501** unless mock mode is on |
+| **API stub** | Frontend calls `POST /api/conversions` → worker queue; only audio transcodes with ffmpeg; other tools stub passthrough |
 | **Premium UI** | Tool or feature gated behind subscription; may still be mock underneath |
 | **WIP** | Component exists but not in catalog / not routed |
 
@@ -54,11 +54,11 @@ Routes use Hebrew default (no prefix). Other locales prefix the path: `/en/jpg-t
 
 | Name (HE) | ID | Default route | Premium | Implementation | Notes |
 |-----------|-----|---------------|---------|----------------|-------|
-| המרת פורמט תמונה | `image-converter` | `/jpg-to-png` | Free | **Mock** (generic `ToolPage`) | 7→6 format matrix: JPG, PNG, WEBP, GIF, BMP, TIFF, SVG in; SVG excluded as output. **42** pairwise slugs; overlaps deduped in sitemap |
+| המרת פורמט תמונה | `image-converter` | `/jpg-to-png` | Free | **Client real** | Canvas in browser via `image-convert.ts`. 7→6 format matrix; TIFF input only (no TIFF output). **42** pairwise slugs; overlaps deduped in sitemap |
 | דחיסת תמונה | `image-compressor` | `/image-compressor` | Free | **Client real** | Canvas `toBlob`; quality slider. Custom component |
 | שינוי גודל תמונה | `image-resizer` | `/image-resizer` | Free | **Client real** | Canvas resize; social presets. Custom component |
-| PNG ל-ICO | `png-to-ico` | `/png-to-ico` | Free | **Mock** | Single slug; favicon use case |
-| SVG ל-PNG | `svg-to-png` | `/svg-to-png` | Free | **Mock** | Single slug |
+| PNG ל-ICO | `png-to-ico` | `/png-to-ico` | Free | **Client real** | Canvas ICO encoder in `image-convert.ts` |
+| SVG ל-PNG | `svg-to-png` | `/svg-to-png` | Free | **Client real** | Canvas rasterize in `image-convert.ts` |
 
 **Popular** (homepage): image-converter, image-compressor.
 
@@ -73,14 +73,14 @@ Routes use Hebrew default (no prefix). Other locales prefix the path: `/en/jpg-t
 
 | Name (HE) | ID | Default route | Premium | Implementation | Notes |
 |-----------|-----|---------------|---------|----------------|-------|
-| המרת פורמט אודיו | `audio-converter` | `/mp3-to-wav` | Free | **Mock** | MP3, WAV, AAC, OGG, FLAC — all pairwise slugs |
+| המרת פורמט אודיו | `audio-converter` | `/mp3-to-wav` | Free | **Server real** (ffmpeg) | `POST /api/conversions` queue; passthrough stub if ffmpeg missing on host |
 
 ### Document (4 tools, 11 slugs)
 
 | Name (HE) | ID | Default route | Premium | Implementation | Notes |
 |-----------|-----|---------------|---------|----------------|-------|
 | PDF ל-Word | `pdf-to-word` | `/pdf-to-docx` | Free | **Mock** | Single slug `pdf-to-docx` |
-| Word ל-PDF | `word-to-pdf` | `/docx-to-pdf` | Free | **Mock** | `docx-to-pdf`, `doc-to-pdf` |
+| Word ל-PDF | `word-to-pdf` | `/docx-to-pdf` | Free | **Client real** | `word-to-pdf.ts` (mammoth + jspdf); legacy `.doc` rejected |
 | מנהל PDF | `merge-pdf` | `/merge-pdf` | Free | **Client real** | pdf-lib + pdf.js — merge, reorder, rotate pages. `customComponent: "pdf-manager"` |
 | כלי טקסט | `text-tools` | `/text-tools` | Free | **Client real** | TXT ↔ MD ↔ HTML via `marked` + `turndown`; word/char counts. Custom component |
 
@@ -88,7 +88,7 @@ Routes use Hebrew default (no prefix). Other locales prefix the path: `/en/jpg-t
 
 | Name (HE) | ID | Default route | Premium | Implementation | Notes |
 |-----------|-----|---------------|---------|----------------|-------|
-| יצירת תמונות AI | `ai-image-generator` | `/ai-image-generator` | **Yes** | **Premium UI stub** | `isPremium` hardcoded `false` in component; simulated 3s generation, no real API. Credit packs UI present |
+| יצירת תמונות AI | `ai-image-generator` | `/ai-image-generator` | **Yes** | **API partial** | `POST /api/ai/generate-image`; credits from `useSubscription`; needs Google API key in `/admin/ai` |
 
 ---
 
@@ -210,7 +210,7 @@ Anonymous users: session cookie `tamir_sid` for server-side usage counting.
 
 ### Blog
 
-- 21 Hebrew long-form articles in `src/lib/blog-data.ts`
+- 22 Hebrew long-form articles in `src/lib/blog-data.ts`
 - Each post links to relevant tool slugs
 - Route: `/blog`, `/blog/:slug`
 
@@ -240,7 +240,11 @@ Anonymous users: session cookie `tamir_sid` for server-side usage counting.
 | GET | `/health` | — | **Live** | Server health |
 | POST | `/api/auth/google` | — | **Live** | Google sign-in |
 | GET | `/api/auth/me` | JWT | **Live** | Current user profile |
-| POST | `/api/conversions` | — | **501** | File conversion pipeline (not wired) |
+| POST | `/api/conversions` | optional | **Live** (202) | Enqueue job; audio via ffmpeg; other tools stub passthrough in worker |
+| GET | `/api/conversions/:id` | optional | **Live** | Job status poll |
+| GET | `/api/conversions/:id/file` | optional | **Live** | Download completed output |
+| POST | `/api/ai/generate-image` | JWT | **Live** | AI image gen (env-gated) |
+| GET | `/api/ads/config` | — | **Live** | Public ad zone config (DB + env) |
 | GET | `/api/conversions/health` | — | **Live** | Conversions service ping |
 | GET | `/api/tools/config` | — | **Live** | Public tool enable/featured/sort |
 | GET | `/api/usage/today` | optional | **Live** | Daily usage count |
@@ -264,15 +268,17 @@ Production serves Vite `dist/` + `/api/*` from one Express process (Plesk monoli
 
 ## Quick reference: what actually converts files today?
 
-| Works in browser (real output) | Simulated / API pending |
-|-------------------------------|-------------------------|
-| Image compress | All format-pair converters (image, video, audio, document) |
-| Image resize | Video compress |
-| PDF manager (merge/rotate/reorder) | PNG→ICO, SVG→PNG |
-| Text tools (TXT/MD/HTML) | AI image generator |
-| | Hebrew OCR (WIP) |
+| Works in browser (real output) | Server queue or stub |
+|-------------------------------|----------------------|
+| Image format convert (~42 slugs) | Video convert / compress (stub passthrough) |
+| Image compress / resize | PDF → Word (mock dev / stub server) |
+| SVG→PNG, PNG→ICO | AI image (needs admin Google key) |
+| Word → PDF | Hebrew OCR (WIP, not in catalog) |
+| PDF manager (merge/rotate/reorder) | |
+| Text tools (TXT/MD/HTML) | |
+| | Audio (ffmpeg on server; stub if missing) |
 
-Until `POST /api/conversions` is implemented, production generic tools need `VITE_USE_MOCK_CONVERSION=true` for any UX beyond the 501 error toast — which still does not transform file bytes.
+`POST /api/conversions` enqueues jobs (202). Only **audio** transcodes with ffmpeg today; video/document jobs complete with **passthrough stub** output. Dev mock mode still fakes progress without transforming bytes.
 
 ---
 

@@ -59,6 +59,16 @@ public/            robots.txt, ads.txt, llms.txt, sitemap.xml (generated at buil
 - **Usage limits**: `MAX_DAILY_FREE = 5` in both `backend/src/routes/usage.routes.ts` and `src/hooks/useUsage.ts` — keep in sync.
 - **Premium flag**: `useSubscription()` → `setPremiumUser()` in `src/lib/ads/adsterra.ts` so ad components hide for subscribers.
 
+### UI/UX
+
+When doing design, UI, UX, visual polish, layout, or styling work, **always** read and follow [`.cursor/skills/ui-ux-pro-max/SKILL.md`](.cursor/skills/ui-ux-pro-max/SKILL.md).
+
+1. Run the design-system generator first (from repo root):
+
+   `python .cursor/skills/ui-ux-pro-max/scripts/search.py "<query>" --design-system -p "tamir.li"`
+
+2. Stack for this project: React + shadcn/ui + Tailwind — use `--stack shadcn` for component patterns or `--stack html-tailwind` for markup/CSS as appropriate.
+
 ## Product pillars (agent checklist)
 
 ### SEO

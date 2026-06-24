@@ -1,7 +1,7 @@
 # tamir.li — Production readiness audit
 
-**Date:** 2026-06-22  
-**Verdict:** The codebase is a **real full-stack app** (Express + Prisma + MySQL + Google OAuth + PayPal). **Production today is static-first:** the SPA is live, but `/api/*` and `/health` never reach Node — they return `index.html`.
+**Date:** 2026-06-22 (probes refreshed **2026-06-24**)  
+**Verdict:** The codebase is a **real full-stack app** (Express + Prisma + MySQL + Google OAuth + PayPal). **As of 2026-06-24**, the Node monolith is reachable: `GET https://tamir.li/health` returns JSON (`db.ok`, `migrations.state: success`); `GET /api/usage/today` returns JSON. The **2026-06-22** static-layer issue (SPA HTML for `/api/*`) appears **fixed** — re-verify after each deploy with `npm run site:check:prod`.
 
 ---
 

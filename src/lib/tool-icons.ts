@@ -1,38 +1,73 @@
-import type { ToolCategory } from "@/lib/tools-data";
-
-export type ToolIconMeta = {
+/** Pastel card styles extracted from freepdfconvert.com product-family grid. */
+export type ToolIconStyle = {
   icon: string;
-  /** Pastel card background — FPC-style tinted tiles */
-  cardClass: string;
+  bg: string;
+  border: string;
 };
 
-const ICON = (file: string) => `/icons/tools/${file}`;
+const ICON_BASE = "/icons/tools";
 
-/** Per-tool icon + card tint (icons from public/icons/tools/). */
-export const TOOL_ICON_MAP: Record<string, ToolIconMeta> = {
-  "image-converter": { icon: ICON("pdf-to-png.svg"), cardClass: "bg-violet-50 dark:bg-violet-950/25" },
-  "image-compressor": { icon: ICON("pdf-compress.svg"), cardClass: "bg-rose-50 dark:bg-rose-950/25" },
-  "image-resizer": { icon: ICON("file-tiff.svg"), cardClass: "bg-fuchsia-50 dark:bg-fuchsia-950/25" },
-  "png-to-ico": { icon: ICON("pdf-to-png.svg"), cardClass: "bg-purple-50 dark:bg-purple-950/25" },
-  "svg-to-png": { icon: ICON("pdf-to-png.svg"), cardClass: "bg-indigo-50 dark:bg-indigo-950/25" },
-  "video-converter": { icon: ICON("pdf-converter.svg"), cardClass: "bg-red-50 dark:bg-red-950/25" },
-  "video-compressor": { icon: ICON("pdf-compress.svg"), cardClass: "bg-orange-50 dark:bg-orange-950/25" },
-  "audio-converter": { icon: ICON("dots.svg"), cardClass: "bg-sky-50 dark:bg-sky-950/25" },
-  "pdf-to-word": { icon: ICON("pdf-to-word.svg"), cardClass: "bg-blue-50 dark:bg-blue-950/25" },
-  "word-to-pdf": { icon: ICON("word-to-pdf.svg"), cardClass: "bg-blue-50 dark:bg-blue-950/25" },
-  "merge-pdf": { icon: ICON("pdf-merge.svg"), cardClass: "bg-amber-50 dark:bg-amber-950/25" },
-  "text-tools": { icon: ICON("file-docx.svg"), cardClass: "bg-slate-50 dark:bg-slate-900/40" },
-  "ai-image-generator": { icon: ICON("extract-pdf-images.svg"), cardClass: "bg-yellow-50 dark:bg-yellow-950/25" },
+/** Style groups keyed by icon slug (filename without .svg). */
+const STYLE_BY_ICON: Record<string, Omit<ToolIconStyle, "icon">> = {
+  "word-to-pdf": { bg: "#f2f9fe", border: "#d7e3ec" },
+  "pdf-to-word": { bg: "#f2f9fe", border: "#d7e3ec" },
+  "file-docx": { bg: "#f2f9fe", border: "#d7e3ec" },
+  "excel-to-pdf": { bg: "#f9fefb", border: "#d9efe2" },
+  "pdf-to-excel": { bg: "#f9fefb", border: "#d9efe2" },
+  "file-xlsx": { bg: "#f9fefb", border: "#d9efe2" },
+  "powerpoint-to-pdf": { bg: "#fffcfa", border: "#f0e3db" },
+  "pdf-to-powerpoint": { bg: "#fffcfa", border: "#f0e3db" },
+  "file-pptx": { bg: "#fffcfa", border: "#f0e3db" },
+  "jpg-to-pdf": { bg: "#fdf8ff", border: "#eee2f3" },
+  "pdf-to-jpg": { bg: "#fdf8ff", border: "#eee2f3" },
+  "pdf-to-png": { bg: "#fdf8ff", border: "#eee2f3" },
+  "extract-pdf-images": { bg: "#fdf8ff", border: "#eee2f3" },
+  "file-tiff": { bg: "#fdf8ff", border: "#eee2f3" },
+  "openoffice-to-pdf": { bg: "#f8fcff", border: "#d9e6ee" },
+  "autocad-to-pdf": { bg: "#fff5f8", border: "#f4e4e9" },
+  "ebook-to-pdf": { bg: "#fffdfa", border: "#f3efeb" },
+  "iworks-to-pdf": { bg: "#f7f9fb", border: "#e9edf1" },
+  "pdf-merge": { bg: "#fffcf9", border: "#f3efeb" },
+  "pdf-split": { bg: "#fffcf9", border: "#f3efeb" },
+  "pdf-protect": { bg: "#fafffe", border: "#daeae7" },
+  "unlock-pdf": { bg: "#fafffe", border: "#daeae7" },
+  "pdf-redact": { bg: "#fafffe", border: "#daeae7" },
+  "pdf-converter": { bg: "#faf6f6", border: "#f7ecec" },
+  "pdf-compress": { bg: "#faf6f6", border: "#f7ecec" },
+  "pdf-delete-pages": { bg: "#faf6f6", border: "#f7ecec" },
+  "rotate-pdf": { bg: "#faf6f6", border: "#f7ecec" },
+  "repair-pdf": { bg: "#faf6f6", border: "#f7ecec" },
+  "pdf-flatten": { bg: "#faf6f6", border: "#f7ecec" },
+  "pdf-print": { bg: "#faf6f6", border: "#f7ecec" },
+  "pdf-to-pdfa": { bg: "#f7fcff", border: "#d3dfe7" },
+  "file-pdf": { bg: "#faf6f6", border: "#f7ecec" },
+  dots: { bg: "#f7f9fb", border: "#e9edf1" },
 };
 
-const CATEGORY_FALLBACK: Record<ToolCategory, ToolIconMeta> = {
-  image: { icon: ICON("file-tiff.svg"), cardClass: "bg-violet-50 dark:bg-violet-950/25" },
-  video: { icon: ICON("pdf-converter.svg"), cardClass: "bg-red-50 dark:bg-red-950/25" },
-  audio: { icon: ICON("dots.svg"), cardClass: "bg-sky-50 dark:bg-sky-950/25" },
-  document: { icon: ICON("file-pdf.svg"), cardClass: "bg-blue-50 dark:bg-blue-950/25" },
-  ai: { icon: ICON("dots.svg"), cardClass: "bg-yellow-50 dark:bg-yellow-950/25" },
+const DEFAULT_STYLE = STYLE_BY_ICON["pdf-converter"];
+
+/** Maps each tool id in tools-data.ts to the best matching extracted icon. */
+const TOOL_ICON_SLUG: Record<string, string> = {
+  "image-converter": "pdf-converter",
+  "image-compressor": "pdf-compress",
+  "image-resizer": "rotate-pdf",
+  "png-to-ico": "jpg-to-pdf",
+  "svg-to-png": "pdf-to-png",
+  "video-converter": "pdf-converter",
+  "video-compressor": "pdf-compress",
+  "audio-converter": "pdf-converter",
+  "pdf-to-word": "pdf-to-word",
+  "word-to-pdf": "word-to-pdf",
+  "merge-pdf": "pdf-merge",
+  "text-tools": "file-docx",
+  "ai-image-generator": "extract-pdf-images",
 };
 
-export function getToolIconMeta(toolId: string, category: ToolCategory): ToolIconMeta {
-  return TOOL_ICON_MAP[toolId] ?? CATEGORY_FALLBACK[category];
+export function getToolIconStyle(toolId: string): ToolIconStyle {
+  const slug = TOOL_ICON_SLUG[toolId] ?? "dots";
+  const style = STYLE_BY_ICON[slug] ?? DEFAULT_STYLE;
+  return {
+    icon: `${ICON_BASE}/${slug}.svg`,
+    ...style,
+  };
 }
