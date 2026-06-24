@@ -89,13 +89,48 @@ export async function pingAdSettingsTable(): Promise<{ ok: true } | { ok: false;
   }
 }
 
+/** Emergency DDL when migrate deploy is blocked — matches 20260624120000 + updatedAt default. */
+const AD_SETTINGS_CREATE_TABLE_SQL = `
+CREATE TABLE IF NOT EXISTS \`AdSettings\` (
+    \`id\` VARCHAR(191) NOT NULL DEFAULT 'default',
+    \`zoneBanner\` VARCHAR(64) NULL,
+    \`zoneSidebar\` VARCHAR(64) NULL,
+    \`zoneSidebar2\` VARCHAR(64) NULL,
+    \`zoneInline\` VARCHAR(64) NULL,
+    \`popunderScriptUrl\` VARCHAR(512) NULL,
+    \`nativeScriptUrl\` VARCHAR(512) NULL,
+    \`nativeContainerId\` VARCHAR(128) NULL,
+    \`invokeHost\` VARCHAR(128) NULL DEFAULT 'www.highperformanceformat.com',
+    \`updatedAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+    PRIMARY KEY (\`id\`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+`.trim();
+
+/** Last-resort table creation when migrations are pending (P2021). */
+export async function ensureAdSettingsTableFromSql(): Promise<void> {
+  await prisma.$executeRawUnsafe(AD_SETTINGS_CREATE_TABLE_SQL);
+}
+
 /** Ensure the singleton row exists; safe to call on every read. */
 export async function ensureAdSettings(): Promise<AdSettings> {
-  return prisma.adSettings.upsert({
-    where: { id: AD_SETTINGS_ID },
-    create: { id: AD_SETTINGS_ID },
-    update: {},
-  });
+  try {
+    return await prisma.adSettings.upsert({
+      where: { id: AD_SETTINGS_ID },
+      create: { id: AD_SETTINGS_ID },
+      update: {},
+    });
+  } catch (err) {
+    if (!isAdSettingsTableMissing(err)) {
+      throw err;
+    }
+    console.warn('[ad-settings] AdSettings table missing — applying emergency CREATE TABLE IF NOT EXISTS');
+    await ensureAdSettingsTableFromSql();
+    return prisma.adSettings.upsert({
+      where: { id: AD_SETTINGS_ID },
+      create: { id: AD_SETTINGS_ID },
+      update: {},
+    });
+  }
 }
 
 function trimOrNull(value: unknown): string | null | undefined {
@@ -151,9 +186,22 @@ export function adSettingsErrorMessage(e: unknown, action: 'load' | 'save'): str
 
 /** Persist patch fields on the singleton row (create if missing). */
 export async function saveAdSettings(data: Partial<AdSettingsPayload>): Promise<AdSettings> {
-  return prisma.adSettings.upsert({
-    where: { id: AD_SETTINGS_ID },
-    create: { id: AD_SETTINGS_ID, ...data },
-    update: data,
-  });
+  try {
+    return await prisma.adSettings.upsert({
+      where: { id: AD_SETTINGS_ID },
+      create: { id: AD_SETTINGS_ID, ...data },
+      update: data,
+    });
+  } catch (err) {
+    if (!isAdSettingsTableMissing(err)) {
+      throw err;
+    }
+    console.warn('[ad-settings] AdSettings table missing on save — applying emergency CREATE TABLE IF NOT EXISTS');
+    await ensureAdSettingsTableFromSql();
+    return prisma.adSettings.upsert({
+      where: { id: AD_SETTINGS_ID },
+      create: { id: AD_SETTINGS_ID, ...data },
+      update: data,
+    });
+  }
 }

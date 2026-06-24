@@ -86,6 +86,8 @@ jobs:
           test -f plesk-upload/deploy/package.json
           test -f plesk-upload/deploy/app.js
           test -f plesk-upload/deploy/backend/dist/index.js
+          grep -q getRecoverableP3018Migration plesk-upload/deploy/backend/dist/lib/startup-migrate.js
+          grep -q proactivelyResolveExistingTables plesk-upload/deploy/backend/dist/lib/startup-migrate.js
           test -f plesk-upload/deploy/scripts/plesk-db.mjs
           test -f plesk-upload/deploy/dist/sitemap.xml
           test -f plesk-upload/sitemap.xml
