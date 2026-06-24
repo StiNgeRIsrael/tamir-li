@@ -1,10 +1,25 @@
 import { Router, Request, Response } from 'express';
-import { PaymentStatus, Prisma, RoleType, SubscriptionStatus } from '@prisma/client';
+import {
+  PaymentStatus,
+  Prisma,
+  RoleType,
+  SubscriptionPlan,
+  SubscriptionStatus,
+} from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { requireAuth } from '../middleware/auth.middleware';
 import { requireRoles } from '../middleware/admin.middleware';
 import { KNOWN_TOOL_IDS, TOOL_CATALOG_META, type KnownToolId } from '../data/tool-catalog';
-import { isActivePremium, SUBSCRIPTION_MRR_AGOROT } from '../lib/billing-shared';
+import {
+  grantInitialPremiumCredits,
+  isActivePremium,
+  SUBSCRIPTION_MRR_AGOROT,
+} from '../lib/billing-shared';
+import {
+  computePremiumPeriodEnd,
+  parseGrantCreditsAmount,
+  parsePremiumGrantDuration,
+} from '../lib/admin-grant';
 import {
   ensureAdSettings,
   parseAdSettingsPatch,
@@ -154,6 +169,7 @@ router.get('/users', async (req: Request, res: Response) => {
         include: {
           profile: true,
           roles: true,
+          aiCredits: { select: { balance: true } },
           subscription: {
             select: {
               status: true,
@@ -179,6 +195,7 @@ router.get('/users', async (req: Request, res: Response) => {
         locale: u.profile?.locale ?? 'he',
         roles: u.roles.map((r) => r.role),
         createdAt: u.createdAt,
+        aiCreditsBalance: u.aiCredits?.balance ?? 0,
         subscription: u.subscription
           ? {
               status: u.subscription.status,
@@ -294,6 +311,115 @@ router.patch('/users/:id', async (req: Request, res: Response) => {
   } catch (e) {
     console.error('[admin/users patch]', e);
     res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not update user' });
+  }
+});
+
+router.patch('/users/:id/grant-premium', async (req: Request, res: Response) => {
+  try {
+    const rawId = req.params.id;
+    const targetId = typeof rawId === 'string' ? rawId : rawId?.[0];
+    if (!targetId) {
+      res.status(400).json({ error: 'INVALID_PARAMS', message: 'Missing user id' });
+      return;
+    }
+
+    const body = req.body as { duration?: unknown; plan?: unknown };
+    const duration = parsePremiumGrantDuration(body.duration);
+    if (!duration) {
+      res.status(400).json({
+        error: 'INVALID_BODY',
+        message: 'duration must be one of: 30d, 90d, 1y, lifetime',
+      });
+      return;
+    }
+
+    let plan: SubscriptionPlan = SubscriptionPlan.MONTHLY;
+    if (body.plan !== undefined) {
+      if (body.plan !== SubscriptionPlan.MONTHLY && body.plan !== SubscriptionPlan.YEARLY) {
+        res.status(400).json({ error: 'INVALID_BODY', message: 'plan must be MONTHLY or YEARLY' });
+        return;
+      }
+      plan = body.plan;
+    }
+
+    const target = await prisma.user.findUnique({ where: { id: targetId } });
+    if (!target) {
+      res.status(404).json({ error: 'NOT_FOUND', message: 'User not found' });
+      return;
+    }
+
+    const now = new Date();
+    const periodEnd = computePremiumPeriodEnd(duration, now);
+
+    const sub = await prisma.subscription.upsert({
+      where: { userId: targetId },
+      create: {
+        userId: targetId,
+        plan,
+        status: SubscriptionStatus.ACTIVE,
+        currentPeriodStart: now,
+        currentPeriodEnd: periodEnd,
+        cancelAtPeriodEnd: false,
+      },
+      update: {
+        plan,
+        status: SubscriptionStatus.ACTIVE,
+        currentPeriodStart: now,
+        currentPeriodEnd: periodEnd,
+        cancelAtPeriodEnd: false,
+      },
+    });
+
+    await grantInitialPremiumCredits(targetId);
+
+    res.json({
+      subscription: {
+        status: sub.status,
+        plan: sub.plan,
+        isPremium: isActivePremium(sub.status, sub.currentPeriodEnd),
+        currentPeriodEnd: sub.currentPeriodEnd,
+      },
+    });
+  } catch (e) {
+    console.error('[admin/users grant-premium]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not grant premium' });
+  }
+});
+
+router.patch('/users/:id/grant-credits', async (req: Request, res: Response) => {
+  try {
+    const rawId = req.params.id;
+    const targetId = typeof rawId === 'string' ? rawId : rawId?.[0];
+    if (!targetId) {
+      res.status(400).json({ error: 'INVALID_PARAMS', message: 'Missing user id' });
+      return;
+    }
+
+    const credits = parseGrantCreditsAmount((req.body as { credits?: unknown })?.credits);
+    if (credits === null) {
+      res.status(400).json({
+        error: 'INVALID_BODY',
+        message: 'credits must be an integer from 1 to 500',
+      });
+      return;
+    }
+
+    const target = await prisma.user.findUnique({ where: { id: targetId } });
+    if (!target) {
+      res.status(404).json({ error: 'NOT_FOUND', message: 'User not found' });
+      return;
+    }
+
+    const row = await prisma.aiCredit.upsert({
+      where: { userId: targetId },
+      create: { userId: targetId, balance: credits },
+      update: { balance: { increment: credits } },
+    });
+
+    res.json({ aiCredits: { balance: row.balance } });
+  } catch (e) {
+    console.error('[admin/users grant-credits]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not grant credits' });
   }
 });
 

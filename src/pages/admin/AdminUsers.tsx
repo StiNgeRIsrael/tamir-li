@@ -25,9 +25,24 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, MoreHorizontal } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type Role = "ADMIN" | "MODERATOR" | "USER";
+
+type PremiumDuration = "30d" | "90d" | "1y" | "lifetime";
 
 type AdminUserRow = {
   id: string;
@@ -36,6 +51,7 @@ type AdminUserRow = {
   displayName: string | null;
   roles: Role[];
   createdAt: string;
+  aiCreditsBalance: number;
   subscription: {
     status: string;
     plan: string;
@@ -54,6 +70,10 @@ export default function AdminUsers() {
   const [searchDebounced, setSearchDebounced] = useState("");
   const [rolesDialog, setRolesDialog] = useState<AdminUserRow | null>(null);
   const [draftRoles, setDraftRoles] = useState<Role[]>([]);
+  const [premiumDialog, setPremiumDialog] = useState<AdminUserRow | null>(null);
+  const [premiumDuration, setPremiumDuration] = useState<PremiumDuration>("30d");
+  const [creditsDialog, setCreditsDialog] = useState<AdminUserRow | null>(null);
+  const [creditsAmount, setCreditsAmount] = useState("10");
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users", token, page, searchDebounced],
@@ -65,6 +85,36 @@ export default function AdminUsers() {
         users: AdminUserRow[];
       }>(`/api/admin/users?page=${page}&search=${encodeURIComponent(searchDebounced)}`, token),
     enabled: !!token,
+  });
+
+  const grantPremiumMutation = useMutation({
+    mutationFn: async ({ id, duration }: { id: string; duration: PremiumDuration }) => {
+      await adminFetch(`/api/admin/users/${id}/grant-premium`, token, {
+        method: "PATCH",
+        body: JSON.stringify({ duration }),
+      });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+      toast.success(admin.grantPremiumSuccess ?? "Premium granted");
+      setPremiumDialog(null);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const grantCreditsMutation = useMutation({
+    mutationFn: async ({ id, credits }: { id: string; credits: number }) => {
+      await adminFetch(`/api/admin/users/${id}/grant-credits`, token, {
+        method: "PATCH",
+        body: JSON.stringify({ credits }),
+      });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+      toast.success(admin.grantCreditsSuccess ?? "Credits granted");
+      setCreditsDialog(null);
+    },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   const patchMutation = useMutation({
@@ -106,6 +156,31 @@ export default function AdminUsers() {
       if (checked) return prev.includes(role) ? prev : [...prev, role];
       return prev.filter((r) => r !== role);
     });
+  };
+
+  const saveCredits = () => {
+    if (!creditsDialog) return;
+    const credits = Number.parseInt(creditsAmount, 10);
+    if (!Number.isInteger(credits) || credits < 1 || credits > 500) {
+      toast.error(admin.grantCreditsInvalid ?? "Enter a valid amount (1–500)");
+      return;
+    }
+    grantCreditsMutation.mutate({ id: creditsDialog.id, credits });
+  };
+
+  const savePremium = () => {
+    if (!premiumDialog) return;
+    grantPremiumMutation.mutate({ id: premiumDialog.id, duration: premiumDuration });
+  };
+
+  const openPremium = (u: AdminUserRow) => {
+    setPremiumDialog(u);
+    setPremiumDuration("30d");
+  };
+
+  const openCredits = (u: AdminUserRow) => {
+    setCreditsDialog(u);
+    setCreditsAmount("10");
   };
 
   if (isLoading && !data) {
@@ -163,6 +238,10 @@ export default function AdminUsers() {
                   ) : (
                     <span className="text-xs text-muted-foreground">—</span>
                   )}
+                  <div className="text-[10px] text-muted-foreground mt-0.5">
+                    {admin.colCreditsBalance?.replace("{n}", String(u.aiCreditsBalance)) ??
+                      `AI: ${u.aiCreditsBalance}`}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
@@ -185,9 +264,25 @@ export default function AdminUsers() {
                   </div>
                 </TableCell>
                 <TableCell className="text-end">
-                  <Button variant="outline" size="sm" onClick={() => openRoles(u)}>
-                    {admin.editRoles ?? "Roles"}
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <MoreHorizontal className="h-4 w-4" />
+                        <span className="sr-only">{admin.moreActions ?? "More"}</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => openRoles(u)}>
+                        {admin.editRoles ?? "Roles"}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => openPremium(u)}>
+                        {admin.grantPremium ?? "Grant Premium"}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => openCredits(u)}>
+                        {admin.grantCredits ?? "Grant Credits"}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
@@ -235,6 +330,77 @@ export default function AdminUsers() {
               {admin.cancel ?? "Cancel"}
             </Button>
             <Button onClick={saveRoles}>{admin.save ?? "Save"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!premiumDialog} onOpenChange={(o) => !o && setPremiumDialog(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{admin.grantPremiumTitle ?? "Grant premium access"}</DialogTitle>
+          </DialogHeader>
+          {premiumDialog && (
+            <p className="text-sm text-muted-foreground">{premiumDialog.email}</p>
+          )}
+          <div className="space-y-2 py-2">
+            <Label htmlFor="grant-duration">{admin.grantDuration ?? "Duration"}</Label>
+            <Select
+              value={premiumDuration}
+              onValueChange={(v) => setPremiumDuration(v as PremiumDuration)}
+            >
+              <SelectTrigger id="grant-duration">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="30d">{admin.grantDuration30d ?? "30 days"}</SelectItem>
+                <SelectItem value="90d">{admin.grantDuration90d ?? "90 days"}</SelectItem>
+                <SelectItem value="1y">{admin.grantDuration1y ?? "1 year"}</SelectItem>
+                <SelectItem value="lifetime">
+                  {admin.grantDurationLifetime ?? "Lifetime"}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPremiumDialog(null)}>
+              {admin.cancel ?? "Cancel"}
+            </Button>
+            <Button onClick={savePremium} disabled={grantPremiumMutation.isPending}>
+              {admin.grantConfirm ?? "Grant"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!creditsDialog} onOpenChange={(o) => !o && setCreditsDialog(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{admin.grantCreditsTitle ?? "Grant AI credits"}</DialogTitle>
+          </DialogHeader>
+          {creditsDialog && (
+            <p className="text-sm text-muted-foreground">{creditsDialog.email}</p>
+          )}
+          <div className="space-y-2 py-2">
+            <Label htmlFor="grant-credits">{admin.grantCreditsAmount ?? "Credits to add"}</Label>
+            <Input
+              id="grant-credits"
+              type="number"
+              min={1}
+              max={500}
+              value={creditsAmount}
+              onChange={(e) => setCreditsAmount(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              {admin.grantCreditsHint ?? "Added to the user's AI credit balance"}
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreditsDialog(null)}>
+              {admin.cancel ?? "Cancel"}
+            </Button>
+            <Button onClick={saveCredits} disabled={grantCreditsMutation.isPending}>
+              {admin.grantConfirm ?? "Grant"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
