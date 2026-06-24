@@ -46,7 +46,8 @@ export function FileDropZone({
         onRejected?.(item.reason, item.fileName);
       }
       if (accepted.length > 0) {
-        onFilesSelected(accepted.slice(0, effectiveMaxFiles - existingFileCount));
+        const slotLimit = isPremium ? accepted.length : effectiveMaxFiles - existingFileCount;
+        onFilesSelected(accepted.slice(0, Math.max(0, slotLimit)));
       }
     },
     [effectiveMaxFiles, existingFileCount, isPremium, onFilesSelected, onRejected]

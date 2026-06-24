@@ -16,7 +16,7 @@ describe("freemium-limits", () => {
     expect(maxFileSizeMb(false)).toBe(50);
     expect(maxFileSizeMb(true)).toBe(200);
     expect(maxBatchFiles(false)).toBe(1);
-    expect(maxBatchFiles(true)).toBe(10);
+    expect(maxBatchFiles(true)).toBeGreaterThan(1000);
   });
 
   it("rejects oversized files on free tier", () => {

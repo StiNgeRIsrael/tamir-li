@@ -1,7 +1,8 @@
 export const MAX_FILE_SIZE_MB_FREE = 50;
 export const MAX_FILE_SIZE_MB_PREMIUM = 200;
 export const MAX_BATCH_FILES_FREE = 1;
-export const MAX_BATCH_FILES_PREMIUM = 10;
+/** Practical upper bound for UI file-picker batching; premium has no enforced cap. */
+export const MAX_BATCH_FILES_PREMIUM = Number.MAX_SAFE_INTEGER;
 
 export const MAX_FILE_BYTES_FREE = MAX_FILE_SIZE_MB_FREE * 1024 * 1024;
 export const MAX_FILE_BYTES_PREMIUM = MAX_FILE_SIZE_MB_PREMIUM * 1024 * 1024;
