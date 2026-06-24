@@ -93,7 +93,31 @@ Local dev: copy the same keys into `backend/.env` (see `backend/.env.example`). 
 | `PAYPAL_PLAN_YEARLY` | `P-...` | **₪191.04/year** ILS — `Tamir.li Premium — Yearly` |
 | `PAYPAL_WEBHOOK_ID` | `WH-...` | Webhook URL: `https://<your-tunnel-or-staging>/api/billing/paypal/webhook` |
 
-Create plans via PayPal Dashboard or PayPal MCP (see [paypal-mcp-setup.md §9](./paypal-mcp-setup.md#9-sandbox-plan-creation-after-oauth)).
+Create plans via PayPal Dashboard or PayPal MCP (see [paypal-mcp-setup.md §9](./paypal-mcp-setup.md#9-production-plan-creation-after-oauth)).
+
+### Live production env worksheet (paste into Plesk — do not commit secrets)
+
+After PayPal MCP OAuth (production) or manual Dashboard setup, paste **live** values into Plesk → Node.js → Custom environment variables (`httpdocs/deploy`):
+
+| Variable | Live value (paste from PayPal) | Notes |
+|----------|-------------------------------|-------|
+| `PAYPAL_CLIENT_ID` | | REST app → **Live** → Client ID |
+| `PAYPAL_CLIENT_SECRET` | | Show once in dashboard — **never** in `VITE_*` or git |
+| `PAYPAL_MODE` | `live` | |
+| `PAYPAL_PLAN_MONTHLY` | `P-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` | **₪19.90/month** ILS — `Tamir.li Premium — Monthly` |
+| `PAYPAL_PLAN_YEARLY` | `P-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` | **₪191.04/year** ILS — `Tamir.li Premium — Yearly` |
+| `PAYPAL_WEBHOOK_ID` | `WH-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` | Webhook URL: `https://tamir.li/api/billing/paypal/webhook` |
+| `CORS_ORIGIN` | `https://tamir.li` | First origin = PayPal return/cancel URLs |
+
+**Frontend build** (GitHub Actions or local `npm run build` — baked at build time):
+
+| Variable | Live value |
+|----------|------------|
+| `VITE_API_URL` | `https://tamir.li` |
+| `VITE_SITE_ORIGIN` | `https://tamir.li` |
+| `VITE_PAYPAL_CLIENT_ID` | Same as `PAYPAL_CLIENT_ID` (optional today) |
+
+Replace `P-XXXXXXXX...` / `WH-XXXXXXXX...` with real IDs from MCP agent output or PayPal Dashboard → Subscriptions / Webhooks. Plan IDs are config (not secrets); client secret must stay server-only.
 
 ## 5. API flow
 
