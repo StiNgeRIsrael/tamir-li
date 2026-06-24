@@ -58,6 +58,10 @@ jobs:
           npm run build
           test -f dist/sitemap.xml
           test -f dist/robots.txt
+          test -f dist/icons/tools/pdf-to-png.svg
+          ICON_COUNT=$(find dist/icons/tools -maxdepth 1 -name '*.svg' | wc -l | tr -d ' ')
+          echo "dist/icons/tools: ${ICON_COUNT} SVG files"
+          test "$ICON_COUNT" -ge 30
           SITEMAP_BYTES=$(wc -c < dist/sitemap.xml | tr -d ' ')
           echo "dist/sitemap.xml: ${SITEMAP_BYTES} bytes"
           test "$SITEMAP_BYTES" -gt 100000
@@ -90,6 +94,7 @@ jobs:
           grep -q proactivelyResolveExistingTables plesk-upload/deploy/backend/dist/lib/startup-migrate.js
           test -f plesk-upload/deploy/scripts/plesk-db.mjs
           test -f plesk-upload/deploy/dist/sitemap.xml
+          test -f plesk-upload/deploy/dist/icons/tools/pdf-to-png.svg
           test -f plesk-upload/sitemap.xml
           SITEMAP_BYTES=$(wc -c < plesk-upload/sitemap.xml | tr -d ' ')
           echo "plesk-upload/sitemap.xml: ${SITEMAP_BYTES} bytes"
@@ -188,6 +193,10 @@ jobs:
               echo "Removing legacy httpdocs/dist/ (old full static deploy)..."
               rm -rf "$HTTPDOCS/dist"
             fi
+            if [ -d "$HTTPDOCS/icons" ]; then
+              echo "Removing legacy httpdocs/icons/ (Apache serves /icons/* before Node — blocks deploy/dist/icons)..."
+              rm -rf "$HTTPDOCS/icons"
+            fi
             for legacy in registerSW.js sw.js workbox-*.js manifest.webmanifest; do
               rm -f "$HTTPDOCS/$legacy" 2>/dev/null || true
             done
@@ -198,8 +207,8 @@ jobs:
               rm -f "$APP_DIR/dist/.htaccess"
             fi
 
-            echo "Deploy layout (expected: app.js + dist/index.html + backend/dist/index.js):"
-            for f in app.js dist/index.html backend/dist/index.js; do
+            echo "Deploy layout (expected: app.js + dist/index.html + backend/dist/index.js + tool icons):"
+            for f in app.js dist/index.html backend/dist/index.js dist/icons/tools/pdf-to-png.svg; do
               if [ ! -f "$f" ]; then
                 echo "::error:: Missing $f in $APP_DIR"
                 ls -la "$(dirname "$f")" 2>/dev/null || true
@@ -226,3 +235,15 @@ jobs:
           if grep -q '"adSettingsTable"[[:space:]]*:[[:space:]]*{[^}]*"ok"[[:space:]]*:[[:space:]]*false' /tmp/health-body; then
             echo "::warning:: GET /health reports adSettingsTable.ok=false — check Plesk logs for [startup-migrate] and /health migrations.state (restart applies pending migrations)."
           fi
+          ICON_CT=$(curl -sS -o /tmp/icon-body -w '%{content_type}' https://tamir.li/icons/tools/pdf-to-png.svg || echo "failed")
+          if echo "$ICON_CT" | grep -qi 'text/html'; then
+            echo "::error:: GET /icons/tools/pdf-to-png.svg returned HTML (expected image/svg+xml). Legacy httpdocs/icons/ may still intercept — see deploy SSH cleanup."
+            head -c 200 /tmp/icon-body || true
+            exit 1
+          fi
+          if ! echo "$ICON_CT" | grep -qi 'image/svg'; then
+            echo "::error:: GET /icons/tools/pdf-to-png.svg content-type: $ICON_CT (expected image/svg+xml)"
+            head -c 200 /tmp/icon-body || true
+            exit 1
+          fi
+          echo "/icons/tools/pdf-to-png.svg content-type: $ICON_CT"
