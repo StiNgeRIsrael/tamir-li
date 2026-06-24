@@ -59,7 +59,18 @@ app.use(
   })
 );
 // same-origin-allow-popups: required for Google Identity Services popup postMessage
-app.use(helmet({ crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' } }));
+// blob: in img-src — client tools preview via URL.createObjectURL (compressor/resizer)
+app.use(
+  helmet({
+    crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        'img-src': ["'self'", 'data:', 'blob:', 'https:'],
+      },
+    },
+  })
+);
 app.use(morgan('dev'));
 
 // Routes

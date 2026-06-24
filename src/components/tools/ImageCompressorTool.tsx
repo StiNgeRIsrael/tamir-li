@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { FileDropZone } from "@/components/FileDropZone";
@@ -24,6 +24,41 @@ function getSavingsPercent(original: number, compressed: number) {
   return Math.round((1 - compressed / original) * 100);
 }
 
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === "string") resolve(result);
+      else reject(new Error("PREVIEW_READ_FAILED"));
+    };
+    reader.onerror = () => reject(reader.error ?? new Error("PREVIEW_READ_FAILED"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === "string") resolve(result);
+      else reject(new Error("RESULT_READ_FAILED"));
+    };
+    reader.onerror = () => reject(reader.error ?? new Error("RESULT_READ_FAILED"));
+    reader.readAsDataURL(blob);
+  });
+}
+
+function loadImageFromDataUrl(dataUrl: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("IMAGE_DECODE_FAILED"));
+    img.src = dataUrl;
+  });
+}
+
 type Props = { freemium?: CustomToolFreemiumProps };
 
 export function ImageCompressorTool({ freemium }: Props) {
@@ -35,49 +70,86 @@ export function ImageCompressorTool({ freemium }: Props) {
   const [preview, setPreview] = useState("");
   const [quality, setQuality] = useState(75);
   const [processing, setProcessing] = useState(false);
+  const [previewLoading, setPreviewLoading] = useState(false);
   const [resultUrl, setResultUrl] = useState("");
   const [resultSize, setResultSize] = useState(0);
   const [imgDimensions, setImgDimensions] = useState({ w: 0, h: 0 });
   const [downloadGate, setDownloadGate] = useState(false);
+  const sourceImageRef = useRef<HTMLImageElement | null>(null);
 
   const isPremium = freemium?.isPremium ?? false;
   const atUsageLimit = freemium?.atUsageLimit ?? false;
 
   const qualityLabel = quality > 85 ? c.high : quality > 50 ? c.medium : quality > 25 ? c.low : c.minimal;
 
-  const handleFile = useCallback(async (files: File[]) => {
-    const f = files[0]; if (!f) return;
-    setFile(f); setResultUrl(""); setResultSize(0); setDownloadGate(false);
-    const url = URL.createObjectURL(f); setPreview(url);
-    const img = new Image();
-    img.onload = () => setImgDimensions({ w: img.naturalWidth, h: img.naturalHeight });
-    img.src = url;
+  const invalidateResult = useCallback(() => {
+    setResultUrl("");
+    setResultSize(0);
+    setDownloadGate(false);
   }, []);
+
+  const handleFile = useCallback(async (files: File[]) => {
+    const f = files[0];
+    if (!f) return;
+    setFile(f);
+    invalidateResult();
+    setPreview("");
+    setImgDimensions({ w: 0, h: 0 });
+    sourceImageRef.current = null;
+    setPreviewLoading(true);
+
+    try {
+      const dataUrl = await readFileAsDataUrl(f);
+      const img = await loadImageFromDataUrl(dataUrl);
+      sourceImageRef.current = img;
+      setPreview(dataUrl);
+      setImgDimensions({ w: img.naturalWidth, h: img.naturalHeight });
+    } catch {
+      setFile(null);
+      setPreview("");
+      sourceImageRef.current = null;
+    } finally {
+      setPreviewLoading(false);
+    }
+  }, [invalidateResult]);
 
   const handleCompress = useCallback(async () => {
     if (!file || atUsageLimit) return;
+    const img = sourceImageRef.current;
+    if (!img?.naturalWidth || !img.naturalHeight) return;
+
     if (freemium?.toolId) trackCustomToolStart(freemium.toolId);
     setProcessing(true);
-    const img = new Image();
-    img.onload = () => {
+
+    try {
       const canvas = document.createElement("canvas");
-      canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
-      const ctx = canvas.getContext("2d")!; ctx.drawImage(img, 0, 0);
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        setProcessing(false);
+        return;
+      }
+      ctx.drawImage(img, 0, 0);
       const isPng = file.type === "image/png";
       const outputType = isPng && quality > 90 ? "image/png" : "image/jpeg";
-      canvas.toBlob(async (blob) => {
-        if (blob) {
-          setResultUrl(URL.createObjectURL(blob));
-          setResultSize(blob.size);
-          if (freemium) {
-            await onCustomToolSuccess(freemium.isPremium, freemium.recordUsage, freemium.toolId);
-          }
-        }
+      const blob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob((next) => resolve(next), outputType, quality / 100);
+      });
+      if (!blob) {
         setProcessing(false);
-      }, outputType, quality / 100);
-    };
-    img.src = preview;
-  }, [file, preview, quality, atUsageLimit, freemium]);
+        return;
+      }
+      const compressedPreview = await blobToDataUrl(blob);
+      setResultUrl(compressedPreview);
+      setResultSize(blob.size);
+      if (freemium) {
+        await onCustomToolSuccess(freemium.isPremium, freemium.recordUsage, freemium.toolId);
+      }
+    } finally {
+      setProcessing(false);
+    }
+  }, [file, quality, atUsageLimit, freemium]);
 
   const handleDownload = async () => {
     if (!resultUrl || !file) return;
@@ -96,7 +168,13 @@ export function ImageCompressorTool({ freemium }: Props) {
   };
 
   const handleReset = () => {
-    setFile(null); setPreview(""); setResultUrl(""); setResultSize(0); setDownloadGate(false);
+    setFile(null);
+    setPreview("");
+    setResultUrl("");
+    setResultSize(0);
+    setDownloadGate(false);
+    setImgDimensions({ w: 0, h: 0 });
+    sourceImageRef.current = null;
   };
 
   const downloadLabel = isPremium
@@ -104,6 +182,8 @@ export function ImageCompressorTool({ freemium }: Props) {
     : downloadGate
       ? tt.downloadNow
       : tt.watchAdToDownload;
+
+  const displaySrc = resultUrl || preview;
 
   if (!file) {
     return (
@@ -125,8 +205,16 @@ export function ImageCompressorTool({ freemium }: Props) {
       {freemium && !isPremium && <UsageLimitNotice used={freemium.usedToday} max={freemium.maxDaily} />}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="space-y-3">
-          <div className="bg-card border border-border rounded-xl p-3">
-            <img src={resultUrl || preview} alt={c.preview} className="max-h-[350px] w-full object-contain rounded-lg" />
+          <div className="bg-card border border-border rounded-xl p-3 flex items-center justify-center min-h-[200px] max-h-[380px] overflow-hidden">
+            {previewLoading || !displaySrc ? (
+              <Loader2 className="w-6 h-6 animate-spin text-primary" aria-hidden />
+            ) : (
+              <img
+                src={displaySrc}
+                alt={resultUrl ? c.afterCompression : c.preview}
+                className="max-h-[350px] w-full object-contain rounded-lg"
+              />
+            )}
           </div>
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>{imgDimensions.w}×{imgDimensions.h}</span>
@@ -139,7 +227,7 @@ export function ImageCompressorTool({ freemium }: Props) {
               <h3 className="text-sm font-bold text-foreground">{c.qualityLevel}</h3>
               <span className="text-sm font-bold text-primary">{quality}% — {qualityLabel}</span>
             </div>
-            <Slider value={[quality]} onValueChange={([v]) => { setQuality(v); setResultUrl(""); setDownloadGate(false); }} min={10} max={100} step={5} className="w-full" />
+            <Slider value={[quality]} onValueChange={([v]) => { setQuality(v); invalidateResult(); }} min={10} max={100} step={5} className="w-full" />
             <div className="flex justify-between text-[10px] text-muted-foreground">
               <span>{c.smallerFile}</span><span>{c.higherQuality}</span>
             </div>
@@ -148,7 +236,7 @@ export function ImageCompressorTool({ freemium }: Props) {
             <h3 className="text-sm font-bold text-foreground">{c.quickCompress}</h3>
             <div className="grid grid-cols-2 gap-2">
               {((c.presets || []) as { quality: number; label: string; desc: string }[]).map((p) => (
-                <button key={p.quality} onClick={() => { setQuality(p.quality); setResultUrl(""); setDownloadGate(false); }}
+                <button key={p.quality} onClick={() => { setQuality(p.quality); invalidateResult(); }}
                   className={`text-start p-3 rounded-xl border transition-all ${quality === p.quality ? "border-primary bg-primary/10" : "border-border hover:border-primary/30"}`}>
                   <span className={`text-xs font-bold ${quality === p.quality ? "text-primary" : "text-foreground"}`}>{p.label} ({p.quality}%)</span>
                   <p className="text-[10px] text-muted-foreground mt-0.5">{p.desc}</p>
@@ -172,7 +260,7 @@ export function ImageCompressorTool({ freemium }: Props) {
       <div className="flex items-center gap-3">
         <Button variant="outline" onClick={handleReset}><RotateCcw className="w-4 h-4 me-1" />{c.newImage}</Button>
         {!resultUrl ? (
-          <Button onClick={handleCompress} disabled={processing || atUsageLimit} className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold flex-1 sm:flex-none">
+          <Button onClick={handleCompress} disabled={processing || previewLoading || atUsageLimit || !preview} className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold flex-1 sm:flex-none">
             {processing ? <><Loader2 className="w-4 h-4 me-2 animate-spin" />{c.compressing}</> : <><Minimize2 className="w-4 h-4 me-2" />{c.compress(quality)}</>}
           </Button>
         ) : (
