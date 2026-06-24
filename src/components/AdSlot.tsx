@@ -9,7 +9,6 @@ import {
   isAdsterraConfigured,
   triggerPopunderAd,
 } from "@/lib/ads/adsterra";
-import { useAdConfig } from "@/contexts/AdConfigContext";
 import { useAdsConsent } from "@/hooks/useAdsConsent";
 import { useSubscription } from "@/hooks/useSubscription";
 import { showAdVignette } from "@/components/ads/AdVignette";
@@ -19,6 +18,8 @@ interface AdSlotProps {
   className?: string;
   /** Logical placement id for analytics / second-sidebar routing */
   slotId?: string;
+  /** High-intent slots (processing, download) load immediately */
+  eager?: boolean;
 }
 
 type AdLoadStatus = "loading" | "loaded" | "failed";
@@ -60,17 +61,17 @@ function AdFallbackMessage({ label, className }: { label: string; className?: st
   );
 }
 
-export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
+export function AdSlot({ type, className = "", slotId, eager = false }: AdSlotProps) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
-  const { loading: configLoading } = useAdConfig();
   const hasConsent = useAdsConsent();
   const L = layout[type];
   const label = t.adLabel || "Ad";
   const dims = getPlacementLayout(type);
 
   const zoneKey = getAdsterraZoneKey(type, slotId);
-  const clientReady = isAdsterraConfigured() && hasConsent && !isPremium;
+  const adsConfigured = isAdsterraConfigured();
+  const clientReady = adsConfigured && hasConsent && !isPremium;
   const showLiveAd = clientReady && hasAdsterraZone(type, slotId);
   const pendingSlot = clientReady && !hasAdsterraZone(type, slotId);
 
@@ -119,9 +120,9 @@ export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
 
   if (isPremium) return null;
 
-  if (configLoading) return null;
+  if (!hasConsent) return null;
 
-  if (!isAdsterraConfigured()) return null;
+  if (!adsConfigured) return null;
 
   if (!showLiveAd) {
     return (
@@ -177,7 +178,7 @@ export function AdSlot({ type, className = "", slotId }: AdSlotProps) {
         srcDoc={iframeSrcdoc}
         width={dims.width}
         height={dims.height}
-        loading="lazy"
+        loading={eager ? "eager" : "lazy"}
         sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
         className={cn(
           "relative z-10 mx-auto block max-w-full border-0 bg-transparent",

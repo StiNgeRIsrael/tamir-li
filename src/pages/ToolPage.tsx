@@ -39,6 +39,7 @@ import { usesClientDocumentConversion } from "@/lib/document-convert";
 import { convertWordFileToPdf } from "@/lib/word-to-pdf";
 import { isServerUnavailableError } from "@/lib/conversion-errors";
 import { ComingSoonPanel } from "@/components/ComingSoonPanel";
+import { DownloadGateIndicator } from "@/components/ads/DownloadGateIndicator";
 
 const categoryHeaderIcon: Record<ToolCategory, string> = {
   image: "bg-tool-image/10 text-tool-image",
@@ -100,8 +101,9 @@ export default function ToolPage() {
   const [allDownloadGate, setAllDownloadGate] = useState(false);
   const { used: usedToday, max: maxDaily, isPremium: usageIsPremium, atLimit, recordUsage } = useUsage();
   const { isPremium: isSubPremium } = useSubscription();
-  const { startJob: startConversionJob } = useConversionJob();
+  const { startJob: startConversionJob, polling: jobPolling } = useConversionJob();
   const isPremium = isSubPremium || usageIsPremium;
+  const isProcessing = converting || jobPolling;
   const [usageUnlocked, setUsageUnlocked] = useState(false);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
   const [serverUnavailable, setServerUnavailable] = useState(false);
@@ -577,7 +579,7 @@ export default function ToolPage() {
         </div>
       </div>
 
-      <AdSlot type="inline" slotId="tool-sidebar-inline" />
+      <AdSlot type="inline" slotId="tool-sidebar-inline" eager={isProcessing || showSuccessPanel} />
 
       {related.length > 0 && (
         <div className="bg-card border border-border rounded-xl p-5 space-y-3">
@@ -758,7 +760,13 @@ export default function ToolPage() {
                 })}
                 <div className="flex flex-col gap-2 pt-3 sm:flex-row sm:items-center sm:justify-between">
                   <Button variant="outline" onClick={handleReset}>{tt.moreConversion}</Button>
-                  <div className="flex flex-col items-stretch gap-1 sm:items-end">
+                  <div className="flex flex-col items-stretch gap-2 sm:items-end">
+                    {!isPremium && (
+                      <DownloadGateIndicator
+                        step1Done={allDownloadGate}
+                        className="sm:max-w-xs"
+                      />
+                    )}
                     <Button
                       className={allDownloadGate ? "bg-success text-success-foreground hover:bg-success/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}
                       onClick={onDownloadAll}
@@ -766,18 +774,21 @@ export default function ToolPage() {
                       <Download className="w-4 h-4 ml-2" />
                       {isPremium ? tt.downloadAll : allDownloadGate ? tt.downloadAll : tt.watchAdToDownload}
                     </Button>
-                    {!isPremium && (
-                      <p className="text-center text-xs text-muted-foreground sm:hidden">{tt.downloadGateHint}</p>
-                    )}
                   </div>
                 </div>
                 <ConversionSuccessUsage used={usedToday} max={maxDaily} />
-                <AdSlot type="inline" slotId="tool-after-success" className="mt-4" />
+                {!isPremium && (
+                  <AdSlot type="inline" slotId="tool-download-area" className="mt-2" eager />
+                )}
+                <AdSlot type="inline" slotId="tool-after-success" className="mt-4" eager />
               </div>
             ) : converted ? (
-              <div className="py-12 text-center text-sm text-muted-foreground">
-                <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin text-primary" />
-                {tt.preparingDownload ?? tt.convertingWait}
+              <div className="space-y-4 py-8 text-center">
+                <Loader2 className="mx-auto h-6 w-6 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground">{tt.preparingDownload ?? tt.convertingWait}</p>
+                {!isPremium && (
+                  <AdSlot type="inline" slotId="tool-preparing-inline" className="mx-auto max-w-lg" eager />
+                )}
               </div>
             ) : (
               <div className="space-y-5">
@@ -921,10 +932,22 @@ export default function ToolPage() {
                         </Button>
                       </div>
                     )}
-                    {converting && (
-                      <div className="py-2 text-center text-sm text-muted-foreground">
-                        <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin text-primary" />
-                        {tt.convertingWait}
+                    {isProcessing && (
+                      <div className="space-y-4 py-2 text-center">
+                        <Loader2 className="mx-auto h-5 w-5 animate-spin text-primary" />
+                        <p className="text-sm text-muted-foreground">{tt.convertingWait}</p>
+                        {!isPremium && (
+                          <>
+                            <p className="text-xs text-muted-foreground">
+                              {tt.convertingPremiumHint}{" "}
+                              <Link to={localePath("/premium", locale)} className="font-medium text-primary hover:underline">
+                                {t.upgradePage.ctaMain}
+                              </Link>
+                            </p>
+                            <AdSlot type="inline" slotId="tool-converting-inline" className="mx-auto max-w-lg" eager />
+                            <AdSlot type="banner" slotId="tool-converting-banner" className="xl:hidden" eager />
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
