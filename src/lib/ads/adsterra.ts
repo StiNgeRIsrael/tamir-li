@@ -133,6 +133,15 @@ function getInvokeHost(): string {
 /** Milliseconds before iframe reports load failure to parent (parent retries once). */
 export const AD_IFRAME_LOAD_TIMEOUT_MS = 20_000;
 
+/** Force Adsterra-injected nodes to fill the iframe viewport (creative often renders narrower). */
+export const AD_IFRAME_STRETCH_CSS =
+  "html,body{margin:0;padding:0;overflow:hidden;background:transparent;width:100%;height:100%;}" +
+  "body>*:not(script){display:block!important;width:100%!important;height:100%!important;max-width:none!important;min-width:100%!important;}" +
+  "body iframe{border:0!important;width:100%!important;height:100%!important;}";
+
+/** Re-stretch when invoke.js injects nested iframes/divs after load. */
+export const AD_IFRAME_STRETCH_SCRIPT = `(function(){function stretch(){document.body.style.width='100%';document.body.style.height='100%';var nodes=document.body.querySelectorAll('iframe,div,ins,a,img');for(var i=0;i<nodes.length;i++){var el=nodes[i];el.style.setProperty('width','100%','important');el.style.setProperty('height','100%','important');el.style.setProperty('max-width','100%','important');if(el.tagName==='IFRAME'){el.style.setProperty('border','0','important');}}}stretch();try{new MutationObserver(stretch).observe(document.body,{childList:true,subtree:true});}catch(e){}[50,250,750,2000,4000].forEach(function(ms){setTimeout(stretch,ms);});})();`;
+
 /** Build isolated iframe HTML so multiple Adsterra units do not clash on `atOptions`. */
 export function buildAdIframeSrcdoc(
   key: string,
@@ -150,7 +159,7 @@ export function buildAdIframeSrcdoc(
   });
   const slotJson = JSON.stringify(slotId ?? "");
   const timeoutMs = AD_IFRAME_LOAD_TIMEOUT_MS;
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>html,body{margin:0;padding:0;overflow:hidden;background:transparent;width:100%;height:100%;}body>*{max-width:100%!important;}</style></head><body><script type="text/javascript">atOptions = ${atOptions};</script><script type="text/javascript">(function(){var slot=${slotJson};var loaded=false;function notify(status){if(loaded&&status!=='loaded')return;try{parent.postMessage({tamirAdSlot:slot,status:status},'*');}catch(e){}if(status==='loaded')loaded=true;}notify('loading');var s=document.createElement('script');s.type='text/javascript';s.src='https://${host}/${key}/invoke.js';s.onload=function(){notify('loaded');};s.onerror=function(){if(!loaded)notify('error');};document.body.appendChild(s);setTimeout(function(){if(!loaded)notify('timeout');},${timeoutMs});})();</script></body></html>`;
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>${AD_IFRAME_STRETCH_CSS}</style></head><body><script type="text/javascript">atOptions = ${atOptions};</script><script type="text/javascript">${AD_IFRAME_STRETCH_SCRIPT}</script><script type="text/javascript">(function(){var slot=${slotJson};var loaded=false;function notify(status){if(loaded&&status!=='loaded')return;try{parent.postMessage({tamirAdSlot:slot,status:status},'*');}catch(e){}if(status==='loaded')loaded=true;}notify('loading');var s=document.createElement('script');s.type='text/javascript';s.src='https://${host}/${key}/invoke.js';s.onload=function(){notify('loaded');};s.onerror=function(){if(!loaded)notify('error');};document.body.appendChild(s);setTimeout(function(){if(!loaded)notify('timeout');},${timeoutMs});})();</script></body></html>`;
 }
 
 function scriptUrlForPrefetch(src: string): string {

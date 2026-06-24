@@ -59,4 +59,15 @@ describe("buildAdIframeSrcdoc", () => {
     expect(srcdoc).not.toContain("notify('blocked')");
     expect(srcdoc).toContain("20000");
   });
+
+  it("includes stretch CSS and mutation observer for full-width creatives", async () => {
+    const { buildAdIframeSrcdoc, AD_IFRAME_STRETCH_CSS, AD_IFRAME_STRETCH_SCRIPT } = await import(
+      "@/lib/ads/adsterra"
+    );
+    const srcdoc = buildAdIframeSrcdoc("test-key", 728, 90, "home-banner");
+    expect(srcdoc).toContain(AD_IFRAME_STRETCH_CSS);
+    expect(srcdoc).toContain(AD_IFRAME_STRETCH_SCRIPT);
+    expect(srcdoc).toContain("MutationObserver");
+    expect(srcdoc).toContain("min-width:100%");
+  });
 });

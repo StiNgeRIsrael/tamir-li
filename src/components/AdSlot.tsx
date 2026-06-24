@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type RefObject } from "react";
+import { useMemo, useRef, type CSSProperties } from "react";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
@@ -12,6 +12,7 @@ import {
 import { useAdConfig } from "@/contexts/AdConfigContext";
 import { useAdsConsent } from "@/hooks/useAdsConsent";
 import { useAdIframeLoad } from "@/hooks/useAdIframeLoad";
+import { scaleModeForPlacement, useAdSlotScale } from "@/hooks/useAdSlotScale";
 import { useSubscription } from "@/hooks/useSubscription";
 import { showAdVignette } from "@/components/ads/AdVignette";
 import { Button } from "@/components/ui/button";
@@ -33,28 +34,6 @@ const PLACEMENT_META: Record<
   sidebar: { labelKey: "sidebar", envVar: "VITE_ADSTERRA_ZONE_SIDEBAR" },
   inline: { labelKey: "inline", envVar: "VITE_ADSTERRA_ZONE_INLINE" },
 };
-
-/** Scale Adsterra iframe from native unit size to fill the slot container width. */
-function useAdSlotScale(containerRef: RefObject<HTMLDivElement | null>, nativeWidth: number) {
-  const [scale, setScale] = useState(1);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el || nativeWidth <= 0) return;
-
-    const update = () => {
-      const w = el.clientWidth;
-      if (w > 0) setScale(w / nativeWidth);
-    };
-
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [containerRef, nativeWidth]);
-
-  return scale;
-}
 
 function adSlotAspectStyle(width: number, height: number): CSSProperties {
   return { aspectRatio: `${width} / ${height}` };
@@ -85,8 +64,8 @@ export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotPro
     slotIdentity
   );
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const scale = useAdSlotScale(containerRef, dims.width);
+  const slotRef = useRef<HTMLElement>(null);
+  const scale = useAdSlotScale(slotRef, dims.width, scaleModeForPlacement(type));
 
   const iframeSrcdoc = useMemo(() => {
     if (!showLiveAd || !zoneKey) return undefined;
@@ -132,16 +111,18 @@ export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotPro
 
   return (
     <aside
+      ref={slotRef}
       role="complementary"
       aria-label={label}
       data-ad-region={type}
       data-ad-slot-id={slotId}
       data-ad-load-status={adStatus}
       data-ad-retry-count={retryKey}
-      className={cn("ad-slot relative mx-auto w-full max-w-full overflow-hidden", className)}
+      data-ad-scale={scale.toFixed(3)}
+      className={cn("ad-slot relative mx-auto block w-full max-w-full overflow-hidden", className)}
       style={aspectStyle}
     >
-      <div ref={containerRef} className="relative h-full w-full overflow-hidden">
+      <div className="relative h-full w-full overflow-hidden">
         {showFailedOverlay && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-muted/95 px-2 text-center">
             <span className="text-sm font-medium leading-snug text-foreground">{t.adLoadFailed}</span>
