@@ -72,11 +72,10 @@ function loadImageFromFile(file: File): Promise<HTMLImageElement> {
   });
 }
 
-function canvasToBmp(canvas: HTMLCanvasElement): Blob {
-  const w = canvas.width;
-  const h = canvas.height;
-  const ctx = canvas.getContext("2d")!;
-  const { data } = ctx.getImageData(0, 0, w, h);
+/** Encode RGBA canvas pixels as an uncompressed 24-bit BMP (browser canvas has no BMP export). */
+export function encodeRgbaAsBmpBuffer(width: number, height: number, rgba: Uint8ClampedArray): ArrayBuffer {
+  const w = width;
+  const h = height;
   const rowSize = Math.floor((24 * w + 31) / 32) * 4;
   const pixelSize = rowSize * h;
   const fileSize = 54 + pixelSize;
@@ -107,15 +106,33 @@ function canvasToBmp(canvas: HTMLCanvasElement): Blob {
   for (let y = h - 1; y >= 0; y--) {
     for (let x = 0; x < w; x++) {
       const i = (y * w + x) * 4;
-      view.setUint8(offset++, data[i + 2]);
-      view.setUint8(offset++, data[i + 1]);
-      view.setUint8(offset++, data[i]);
+      view.setUint8(offset++, rgba[i + 2]);
+      view.setUint8(offset++, rgba[i + 1]);
+      view.setUint8(offset++, rgba[i]);
     }
     const pad = rowSize - w * 3;
     for (let p = 0; p < pad; p++) view.setUint8(offset++, 0);
   }
 
-  return new Blob([buffer], { type: "image/bmp" });
+  return buffer;
+}
+
+export function encodeRgbaAsBmp(width: number, height: number, rgba: Uint8ClampedArray): Blob {
+  return new Blob([encodeRgbaAsBmpBuffer(width, height, rgba)], { type: "image/bmp" });
+}
+
+function canvasToBmp(canvas: HTMLCanvasElement): Blob {
+  const w = canvas.width;
+  const h = canvas.height;
+  if (w < 1 || h < 1) {
+    throw new Error("CANVAS_EXPORT_FAILED");
+  }
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    throw new Error("CANVAS_EXPORT_FAILED");
+  }
+  const { data } = ctx.getImageData(0, 0, w, h);
+  return encodeRgbaAsBmp(w, h, data);
 }
 
 const FAVICON_SIZES = [16, 32, 48] as const;
@@ -187,10 +204,16 @@ export async function convertImageFile(file: File, toFormat: string): Promise<Bl
   }
 
   const img = await loadImageFromFile(file);
+  if (img.naturalWidth < 1 || img.naturalHeight < 1) {
+    throw new Error("IMAGE_DECODE_FAILED");
+  }
   const canvas = document.createElement("canvas");
   canvas.width = img.naturalWidth;
   canvas.height = img.naturalHeight;
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    throw new Error("CANVAS_EXPORT_FAILED");
+  }
   ctx.drawImage(img, 0, 0);
 
   if (to === "BMP") {

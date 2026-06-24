@@ -203,6 +203,7 @@ function checkImageFormatHelpers(): void {
     ["PNG", true],
     ["JPG", true],
     ["WEBP", true],
+    ["BMP", true],
     ["TIFF", false],
     ["SVG", false],
   ];
@@ -497,6 +498,7 @@ async function run(): Promise<void> {
   // Key pages — locale routing
   await checkPage("/", "home (he default)");
   await checkPage("/jpg-to-png", "tool jpg-to-png (he)");
+  await checkPage("/jpg-to-bmp", "tool jpg-to-bmp (he)");
   await checkPage("/en/jpg-to-png", "tool jpg-to-png (en)");
   await checkPage("/image-compressor", "client tool image-compressor");
   await checkPage("/merge-pdf", "client tool merge-pdf");

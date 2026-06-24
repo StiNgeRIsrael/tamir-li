@@ -6,8 +6,11 @@ import {
   isInputFormatSupported,
   canConvertClientSide,
   usesClientImageConversion,
+  encodeRgbaAsBmp,
+  encodeRgbaAsBmpBuffer,
 } from "./image-convert";
 import { isToolFunctional, getFunctionalToolIds } from "./tool-availability";
+import { getToolByFormatSlug } from "./tools-data";
 
 describe("image-convert format helpers", () => {
   it("normalizes JPEG to JPG", () => {
@@ -53,6 +56,45 @@ describe("image-convert format helpers", () => {
     expect(isInputFormatSupported("JPG")).toBe(true);
     expect(isInputFormatSupported("SVG")).toBe(true);
     expect(isInputFormatSupported("XYZ")).toBe(false);
+  });
+
+  it("supports JPG to BMP client-side conversion", () => {
+    expect(canConvertClientSide("JPG", "BMP")).toBe(true);
+    expect(usesClientImageConversion("image-converter", ["JPG"], ["BMP"])).toBe(true);
+  });
+
+  it("writes a valid 24-bit BMP header and pixel data", () => {
+    // 2×2: red + blue top row, green + white bottom row
+    const rgba = new Uint8ClampedArray([
+      255, 0, 0, 255, 0, 0, 255, 255,
+      0, 255, 0, 255, 255, 255, 255, 255,
+    ]);
+    const bytes = new Uint8Array(encodeRgbaAsBmpBuffer(2, 2, rgba));
+    const blob = encodeRgbaAsBmp(2, 2, rgba);
+
+    expect(String.fromCharCode(bytes[0], bytes[1])).toBe("BM");
+    expect(blob.type).toBe("image/bmp");
+    expect(bytes.length).toBe(70); // 54 header + 2 rows × 8 bytes (6 pixels + 2 pad)
+
+    const dataView = new DataView(bytes.buffer);
+    expect(dataView.getInt32(18, true)).toBe(2);
+    expect(dataView.getInt32(22, true)).toBe(2);
+    // bottom row starts at offset 54: BGR for green
+    expect(bytes[54]).toBe(0);
+    expect(bytes[55]).toBe(255);
+    expect(bytes[56]).toBe(0);
+  });
+
+  it("resolves jpg-to-bmp and jpeg-to-bmp slugs to image-converter", () => {
+    const jpg = getToolByFormatSlug("jpg-to-bmp");
+    expect(jpg?.tool.id).toBe("image-converter");
+    expect(jpg?.from).toBe("JPG");
+    expect(jpg?.to).toBe("BMP");
+
+    const jpeg = getToolByFormatSlug("jpeg-to-bmp");
+    expect(jpeg?.tool.id).toBe("image-converter");
+    expect(jpeg?.from).toBe("JPG");
+    expect(jpeg?.to).toBe("BMP");
   });
 });
 

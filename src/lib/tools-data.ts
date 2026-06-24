@@ -1,4 +1,5 @@
 import { Image, FileVideo, FileAudio, FileText, ArrowLeftRight, Minimize2, Hash, Palette, Type, FileArchive, Sparkles, Wand2 } from "lucide-react";
+import { normalizeFormat } from "./image-convert";
 
 export interface Tool {
   id: string;
@@ -203,7 +204,7 @@ export function buildFormatSlug(from: string, to: string): string {
 export function parseFormatSlug(slug: string): { from: string; to: string } | null {
   const match = slug.match(/^(.+)-to-(.+)$/);
   if (!match) return null;
-  return { from: match[1].toUpperCase(), to: match[2].toUpperCase() };
+  return { from: normalizeFormat(match[1]), to: normalizeFormat(match[2]) };
 }
 
 /** Find a tool that supports a given from→to conversion */
