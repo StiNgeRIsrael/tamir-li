@@ -53,4 +53,10 @@ export function saveConsent(analytics: boolean, ads: boolean): void {
   const state: ConsentState = { analytics, ads, timestamp: Date.now() };
   setStoredConsent(state);
   activateConsent(state);
+  if (analytics) {
+    // Dynamic import avoids circular dependency with events.ts → consent.ts
+    void import("@/lib/analytics/events").then(({ trackEvent, ANALYTICS_EVENTS }) => {
+      trackEvent(ANALYTICS_EVENTS.COOKIE_CONSENT, { analytics, ads });
+    });
+  }
 }

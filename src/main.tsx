@@ -4,5 +4,4 @@ import "./index.css";
 import { applyStoredConsent } from "@/lib/ads/consent";
 
 applyStoredConsent();
-
 createRoot(document.getElementById("root")!).render(<App />);

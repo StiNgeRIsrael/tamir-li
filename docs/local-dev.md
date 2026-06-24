@@ -76,7 +76,11 @@ Minimum for local full stack:
 | `VITE_GOOGLE_CLIENT_ID` | Same as backend | For Google sign-in |
 | `VITE_USE_MOCK_CONVERSION` | omit or `false` | Use real API conversions |
 
-Optional: `VITE_GTM_ID`, `VITE_ADSTERRA_*`, `VITE_PAYPAL_CLIENT_ID`, `VITE_STRIPE_PUBLISHABLE_KEY` — not needed for core dev.
+Optional: `VITE_GA4_ID` (direct GA4 — production `G-EBE6D6BPZ0`), `VITE_GTM_ID` (use one, not both), `VITE_ADSTERRA_*`, `VITE_PAYPAL_CLIENT_ID`, `VITE_STRIPE_PUBLISHABLE_KEY` — not needed for core dev.
+
+### Analytics (GA4)
+
+Set `VITE_GA4_ID=G-EBE6D6BPZ0` in `.env.development.local` to test locally. gtag loads **on app boot** (Consent Mode v2 — cookieless pings before accept). Do **not** set `VITE_GTM_ID` at the same time. See [`google-analytics-setup.md`](./google-analytics-setup.md).
 
 ### Backend — `backend/.env`
 

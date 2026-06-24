@@ -49,7 +49,7 @@ let gtmInjected = false;
 
 /** Inject GTM container script when VITE_GTM_ID is configured. */
 export function initGTM(): void {
-  const gtmId = import.meta.env.VITE_GTM_ID?.trim();
+  const gtmId = getGtmContainerId();
   if (!gtmId || gtmInjected || document.getElementById("gtm-script")) return;
 
   ensureGtag();
@@ -79,13 +79,50 @@ export function initGTM(): void {
 
 let ga4Injected = false;
 
+/** True when direct GA4 gtag.js has been injected (not GTM path). */
+export function isGa4Booted(): boolean {
+  return ga4Injected;
+}
+
+/** True when GTM container script has been injected. */
+export function isGtmBooted(): boolean {
+  return gtmInjected;
+}
+
+/** GA4 measurement ID from build-time env (direct gtag.js mode). */
+export function getGa4MeasurementId(): string | undefined {
+  return import.meta.env.VITE_GA4_ID?.trim() || undefined;
+}
+
+function getGtmContainerId(): string | undefined {
+  return import.meta.env.VITE_GTM_ID?.trim() || undefined;
+}
+
+/** Whether analytics tags are loaded and events can be sent. */
+export function isAnalyticsActive(): boolean {
+  if (typeof window.gtag !== "function") return false;
+  const ga4Id = getGa4MeasurementId();
+  const gtmId = getGtmContainerId();
+  if (ga4Id && gtmId) return false;
+  if (ga4Id) return ga4Injected;
+  if (gtmId) return gtmInjected;
+  return false;
+}
+
+/**
+ * @deprecated GA4 loads after analytics consent via `initGA4()` in consent.ts — not on boot.
+ */
+export function bootAnalytics(): void {
+  /* no-op — gtag loads only after cookie consent (see src/lib/ads/consent.ts) */
+}
+
 /**
  * Direct GA4 via gtag.js when VITE_GA4_ID is set.
  * Skip when VITE_GTM_ID is also set — configure GA4 inside GTM instead to avoid double counting.
  */
 export function initGA4(): void {
-  const ga4Id = import.meta.env.VITE_GA4_ID?.trim();
-  const gtmId = import.meta.env.VITE_GTM_ID?.trim();
+  const ga4Id = getGa4MeasurementId();
+  const gtmId = getGtmContainerId();
   if (!ga4Id || gtmId || ga4Injected || document.getElementById("ga4-script")) return;
 
   ensureGtag();
@@ -97,7 +134,15 @@ export function initGA4(): void {
   document.head.appendChild(script);
 
   window.gtag!("js", new Date());
-  window.gtag!("config", ga4Id, { send_page_view: false });
+  window.gtag!("set", "allow_google_signals", true);
+  window.gtag!("set", "allow_ad_personalization_signals", true);
+  window.gtag!("config", ga4Id, {
+    send_page_view: false,
+    allow_google_signals: true,
+    allow_ad_personalization_signals: true,
+    cookie_flags: "SameSite=None;Secure",
+    // Enhanced measurement toggles: GA4 Admin → Data stream → Enhanced measurement.
+  });
 
   ga4Injected = true;
 }

@@ -1,209 +1,137 @@
 # Google Analytics setup for Tamir.li
 
-This guide covers everything **you** must configure in Google’s UI. The codebase already wires Consent Mode v2, GTM injection (after consent), funnel events, and SPA `page_view` tracking.
+Production uses **direct GA4** via `gtag.js` and measurement ID **`G-EBE6D6BPZ0`**. The codebase wires **Google Consent Mode v2**: gtag loads on app boot, storage defaults to denied, and the cookie banner unlocks full measurement on accept. SPA `page_view` and funnel events fire immediately (cookieless pings while denied).
 
-## Environment variables
-
-Copy `.env.example` to `.env.production.local` (or `.env.development.local` for local testing) and set:
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `VITE_GTM_ID` | **Recommended** | GTM container ID, e.g. `GTM-ABC1234` |
-| `VITE_GA4_ID` | Optional | GA4 measurement ID, e.g. `G-XXXXXXXXXX`. **Only use if you are NOT using GTM.** If `VITE_GTM_ID` is set, configure GA4 inside GTM instead (avoids double counting). |
-| `VITE_SITE_ORIGIN` | Recommended | `https://tamir.li` — used for canonical URLs |
-
-Rebuild/redeploy after changing env vars (`npm run build`).
+> **Do not enable both `VITE_GTM_ID` and `VITE_GA4_ID`** — that double-counts. Use direct GA4 **or** GTM, not both.
 
 ---
 
-## Step 1: Create a GA4 property for tamir.li
+## Deploy requirement (Plesk / CI)
 
-1. Go to [Google Analytics](https://analytics.google.com/).
-2. **Admin** (gear) → **Create** → **Property**.
-3. Property name: `Tamir.li`, reporting time zone: **Israel**, currency: **ILS**.
-4. Create a **Web** data stream:
-   - Website URL: `https://tamir.li`
-   - Stream name: `Tamir.li Web`
-5. Copy the **Measurement ID** (`G-XXXXXXXXXX`). You will use it in GTM (Step 3), not necessarily in `.env` if everything goes through GTM.
+`VITE_GA4_ID` is baked in at **build time**. Set it before every production build:
 
----
+```bash
+VITE_GA4_ID=G-EBE6D6BPZ0 npm run build
+```
 
-## Step 2: Create a GTM container
+On **Plesk Node.js**: add `VITE_GA4_ID=G-EBE6D6BPZ0` to the environment variables used by the build step (or `.env.production.local` on the build host). Rebuild and redeploy after changing it.
 
-1. Go to [Google Tag Manager](https://tagmanager.google.com/).
-2. **Create Account** (e.g. `Tamir.li`) → **Container** name `tamir.li`, target platform **Web**.
-3. Copy the **Container ID** (`GTM-XXXXXXX`) → set `VITE_GTM_ID` in your `.env`.
-4. GTM loads **only after** the user accepts analytics cookies (see `src/lib/ads/consent.ts`). Consent Mode defaults are denied in `index.html` before any tags run.
+| Variable | Production value | Required |
+|----------|------------------|----------|
+| `VITE_GA4_ID` | `G-EBE6D6BPZ0` | **Yes** (direct GA4 mode) |
+| `VITE_GTM_ID` | — | **No** — leave unset when using direct GA4 |
+| `VITE_SITE_ORIGIN` | `https://tamir.li` | Recommended |
 
 ---
 
-## Step 3: Configure tags in GTM (click-by-click)
+## How consent works
 
-Open [tagmanager.google.com](https://tagmanager.google.com/) → select container **GTM-5GH9HV38**.
-
-> **Consent is already handled in code** (`index.html` sets Consent Mode defaults; the cookie banner grants `analytics_storage` before GTM loads). You only need to require `analytics_storage` on each tag below.
-
-### 3a. GA4 Configuration tag (one time)
-
-1. Left sidebar → **Tags** → **New**.
-2. Tag type → **Google Analytics: GA4 Configuration**.
-3. **Measurement ID**: `G-EBE6D6BPZ0`
-4. Expand **Configuration settings** → add row: `send_page_view` = `false` (the app sends `page_view` via dataLayer on route changes).
-5. **Triggering** → **Consent Initialization – All Pages**.
-6. Tag **Consent settings** (gear icon or Advanced Settings) → **Require additional consent for tag to fire** → check **analytics_storage**.
-7. Name the tag `GA4 - Configuration` → **Save**.
-
-### 3b. Custom Event trigger (repeat for each event)
-
-For **each** event name in the table below, do this once:
-
-1. Left sidebar → **Triggers** → **New**.
-2. Trigger type → **Custom Event**.
-3. **Event name**: copy from the **Event name** column (exact match, e.g. `page_view`).
-4. Name the trigger `CE - <event name>` (e.g. `CE - page_view`) → **Save**.
-
-| Event name (type exactly) |
-|---------------------------|
-| `page_view` |
-| `tool_view` |
-| `file_upload` |
-| `convert_start` |
-| `convert_success` |
-| `paywall_hit` |
-| `upgrade_click` |
-| `begin_checkout` |
-| `purchase` |
-| `file_download` |
-| `file_download_all` |
-| `ad_click_download` |
-
-### 3c. GA4 Event tag (one per trigger)
-
-For **each** trigger from 3b:
-
-1. **Tags** → **New**.
-2. Tag type → **Google Analytics: GA4 Event**.
-3. **Configuration Tag** → select `GA4 - Configuration`.
-4. **Event Name** → same as the trigger (e.g. `page_view`).
-5. **Triggering** → select the matching `CE - …` trigger.
-6. **Consent settings** → require **analytics_storage**.
-7. Name `GA4 - <event name>` → **Save**.
-
-**Optional — event parameters** (Variables → New → Data Layer Variable, then map in each tag):
-
-| Variable name | Data Layer Variable Name |
-|---------------|--------------------------|
-| `dlv - tool_id` | `tool_id` |
-| `dlv - slug` | `slug` |
-| `dlv - file_count` | `file_count` |
-| `dlv - plan` | `plan` |
-| `dlv - source` | `source` |
-| `dlv - type` | `type` |
-| `dlv - page_type` | `page_type` |
-| `dlv - blog_slug` | `blog_slug` |
-| `dlv - page_path` | `page_path` |
-
-For `page_view`, add parameters: `page_path` → `{{dlv - page_path}}`, `page_type` → `{{dlv - page_type}}`, `blog_slug` → `{{dlv - blog_slug}}`, `slug` → `{{dlv - slug}}`.
-
-### 3d. Publish
-
-1. Top right → **Submit**.
-2. Version name e.g. `GA4 funnel tags` → **Publish**.
+1. `index.html` sets Consent Mode v2 defaults (`analytics_storage: denied`, `ad_storage: denied`, `wait_for_update: 500`) before any Google scripts load.
+2. `main.tsx` calls `bootAnalytics()` — when `VITE_GA4_ID` is set (and `VITE_GTM_ID` is not), `gtag.js` injects immediately.
+3. Cookie banner (`CookieConsent`) calls `saveConsent(analytics, ads)` → `gtag('consent', 'update', …)`.
+4. **Before accept:** GA4 sends cookieless pings and modeled data; no analytics cookies.
+5. **After accept:** `analytics_storage: granted` — full cookies, user stitching (`user_id`), and enhanced signals.
+6. **Adsterra** scripts load only when `ads: true` (`ad_storage` granted) — unchanged.
+7. SPA route changes fire `page_view` on every navigation via `AnalyticsPageTracker` (works in both denied and granted states).
+8. **GTM path** (`VITE_GTM_ID` only): container still loads after analytics consent (not on boot).
 
 ---
 
-## Step 4: Events emitted by the codebase (reference)
+## GA4 Admin — enable enhanced measurement
 
-| Event | Where | Parameters |
-|-------|-------|------------|
-| `page_view` | SPA route changes | `page_path`, `page_location`, `page_title`, `page_type`, `blog_slug`, `slug` |
-| `tool_view` | Tool pages | `tool_id`, `slug` |
-| `file_upload` | Tool upload | `tool_id`, `file_count` |
-| `convert_start` | Conversion start | `tool_id`, `format`, etc. |
-| `convert_success` | Conversion done | `tool_id`, `format`, `duration_ms` |
-| `paywall_hit` | Limit / premium gate | `tool_id`, `type` (`daily_limit` \| `premium_tool`) |
-| `upgrade_click` | Premium CTA | `plan`, `source` |
-| `begin_checkout` | Stripe checkout start | `plan`, `source` |
-| `purchase` | Stripe return URL | `plan`, `source` |
-| `file_download` | Download click | `tool_id`, `file_index` |
-| `file_download_all` | Download all | `tool_id`, `file_count` |
-| `ad_click_download` | Ad-gated download | `file_index`, `method` |
+In [Google Analytics](https://analytics.google.com/) → **Admin** → **Data streams** → **Tamir.li Web** → **Enhanced measurement**, enable:
+
+- Page views (supplemental — app sends manual SPA `page_view`)
+- Scrolls
+- Outbound clicks
+- Site search
+- Form interactions
+- File downloads
+- Video engagement
+
+Direct `gtag` config uses `send_page_view: false` (SPA sends manual `page_view`). Consent Mode controls storage — no `allow_google_signals` override before consent.
 
 ---
 
-## Step 5: Adsterra (separate from GA4)
+## Event inventory (sent to GA4)
 
-Adsterra and GA4 are separate products.
+| Event | GA4 type | Where | Parameters |
+|-------|----------|-------|------------|
+| `page_view` | Recommended | SPA route changes | `page_path`, `page_location`, `page_title`, `page_type`, `blog_slug`, `slug` |
+| `tool_view` | Custom | Tool pages | `tool_id`, `slug` |
+| `file_upload` | Custom | Tool upload | `tool_id`, `file_count` |
+| `convert_start` | Custom | Conversion / custom tool start | `tool_id`, `format`, `source` |
+| `convert_success` | Custom | Conversion done | `tool_id`, `format`, `duration_ms`, `source` |
+| `paywall_hit` | Custom | Limit / premium gate | `tool_id`, `type` (`daily_limit` \| `premium_tool`) |
+| `upgrade_click` | Custom | Premium CTA | `plan`, `source` |
+| `begin_checkout` | **Recommended** | Checkout start | `plan`, `source`, `currency`, `value`, `items` |
+| `purchase` | **Recommended** | PayPal return | `plan`, `source`, `transaction_id`, `currency`, `value`, `items` |
+| `file_download` | Recommended / custom | Download click | `tool_id`, `file_index`, `source` |
+| `file_download_all` | Custom | Download all | `tool_id`, `file_count` |
+| `ad_click_download` | Custom | Ad-gated download step 1 | `file_index`, `method`, `tool_id` |
+| `sign_up` | **Recommended** | First Google sign-in | `method` (`google`) |
+| `login` | **Recommended** | Returning Google sign-in | `method` (`google`) |
+| `sign_out` | Custom | Sign out | `method` |
+| `cookie_consent` | Custom | User accepts cookies | `analytics`, `ads` |
+| `ai_generate_start` | Custom | AI image gen start | `tool_id`, `style`, `aspect_ratio` |
+| `ai_generate_success` | Custom | AI image gen success | `tool_id`, `style`, `aspect_ratio` |
 
-1. Apply at [Adsterra](https://adsterra.com) with site `https://tamir.li`.
-2. After approval, copy zone keys from the publisher dashboard.
-3. Set in `.env`:
-   - `VITE_ADSTERRA_ZONE_BANNER`, `VITE_ADSTERRA_ZONE_SIDEBAR`, etc. (see [`adsterra-setup.md`](./adsterra-setup.md))
-4. Ad scripts load only when the user accepts **ads** cookies (`saveConsent(true, true)` grants both analytics and ad storage).
-5. No GTM tag required — banners use isolated iframes via `src/lib/ads/adsterra.ts`.
-
----
-
-## Step 6: Google Search Console verification
-
-1. Go to [Google Search Console](https://search.google.com/search-console).
-2. **Add property** → URL prefix `https://tamir.li`.
-3. Verification options:
-   - **HTML tag**: add the meta tag to `index.html` `<head>` (one-time deploy), or
-   - **DNS TXT** record at your domain registrar (no code change).
-4. Submit sitemap: `https://tamir.li/sitemap.xml` (generated at build via `npm run generate:sitemap`).
+`page_type` values: `home`, `blog_index`, `blog_post`, `premium`, `tool`, `other`.
 
 ---
 
 ## Testing with GA4 DebugView
 
-1. Install [Google Analytics Debugger](https://chrome.google.com/webstore/detail/google-analytics-debugger/) Chrome extension, **or** add `debug_mode: true` temporarily to your GA4 Configuration tag.
-2. Open the site locally or staging with `VITE_GTM_ID` set.
-3. Accept cookies (analytics + ads).
-4. GA4 → **Admin** → **DebugView** — confirm:
-   - `page_view` on home, blog, tool pages
-   - `tool_view`, `file_upload`, `convert_start`, `convert_success` when using a tool
-   - `paywall_hit`, `upgrade_click`, `begin_checkout` on premium flow
-5. GTM **Preview** mode: connect to your URL and watch Tags Fired on each dataLayer event.
+1. Install [Google Analytics Debugger](https://chrome.google.com/webstore/detail/google-analytics-debugger/) Chrome extension.
+2. Set `VITE_GA4_ID=G-EBE6D6BPZ0` locally (`.env.development.local`).
+3. Run `npm run dev`, open the site — **before** accepting cookies, check Network for `google-analytics.com/g/collect` (cookieless pings).
+4. Accept cookies → `analytics_storage: granted`; confirm richer events in DebugView.
+5. Browser console: `dataLayer` shows events immediately after gtag loads.
 
-### GTM Preview checklist
+### Checklist
 
 - [ ] Consent defaults show `analytics_storage: denied` before accept
-- [ ] After accept, `GA4 - Configuration` fires
-- [ ] `page_view` fires on navigation
-- [ ] Custom events appear in dataLayer (browser console: `dataLayer`)
+- [ ] `gtag.js` loads on page load (`ga4-script` in DOM) — not waiting for banner
+- [ ] Cookieless `page_view` / pings before accept
+- [ ] After accept, full measurement + `user_id` on sign-in
+- [ ] `tool_view`, `file_upload`, `convert_start`, `convert_success` on a tool
+- [ ] `paywall_hit`, `upgrade_click`, `begin_checkout` on premium flow
+- [ ] `login` / `sign_up` after Google sign-in
+- [ ] `purchase` after PayPal return URL
 
 ---
 
-## Optional: GTM container template
+## Optional: GTM instead of direct GA4
 
-See `docs/gtm-container-template.json` for a simplified reference export (measurement ID `G-EBE6D6BPZ0`). Import via GTM Admin → Import, or recreate manually from Step 3 above.
+If you prefer GTM, set `VITE_GTM_ID` and **unset** `VITE_GA4_ID`. Configure GA4 Configuration tag with measurement ID `G-EBE6D6BPZ0` inside GTM. See legacy GTM steps in git history or `docs/gtm-container-template.json`.
 
 ---
 
-## Code reference (already implemented)
+## Code reference
 
 | File | Role |
 |------|------|
-| `index.html` | Consent Mode v2 defaults (`denied` until user acts) |
-| `src/lib/analytics/gtm.ts` | GTM + optional direct GA4 injection after consent |
-| `src/lib/analytics/events.ts` | `trackEvent`, `trackPageView`, event name constants |
-| `src/lib/ads/consent.ts` | Cookie choice persistence, consent updates, script loading |
-| `src/components/CookieConsent.tsx` | Accept (analytics + ads) / Reject all |
-| `src/components/AnalyticsPageTracker.tsx` | SPA `page_view` on route change |
+| `index.html` | Consent Mode v2 defaults |
+| `src/main.tsx` | `bootAnalytics()` then `applyStoredConsent()` on app boot |
+| `src/lib/analytics/gtm.ts` | `bootAnalytics()` (GA4 on load), GTM after consent, `updateConsentMode` |
+| `src/lib/analytics/events.ts` | `trackEvent` — fires when GA4/GTM active (cookieless OK) |
+| `src/lib/analytics/purchase.ts` | Ecommerce `value` / `items` for checkout events |
+| `src/lib/ads/consent.ts` | Cookie persistence, script loading |
+| `src/components/CookieConsent.tsx` | Accept / reject banner |
+| `src/components/AnalyticsPageTracker.tsx` | SPA `page_view` |
 | `src/pages/ToolPage.tsx` | Tool funnel events |
 | `src/pages/PremiumPage.tsx` | Checkout / purchase events |
+| `src/contexts/AuthContext.tsx` | `login`, `sign_up`, `sign_out`, `user_id` |
+| `src/lib/custom-tool-freemium.ts` | Custom tool convert / download events |
 
 ---
 
 ## Quick start checklist
 
-1. [ ] Create GA4 property + web stream → copy `G-…`
-2. [ ] Create GTM container → copy `GTM-…` → `VITE_GTM_ID`
-3. [ ] Add GA4 Configuration tag + consent requirement in GTM
-4. [ ] Add Custom Event triggers + GA4 Event tags for funnel
-5. [ ] Publish GTM container
-6. [ ] Set `VITE_SITE_ORIGIN=https://tamir.li` and deploy
-7. [ ] Verify in GA4 DebugView + GTM Preview
-8. [ ] (Separate) Adsterra approval + `VITE_ADSTERRA_*` env vars
-9. [ ] (Separate) Search Console verification + sitemap
+1. [ ] GA4 property exists with web stream `G-EBE6D6BPZ0`
+2. [ ] Enhanced measurement enabled in GA4 Admin
+3. [ ] `VITE_GA4_ID=G-EBE6D6BPZ0` set at build on Plesk/CI
+4. [ ] `VITE_GTM_ID` **not** set (direct GA4 mode)
+5. [ ] `VITE_SITE_ORIGIN=https://tamir.li` and deploy
+6. [ ] Verify in GA4 DebugView
+7. [ ] (Separate) Search Console verification + sitemap

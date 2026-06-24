@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { trackPageView } from "@/lib/analytics/events";
 import { getStoredConsent } from "@/lib/ads/consent";
-
 const STATIC_PAGES = new Set(["install", "privacy", "terms", "about", "contact", "admin", "blog", "premium"]);
 
 /** Strip locale prefix (/en, /es, …) for path classification. */
@@ -33,8 +32,7 @@ function trackCurrentPage(pathname: string, search: string): void {
   const consent = getStoredConsent();
   if (!consent?.analytics) return;
 
-  trackPageView({
-    page_path: pathname + search,
+  trackPageView({    page_path: pathname + search,
     page_location: window.location.href,
     page_title: document.title,
     ...pageContext(pathname),
@@ -42,8 +40,7 @@ function trackCurrentPage(pathname: string, search: string): void {
 }
 
 /** Fire page_view on SPA navigations after analytics consent is granted. */
-export function AnalyticsPageTracker() {
-  const { pathname, search } = useLocation();
+export function AnalyticsPageTracker() {  const { pathname, search } = useLocation();
   const prevPath = useRef("");
 
   useEffect(() => {
