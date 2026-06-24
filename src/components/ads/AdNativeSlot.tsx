@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useAdConfig } from "@/contexts/AdConfigContext";
@@ -17,6 +17,8 @@ interface AdNativeSlotProps {
   slotId?: string;
 }
 
+type AdLoadStatus = "loading" | "loaded" | "failed";
+
 function AdFallbackMessage({ label }: { label: string }) {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-1 px-3 py-2 text-center">
@@ -28,28 +30,33 @@ function AdFallbackMessage({ label }: { label: string }) {
 export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
-  const { loading: configLoading } = useAdConfig();
+  // Re-render when /api/ads/config settles so native URL from DB replaces env fallback.
+  useAdConfig();
   const hasConsent = useAdsConsent();
-  const [nativeLoaded, setNativeLoaded] = useState(false);
+  const [adStatus, setAdStatus] = useState<AdLoadStatus>("loading");
+  const loadedRef = useRef(false);
   const label = t.adLabel || "Ad";
   const config = getNativeAdConfig();
-  const clientReady = isAdsterraConfigured() && hasConsent && !isPremium;
+  const adsConfigured = isAdsterraConfigured();
+  const clientReady = adsConfigured && hasConsent && !isPremium;
   const showLiveAd = clientReady && hasNativeAdConfigured();
   const pendingSlot = clientReady && !hasNativeAdConfigured();
 
   useEffect(() => {
     if (!showLiveAd || !config) {
-      setNativeLoaded(false);
+      loadedRef.current = false;
+      setAdStatus("failed");
       return;
     }
 
-    setNativeLoaded(false);
+    setAdStatus((current) => (loadedRef.current ? "loaded" : "loading"));
     loadNativeAdScript();
 
     const checkFilled = () => {
       const el = document.getElementById(config.containerId);
       if (el && el.childElementCount > 0) {
-        setNativeLoaded(true);
+        loadedRef.current = true;
+        setAdStatus("loaded");
       }
     };
 
@@ -59,12 +66,11 @@ export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
     if (el) observer.observe(el, { childList: true, subtree: true });
 
     const failTimer = window.setTimeout(() => {
-      setNativeLoaded((loaded) => {
-        if (loaded) return loaded;
-        const node = document.getElementById(config.containerId);
-        return (node?.childElementCount ?? 0) > 0;
+      setAdStatus((current) => {
+        if (loadedRef.current || current === "loaded") return "loaded";
+        return current === "loading" ? "failed" : current;
       });
-    }, 8000);
+    }, 14000);
 
     return () => {
       observer.disconnect();
@@ -74,9 +80,9 @@ export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
 
   if (isPremium) return null;
 
-  if (configLoading) return null;
+  if (!hasConsent) return null;
 
-  if (!isAdsterraConfigured()) return null;
+  if (!adsConfigured) return null;
 
   if (!showLiveAd) {
     return (
@@ -104,7 +110,7 @@ export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
     );
   }
 
-  const showFallbackOverlay = !nativeLoaded;
+  const showFallbackOverlay = adStatus !== "loaded";
 
   return (
     <aside
@@ -112,7 +118,7 @@ export function AdNativeSlot({ className = "", slotId }: AdNativeSlotProps) {
       aria-label={label}
       data-ad-region="native"
       data-ad-slot-id={slotId}
-      data-ad-load-status={nativeLoaded ? "loaded" : "failed"}
+      data-ad-load-status={adStatus}
       className={cn(
         "ad-slot relative mx-auto w-full min-h-[120px] overflow-hidden rounded-md",
         className

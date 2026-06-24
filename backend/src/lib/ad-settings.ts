@@ -141,6 +141,28 @@ function trimOrNull(value: unknown): string | null | undefined {
   return trimmed.length > 0 ? trimmed : null;
 }
 
+const SCRIPT_URL_FIELDS = new Set(['popunderScriptUrl', 'nativeScriptUrl']);
+
+/** Extract script src when admin pastes a full `<script>` embed block. */
+export function cleanScriptUrl(value: string): string {
+  const trimmed = value.trim();
+  const tagMatch = trimmed.match(/<script[^>]*\ssrc=["']([^"']+)["']/i);
+  if (tagMatch) return tagMatch[1].trim();
+  const urlMatch = trimmed.match(/(https?:\/\/[^\s"'<>]+\.js)/i);
+  if (urlMatch && trimmed.includes('<')) return urlMatch[1];
+  return trimmed;
+}
+
+export function isValidAdScriptUrl(url: string): boolean {
+  try {
+    const normalized = url.startsWith('//') ? `https:${url}` : url;
+    const parsed = new URL(normalized);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 export function parseAdSettingsPatch(body: Record<string, unknown>): {
   data: Partial<AdSettingsPayload>;
   error?: string;
@@ -159,9 +181,15 @@ export function parseAdSettingsPatch(body: Record<string, unknown>): {
   const data: Partial<AdSettingsPayload> = {};
   for (const key of fields) {
     if (!(key in body)) continue;
-    const parsed = trimOrNull(body[key]);
+    let parsed = trimOrNull(body[key]);
     if (parsed === undefined) {
       return { data: {}, error: `${key} must be a string or null` };
+    }
+    if (parsed && SCRIPT_URL_FIELDS.has(key)) {
+      parsed = cleanScriptUrl(parsed);
+      if (!isValidAdScriptUrl(parsed)) {
+        return { data: {}, error: `${key} must be a valid http(s) script URL` };
+      }
     }
     data[key] = parsed;
   }

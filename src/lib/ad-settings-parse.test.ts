@@ -3,7 +3,9 @@ import { describe, expect, it } from "vitest";
 import {
   AD_SETTINGS_TABLE_MISSING_MESSAGE,
   adSettingsErrorMessage,
+  cleanScriptUrl,
   isAdSettingsTableMissing,
+  isValidAdScriptUrl,
   parseAdSettingsPatch,
 } from "../../backend/src/lib/ad-settings";
 
@@ -32,6 +34,46 @@ describe("parseAdSettingsPatch", () => {
   it("rejects non-string types", () => {
     const { error } = parseAdSettingsPatch({ zoneBanner: 42 });
     expect(error).toMatch(/zoneBanner must be a string or null/);
+  });
+
+  it("rejects invalid nativeScriptUrl", () => {
+    const { error } = parseAdSettingsPatch({ nativeScriptUrl: "not-a-url" });
+    expect(error).toMatch(/nativeScriptUrl must be a valid http\(s\) script URL/);
+  });
+
+  it("accepts valid nativeScriptUrl", () => {
+    const { data, error } = parseAdSettingsPatch({
+      nativeScriptUrl: "https://cdn.example.com/invoke.js",
+    });
+    expect(error).toBeUndefined();
+    expect(data.nativeScriptUrl).toBe("https://cdn.example.com/invoke.js");
+  });
+
+  it("strips script tag wrapper from nativeScriptUrl", () => {
+    const { data, error } = parseAdSettingsPatch({
+      nativeScriptUrl:
+        '<script async src="https://cdn.example.com/invoke.js" data-cfasync="false"></script>',
+    });
+    expect(error).toBeUndefined();
+    expect(data.nativeScriptUrl).toBe("https://cdn.example.com/invoke.js");
+  });
+});
+
+describe("cleanScriptUrl", () => {
+  it("extracts src from script tag", () => {
+    expect(cleanScriptUrl('<script src="//cdn.example/invoke.js"></script>')).toBe(
+      "//cdn.example/invoke.js",
+    );
+  });
+});
+
+describe("isValidAdScriptUrl", () => {
+  it("accepts protocol-relative URLs", () => {
+    expect(isValidAdScriptUrl("//cdn.example/invoke.js")).toBe(true);
+  });
+
+  it("rejects garbage", () => {
+    expect(isValidAdScriptUrl("javascript:alert(1)")).toBe(false);
   });
 });
 
