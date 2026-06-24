@@ -176,8 +176,8 @@ export const deTranslations = {
   },
   homeStatLabels: {
     tools: "Tools auf der Website",
-    formats: "Unterstützte Formate",
-    categories: "Kategorien",
+    conversionsToday: "Konvertierungen heute",
+    conversionsTotal: "Dateien konvertiert",
     freeDaily: "Kostenloses Kontingent (pro Tag)",
   },
   homeStatValues: {

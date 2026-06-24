@@ -13,6 +13,7 @@ import adsRoutes from './routes/ads.routes';
 import aiRoutes from './routes/ai.routes';
 import adminRoutes from './routes/admin.routes';
 import usageRoutes from './routes/usage.routes';
+import statsRoutes from './routes/stats.routes';
 import billingRoutes, { paypalWebhookHandler } from './routes/billing.routes';
 import { stripeWebhookHandler } from './routes/billing-stripe.routes';
 import { pingAdSettingsTable } from './lib/ad-settings';
@@ -69,6 +70,7 @@ app.use('/api/ads', adsRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/usage', usageRoutes);
+app.use('/api/stats', statsRoutes);
 app.use('/api/billing', billingRoutes);
 
 // Health check endpoint (probed by scripts/autonomous-site-check.ts and frontend)

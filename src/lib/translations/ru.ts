@@ -176,8 +176,8 @@ export const ruTranslations = {
   },
   homeStatLabels: {
     tools: "Инструментов на сайте",
-    formats: "Поддерживаемых форматов",
-    categories: "Категорий",
+    conversionsToday: "Конвертаций сегодня",
+    conversionsTotal: "Файлов конвертировано",
     freeDaily: "Бесплатный лимит (в день)",
   },
   homeStatValues: {

@@ -192,8 +192,8 @@ export const heTranslations = {
   },
   homeStatLabels: {
     tools: "כלים פעילים באתר",
-    formats: "פורמטים וסיומות נתמכים",
-    categories: "קטגוריות כלים",
+    conversionsToday: "המרות היום",
+    conversionsTotal: "סה״כ קבצים שהומרו",
     freeDaily: "מגבלת שימוש חינם (ליום)",
   },
   homeStatValues: {

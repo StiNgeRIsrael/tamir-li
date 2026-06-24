@@ -176,8 +176,8 @@ export const itTranslations = {
   },
   homeStatLabels: {
     tools: "Strumenti sul sito",
-    formats: "Formati supportati",
-    categories: "Categorie",
+    conversionsToday: "Conversioni oggi",
+    conversionsTotal: "File convertiti",
     freeDaily: "Quota gratuita (al giorno)",
   },
   homeStatValues: {

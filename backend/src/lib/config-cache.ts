@@ -8,7 +8,11 @@ export const CONFIG_CACHE_TTL_MS = 60_000;
 export const CONFIG_CACHE_KEYS = {
   ADS: 'ads/config',
   TOOLS: 'tools/config',
+  PUBLIC_STATS: 'stats/public',
 } as const;
+
+/** Aggregate usage counts — refresh less often than tool config. */
+export const PUBLIC_STATS_CACHE_TTL_MS = 300_000;
 
 export function getCachedConfig<T>(key: string): T | undefined {
   const entry = store.get(key);
