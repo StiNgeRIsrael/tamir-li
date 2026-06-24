@@ -380,6 +380,9 @@ export const deTranslations = {
     uploadStepTitle: (from: string, to: string) => `Laden Sie Ihre ${from}-Datei hoch, um in ${to} zu konvertieren`,
     uploadStepHint: "Hierher ziehen oder Button klicken — kostenlos, im Browser",
     selectFiles: "Dateien Auswählen",
+    fileTooLarge: (maxMB: number, name: string) =>
+      name ? `${name} überschreitet das ${maxMB}MB-Limit` : `Datei überschreitet das ${maxMB}MB-Limit`,
+    batchLimitFree: "Im kostenlosen Plan ist eine Datei pro Konvertierung erlaubt. Premium ermöglicht Stapel-Uploads.",
   },
   compressor: {
     qualityLevel: "Qualitätsstufe", high: "Hoch", medium: "Mittel", low: "Niedrig", minimal: "Minimal",
@@ -475,6 +478,7 @@ export const deTranslations = {
     badge: "Premium", headline: "Ruhig arbeiten. Ohne Unterbrechungen.",
     subheadline: "5 Konvertierungen pro Tag bleiben kostenlos. Premium — wenn Sie mehr Tempo brauchen, ohne Werbung, mit KI-Tools.",
     monthlyLabel: "Monatlich", yearlyLabel: "Jährlich", yearlySave: "20% sparen",
+    yearlyBestValue: "Bester Wert — jährlich",
     anchorPriceMonthly: "₪150", priceMonthly: "₪19.90",
     anchorPriceYearlyPerMonth: "₪150", priceYearlyPerMonth: "₪15.92",
     anchorPriceYearly: "₪1,800", priceYearly: "₪191.04",
@@ -494,11 +498,12 @@ export const deTranslations = {
     comparisonTitle: "Was in jedem Plan enthalten ist",
     comparisonHeaders: { feature: "Funktion", free: "Kostenlos", premium: "Premium" },
     comparisonRows: [
+      { feature: "Max. Dateigröße", free: "50MB", premium: "200MB", highlight: true },
+      { feature: "Stapel-Konvertierung", free: "Begrenzt", premium: "Unbegrenzt", highlight: true },
+      { feature: "Werbung", free: "Ja", premium: "Keine", highlight: true, freeNegative: true },
+      { feature: "Verarbeitungsgeschwindigkeit", free: "Standard", premium: "Priorität", highlight: true },
       { feature: "Tägliche Konvertierungen", free: "5/Tag", premium: "Unbegrenzt" },
-      { feature: "Werbung", free: "Ja", premium: "Keine" },
       { feature: "KI-Bilderstellung", free: "—", premium: "6/Monat" },
-      { feature: "Verarbeitungsgeschwindigkeit", free: "Standard", premium: "Priorität" },
-      { feature: "Max. Dateigröße", free: "50MB", premium: "200MB" },
       { feature: "Support", free: "Standard", premium: "Prioritäts-E-Mail" },
     ],
     testimonials: [],
@@ -514,5 +519,11 @@ export const deTranslations = {
     guaranteeItems: ["Keine Nutzung im letzten Monat", "Bestätigte Konvertierungsfehler", "Nicht behobene Bugs"],
     finalCta: "Neugierig, was sich ändert?", finalDesc: "Optionales Abo. Jederzeit kündbar.",
     orGoHome: "oder kostenlos weitermachen",
+    exitIntent: {
+      title: "Schon weg?",
+      body: "Jährliches Premium spart 20% — unbegrenzte Konvertierungen, keine Werbung, Dateien bis 200MB. Jederzeit kündbar.",
+      cta: "Jahresplan ansehen",
+      dismiss: "Kostenlos weitermachen",
+    },
   },
 };

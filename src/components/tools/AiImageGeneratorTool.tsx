@@ -20,8 +20,9 @@ interface GeneratedImage { prompt: string; url: string; timestamp: number; }
 
 export function AiImageGeneratorTool() {
   const t = useT();
-  const { locale } = useLocale();
+  const { locale, t: localeT } = useLocale();
   const ai = t.aiGenerator;
+  const tt = localeT.tool;
   const { token } = useAuth();
   const { isPremium, credits } = useSubscription();
   const qc = useQueryClient();
@@ -167,8 +168,13 @@ export function AiImageGeneratorTool() {
                 <p className="text-xs text-muted-foreground truncate">"{img.prompt}"</p>
                 <div className="flex items-center gap-2">
                   {img.url ? (
-                    <Button size="sm" className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90" asChild>
-                      <a href={img.url} download={`ai-image-${img.timestamp}.png`}><Download className="w-3.5 h-3.5 me-1" />{ai.downloadImage}</a>
+                    <Button
+                      size="sm"
+                      className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                      onClick={() => void handleDownload(img)}
+                    >
+                      <Download className="w-3.5 h-3.5 me-1" />
+                      {isPremium || downloadGates[img.timestamp] ? ai.downloadImage : tt.watchAdToDownload}
                     </Button>
                   ) : (
                     <Button size="sm" className="flex-1" disabled><Download className="w-3.5 h-3.5 me-1" />{ai.downloadImage}</Button>
@@ -176,6 +182,11 @@ export function AiImageGeneratorTool() {
                   <Button size="sm" variant="outline" onClick={() => { setPrompt(img.prompt); setState("idle"); }}><RefreshCw className="w-3.5 h-3.5 me-1" />{ai.regenerate}</Button>
                 </div>
               </div>
+              {!isPremium && (
+                <div className="px-3 pb-3">
+                  <AdSlot type="inline" slotId="tool-ai-gen-success" eager />
+                </div>
+              )}
             </div>
           ))}
         </div>

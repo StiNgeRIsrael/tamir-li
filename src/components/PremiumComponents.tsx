@@ -235,7 +235,7 @@ export function ConversionSuccessUsage({ used, max }: { used: number; max: numbe
   );
 }
 
-export function ConvertUrgencyHint({ remaining, max }: { remaining: number; max: number }) {
+export function ConvertUrgencyHint({ remaining }: { remaining: number; max?: number }) {
   const { t } = useLocale();
   const p = t.premium;
   return (

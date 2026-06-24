@@ -2,6 +2,7 @@ import { useCallback, useState, type DragEvent, type KeyboardEvent } from "react
 import { Upload, FileUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useT } from "@/lib/i18n";
+import { filterFilesForTier, maxBatchFiles, maxFileSizeMb, type FileRejectReason } from "@/lib/freemium-limits";
 
 interface FileDropZoneProps {
   acceptedFormats: string[];
@@ -9,6 +10,9 @@ interface FileDropZoneProps {
   multiple?: boolean;
   maxFiles?: number;
   maxSizeMB?: number;
+  isPremium?: boolean;
+  existingFileCount?: number;
+  onRejected?: (reason: FileRejectReason, fileName?: string) => void;
   inputId?: string;
   emphasized?: boolean;
 }
@@ -17,24 +21,46 @@ export function FileDropZone({
   acceptedFormats,
   onFilesSelected,
   multiple = true,
-  maxFiles = 10,
-  maxSizeMB = 50,
+  maxFiles,
+  maxSizeMB,
+  isPremium = false,
+  existingFileCount = 0,
+  onRejected,
   inputId = "file-input",
   emphasized = false,
 }: FileDropZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const t = useT();
   const fdz = t.fileDropZone || { dragHere: "Drag files here", orClick: () => "", selectFiles: "Select Files" };
+  const effectiveMaxFiles = maxFiles ?? maxBatchFiles(isPremium);
+  const effectiveMaxSizeMB = maxSizeMB ?? maxFileSizeMb(isPremium);
+  const allowMultiple = multiple && effectiveMaxFiles > 1;
+
+  const ingestFiles = useCallback(
+    (raw: File[]) => {
+      const { accepted, rejected } = filterFilesForTier(raw, {
+        isPremium,
+        existingCount: existingFileCount,
+      });
+      for (const item of rejected) {
+        onRejected?.(item.reason, item.fileName);
+      }
+      if (accepted.length > 0) {
+        onFilesSelected(accepted.slice(0, effectiveMaxFiles - existingFileCount));
+      }
+    },
+    [effectiveMaxFiles, existingFileCount, isPremium, onFilesSelected, onRejected]
+  );
 
   const handleDragOver = useCallback((e: DragEvent) => { e.preventDefault(); setIsDragging(true); }, []);
   const handleDragLeave = useCallback((e: DragEvent) => { e.preventDefault(); setIsDragging(false); }, []);
   const handleDrop = useCallback((e: DragEvent) => {
     e.preventDefault(); setIsDragging(false);
-    onFilesSelected(Array.from(e.dataTransfer.files).slice(0, maxFiles));
-  }, [maxFiles, onFilesSelected]);
+    ingestFiles(Array.from(e.dataTransfer.files));
+  }, [ingestFiles]);
   const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) { onFilesSelected(Array.from(e.target.files).slice(0, maxFiles)); e.target.value = ""; }
-  }, [maxFiles, onFilesSelected]);
+    if (e.target.files) { ingestFiles(Array.from(e.target.files)); e.target.value = ""; }
+  }, [ingestFiles]);
 
   const openPicker = useCallback(() => {
     document.getElementById(inputId)?.click();
@@ -68,7 +94,7 @@ export function FileDropZone({
         <div>
           <p className={`font-semibold text-foreground ${emphasized ? "text-lg" : "text-base"}`}>{fdz.dragHere}</p>
           <p className="text-sm text-muted-foreground mt-1">
-            {emphasized ? fdz.orClickShort(maxSizeMB) : fdz.orClick(maxSizeMB, acceptedFormats.join(", "))}
+            {emphasized ? fdz.orClickShort(effectiveMaxSizeMB) : fdz.orClick(effectiveMaxSizeMB, acceptedFormats.join(", "))}
           </p>
         </div>
         {emphasized && acceptedFormats.length > 0 && (
@@ -88,7 +114,7 @@ export function FileDropZone({
           {fdz.selectFiles}
         </Button>
       </div>
-      <input id={inputId} type="file" accept={formatAccept} multiple={multiple} onChange={handleFileInput} className="hidden" />
+      <input id={inputId} type="file" accept={formatAccept} multiple={allowMultiple} onChange={handleFileInput} className="hidden" />
     </div>
   );
 }

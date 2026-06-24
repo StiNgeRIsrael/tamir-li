@@ -8,6 +8,7 @@ import { Download, Loader2, CheckCircle2, RotateCcw, Minimize2, ArrowDown } from
 import { useLocale, useT } from "@/lib/i18n";
 import {
   type CustomToolFreemiumProps,
+  notifyFileRejected,
   onCustomToolSuccess,
   runGatedDownload,
   trackCustomToolStart,
@@ -108,7 +109,12 @@ export function ImageCompressorTool({ freemium }: Props) {
     return (
       <div className="space-y-5">
         {freemium && !isPremium && <UsageLimitNotice used={freemium.usedToday} max={freemium.maxDaily} />}
-        <FileDropZone acceptedFormats={["JPG", "PNG", "WEBP"]} onFilesSelected={handleFile} />
+        <FileDropZone
+          acceptedFormats={["JPG", "PNG", "WEBP"]}
+          onFilesSelected={handleFile}
+          isPremium={isPremium}
+          onRejected={(reason, fileName) => notifyFileRejected(reason, isPremium, t.fileDropZone, fileName)}
+        />
         <AdSlot type="banner" slotId="tool-compressor-empty" />
       </div>
     );
@@ -175,6 +181,12 @@ export function ImageCompressorTool({ freemium }: Props) {
           </Button>
         )}
       </div>
+      {processing && !isPremium && (
+        <AdSlot type="inline" slotId="tool-compressor-processing" className="mx-auto max-w-lg" eager />
+      )}
+      {resultUrl && !isPremium && (
+        <AdSlot type="inline" slotId="tool-compressor-success" className="mx-auto max-w-lg" eager />
+      )}
       <AdSlot type="banner" slotId="tool-compressor-foot" />
     </div>
   );

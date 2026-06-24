@@ -4,7 +4,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { FileDropZone } from "@/components/FileDropZone";
 import { AdSlot } from "@/components/AdSlot";
 import { AdNativeSlot } from "@/components/ads/AdNativeSlot";
-import { PremiumBanner, PremiumLock, DailyLimitLock, ConversionSuccessUsage, UsageLimitNotice, FreePremiumComparison } from "@/components/PremiumComponents";
+import { PremiumBanner, PremiumLock, DailyLimitLock, ConversionSuccessUsage, UsageLimitNotice, FreePremiumComparison, ConvertUrgencyHint } from "@/components/PremiumComponents";
 import { InternalToolLinks } from "@/components/InternalToolLinks";
 import { showAdVignette } from "@/components/ads/AdVignette";
 import { handleGatedDownload, triggerFileDownload, triggerBlobDownload, type DownloadGateState } from "@/lib/ads/download-gate";
@@ -33,7 +33,7 @@ import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
 import { useUsage } from "@/hooks/useUsage";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useConversionJob } from "@/hooks/useConversionJob";
-import { hasAdSurface } from "@/lib/custom-tool-freemium";
+import { hasAdSurface, notifyFileRejected } from "@/lib/custom-tool-freemium";
 import { isToolFunctional } from "@/lib/tool-availability";
 import { convertImageFile, isOutputFormatSupported, usesClientImageConversion } from "@/lib/image-convert";
 import { usesClientDocumentConversion } from "@/lib/document-convert";
@@ -41,6 +41,7 @@ import { convertWordFileToPdf } from "@/lib/word-to-pdf";
 import { isServerUnavailableError } from "@/lib/conversion-errors";
 import { ComingSoonPanel } from "@/components/ComingSoonPanel";
 import { DownloadGateIndicator } from "@/components/ads/DownloadGateIndicator";
+import { filterFilesForTier, maxBatchFiles, type FileRejectReason } from "@/lib/freemium-limits";
 
 const categoryHeaderIcon: Record<ToolCategory, string> = {
   image: "bg-tool-image/10 text-tool-image",
@@ -100,7 +101,7 @@ export default function ToolPage() {
   const [showSuccessPanel, setShowSuccessPanel] = useState(false);
   const [downloadGate, setDownloadGate] = useState<DownloadGateState>({});
   const [allDownloadGate, setAllDownloadGate] = useState(false);
-  const { used: usedToday, max: maxDaily, isPremium: usageIsPremium, atLimit, recordUsage } = useUsage();
+  const { used: usedToday, max: maxDaily, remaining, isPremium: usageIsPremium, atLimit, recordUsage } = useUsage();
   const { isPremium: isSubPremium } = useSubscription();
   const { startJob: startConversionJob, polling: jobPolling } = useConversionJob();
   const isPremium = isSubPremium || usageIsPremium;
@@ -197,12 +198,28 @@ export default function ToolPage() {
     });
   }, []);
 
+  const handleFileReject = useCallback(
+    (reason: FileRejectReason, fileName?: string) => {
+      notifyFileRejected(reason, isPremium, t.fileDropZone, fileName);
+    },
+    [isPremium, t.fileDropZone]
+  );
+
   const handleFilesSelected = useCallback(async (files: File[]) => {
     if (tool) {
       trackEvent(ANALYTICS_EVENTS.FILE_UPLOAD, { tool_id: tool.id, file_count: files.length });
     }
+    const { accepted, rejected } = filterFilesForTier(files, {
+      isPremium,
+      existingCount: fileItems.length,
+    });
+    for (const item of rejected) {
+      handleFileReject(item.reason, item.fileName);
+    }
+    if (accepted.length === 0) return;
+
     const newItems: FileWithFormat[] = await Promise.all(
-      files.map(async (file) => ({
+      accepted.map(async (file) => ({
         file,
         outputFormat: activeTo,
         thumbnail: await generateThumbnail(file),
@@ -212,7 +229,7 @@ export default function ToolPage() {
     );
     setFileItems((prev) => [...prev, ...newItems]);
     setServerUnavailable(false);
-  }, [activeTo, generateThumbnail, tool]);
+  }, [activeTo, generateThumbnail, tool, isPremium, fileItems.length, handleFileReject]);
 
   const removeFile = (index: number) => {
     setFileItems((prev) => prev.filter((_, i) => i !== index));
@@ -269,6 +286,11 @@ export default function ToolPage() {
 
     if (atUsageLimit) {
       trackEvent(ANALYTICS_EVENTS.PAYWALL_HIT, { tool_id: tool.id, type: "daily_limit" });
+      return;
+    }
+
+    if (!isPremium && fileItems.length > maxBatchFiles(false)) {
+      notifyFileRejected("batch_limit", isPremium, t.fileDropZone);
       return;
     }
 
@@ -831,6 +853,11 @@ export default function ToolPage() {
                       emphasized
                       acceptedFormats={tool.fromFormats}
                       onFilesSelected={handleFilesSelected}
+                      isPremium={isPremium}
+                      existingFileCount={fileItems.length}
+                      onRejected={handleFileReject}
+                      multiple={isPremium}
+                      maxFiles={maxBatchFiles(isPremium)}
                     />
                   </section>
                 )}
@@ -930,15 +957,22 @@ export default function ToolPage() {
                       </Alert>
                     )}
                     {!converting && (
-                      <div className="flex items-center justify-between pt-1">
-                        <Button variant="outline" size="sm" onClick={() => document.getElementById("tool-file-input")?.click()}>
-                          <Plus className="w-4 h-4 me-1" />
-                          {tt.addFiles}
-                        </Button>
-                        <Button onClick={handleConvert} disabled={!allHaveFormat || converting || atUsageLimit} size="lg">
-                          <RefreshCw className="w-4 h-4 me-2" />
-                          {tt.convertN(fileItems.length)}
-                        </Button>
+                      <div className="flex items-end justify-between gap-3 pt-1">
+                        {fileItems.length < maxBatchFiles(isPremium) ? (
+                          <Button variant="outline" size="sm" onClick={() => document.getElementById("tool-file-input")?.click()}>
+                            <Plus className="w-4 h-4 me-1" />
+                            {tt.addFiles}
+                          </Button>
+                        ) : (
+                          <span />
+                        )}
+                        <div className="flex flex-col items-end gap-1.5">
+                          {!isPremium && <ConvertUrgencyHint remaining={remaining} max={maxDaily} />}
+                          <Button onClick={handleConvert} disabled={!allHaveFormat || converting || atUsageLimit} size="lg">
+                            <RefreshCw className="w-4 h-4 me-2" />
+                            {tt.convertN(fileItems.length)}
+                          </Button>
+                        </div>
                       </div>
                     )}
                     {isProcessing && (

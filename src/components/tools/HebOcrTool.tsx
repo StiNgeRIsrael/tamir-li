@@ -1,23 +1,28 @@
 import { useState } from "react";
-import { useLocale } from "@/lib/i18n";
 import { FileDropZone } from "@/components/FileDropZone";
 import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle2, FileText, Download, Wand2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { triggerInterstitial } from "@/components/AdSlot";
+import { AdSlot, triggerInterstitial } from "@/components/AdSlot";
+import { useSubscription } from "@/hooks/useSubscription";
+import { notifyFileRejected, runGatedDownload } from "@/lib/custom-tool-freemium";
+import { useT } from "@/lib/i18n";
 
 export function HebOcrTool() {
-    const { t } = useLocale();
     const { toast } = useToast();
+    const { isPremium } = useSubscription();
+    const t = useT();
     const [file, setFile] = useState<File | null>(null);
     const [status, setStatus] = useState<"idle" | "uploading" | "processing" | "done" | "error">("idle");
     const [progress, setProgress] = useState(0);
+    const [downloadGate, setDownloadGate] = useState(false);
 
     const handleFilesSelected = (files: File[]) => {
         if (files.length > 0) {
-            setFile(files[0]); // HebHTR processes one file at a time
+            setFile(files[0]);
             setStatus("idle");
             setProgress(0);
+            setDownloadGate(false);
         }
     };
 
@@ -25,7 +30,6 @@ export function HebOcrTool() {
         if (!file) return;
         setStatus("uploading");
 
-        // Simulate upload and OCR processing on the backend
         setTimeout(() => {
             setStatus("processing");
             let currentProgress = 0;
@@ -45,41 +49,28 @@ export function HebOcrTool() {
                 }
             }, 500);
         }, 1500);
+    };
 
-        /*
-          // Real Implementation Example once the Python server is running:
-          setStatus("uploading");
-          const formData = new FormData();
-          formData.append("file", file);
-
-          try {
-            const response = await fetch("http://localhost:5000/api/ocr", {
-              method: "POST",
-              body: formData,
+    const handleDownload = async () => {
+        const downloadFn = () => {
+            toast({
+                title: "הורדה התחילה",
+                description: "מוריד את המסמך השומר על המבנה של הצילום כקובץ DOCX.",
             });
-
-            const blob = await response.blob();
-            setStatus("done");
-
-            // Trigger download of the output DOCX Document
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `${file.name.replace(/\.[^.]+$/, "")}_ocr.docx`;
-            a.click();
-          } catch (error) {
-            setStatus("error");
-            console.error(error);
-          }
-        */
-    };
-
-    const handleDownloadStub = () => {
-        toast({
-            title: "הורדה התחילה",
-            description: "מוריד את המסמך השומר על המבנה של הצילום כקובץ DOCX.",
+        };
+        const { triggered, gateOpen } = await runGatedDownload(downloadGate, isPremium, downloadFn, {
+            toolId: "heb-ocr",
         });
+        setDownloadGate(gateOpen);
+        if (!triggered) return;
     };
+
+    const isProcessing = status === "uploading" || status === "processing";
+    const downloadLabel = isPremium
+        ? "הורד מסמך וורד"
+        : downloadGate
+            ? "הורד עכשיו"
+            : "צפה בפרסומת להורדה";
 
     return (
         <div className="space-y-6 animate-fade-in">
@@ -88,7 +79,9 @@ export function HebOcrTool() {
                     <FileDropZone
                         acceptedFormats={["PDF", "JPG", "PNG"]}
                         onFilesSelected={handleFilesSelected}
+                        isPremium={isPremium}
                         maxFiles={1}
+                        onRejected={(reason, fileName) => notifyFileRejected(reason, isPremium, t.fileDropZone, fileName)}
                     />
                 </div>
             )}
@@ -119,18 +112,23 @@ export function HebOcrTool() {
                         </div>
                     )}
 
-                    {(status === "uploading" || status === "processing") && (
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
-                                <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                                {status === "uploading" ? "מעלה קובץ..." : "מפענח טקסט עברי בכתב יד (HebHTR)... זה עשוי לקחת מספר דקות."}
+                    {isProcessing && (
+                        <div className="space-y-3">
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
+                                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                                    {status === "uploading" ? "מעלה קובץ..." : "מפענח טקסט עברי בכתב יד (HebHTR)... זה עשוי לקחת מספר דקות."}
+                                </div>
+                                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-primary rounded-full transition-all duration-300 ease-out"
+                                        style={{ width: `${progress}%` }}
+                                    />
+                                </div>
                             </div>
-                            <div className="h-2 bg-muted rounded-full overflow-hidden">
-                                <div
-                                    className="h-full bg-primary rounded-full transition-all duration-300 ease-out"
-                                    style={{ width: `${progress}%` }}
-                                />
-                            </div>
+                            {!isPremium && (
+                                <AdSlot type="inline" slotId="tool-heb-ocr-processing" className="mx-auto max-w-lg" eager />
+                            )}
                         </div>
                     )}
                 </div>
@@ -149,17 +147,20 @@ export function HebOcrTool() {
                     </div>
 
                     <div className="flex justify-center gap-4 pt-4">
-                        <Button variant="outline" onClick={() => setStatus("idle")}>
+                        <Button variant="outline" onClick={() => { setStatus("idle"); setDownloadGate(false); }}>
                             המרת מסמך נוסף
                         </Button>
                         <Button
-                            className="bg-success text-success-foreground hover:bg-success/90"
-                            onClick={handleDownloadStub}
+                            className={downloadGate ? "bg-success text-success-foreground hover:bg-success/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}
+                            onClick={() => void handleDownload()}
                         >
                             <Download className="w-5 h-5 mr-2" />
-                            הורד מסמך וורד
+                            {downloadLabel}
                         </Button>
                     </div>
+                    {!isPremium && (
+                        <AdSlot type="inline" slotId="tool-heb-ocr-success" className="mx-auto max-w-lg" eager />
+                    )}
                 </div>
             )}
         </div>

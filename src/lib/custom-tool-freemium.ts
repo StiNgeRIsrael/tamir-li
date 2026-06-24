@@ -1,6 +1,8 @@
 import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
 import { showAdVignette } from "@/components/ads/AdVignette";
 import { isAdsterraConfigured } from "@/lib/ads/adsterra";
+import { toast } from "sonner";
+import { maxFileSizeMb, type FileRejectReason } from "@/lib/freemium-limits";
 
 /** True when a real ad surface exists (Adsterra zones or click-through URL). */
 export function hasAdSurface(): boolean {
@@ -39,6 +41,25 @@ export type CustomToolFreemiumProps = {
   maxDaily: number;
   recordUsage: () => Promise<unknown>;
 };
+
+type FileDropRejectCopy = {
+  fileTooLarge: (maxMB: number, name: string) => string;
+  batchLimitFree: string;
+};
+
+/** Toast for FileDropZone rejections (size / batch tier limits). */
+export function notifyFileRejected(
+  reason: FileRejectReason,
+  isPremium: boolean,
+  copy: FileDropRejectCopy,
+  fileName?: string
+): void {
+  if (reason === "file_too_large") {
+    toast.error(copy.fileTooLarge(maxFileSizeMb(isPremium), fileName ?? ""));
+  } else {
+    toast.error(copy.batchLimitFree);
+  }
+}
 
 /** Fire at the start of a custom-tool operation. */
 export function trackCustomToolStart(toolId: string): void {

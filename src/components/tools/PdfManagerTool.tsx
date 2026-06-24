@@ -8,6 +8,7 @@ import { Plus, Download, RotateCw, RotateCcw, Trash2, FileText, ChevronUp, Chevr
 import { useLocale, useT } from "@/lib/i18n";
 import {
   type CustomToolFreemiumProps,
+  notifyFileRejected,
   onCustomToolSuccess,
   runGatedDownload,
   trackCustomToolStart,
@@ -129,15 +130,33 @@ export function PdfManagerTool({ freemium }: Props) {
           <Button variant="outline" onClick={handleReset}>{pm.startOver}</Button>
         </div>
       </div>
-      <AdSlot type="inline" slotId="tool-pdf-inline" />
+      <AdSlot type="inline" slotId="tool-pdf-inline" eager />
     </div>
   );
 
   return (
     <div className="space-y-5">
       {freemium && !isPremium && <UsageLimitNotice used={freemium.usedToday} max={freemium.maxDaily} />}
-      {pages.length === 0 && !loading && <FileDropZone acceptedFormats={["PDF"]} onFilesSelected={handleFilesSelected} multiple />}
-      {loading && <div className="text-center py-8"><Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-3" /><p className="text-sm text-muted-foreground">{pm.loadingPages}</p></div>}
+      {pages.length === 0 && !loading && (
+        <FileDropZone
+          acceptedFormats={["PDF"]}
+          onFilesSelected={handleFilesSelected}
+          isPremium={isPremium}
+          existingFileCount={pdfFiles.length}
+          multiple={isPremium}
+          onRejected={(reason, fileName) => notifyFileRejected(reason, isPremium, t.fileDropZone, fileName)}
+        />
+      )}
+      {loading && (
+        <div className="text-center py-8 space-y-4">
+          <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">{pm.loadingPages}</p>
+          {!isPremium && <AdSlot type="inline" slotId="tool-pdf-loading" className="mx-auto max-w-lg" eager />}
+        </div>
+      )}
+      {merging && !isPremium && (
+        <AdSlot type="inline" slotId="tool-pdf-merging" className="mx-auto max-w-lg" eager />
+      )}
       {pages.length > 0 && (
         <div className="space-y-4 animate-fade-in">
           <div className="flex items-center justify-between">

@@ -384,6 +384,9 @@ export const ruTranslations = {
     uploadStepTitle: (from: string, to: string) => `Загрузите файл ${from} для конвертации в ${to}`,
     uploadStepHint: "Перетащите сюда или нажмите кнопку — бесплатно, в браузере",
     selectFiles: "Выбрать Файлы",
+    fileTooLarge: (maxMB: number, name: string) =>
+      name ? `${name} превышает лимит ${maxMB}МБ` : `Файл превышает лимит ${maxMB}МБ`,
+    batchLimitFree: "Бесплатный план — один файл на конвертацию. Premium позволяет пакетную загрузку.",
   },
   compressor: {
     qualityLevel: "Уровень Качества", high: "Высокое", medium: "Среднее", low: "Низкое", minimal: "Минимальное",
@@ -479,6 +482,7 @@ export const ruTranslations = {
     badge: "Премиум", headline: "Спокойная работа. Без отвлечений.",
     subheadline: "5 конвертаций в день остаются бесплатными. Премиум — когда нужен больший темп, без рекламы, с ИИ-инструментами.",
     monthlyLabel: "Ежемесячно", yearlyLabel: "Ежегодно", yearlySave: "Скидка 20%",
+    yearlyBestValue: "Лучшая цена — годовой",
     anchorPriceMonthly: "₪150", priceMonthly: "₪19.90",
     anchorPriceYearlyPerMonth: "₪150", priceYearlyPerMonth: "₪15.92",
     anchorPriceYearly: "₪1,800", priceYearly: "₪191.04",
@@ -498,11 +502,12 @@ export const ruTranslations = {
     comparisonTitle: "Что входит в каждый план",
     comparisonHeaders: { feature: "Функция", free: "Бесплатно", premium: "Премиум" },
     comparisonRows: [
+      { feature: "Макс. размер файла", free: "50MB", premium: "200MB", highlight: true },
+      { feature: "Пакетная конвертация", free: "Ограничена", premium: "Безлимит", highlight: true },
+      { feature: "Реклама", free: "Да", premium: "Нет", highlight: true, freeNegative: true },
+      { feature: "Скорость обработки", free: "Обычная", premium: "Приоритетная", highlight: true },
       { feature: "Ежедневные конвертации", free: "5/день", premium: "Безлимит" },
-      { feature: "Реклама", free: "Да", premium: "Нет" },
       { feature: "ИИ-изображения", free: "—", premium: "6/мес" },
-      { feature: "Скорость обработки", free: "Обычная", premium: "Приоритетная" },
-      { feature: "Макс. размер файла", free: "50MB", premium: "200MB" },
       { feature: "Поддержка", free: "Стандартная", premium: "Приоритетный email" },
     ],
     testimonials: [],
@@ -518,5 +523,11 @@ export const ruTranslations = {
     guaranteeItems: ["Не использовали в последний месяц", "Подтверждённые сбои конвертации", "Нерешённые баги"],
     finalCta: "Интересно, что меняется?", finalDesc: "Дополнительная подписка. Отмена в любое время.",
     orGoHome: "или продолжить бесплатно",
+    exitIntent: {
+      title: "Уже уходите?",
+      body: "Годовой Премиум экономит 20% — безлимитные конвертации, без рекламы, файлы до 200MB. Отмена в любое время.",
+      cta: "Смотреть годовой план",
+      dismiss: "Продолжить бесплатно",
+    },
   },
 };

@@ -16,6 +16,7 @@ function todayKey(): string {
   return new Date().toISOString().split("T")[0];
 }
 
+/** Dev-only fallback when VITE_API_URL is unset (no backend in local split dev). */
 function readLocalUsage(): UsageSnapshot {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -66,6 +67,13 @@ function getAuthHeaders(): HeadersInit {
   return {};
 }
 
+const EMPTY_USAGE: UsageSnapshot = {
+  used: 0,
+  max: MAX_DAILY_FREE,
+  isPremium: false,
+  remaining: MAX_DAILY_FREE,
+};
+
 async function fetchUsageToday(api: string): Promise<UsageSnapshot> {
   const res = await fetch(`${api}/api/usage/today`, {
     credentials: "include",
@@ -101,16 +109,13 @@ async function postUsageRecord(
 export function useUsage() {
   const api = getApiBaseUrl();
   const queryClient = useQueryClient();
+  const apiAvailable = Boolean(api);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["usage-today", api],
     queryFn: async () => {
       if (!api) return readLocalUsage();
-      try {
-        return await fetchUsageToday(api);
-      } catch {
-        return readLocalUsage();
-      }
+      return fetchUsageToday(api);
     },
     staleTime: 30_000,
     retry: 1,
@@ -118,9 +123,13 @@ export function useUsage() {
 
   const snapshot: UsageSnapshot =
     data ??
-    (api && isLoading
-      ? { used: 0, max: MAX_DAILY_FREE, isPremium: false, remaining: MAX_DAILY_FREE }
-      : readLocalUsage());
+    (apiAvailable && isLoading
+      ? EMPTY_USAGE
+      : apiAvailable && isError
+        ? EMPTY_USAGE
+        : !apiAvailable
+          ? readLocalUsage()
+          : EMPTY_USAGE);
 
   const recordMutation = useMutation({
     mutationFn: async (payload: { toolId: string; fromFormat?: string; toFormat?: string }) => {
@@ -128,12 +137,7 @@ export function useUsage() {
         const next = readLocalUsage().used + 1;
         return writeLocalUsage(next);
       }
-      try {
-        return await postUsageRecord(api, payload);
-      } catch {
-        const next = readLocalUsage().used + 1;
-        return writeLocalUsage(next);
-      }
+      return postUsageRecord(api, payload);
     },
     onSuccess: (result) => {
       queryClient.setQueryData(["usage-today", api], result);
@@ -154,7 +158,8 @@ export function useUsage() {
     max: snapshot.max ?? MAX_DAILY_FREE,
     remaining: snapshot.remaining ?? Math.max(0, MAX_DAILY_FREE - snapshot.used),
     isPremium: snapshot.isPremium,
-    loading: !!api && isLoading && !isError,
+    loading: apiAvailable && isLoading && !isError,
+    fetchFailed: apiAvailable && isError,
     atLimit: !snapshot.isPremium && snapshot.used >= MAX_DAILY_FREE,
     recordUsage,
     refetch: () => queryClient.invalidateQueries({ queryKey: ["usage-today", api] }),

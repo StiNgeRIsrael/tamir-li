@@ -26,12 +26,12 @@ Status key: **DONE** / **PARTIAL** / **MISSING** · Priority: **P0** (revenue/le
 |---|------|--------|----------|---------------|
 | A1 | Download gate (2-step: ad → download) on **generic** `ToolPage` | **DONE** | — | `src/lib/ads/download-gate.ts`, `src/pages/ToolPage.tsx`, `DownloadGateIndicator.tsx` |
 | A2 | Download gate on **custom tools** (compressor, resizer, PDF, text) | **DONE** | — | `src/lib/custom-tool-freemium.ts` → `runGatedDownload` |
-| A3 | Download gate on **remaining custom tools** (OCR, AI gen, video, audio…) | **MISSING** | **P1** | `HebOcrTool.tsx`, `AiImageGeneratorTool.tsx`, `VideoCompressorTool.tsx`, etc. — direct download, no gate |
-| A4 | Ads on **converting / wait / success** states (`eager`) | **DONE** | — | `ToolPage.tsx` — `eager={isProcessing \|\| showSuccessPanel}` on inline/banner slots |
+| A3 | Download gate on **remaining custom tools** (OCR, AI gen, video, audio…) | **PARTIAL** → **DONE** (OCR, AI) | **P1** | `HebOcrTool.tsx`, `AiImageGeneratorTool.tsx` use `runGatedDownload`; video/audio tools still direct download |
+| A4 | Ads on **converting / wait / success** states (`eager`) | **DONE** | — | `ToolPage.tsx` + custom tools (compressor, resizer, PDF, OCR, AI gen) |
 | A5 | **Sticky** desktop ad rails (2× sidebar) | **DONE** | — | `src/components/ads/DesktopAdRail.tsx` (`sticky top-[3.75rem]`), `AppLayout.tsx` |
-| A6 | Popunder script (optional env / admin) | **PARTIAL** | **P2** | `VITE_ADSTERRA_POPUNDER_SCRIPT_URL`, admin `popunderScriptUrl`, `loadPopunderScript()` in `consent.ts` — needs live URL |
-| A7 | `PremiumLock` → **real Adsterra** (remove 15s fake timer) | **MISSING** | **P0** | `src/components/PremiumComponents.tsx` L33–99 — fake countdown unlocks `premiumUnlocked` |
-| A8 | `DailyLimitLock` → **real Adsterra** (remove 15s fake timer) | **MISSING** | **P0** | `PremiumComponents.tsx` L102–168 — same pattern; must not grant extra conversions without server credit |
+| A6 | Popunder script (optional env / admin) | **PARTIAL** → **DONE** (consent) | **P2** | `VITE_ADSTERRA_POPUNDER_SCRIPT_URL` loads only after ads cookie consent; documented in `.env.example` |
+| A7 | `PremiumLock` → **real Adsterra** (remove 15s fake timer) | **DONE** | — | `AdGateLock` + `requireAdViewForUnlock` in `PremiumComponents.tsx` |
+| A8 | `DailyLimitLock` → **real Adsterra** (remove 15s fake timer) | **DONE** | — | Same `AdGateLock` pattern |
 | A9 | Premium users skip all ad components | **DONE** | — | `setPremiumUser` in `useSubscription` → `adsterra.ts` |
 | A10 | Cookie consent before ads/analytics | **DONE** | — | `src/lib/ads/consent.ts` |
 | A11 | Interstitial on conversion milestones | **PARTIAL** | **P2** | `AdSlot.tsx` `triggerInterstitial` — used in `HebOcrTool.tsx` only |
@@ -140,11 +140,12 @@ See **Blockers** table at top. No code changes until credentials supplied.
 ## Progress log (loop updates)
 
 - [x] **2026-06-24** — Plan created (`docs/monetization-implementation-plan.md`); dynamic loop armed (30m heartbeat).
-- [ ] F3/F4/F7/A7/A8 — fake lock bypass removal
+- [x] **2026-06-24** — Theme A: real vignette locks (A7/A8), download gates on OCR + AI (A3), processing/success ad slots on custom tools (A4), popunder consent docs (A6)
+- [ ] F3/F4/F7 — client unlock bypass removal (locks show real ads but still grant session unlock)
 - [ ] F2 — server-only usage
 - [ ] B3 — file size enforcement
 - [ ] B4 — batch limits
-- [ ] A3 — download gate remaining tools
+- [ ] A3 — download gate on video/audio custom tools
 - [ ] C2 — exit-intent modal
 - [ ] D1 — SEO tier table
 - [ ] E5 — analytics gaps

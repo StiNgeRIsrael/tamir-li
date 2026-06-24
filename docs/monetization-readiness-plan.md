@@ -16,7 +16,7 @@ Audit date: **2026-06-24**. Status key: **DONE** / **PARTIAL** / **MISSING**.
 | Wait-state / high-intent ads | **DONE** | `eager` prop on processing/download slots in `ToolPage.tsx` (commit `def5d7d`) |
 | Cookie consent gating | **DONE** | `src/lib/ads/consent.ts`; ads/analytics blocked until accept |
 | Download gate (2-step) | **DONE** | `download-gate.ts`, `DownloadGateIndicator`, custom tools via `custom-tool-freemium.ts` |
-| Popunder | **PARTIAL** | Code wired (`triggerPopunderAd`); needs `popunderScriptUrl` in admin or env |
+| Popunder | **PARTIAL** → **DONE** (consent) | `loadPopunderScript` only after ads cookie consent; env `VITE_ADSTERRA_POPUNDER_SCRIPT_URL` documented |
 | Native ads | **PARTIAL** | `AdNativeSlot` + admin fields; needs both script URL + container ID |
 | `ads.txt` | **MISSING** | `public/ads.txt` is placeholder comment only — **must paste Adsterra publisher line before ad network approval** |
 | Premium ad suppression | **DONE** | `setPremiumUser` from `useSubscription` |
@@ -35,7 +35,7 @@ Audit date: **2026-06-24**. Status key: **DONE** / **PARTIAL** / **MISSING**.
 | localStorage fallback | **PARTIAL** | Bypasses server when API down — acceptable for UX, weak for abuse |
 | Custom tools skip limits | **PARTIAL** → **DONE** (2026-06-24) | Image/PDF/text tools call `recordUsage` via `onCustomToolSuccess` after vignette |
 | Premium subscription check | **DONE** | `GET /api/billing/status` → `useSubscription` → ads + limits |
-| Premium tool lock | **PARTIAL** | `PremiumLock` is 15s fake ad timer, **not** tied to `isPremium` on generic `ToolPage` |
+| Premium tool lock | **PARTIAL** → **DONE** (2026-06-24) | `PremiumLock` / `DailyLimitLock` use real `showAdVignette` + inline `AdSlot` before unlock |
 | PayPal checkout (monthly/yearly/credits) | **DONE** | `POST /api/billing/checkout`, capture, webhooks in `billing.routes.ts` |
 | Stripe checkout | **MISSING** | Webhook only; no checkout routes unless `ENABLE_STRIPE=true` + full setup |
 | Anchor pricing UI (₪150 → ₪19.90) | **DONE** | All 7 locales (`upgradePage.anchorPrice*`) |
@@ -131,7 +131,7 @@ Audit date: **2026-06-24**. Status key: **DONE** / **PARTIAL** / **MISSING**.
 | 4 | **Verify live PayPal** plan IDs + one test subscription on production | 45 min | Subscription revenue |
 | 5 | Register **live PayPal webhook** + fire test `BILLING.SUBSCRIPTION.ACTIVATED` | 20 min | Premium sync reliability |
 | 6 | Enter **Adsterra zone keys** in `/admin/ads` (or Plesk env) + consent accept smoke test | 20 min | Display revenue |
-| 7 | Tie **PremiumLock** to `isPremium` (remove fake 15s bypass for subscribers) | 30 min | Freemium integrity |
+| 7 | Tie **PremiumLock** to real ads (remove fake 15s timer) | 30 min | Freemium integrity — **DONE** |
 | 8 | **recordUsage** on custom tools (image/PDF/text) | 45 min | Limit enforcement |
 | 9 | Stub tool pages: **ComingSoon** or disable in catalog until real | 60 min | Trust / chargebacks |
 | 10 | Admin **analytics** page (GA4 embed or key metrics) | 90 min | Ops |
@@ -145,7 +145,8 @@ Audit date: **2026-06-24**. Status key: **DONE** / **PARTIAL** / **MISSING**.
 - [x] This plan document
 - [x] Admin billing UI + API (uncommitted → committed)
 - [x] AdSlot re-render when `/api/ads/config` returns DB keys
-- [ ] `npm test` pass
+- [x] Theme A — Ad & attention (real vignette locks, download gates, processing/success ad slots)
+- [x] `npm test` pass
 - [ ] Commit + push
 - [ ] `npm run site:check:prod`
 

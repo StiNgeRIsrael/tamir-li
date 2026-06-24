@@ -19,6 +19,11 @@ import {
   mimeFromExtension,
   outputFilePath,
 } from '../lib/conversion-storage';
+import {
+  MAX_BATCH_FILES_FREE,
+  MAX_FILE_BYTES_PREMIUM,
+  maxFileBytes,
+} from '../lib/freemium-limits';
 
 const router = Router();
 
@@ -111,6 +116,39 @@ router.post('/', optionalAuth, multipartUpload, async (req: Request, res: Respon
     const sessionId = getOrCreateSessionId(req, res);
     const priority = userId ? await isPremiumUser(userId) : false;
 
+    const files = (req.files as Express.Multer.File[] | undefined) ?? [];
+    const tierMaxBytes = maxFileBytes(priority);
+
+    if (!priority && files.length > MAX_BATCH_FILES_FREE) {
+      res.status(400).json({
+        error: 'BATCH_LIMIT',
+        message: 'Free tier allows one file per conversion batch',
+      });
+      return;
+    }
+
+    for (const file of files) {
+      if (file.size > tierMaxBytes) {
+        res.status(413).json({
+          error: 'FILE_TOO_LARGE',
+          message: priority
+            ? `File exceeds ${MAX_FILE_BYTES_PREMIUM / (1024 * 1024)}MB premium limit`
+            : 'File exceeds 50MB free tier limit',
+        });
+        return;
+      }
+    }
+
+    if (fileSizeBytes != null && fileSizeBytes > BigInt(tierMaxBytes)) {
+      res.status(413).json({
+        error: 'FILE_TOO_LARGE',
+        message: priority
+          ? `File exceeds ${MAX_FILE_BYTES_PREMIUM / (1024 * 1024)}MB premium limit`
+          : 'File exceeds 50MB free tier limit',
+      });
+      return;
+    }
+
     const usageResult = await checkLimitAndRecordUsage({
       userId,
       sessionId,
@@ -142,7 +180,6 @@ router.post('/', optionalAuth, multipartUpload, async (req: Request, res: Respon
       },
     });
 
-    const files = (req.files as Express.Multer.File[] | undefined) ?? [];
     let inputStoragePath: string | null = null;
 
     if (files.length > 0) {

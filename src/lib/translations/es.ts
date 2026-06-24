@@ -436,6 +436,9 @@ export const esTranslations = {
     uploadStepTitle: (from: string, to: string) => `Sube tu archivo ${from} para convertir a ${to}`,
     uploadStepHint: "Arrastra aquí o haz clic en el botón — gratis, en tu navegador",
     selectFiles: "Seleccionar Archivos",
+    fileTooLarge: (maxMB: number, name: string) =>
+      name ? `${name} supera el límite de ${maxMB}MB` : `El archivo supera el límite de ${maxMB}MB`,
+    batchLimitFree: "El plan gratuito permite un archivo por conversión. Premium permite subidas por lotes.",
   },
   compressor: {
     qualityLevel: "Nivel de Calidad", high: "Alta", medium: "Media", low: "Baja", minimal: "Mínima",
@@ -531,6 +534,7 @@ export const esTranslations = {
     badge: "Premium", headline: "Trabajo en calma. Sin interrupciones.",
     subheadline: "5 conversiones al día siguen gratis. Premium — cuando necesitas más ritmo, sin anuncios, con herramientas IA.",
     monthlyLabel: "Mensual", yearlyLabel: "Anual", yearlySave: "Ahorra 20%",
+    yearlyBestValue: "Mejor valor — anual",
     anchorPriceMonthly: "₪150", priceMonthly: "₪19.90",
     anchorPriceYearlyPerMonth: "₪150", priceYearlyPerMonth: "₪15.92",
     anchorPriceYearly: "₪1,800", priceYearly: "₪191.04",
@@ -550,11 +554,12 @@ export const esTranslations = {
     comparisonTitle: "Qué incluye cada plan",
     comparisonHeaders: { feature: "Función", free: "Gratis", premium: "Premium" },
     comparisonRows: [
+      { feature: "Tamaño Máximo de Archivo", free: "50MB", premium: "200MB", highlight: true },
+      { feature: "Conversión por Lotes", free: "Limitada", premium: "Ilimitada", highlight: true },
+      { feature: "Anuncios", free: "Sí", premium: "Ninguno", highlight: true, freeNegative: true },
+      { feature: "Velocidad de Procesamiento", free: "Estándar", premium: "Prioritaria", highlight: true },
       { feature: "Conversiones Diarias", free: "5/día", premium: "Ilimitadas" },
-      { feature: "Anuncios", free: "Sí", premium: "Ninguno" },
       { feature: "Imágenes IA", free: "—", premium: "6/mes" },
-      { feature: "Velocidad", free: "Estándar", premium: "Prioritaria" },
-      { feature: "Tamaño Máximo", free: "50MB", premium: "200MB" },
       { feature: "Soporte", free: "Estándar", premium: "Email Prioritario" },
     ],
     testimonials: [],
@@ -570,5 +575,11 @@ export const esTranslations = {
     guaranteeItems: ["Sin uso en el último mes", "Fallos de conversión confirmados", "Bugs reportados sin resolver"],
     finalCta: "¿Curioso qué cambia?", finalDesc: "Suscripción opcional. Cancela cuando quieras.",
     orGoHome: "o seguir gratis",
+    exitIntent: {
+      title: "¿Ya te vas?",
+      body: "Premium anual ahorra 20% — conversiones ilimitadas, sin anuncios y archivos hasta 200MB. Cancela cuando quieras.",
+      cta: "Ver plan anual",
+      dismiss: "Seguir gratis",
+    },
   },
 };

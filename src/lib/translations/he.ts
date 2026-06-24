@@ -481,6 +481,9 @@ export const heTranslations = {
     uploadStepTitle: (from: string, to: string) => `העלו קובץ ${from} להמרה ל-${to}`,
     uploadStepHint: "גררו לכאן או לחצו על הכפתור — חינם, ישירות בדפדפן",
     selectFiles: "בחר קבצים",
+    fileTooLarge: (maxMB: number, name: string) =>
+      name ? `${name} חורג ממגבלת ${maxMB}MB` : `הקובץ חורג ממגבלת ${maxMB}MB`,
+    batchLimitFree: "בתוכנית החינמית ניתן להעלות קובץ אחד להמרה. שדרגו לפרימיום להעלאה מרובה.",
   },
   compressor: {
     qualityLevel: "רמת איכות", high: "גבוהה", medium: "בינונית", low: "נמוכה", minimal: "מינימלית",
@@ -589,6 +592,7 @@ export const heTranslations = {
     monthlyLabel: "חודשי",
     yearlyLabel: "שנתי",
     yearlySave: "חסכו 20%",
+    yearlyBestValue: "הכי משתלם — שנתי",
     anchorPriceMonthly: "₪150",
     priceMonthly: "₪19.90",
     anchorPriceYearlyPerMonth: "₪150",
@@ -614,11 +618,12 @@ export const heTranslations = {
     comparisonTitle: "מה כלול בכל תוכנית",
     comparisonHeaders: { feature: "תכונה", free: "חינם", premium: "פרימיום" },
     comparisonRows: [
+      { feature: "גודל קובץ מקסימלי", free: "50MB", premium: "200MB", highlight: true },
+      { feature: "המרה מרובת קבצים", free: "מוגבל", premium: "ללא הגבלה", highlight: true },
+      { feature: "מודעות", free: "כן", premium: "ללא", highlight: true, freeNegative: true },
+      { feature: "מהירות עיבוד", free: "רגילה", premium: "עדיפות", highlight: true },
       { feature: "המרות יומיות", free: "5 ליום", premium: "ללא הגבלה" },
-      { feature: "מודעות", free: "כן", premium: "ללא" },
       { feature: "יצירת תמונות AI", free: "—", premium: "6 בחודש" },
-      { feature: "מהירות עיבוד", free: "רגילה", premium: "עדיפות" },
-      { feature: "גודל קובץ מקסימלי", free: "50MB", premium: "200MB" },
       { feature: "תמיכה", free: "סטנדרטית", premium: "מייל בעדיפות" },
     ],
     testimonials: [],
@@ -639,6 +644,12 @@ export const heTranslations = {
     finalCta: "רוצים לראות מה משתנה?",
     finalDesc: "מנוי אופציונלי. אפשר לבטל מתי שרוצים.",
     orGoHome: "או להמשיך בחינם",
+    exitIntent: {
+      title: "כבר עוזבים?",
+      body: "פרימיום שנתי חוסך 20% — המרות ללא הגבלה, בלי פרסומות, וקבצים עד 200MB. אפשר לבטל מתי שרוצים.",
+      cta: "לראות את התוכנית השנתית",
+      dismiss: "להמשיך בחינם",
+    },
   },
 
   consent: {

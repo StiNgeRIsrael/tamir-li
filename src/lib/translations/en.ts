@@ -460,6 +460,9 @@ export const enTranslations = {
     uploadStepTitle: (from: string, to: string) => `Upload your ${from} file to convert to ${to}`,
     uploadStepHint: "Drag and drop here or click the button — free, in your browser",
     selectFiles: "Select Files",
+    fileTooLarge: (maxMB: number, name: string) =>
+      name ? `${name} exceeds the ${maxMB}MB limit` : `File exceeds the ${maxMB}MB limit`,
+    batchLimitFree: "Free plan allows one file per conversion. Upgrade to Premium for batch uploads.",
   },
   compressor: {
     qualityLevel: "Quality Level", high: "High", medium: "Medium", low: "Low", minimal: "Minimal",
@@ -568,6 +571,7 @@ export const enTranslations = {
     monthlyLabel: "Monthly",
     yearlyLabel: "Yearly",
     yearlySave: "Save 20%",
+    yearlyBestValue: "Best value — yearly",
     anchorPriceMonthly: "₪150",
     priceMonthly: "₪19.90",
     anchorPriceYearlyPerMonth: "₪150",
@@ -593,11 +597,12 @@ export const enTranslations = {
     comparisonTitle: "What's in each plan",
     comparisonHeaders: { feature: "Feature", free: "Free", premium: "Premium" },
     comparisonRows: [
+      { feature: "File Size Limit", free: "50MB", premium: "200MB", highlight: true },
+      { feature: "Batch Conversion", free: "Limited", premium: "Unlimited", highlight: true },
+      { feature: "Ads", free: "Yes", premium: "None", highlight: true, freeNegative: true },
+      { feature: "Processing Speed", free: "Standard", premium: "Priority", highlight: true },
       { feature: "Daily Conversions", free: "5/day", premium: "Unlimited" },
-      { feature: "Ads", free: "Yes", premium: "None" },
       { feature: "AI Image Generation", free: "—", premium: "6/month" },
-      { feature: "Processing Speed", free: "Standard", premium: "Priority" },
-      { feature: "File Size Limit", free: "50MB", premium: "200MB" },
       { feature: "Support", free: "Standard", premium: "Priority Email" },
     ],
     testimonials: [],
@@ -618,6 +623,12 @@ export const enTranslations = {
     finalCta: "Curious what changes?",
     finalDesc: "Optional subscription. Cancel whenever you like.",
     orGoHome: "or keep using free",
+    exitIntent: {
+      title: "Leaving already?",
+      body: "Yearly Premium saves 20% — unlimited conversions, no ads, and files up to 200MB. Cancel anytime.",
+      cta: "See yearly plan",
+      dismiss: "Continue with free",
+    },
   },
 
   consent: {

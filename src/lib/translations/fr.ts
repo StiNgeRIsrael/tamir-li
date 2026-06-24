@@ -380,6 +380,9 @@ export const frTranslations = {
     uploadStepTitle: (from: string, to: string) => `Téléversez votre fichier ${from} pour convertir en ${to}`,
     uploadStepHint: "Glissez ici ou cliquez sur le bouton — gratuit, dans votre navigateur",
     selectFiles: "Sélectionner des Fichiers",
+    fileTooLarge: (maxMB: number, name: string) =>
+      name ? `${name} dépasse la limite de ${maxMB} Mo` : `Le fichier dépasse la limite de ${maxMB} Mo`,
+    batchLimitFree: "Le plan gratuit autorise un fichier par conversion. Premium permet les envois groupés.",
   },
   compressor: {
     qualityLevel: "Niveau de Qualité", high: "Haute", medium: "Moyenne", low: "Basse", minimal: "Minimale",
@@ -475,6 +478,7 @@ export const frTranslations = {
     badge: "Premium", headline: "Travail tranquille. Sans interruption.",
     subheadline: "5 conversions par jour restent gratuites. Premium — quand il faut plus de rythme, sans pub, avec outils IA.",
     monthlyLabel: "Mensuel", yearlyLabel: "Annuel", yearlySave: "Économisez 20%",
+    yearlyBestValue: "Meilleur rapport — annuel",
     anchorPriceMonthly: "₪150", priceMonthly: "₪19.90",
     anchorPriceYearlyPerMonth: "₪150", priceYearlyPerMonth: "₪15.92",
     anchorPriceYearly: "₪1,800", priceYearly: "₪191.04",
@@ -494,11 +498,12 @@ export const frTranslations = {
     comparisonTitle: "Ce que contient chaque formule",
     comparisonHeaders: { feature: "Fonctionnalité", free: "Gratuit", premium: "Premium" },
     comparisonRows: [
+      { feature: "Taille max. de fichier", free: "50Mo", premium: "200Mo", highlight: true },
+      { feature: "Conversion par lot", free: "Limitée", premium: "Illimitée", highlight: true },
+      { feature: "Publicités", free: "Oui", premium: "Aucune", highlight: true, freeNegative: true },
+      { feature: "Vitesse de traitement", free: "Standard", premium: "Prioritaire", highlight: true },
       { feature: "Conversions quotidiennes", free: "5/jour", premium: "Illimitées" },
-      { feature: "Publicités", free: "Oui", premium: "Aucune" },
       { feature: "Génération d'images IA", free: "—", premium: "6/mois" },
-      { feature: "Vitesse de traitement", free: "Standard", premium: "Prioritaire" },
-      { feature: "Taille max. de fichier", free: "50Mo", premium: "200Mo" },
       { feature: "Support", free: "Standard", premium: "Email prioritaire" },
     ],
     testimonials: [],
@@ -514,5 +519,11 @@ export const frTranslations = {
     guaranteeItems: ["Pas d'utilisation le mois dernier", "Échecs de conversion confirmés", "Bugs signalés non résolus"],
     finalCta: "Curieux de voir la différence ?", finalDesc: "Abonnement optionnel. Annulez quand vous voulez.",
     orGoHome: "ou continuer gratuitement",
+    exitIntent: {
+      title: "Vous partez déjà ?",
+      body: "Premium annuel — 20% d'économie, conversions illimitées, sans pub, fichiers jusqu'à 200Mo. Annulez quand vous voulez.",
+      cta: "Voir l'offre annuelle",
+      dismiss: "Continuer gratuitement",
+    },
   },
 };
