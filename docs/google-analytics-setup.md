@@ -64,6 +64,7 @@ Direct `gtag` config uses `send_page_view: false` (SPA sends manual `page_view`)
 | `convert_success` | Custom | Conversion done | `tool_id`, `format`, `duration_ms`, `source` |
 | `paywall_hit` | Custom | Limit / premium gate | `tool_id`, `type` (`daily_limit` \| `premium_tool`) |
 | `upgrade_click` | Custom | Premium CTA | `plan`, `source` |
+| `view_promotion` | **Recommended** | Premium page / exit modal | `promotion_name`, `creative_name`, `location_id`, `plan`, `currency`, `value` |
 | `begin_checkout` | **Recommended** | Checkout start | `plan`, `source`, `currency`, `value`, `items` |
 | `purchase` | **Recommended** | PayPal return | `plan`, `source`, `transaction_id`, `currency`, `value`, `items` |
 | `file_download` | Recommended / custom | Download click | `tool_id`, `file_index`, `source` |
@@ -95,7 +96,7 @@ Direct `gtag` config uses `send_page_view: false` (SPA sends manual `page_view`)
 - [ ] Cookieless `page_view` / pings before accept
 - [ ] After accept, full measurement + `user_id` on sign-in
 - [ ] `tool_view`, `file_upload`, `convert_start`, `convert_success` on a tool
-- [ ] `paywall_hit`, `upgrade_click`, `begin_checkout` on premium flow
+- [ ] `paywall_hit`, `upgrade_click`, `view_promotion`, `begin_checkout` on premium flow
 - [ ] `login` / `sign_up` after Google sign-in
 - [ ] `purchase` after PayPal return URL
 
