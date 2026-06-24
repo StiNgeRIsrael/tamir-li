@@ -539,4 +539,10 @@ export const itTranslations = {
       dismiss: "Continua gratis",
     },
   },
+
+  pwaUpdate: {
+    message: "Nuova versione disponibile — aggiorna la pagina",
+    refresh: "Aggiorna",
+    dismiss: "Più tardi",
+  },
 };

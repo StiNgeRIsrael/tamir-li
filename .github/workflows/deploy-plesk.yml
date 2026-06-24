@@ -247,3 +247,32 @@ jobs:
             exit 1
           fi
           echo "/tool-icons/pdf-to-png.svg content-type: $ICON_CT"
+
+      - name: Purge Cloudflare cache
+        if: success()
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          SITE_ORIGIN: ${{ vars.VITE_SITE_ORIGIN || 'https://tamir.li' }}
+        run: |
+          if [ -z "$CLOUDFLARE_ZONE_ID" ] || [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "Skipping Cloudflare cache purge (CLOUDFLARE_ZONE_ID or CLOUDFLARE_API_TOKEN not set)."
+            exit 0
+          fi
+          ORIGIN="${SITE_ORIGIN%/}"
+          echo "Purging Cloudflare edge cache for ${ORIGIN} (index.html, sw.js, registerSW.js)..."
+          HTTP_CODE=$(curl -sS -o /tmp/cf-purge-response.json -w '%{http_code}' \
+            -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data "{\"files\":[\"${ORIGIN}/\",\"${ORIGIN}/index.html\",\"${ORIGIN}/sw.js\",\"${ORIGIN}/registerSW.js\"]}")
+          cat /tmp/cf-purge-response.json
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error:: Cloudflare cache purge failed (HTTP ${HTTP_CODE})"
+            exit 1
+          fi
+          if ! grep -q '"success"[[:space:]]*:[[:space:]]*true' /tmp/cf-purge-response.json; then
+            echo "::error:: Cloudflare API returned success=false"
+            exit 1
+          fi
+          echo "Cloudflare cache purged successfully."

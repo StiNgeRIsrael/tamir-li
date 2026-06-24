@@ -652,6 +652,12 @@ export const enTranslations = {
     privacyLink: "Privacy Policy",
   },
 
+  pwaUpdate: {
+    message: "New version available — refresh to update",
+    refresh: "Refresh",
+    dismiss: "Later",
+  },
+
   privacyPage: {
     seoTitle: "Privacy Policy | Tamir.li",
     seoDesc: "Tamir.li privacy policy — data collection, cookies, Google Analytics, Adsterra, and your rights.",

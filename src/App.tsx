@@ -10,6 +10,7 @@ import { LocaleProvider, NON_HE_LOCALES, type Locale } from "@/lib/i18n";
 import Index from "./pages/Index";
 import { AnalyticsPageTracker } from "@/components/AnalyticsPageTracker";
 import { CookieConsent } from "@/components/CookieConsent";
+import { PwaUpdatePrompt } from "@/components/PwaUpdatePrompt";
 import { AdVignetteHost } from "@/components/ads/AdVignette";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ToolConfigProvider } from "@/contexts/ToolConfigContext";
@@ -110,6 +111,7 @@ const App = () => (
           <ScrollToTop />
           <AnalyticsPageTracker />
           <CookieConsent />
+          <PwaUpdatePrompt />
           <AdVignetteHost />
           <Routes>
             {/* Explicitly map over supported locales so it doesn't swallow `:slug` */}

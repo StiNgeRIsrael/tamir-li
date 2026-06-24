@@ -673,6 +673,12 @@ export const heTranslations = {
     privacyLink: "מדיניות פרטיות",
   },
 
+  pwaUpdate: {
+    message: "גרסה חדשה זמינה — רעננו כדי לקבל את העדכון",
+    refresh: "רענון",
+    dismiss: "אחר כך",
+  },
+
   privacyPage: {
     seoTitle: "מדיניות פרטיות | תמיר לי",
     seoDesc: "מדיניות הפרטיות של תמיר לי — איסוף נתונים, עוגיות, Google Analytics, Adsterra וזכויות המשתמש.",

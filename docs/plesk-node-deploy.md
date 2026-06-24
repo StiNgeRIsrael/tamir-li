@@ -511,6 +511,8 @@ Upload the CI deploy bundle (or built repo) via Plesk **File Manager**, then use
 
 ## Post-deploy checks
 
+After each deploy, CI optionally purges Cloudflare edge cache for `index.html`, `sw.js`, and `registerSW.js` when `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ZONE_ID` GitHub secrets are set. See [`cloudflare-cache.md`](./cloudflare-cache.md).
+
 ```bash
 curl https://tamir.li/health
 curl https://tamir.li/api/tools/config

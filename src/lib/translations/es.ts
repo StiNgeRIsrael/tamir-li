@@ -595,4 +595,10 @@ export const esTranslations = {
       dismiss: "Seguir gratis",
     },
   },
+
+  pwaUpdate: {
+    message: "Nueva versión disponible — actualiza para obtenerla",
+    refresh: "Actualizar",
+    dismiss: "Más tarde",
+  },
 };

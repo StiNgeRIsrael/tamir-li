@@ -539,4 +539,10 @@ export const deTranslations = {
       dismiss: "Kostenlos weitermachen",
     },
   },
+
+  pwaUpdate: {
+    message: "Neue Version verfügbar — Seite aktualisieren",
+    refresh: "Aktualisieren",
+    dismiss: "Später",
+  },
 };

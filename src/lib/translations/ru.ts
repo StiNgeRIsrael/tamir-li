@@ -543,4 +543,10 @@ export const ruTranslations = {
       dismiss: "Продолжить бесплатно",
     },
   },
+
+  pwaUpdate: {
+    message: "Доступна новая версия — обновите страницу",
+    refresh: "Обновить",
+    dismiss: "Позже",
+  },
 };

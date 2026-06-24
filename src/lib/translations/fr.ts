@@ -539,4 +539,10 @@ export const frTranslations = {
       dismiss: "Continuer gratuitement",
     },
   },
+
+  pwaUpdate: {
+    message: "Nouvelle version disponible — actualisez la page",
+    refresh: "Actualiser",
+    dismiss: "Plus tard",
+  },
 };
