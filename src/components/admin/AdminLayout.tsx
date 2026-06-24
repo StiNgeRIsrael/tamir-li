@@ -6,6 +6,7 @@ import {
   Megaphone,
   CreditCard,
   ArrowLeft,
+  Sparkles,
 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -67,6 +68,10 @@ export function AdminLayout() {
               <NavLink to={localePath("/admin/ads", locale)} className={navCls}>
                 <Megaphone className="h-4 w-4 shrink-0" />
                 {admin.navAds}
+              </NavLink>
+              <NavLink to={localePath("/admin/ai", locale)} className={navCls}>
+                <Sparkles className="h-4 w-4 shrink-0" />
+                {admin.navAi}
               </NavLink>
             </nav>
           </aside>

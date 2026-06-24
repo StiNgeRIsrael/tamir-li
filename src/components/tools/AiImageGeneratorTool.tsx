@@ -6,7 +6,11 @@ import { Crown, Sparkles, Loader2, Download, RefreshCw, ImageIcon } from "lucide
 import { CreditsDisplay, CreditPackages } from "@/components/PremiumCredits";
 import { useT, useLocale, localePath } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useAuth } from "@/contexts/AuthContext";
+import { getApiBaseUrl } from "@/lib/api/client";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 type GenerationState = "idle" | "generating" | "done";
 interface GeneratedImage { prompt: string; url: string; timestamp: number; }
@@ -15,7 +19,9 @@ export function AiImageGeneratorTool() {
   const t = useT();
   const { locale } = useLocale();
   const ai = t.aiGenerator;
+  const { token } = useAuth();
   const { isPremium, credits } = useSubscription();
+  const qc = useQueryClient();
   const [prompt, setPrompt] = useState("");
   const [style, setStyle] = useState("realistic");
   const [aspectRatio, setAspectRatio] = useState("1:1");
@@ -23,13 +29,49 @@ export function AiImageGeneratorTool() {
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
   const [showPackages, setShowPackages] = useState(false);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!prompt.trim() || credits <= 0) return;
+    const base = getApiBaseUrl();
+    if (!base || !token) {
+      toast.error(ai.generating ?? "Sign in required");
+      return;
+    }
+
     setState("generating");
-    setTimeout(() => {
-      setGeneratedImages((prev) => [{ prompt: prompt.trim(), url: "", timestamp: Date.now() }, ...prev]);
+    try {
+      const res = await fetch(`${base}/api/ai/generate-image`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: prompt.trim(),
+          style,
+          aspectRatio,
+          toolId: "ai-image-generator",
+        }),
+      });
+      const body = (await res.json().catch(() => ({}))) as {
+        imageDataUrl?: string;
+        message?: string;
+        creditsRemaining?: number;
+      };
+      if (!res.ok) {
+        throw new Error(body.message ?? res.statusText);
+      }
+      if (body.imageDataUrl) {
+        setGeneratedImages((prev) => [
+          { prompt: prompt.trim(), url: body.imageDataUrl!, timestamp: Date.now() },
+          ...prev,
+        ]);
+      }
+      qc.invalidateQueries({ queryKey: ["subscription"] });
       setState("done");
-    }, 3000);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Generation failed");
+      setState("idle");
+    }
   };
 
   const styles = ai.styles || [];
@@ -68,7 +110,7 @@ export function AiImageGeneratorTool() {
               <SelectContent>{(ratios as { value: string; label: string }[]).map((r) => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent></Select>
           </div>
         </div>
-        <Button onClick={handleGenerate} disabled={!prompt.trim() || state === "generating" || credits <= 0} className="w-full h-11 font-bold bg-premium text-premium-foreground hover:bg-premium/90" size="lg">
+        <Button onClick={handleGenerate} disabled={!prompt.trim() || state === "generating" || credits <= 0 || !token} className="w-full h-11 font-bold bg-premium text-premium-foreground hover:bg-premium/90" size="lg">
           {state === "generating" ? <><Loader2 className="w-4 h-4 me-2 animate-spin" />{ai.generating}</> : <><Sparkles className="w-4 h-4 me-2" />{ai.generateBtn}</>}
         </Button>
       </div>
@@ -81,15 +123,25 @@ export function AiImageGeneratorTool() {
       {generatedImages.length > 0 && state !== "generating" && (
         <div className="space-y-3">
           <h3 className="text-sm font-bold text-foreground">{ai.generatedImages}</h3>
-          {generatedImages.map((img, index) => (
+          {generatedImages.map((img) => (
             <div key={img.timestamp} className="bg-card border border-border rounded-2xl overflow-hidden animate-fade-in">
               <div className="aspect-square max-h-[400px] bg-muted flex items-center justify-center">
-                <div className="text-center space-y-2"><ImageIcon className="w-12 h-12 text-muted-foreground/30 mx-auto" /><p className="text-xs text-muted-foreground">{ai.imagePlaceholder}</p></div>
+                {img.url ? (
+                  <img src={img.url} alt={img.prompt} className="max-h-[400px] w-full object-contain" />
+                ) : (
+                  <div className="text-center space-y-2"><ImageIcon className="w-12 h-12 text-muted-foreground/30 mx-auto" /><p className="text-xs text-muted-foreground">{ai.imagePlaceholder}</p></div>
+                )}
               </div>
               <div className="p-3 space-y-2">
                 <p className="text-xs text-muted-foreground truncate">"{img.prompt}"</p>
                 <div className="flex items-center gap-2">
-                  <Button size="sm" className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"><Download className="w-3.5 h-3.5 me-1" />{ai.downloadImage}</Button>
+                  {img.url ? (
+                    <Button size="sm" className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90" asChild>
+                      <a href={img.url} download={`ai-image-${img.timestamp}.png`}><Download className="w-3.5 h-3.5 me-1" />{ai.downloadImage}</a>
+                    </Button>
+                  ) : (
+                    <Button size="sm" className="flex-1" disabled><Download className="w-3.5 h-3.5 me-1" />{ai.downloadImage}</Button>
+                  )}
                   <Button size="sm" variant="outline" onClick={() => { setPrompt(img.prompt); setState("idle"); }}><RefreshCw className="w-3.5 h-3.5 me-1" />{ai.regenerate}</Button>
                 </div>
               </div>

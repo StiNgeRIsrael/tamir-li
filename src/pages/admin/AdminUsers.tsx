@@ -74,6 +74,27 @@ export default function AdminUsers() {
   const [premiumDuration, setPremiumDuration] = useState<PremiumDuration>("30d");
   const [creditsDialog, setCreditsDialog] = useState<AdminUserRow | null>(null);
   const [creditsAmount, setCreditsAmount] = useState("10");
+  const [aiStatsDialog, setAiStatsDialog] = useState<AdminUserRow | null>(null);
+
+  const { data: aiStats, isLoading: aiStatsLoading } = useQuery({
+    queryKey: ["admin-user-ai-stats", token, aiStatsDialog?.id],
+    queryFn: () =>
+      adminFetch<{
+        generationCount: number;
+        totalCostUsd: number;
+        totalCreditsCharged: number;
+        recent: Array<{
+          id: string;
+          toolId: string;
+          status: string;
+          creditsCharged: number;
+          estimatedCostUsd: number | null;
+          promptPreview: string | null;
+          createdAt: string;
+        }>;
+      }>(`/api/admin/users/${aiStatsDialog!.id}/ai-stats`, token),
+    enabled: !!token && !!aiStatsDialog,
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users", token, page, searchDebounced],
@@ -281,6 +302,9 @@ export default function AdminUsers() {
                       <DropdownMenuItem onClick={() => openCredits(u)}>
                         {admin.grantCredits ?? "Grant Credits"}
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setAiStatsDialog(u)}>
+                        {admin.aiViewUsage ?? "AI usage"}
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -400,6 +424,63 @@ export default function AdminUsers() {
             </Button>
             <Button onClick={saveCredits} disabled={grantCreditsMutation.isPending}>
               {admin.grantConfirm ?? "Grant"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!aiStatsDialog} onOpenChange={(o) => !o && setAiStatsDialog(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{admin.aiViewUsage ?? "AI usage"}</DialogTitle>
+          </DialogHeader>
+          {aiStatsDialog && (
+            <p className="text-sm text-muted-foreground">{aiStatsDialog.email}</p>
+          )}
+          {aiStatsLoading && (
+            <div className="flex justify-center py-6">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          )}
+          {aiStats && (
+            <div className="space-y-4">
+              <p className="text-sm">
+                {(admin.aiUserSpend ?? "Total AI spend: ${amount}").replace(
+                  "${amount}",
+                  `$${aiStats.totalCostUsd.toFixed(4)}`
+                )}{" "}
+                · {aiStats.generationCount} gens · {aiStats.totalCreditsCharged}{" "}
+                {admin.aiColCredits?.toLowerCase() ?? "credits"}
+              </p>
+              <div>
+                <h4 className="text-sm font-medium mb-2">
+                  {admin.aiRecentGenerations ?? "Recent generations"}
+                </h4>
+                {aiStats.recent.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">{admin.aiNoGenerations}</p>
+                ) : (
+                  <ul className="space-y-2 max-h-48 overflow-y-auto text-xs">
+                    {aiStats.recent.map((g) => (
+                      <li key={g.id} className="border-b border-border/50 pb-2">
+                        <div className="flex justify-between gap-2">
+                          <Badge variant={g.status === "SUCCESS" ? "default" : "destructive"} className="text-[10px]">
+                            {g.status === "SUCCESS" ? admin.aiStatusSuccess : admin.aiStatusFailed}
+                          </Badge>
+                          <span className="text-muted-foreground">
+                            {new Date(g.createdAt).toLocaleString()}
+                          </span>
+                        </div>
+                        <p className="truncate text-muted-foreground mt-1">{g.promptPreview ?? g.toolId}</p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAiStatsDialog(null)}>
+              {admin.cancel ?? "Close"}
             </Button>
           </DialogFooter>
         </DialogContent>

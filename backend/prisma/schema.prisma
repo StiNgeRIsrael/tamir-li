@@ -20,9 +20,10 @@ model User {
   roles          UserRole[]
   subscription   Subscription?
   payments       Payment[]
-  aiCredits      AiCredit?
-  usageLogs      UsageLog[]
-  conversionJobs ConversionJob[]
+  aiCredits         AiCredit?
+  aiGenerationLogs  AiGenerationLog[]
+  usageLogs         UsageLog[]
+  conversionJobs    ConversionJob[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 }
@@ -148,6 +149,41 @@ model AiCredit {
   lifetimePurchased  Int       @default(0)
   lastMonthlyReset   DateTime?
   updatedAt          DateTime  @updatedAt
+}
+
+/** הגדרות AI — שורה יחידה (id = default); מפתח Google נשמר בשרת בלבד */
+model AiSettings {
+  id           String   @id @default("default")
+  googleApiKey String?  @db.VarChar(256)
+  modelName    String   @default("imagen-3.0-generate-002") @db.VarChar(128)
+  enabled      Boolean  @default(false)
+  updatedAt    DateTime @default(now()) @updatedAt
+}
+
+enum AiGenerationStatus {
+  SUCCESS
+  FAILED
+}
+
+/** יומן עלות לכל ניסיון יצירת תמונה AI (הצלחה או כישלון) */
+model AiGenerationLog {
+  id               String             @id @default(uuid())
+  userId           String?
+  user             User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  toolId           String
+  status           AiGenerationStatus
+  creditsCharged   Int                @default(0)
+  estimatedCostUsd Decimal?           @db.Decimal(10, 6)
+  provider         String             @default("google") @db.VarChar(32)
+  model            String?            @db.VarChar(128)
+  promptPreview    String?            @db.VarChar(200)
+  errorMessage     String?            @db.Text
+  durationMs       Int?
+  createdAt        DateTime           @default(now())
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
+  @@index([status, createdAt])
 }
 
 model UsageLog {

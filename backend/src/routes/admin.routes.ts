@@ -27,6 +27,13 @@ import {
   saveAdSettings,
   serializeAdSettings,
 } from '../lib/ad-settings';
+import {
+  ensureAiSettings,
+  parseAiSettingsPatch,
+  respondAiSettingsDbError,
+  saveAiSettings,
+  serializeAiSettingsAdmin,
+} from '../lib/ai-settings';
 import { CONFIG_CACHE_KEYS, invalidateConfigCache } from '../lib/config-cache';
 
 const router = Router();
@@ -695,6 +702,159 @@ router.patch('/ads/settings', async (req: Request, res: Response) => {
     res.json({ settings: serializeAdSettings(updated) });
   } catch (e) {
     respondAdSettingsDbError(res, e, 'admin/ads/settings PATCH', 'save');
+  }
+});
+
+router.get('/ai/settings', async (_req: Request, res: Response) => {
+  try {
+    const row = await ensureAiSettings();
+    res.json({ settings: serializeAiSettingsAdmin(row) });
+  } catch (e) {
+    respondAiSettingsDbError(res, e, 'admin/ai/settings GET', 'load');
+  }
+});
+
+router.patch('/ai/settings', async (req: Request, res: Response) => {
+  try {
+    const { data, error } = parseAiSettingsPatch(req.body as Record<string, unknown>);
+    if (error) {
+      res.status(400).json({ error: 'INVALID_BODY', message: error });
+      return;
+    }
+    if (Object.keys(data).length === 0) {
+      res.status(400).json({ error: 'INVALID_BODY', message: 'No fields to update' });
+      return;
+    }
+
+    const updated = await saveAiSettings(data);
+    res.json({ settings: serializeAiSettingsAdmin(updated) });
+  } catch (e) {
+    respondAiSettingsDbError(res, e, 'admin/ai/settings PATCH', 'save');
+  }
+});
+
+router.get('/ai/generations', async (req: Request, res: Response) => {
+  try {
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const pageSize = Math.min(100, Math.max(1, Number(req.query.pageSize) || 25));
+    const skip = (page - 1) * pageSize;
+    const userId = typeof req.query.userId === 'string' ? req.query.userId.trim() : '';
+    const status = typeof req.query.status === 'string' ? req.query.status.trim() : '';
+    const search = typeof req.query.search === 'string' ? req.query.search.trim() : '';
+
+    const where: Prisma.AiGenerationLogWhereInput = {};
+    if (userId) where.userId = userId;
+    if (status === 'SUCCESS' || status === 'FAILED') {
+      where.status = status;
+    }
+    if (search) {
+      where.user = { email: { contains: search } };
+    }
+
+    const [total, rows, aggregates] = await Promise.all([
+      prisma.aiGenerationLog.count({ where }),
+      prisma.aiGenerationLog.findMany({
+        where,
+        skip,
+        take: pageSize,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: { select: { email: true } },
+        },
+      }),
+      prisma.aiGenerationLog.aggregate({
+        where: { ...where, status: 'SUCCESS' },
+        _sum: { estimatedCostUsd: true, creditsCharged: true },
+        _count: { _all: true },
+      }),
+    ]);
+
+    res.json({
+      page,
+      pageSize,
+      total,
+      summary: {
+        successCount: aggregates._count._all,
+        totalCreditsCharged: aggregates._sum.creditsCharged ?? 0,
+        totalCostUsd: aggregates._sum.estimatedCostUsd
+          ? Number(aggregates._sum.estimatedCostUsd)
+          : 0,
+      },
+      generations: rows.map((g) => ({
+        id: g.id,
+        userId: g.userId,
+        userEmail: g.user?.email ?? null,
+        toolId: g.toolId,
+        status: g.status,
+        creditsCharged: g.creditsCharged,
+        estimatedCostUsd: g.estimatedCostUsd ? Number(g.estimatedCostUsd) : null,
+        provider: g.provider,
+        model: g.model,
+        promptPreview: g.promptPreview,
+        errorMessage: g.errorMessage,
+        durationMs: g.durationMs,
+        createdAt: g.createdAt,
+      })),
+    });
+  } catch (e) {
+    console.error('[admin/ai/generations]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not list AI generations' });
+  }
+});
+
+router.get('/users/:id/ai-stats', async (req: Request, res: Response) => {
+  try {
+    const rawId = req.params.id;
+    const targetId = typeof rawId === 'string' ? rawId : rawId?.[0];
+    if (!targetId) {
+      res.status(400).json({ error: 'INVALID_PARAMS', message: 'Missing user id' });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: targetId },
+      select: { id: true, email: true },
+    });
+    if (!user) {
+      res.status(404).json({ error: 'NOT_FOUND', message: 'User not found' });
+      return;
+    }
+
+    const [aggregates, recent] = await Promise.all([
+      prisma.aiGenerationLog.aggregate({
+        where: { userId: targetId },
+        _sum: { estimatedCostUsd: true, creditsCharged: true },
+        _count: { _all: true },
+      }),
+      prisma.aiGenerationLog.findMany({
+        where: { userId: targetId },
+        orderBy: { createdAt: 'desc' },
+        take: 10,
+      }),
+    ]);
+
+    res.json({
+      userId: user.id,
+      email: user.email,
+      generationCount: aggregates._count._all,
+      totalCreditsCharged: aggregates._sum.creditsCharged ?? 0,
+      totalCostUsd: aggregates._sum.estimatedCostUsd
+        ? Number(aggregates._sum.estimatedCostUsd)
+        : 0,
+      recent: recent.map((g) => ({
+        id: g.id,
+        toolId: g.toolId,
+        status: g.status,
+        creditsCharged: g.creditsCharged,
+        estimatedCostUsd: g.estimatedCostUsd ? Number(g.estimatedCostUsd) : null,
+        model: g.model,
+        promptPreview: g.promptPreview,
+        createdAt: g.createdAt,
+      })),
+    });
+  } catch (e) {
+    console.error('[admin/users/:id/ai-stats]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not load AI stats' });
   }
 });
 

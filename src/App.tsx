@@ -31,6 +31,7 @@ const AdminOverview = lazy(() => import("@/pages/admin/AdminOverview"));
 const AdminUsers = lazy(() => import("@/pages/admin/AdminUsers"));
 const AdminTools = lazy(() => import("@/pages/admin/AdminTools"));
 const AdminAds = lazy(() => import("@/pages/admin/AdminAds"));
+const AdminAi = lazy(() => import("@/pages/admin/AdminAi"));
 const AdminBilling = lazy(() => import("@/pages/admin/AdminBilling"));
 
 const queryClient = new QueryClient();
@@ -89,6 +90,7 @@ const getAppRoutes = (explicitLocale?: Locale) => (
       <Route path="tools" element={<LazyPage><AdminTools /></LazyPage>} />
       <Route path="billing" element={<LazyPage><AdminBilling /></LazyPage>} />
       <Route path="ads" element={<LazyPage><AdminAds /></LazyPage>} />
+      <Route path="ai" element={<LazyPage><AdminAi /></LazyPage>} />
     </Route>
     <Route path=":slug" element={<ToolPageRoute />} />
     <Route path="*" element={<LazyPage><NotFound /></LazyPage>} />

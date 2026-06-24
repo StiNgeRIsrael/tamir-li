@@ -10,11 +10,13 @@ import authRoutes from './routes/auth.routes';
 import conversionsRoutes from './routes/conversions.routes';
 import toolsRoutes from './routes/tools.routes';
 import adsRoutes from './routes/ads.routes';
+import aiRoutes from './routes/ai.routes';
 import adminRoutes from './routes/admin.routes';
 import usageRoutes from './routes/usage.routes';
 import billingRoutes, { paypalWebhookHandler } from './routes/billing.routes';
 import { stripeWebhookHandler } from './routes/billing-stripe.routes';
 import { pingAdSettingsTable } from './lib/ad-settings';
+import { pingAiSettingsTable } from './lib/ai-settings';
 import { getStartupMigrateStatus } from './lib/startup-migrate';
 import { isDatabaseUrlSet, parseDatabaseUrlSafe, pingDatabase } from './lib/db-health';
 
@@ -64,6 +66,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/conversions', conversionsRoutes);
 app.use('/api/tools', toolsRoutes);
 app.use('/api/ads', adsRoutes);
+app.use('/api/ai', aiRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/usage', usageRoutes);
 app.use('/api/billing', billingRoutes);
@@ -76,6 +79,8 @@ app.get('/health', async (_req: Request, res: Response) => {
   const db = await pingDatabase();
   const adSettingsTable =
     db.ok ? await pingAdSettingsTable() : { ok: false as const, error: 'DB_UNREACHABLE' };
+  const aiSettingsTable =
+    db.ok ? await pingAiSettingsTable() : { ok: false as const, error: 'DB_UNREACHABLE' };
   const dbMeta = { envSet, ...dbTarget };
   const migrations = getStartupMigrateStatus();
   res.status(200).json({
@@ -88,6 +93,9 @@ app.get('/health', async (_req: Request, res: Response) => {
     adSettingsTable: adSettingsTable.ok
       ? { ok: true }
       : { ok: false, error: adSettingsTable.error },
+    aiSettingsTable: aiSettingsTable.ok
+      ? { ok: true }
+      : { ok: false, error: aiSettingsTable.error },
   });
 });
 

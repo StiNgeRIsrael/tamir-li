@@ -19,12 +19,20 @@ Operational admin tools for tamir.li site management. Prioritized for support, b
 | 11 | **Admin audit log** | Persist who changed what (grants, blocks, tool toggles) with actor, target, payload. | P2 | L | `GET /api/admin/audit-log`; write hooks on mutating routes |
 | 12 | **Impersonate user (read-only)** | Short-lived JWT as target user for reproducing issues; no billing mutations. | P2 | L | `POST /api/admin/users/:id/impersonate` |
 
+### Shipped this cycle (2026-06-24)
+
+1. Grant premium manually — API + AdminUsers dialog
+2. Grant AI credits — API + AdminUsers dialog
+3. **AI admin settings** — `GET/PATCH /api/admin/ai/settings`, `POST /api/ai/generate-image`, AdminAi page at `/admin/ai`
+4. **Per-task AI cost log** — `AiGenerationLog` table, `GET /api/admin/ai/generations`, user AI stats at `GET /api/admin/users/:id/ai-stats`
+
 ### Related (already partial)
 
 | Feature | Status | Notes |
 |---------|--------|-------|
 | Tool enable / featured / sort | Shipped | `GET/PATCH /api/admin/tools/:toolId`, AdminTools page |
 | Ad zone config | Shipped | `GET/PATCH /api/admin/ads/settings`, AdminAds page |
+| AI runtime config + cost log | Shipped | `GET/PATCH /api/admin/ai/settings`, `GET /api/admin/ai/generations`, `/admin/ai` |
 | Role management | Shipped | `PATCH /api/admin/users/:id` roles array |
 | Billing read-only | Shipped | Stats, payments, subscriptions lists |
 
@@ -34,8 +42,3 @@ Operational admin tools for tamir.li site management. Prioritized for support, b
 - **Lifetime premium / comp account** — covered by grant-premium `lifetime` duration (shipped P0).
 - **Manual ad test mode** — env or per-session flag to show placeholder ads without live zones.
 - **Feature flags per tool** — extend `ToolConfig` with `premiumOnlyOverride`, `maxFileMb`, etc.
-
-### Shipped this cycle (2026-06-24)
-
-1. Grant premium manually — API + AdminUsers dialog
-2. Grant AI credits — API + AdminUsers dialog
