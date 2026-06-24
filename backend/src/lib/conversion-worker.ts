@@ -137,6 +137,25 @@ function runStubConversion(
   }
 }
 
+/** Atomically claim the next PENDING job (safe for concurrent workers). */
+async function claimNextPendingJob() {
+  return prisma.$transaction(async (tx) => {
+    const job = await tx.conversionJob.findFirst({
+      where: { status: JobStatus.PENDING },
+      orderBy: [{ priority: 'desc' }, { createdAt: 'asc' }],
+    });
+    if (!job) return null;
+
+    const { count } = await tx.conversionJob.updateMany({
+      where: { id: job.id, status: JobStatus.PENDING },
+      data: { status: JobStatus.PROCESSING },
+    });
+    if (count === 0) return null;
+
+    return job;
+  });
+}
+
 /** Returns true when a job was picked up (queue may have more). */
 async function processNextJob(): Promise<boolean> {
   if (processing) return false;
@@ -144,17 +163,9 @@ async function processNextJob(): Promise<boolean> {
   let activeJobId: string | null = null;
 
   try {
-    const job = await prisma.conversionJob.findFirst({
-      where: { status: JobStatus.PENDING },
-      orderBy: [{ priority: 'desc' }, { createdAt: 'asc' }],
-    });
+    const job = await claimNextPendingJob();
     if (!job) return false;
     activeJobId = job.id;
-
-    await prisma.conversionJob.update({
-      where: { id: job.id },
-      data: { status: JobStatus.PROCESSING },
-    });
 
     const outPath = outputFilePath(job.id, job.toFormat);
     ensureJobDir(job.id);

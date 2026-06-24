@@ -1,4 +1,9 @@
 import { Router, Request, Response } from 'express';
+import {
+  CONFIG_CACHE_KEYS,
+  getCachedConfig,
+  setCachedConfig,
+} from '../lib/config-cache';
 import { prisma } from '../lib/prisma';
 import { KNOWN_TOOL_IDS } from '../data/tool-catalog';
 
@@ -31,9 +36,16 @@ const CONFIG_CACHE_CONTROL = 'public, max-age=60, stale-while-revalidate=300';
 /** הגדרות תצוגה ציבוריות (בלי אימות) — לא תוכן רגיש */
 router.get('/config', async (_req: Request, res: Response) => {
   res.set('Cache-Control', CONFIG_CACHE_CONTROL);
+  const cached = getCachedConfig<ReturnType<typeof buildToolConfigResponse>>(CONFIG_CACHE_KEYS.TOOLS);
+  if (cached) {
+    res.json(cached);
+    return;
+  }
   try {
     const rows = await prisma.toolConfig.findMany();
-    res.json(buildToolConfigResponse(rows));
+    const payload = buildToolConfigResponse(rows);
+    setCachedConfig(CONFIG_CACHE_KEYS.TOOLS, payload);
+    res.json(payload);
   } catch (e) {
     console.error('[tools/config] Prisma failure, serving defaults:', e);
     res.json(buildToolConfigResponse([]));

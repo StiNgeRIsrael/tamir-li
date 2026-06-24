@@ -11,6 +11,7 @@ import {
   saveAdSettings,
   serializeAdSettings,
 } from '../lib/ad-settings';
+import { CONFIG_CACHE_KEYS, invalidateConfigCache } from '../lib/config-cache';
 
 const router = Router();
 
@@ -326,6 +327,8 @@ router.patch('/tools/:toolId', async (req: Request, res: Response) => {
       },
     });
 
+    invalidateConfigCache(CONFIG_CACHE_KEYS.TOOLS);
+
     const meta = TOOL_CATALOG_META[toolId];
     res.json({
       tool: {
@@ -366,6 +369,7 @@ router.patch('/ads/settings', async (req: Request, res: Response) => {
     }
 
     const updated = await saveAdSettings(data);
+    invalidateConfigCache(CONFIG_CACHE_KEYS.ADS);
     res.json({ settings: serializeAdSettings(updated) });
   } catch (e) {
     respondAdSettingsDbError(res, e, 'admin/ads/settings PATCH', 'save');
