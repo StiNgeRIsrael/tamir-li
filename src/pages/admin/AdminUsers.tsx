@@ -24,12 +24,23 @@ import {
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Loader2, MoreHorizontal } from "lucide-react";
+import {
+  Loader2,
+  MoreHorizontal,
+  Sparkles,
+  Crown,
+  Coins,
+  Repeat,
+  BarChart3,
+  Shield,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -52,6 +63,7 @@ type AdminUserRow = {
   roles: Role[];
   createdAt: string;
   aiCreditsBalance: number;
+  bonusConversions: number;
   subscription: {
     status: string;
     plan: string;
@@ -74,6 +86,9 @@ export default function AdminUsers() {
   const [premiumDuration, setPremiumDuration] = useState<PremiumDuration>("30d");
   const [creditsDialog, setCreditsDialog] = useState<AdminUserRow | null>(null);
   const [creditsAmount, setCreditsAmount] = useState("10");
+  const [conversionsDialog, setConversionsDialog] = useState<AdminUserRow | null>(null);
+  const [conversionsAmount, setConversionsAmount] = useState("5");
+  const [conversionsNote, setConversionsNote] = useState("");
   const [aiStatsDialog, setAiStatsDialog] = useState<AdminUserRow | null>(null);
 
   const { data: aiStats, isLoading: aiStatsLoading } = useQuery({
@@ -138,6 +153,29 @@ export default function AdminUsers() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const grantConversionsMutation = useMutation({
+    mutationFn: async ({
+      id,
+      amount,
+      note,
+    }: {
+      id: string;
+      amount: number;
+      note?: string;
+    }) => {
+      await adminFetch(`/api/admin/users/${id}/grant-conversions`, token, {
+        method: "POST",
+        body: JSON.stringify({ amount, ...(note ? { note } : {}) }),
+      });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+      toast.success(admin.grantConversionsSuccess ?? "Bonus conversions granted");
+      setConversionsDialog(null);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const patchMutation = useMutation({
     mutationFn: async ({ id, body }: { id: string; body: { blocked?: boolean; roles?: Role[] } }) => {
       await adminFetch(`/api/admin/users/${id}`, token, {
@@ -189,6 +227,21 @@ export default function AdminUsers() {
     grantCreditsMutation.mutate({ id: creditsDialog.id, credits });
   };
 
+  const saveConversions = () => {
+    if (!conversionsDialog) return;
+    const amount = Number.parseInt(conversionsAmount, 10);
+    if (!Number.isInteger(amount) || amount < 1 || amount > 100) {
+      toast.error(admin.grantConversionsInvalid ?? "Enter a valid amount (1–100)");
+      return;
+    }
+    const note = conversionsNote.trim();
+    grantConversionsMutation.mutate({
+      id: conversionsDialog.id,
+      amount,
+      note: note || undefined,
+    });
+  };
+
   const savePremium = () => {
     if (!premiumDialog) return;
     grantPremiumMutation.mutate({ id: premiumDialog.id, duration: premiumDuration });
@@ -204,6 +257,12 @@ export default function AdminUsers() {
     setCreditsAmount("10");
   };
 
+  const openConversions = (u: AdminUserRow) => {
+    setConversionsDialog(u);
+    setConversionsAmount("5");
+    setConversionsNote("");
+  };
+
   if (isLoading && !data) {
     return (
       <div className="flex justify-center py-16">
@@ -215,65 +274,79 @@ export default function AdminUsers() {
   const totalPages = data ? Math.max(1, Math.ceil(data.total / data.pageSize)) : 1;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
         <Input
           placeholder={admin.searchPlaceholder ?? "Search email or name…"}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && applySearch()}
-          className="max-w-md"
+          className="max-w-md h-9 text-sm"
         />
-        <Button type="button" variant="secondary" onClick={applySearch}>
+        <Button type="button" variant="secondary" size="sm" onClick={applySearch}>
           {admin.search ?? "Search"}
         </Button>
       </div>
 
-      <div className="rounded-lg border border-border overflow-hidden">
-        <Table className="table-fixed">
+      <div className="rounded-lg border border-border overflow-x-auto">
+        <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-[32%]">{admin.colEmail}</TableHead>
-              <TableHead className="w-[18%]">{admin.colSubscription}</TableHead>
-              <TableHead className="w-[22%]">{admin.colRoles}</TableHead>
-              <TableHead className="w-20 text-center">{admin.colBlocked}</TableHead>
-              <TableHead className="w-28 text-end">{admin.colActions}</TableHead>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="h-9 text-xs font-semibold">{admin.colEmail}</TableHead>
+              <TableHead className="h-9 text-xs font-semibold">{admin.colSubscription}</TableHead>
+              <TableHead className="h-9 text-xs font-semibold hidden md:table-cell">
+                {admin.colRoles}
+              </TableHead>
+              <TableHead className="h-9 text-xs font-semibold w-16 text-center">
+                {admin.colBlocked}
+              </TableHead>
+              <TableHead className="h-9 text-xs font-semibold w-24 text-end">
+                {admin.colActions}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data?.users.map((u) => (
-              <TableRow key={u.id}>
-                <TableCell>
-                  <div className="font-medium text-sm">{u.email}</div>
+              <TableRow key={u.id} className="hover:bg-muted/40 transition-colors">
+                <TableCell className="py-2">
+                  <div className="font-medium text-sm leading-tight">{u.email}</div>
                   {u.displayName && (
-                    <div className="text-xs text-muted-foreground">{u.displayName}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{u.displayName}</div>
                   )}
                 </TableCell>
-                <TableCell>
-                  {u.subscription?.isPremium ? (
-                    <Badge className="text-[10px]">{admin.premiumBadge}</Badge>
-                  ) : u.subscription ? (
-                    <Badge variant="outline" className="text-[10px] font-mono">
-                      {u.subscription.status}
-                    </Badge>
-                  ) : (
-                    <span className="text-xs text-muted-foreground">—</span>
-                  )}
-                  <div className="text-[10px] text-muted-foreground mt-0.5">
+                <TableCell className="py-2">
+                  <div className="flex flex-wrap items-center gap-1">
+                    {u.subscription?.isPremium ? (
+                      <Badge className="text-[10px] px-1.5 py-0">{admin.premiumBadge}</Badge>
+                    ) : u.subscription ? (
+                      <Badge variant="outline" className="text-[10px] font-mono px-1.5 py-0">
+                        {u.subscription.status}
+                      </Badge>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
+                    {u.bonusConversions > 0 && !u.subscription?.isPremium && (
+                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-mono">
+                        {admin.colBonusConversions?.replace("{n}", String(u.bonusConversions)) ??
+                          `+${u.bonusConversions}`}
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground mt-1 font-mono tabular-nums">
                     {admin.colCreditsBalance?.replace("{n}", String(u.aiCreditsBalance)) ??
                       `AI: ${u.aiCreditsBalance}`}
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="py-2 hidden md:table-cell">
                   <div className="flex flex-wrap gap-1">
                     {u.roles.map((r) => (
-                      <Badge key={r} variant="secondary" className="text-[10px]">
+                      <Badge key={r} variant="secondary" className="text-[10px] px-1.5 py-0">
                         {r}
                       </Badge>
                     ))}
                   </div>
                 </TableCell>
-                <TableCell className="text-center">
+                <TableCell className="py-2 text-center">
                   <div className="flex justify-center">
                     <Switch
                       checked={u.blocked}
@@ -281,29 +354,43 @@ export default function AdminUsers() {
                       onCheckedChange={(checked) =>
                         patchMutation.mutate({ id: u.id, body: { blocked: checked } })
                       }
+                      className="scale-90"
                     />
                   </div>
                 </TableCell>
-                <TableCell className="text-end">
+                <TableCell className="py-2 text-end">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" className="h-8 w-8 p-0">
                         <MoreHorizontal className="h-4 w-4" />
                         <span className="sr-only">{admin.moreActions ?? "More"}</span>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => openRoles(u)}>
-                        {admin.editRoles ?? "Roles"}
+                    <DropdownMenuContent align="end" className="w-52">
+                      <DropdownMenuItem onClick={() => openRoles(u)} className="gap-2 text-sm">
+                        <Shield className="h-3.5 w-3.5 text-muted-foreground" />
+                        {admin.actionEditRoles ?? admin.editRoles ?? "Roles"}
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => openPremium(u)}>
-                        {admin.grantPremium ?? "Grant Premium"}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => openPremium(u)} className="gap-2 text-sm">
+                        <Crown className="h-3.5 w-3.5 text-muted-foreground" />
+                        {admin.actionGrantPremium ?? admin.grantPremium ?? "Grant Premium"}
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => openCredits(u)}>
-                        {admin.grantCredits ?? "Grant Credits"}
+                      <DropdownMenuItem onClick={() => openCredits(u)} className="gap-2 text-sm">
+                        <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
+                        {admin.actionGrantCredits ?? admin.grantCredits ?? "Grant Credits"}
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setAiStatsDialog(u)}>
-                        {admin.aiViewUsage ?? "AI usage"}
+                      <DropdownMenuItem onClick={() => openConversions(u)} className="gap-2 text-sm">
+                        <Repeat className="h-3.5 w-3.5 text-muted-foreground" />
+                        {admin.actionGrantConversions ?? admin.grantConversions ?? "Grant conversions"}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => setAiStatsDialog(u)}
+                        className="gap-2 text-sm"
+                      >
+                        <BarChart3 className="h-3.5 w-3.5 text-muted-foreground" />
+                        {admin.actionAiUsage ?? admin.aiViewUsage ?? "AI usage"}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -314,11 +401,11 @@ export default function AdminUsers() {
         </Table>
       </div>
 
-      <div className="flex items-center justify-between gap-2 text-sm">
+      <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
         <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
           {admin.prev ?? "Previous"}
         </Button>
-        <span className="text-muted-foreground">
+        <span>
           {admin.pageOf?.replace("{page}", String(page)).replace("{total}", String(totalPages)) ??
             `Page ${page} / ${totalPages}`}
         </span>
@@ -399,7 +486,10 @@ export default function AdminUsers() {
       <Dialog open={!!creditsDialog} onOpenChange={(o) => !o && setCreditsDialog(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{admin.grantCreditsTitle ?? "Grant AI credits"}</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" />
+              {admin.grantCreditsTitle ?? "Grant AI credits"}
+            </DialogTitle>
           </DialogHeader>
           {creditsDialog && (
             <p className="text-sm text-muted-foreground">{creditsDialog.email}</p>
@@ -423,6 +513,67 @@ export default function AdminUsers() {
               {admin.cancel ?? "Cancel"}
             </Button>
             <Button onClick={saveCredits} disabled={grantCreditsMutation.isPending}>
+              {admin.grantConfirm ?? "Grant"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!conversionsDialog} onOpenChange={(o) => !o && setConversionsDialog(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Repeat className="h-4 w-4 text-primary" />
+              {admin.grantConversionsTitle ?? "Grant bonus conversions"}
+            </DialogTitle>
+          </DialogHeader>
+          {conversionsDialog && (
+            <div className="text-sm text-muted-foreground space-y-1">
+              <p>{conversionsDialog.email}</p>
+              {conversionsDialog.bonusConversions > 0 && (
+                <p className="text-xs font-mono">
+                  {admin.colBonusConversions?.replace(
+                    "{n}",
+                    String(conversionsDialog.bonusConversions)
+                  ) ?? `Current bonus: ${conversionsDialog.bonusConversions}`}
+                </p>
+              )}
+            </div>
+          )}
+          <div className="space-y-3 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="grant-conversions">{admin.grantConversionsAmount ?? "Conversions"}</Label>
+              <Input
+                id="grant-conversions"
+                type="number"
+                min={1}
+                max={100}
+                value={conversionsAmount}
+                onChange={(e) => setConversionsAmount(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                {admin.grantConversionsHint ??
+                  "Added to bonus pool beyond the daily free limit (5/day)"}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="grant-conversions-note">
+                {admin.grantConversionsNote ?? "Note (optional)"}
+              </Label>
+              <Textarea
+                id="grant-conversions-note"
+                rows={2}
+                value={conversionsNote}
+                onChange={(e) => setConversionsNote(e.target.value)}
+                className="resize-none text-sm"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConversionsDialog(null)}>
+              {admin.cancel ?? "Cancel"}
+            </Button>
+            <Button onClick={saveConversions} disabled={grantConversionsMutation.isPending}>
               {admin.grantConfirm ?? "Grant"}
             </Button>
           </DialogFooter>

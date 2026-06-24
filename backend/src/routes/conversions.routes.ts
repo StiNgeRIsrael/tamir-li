@@ -161,7 +161,7 @@ router.post('/', optionalAuth, multipartUpload, async (req: Request, res: Respon
       res.status(429).json({
         error: 'DAILY_LIMIT',
         message: 'Daily conversion limit reached',
-        ...buildUsageResponse(usageResult.used, false),
+        ...buildUsageResponse(usageResult.used, false, usageResult.bonusConversions),
       });
       return;
     }

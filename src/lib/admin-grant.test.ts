@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   computePremiumPeriodEnd,
+  parseGrantConversionsAmount,
   parseGrantCreditsAmount,
   parsePremiumGrantDuration,
 } from "../../backend/src/lib/admin-grant";
@@ -40,5 +41,18 @@ describe("parseGrantCreditsAmount", () => {
     expect(parseGrantCreditsAmount(0)).toBeNull();
     expect(parseGrantCreditsAmount(501)).toBeNull();
     expect(parseGrantCreditsAmount(1.5)).toBeNull();
+  });
+});
+
+describe("parseGrantConversionsAmount", () => {
+  it("accepts integers in range", () => {
+    expect(parseGrantConversionsAmount(5)).toBe(5);
+    expect(parseGrantConversionsAmount("25")).toBe(25);
+  });
+
+  it("rejects out of range or non-integers", () => {
+    expect(parseGrantConversionsAmount(0)).toBeNull();
+    expect(parseGrantConversionsAmount(101)).toBeNull();
+    expect(parseGrantConversionsAmount(2.5)).toBeNull();
   });
 });

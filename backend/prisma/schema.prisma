@@ -12,6 +12,8 @@ model User {
   email          String           @unique
   /** חסימת גישה לאתר (למשתמש מחובר) */
   blocked        Boolean          @default(false)
+  /** המרות בונוס מעבר למכסה היומית החינמית — נצרכות אחרי 5 יומיות */
+  bonusConversions Int            @default(0)
   /** סיסמה — רק למשתמשים שנרשמו עם אימייל/סיסמה; OAuth לא דורש */
   passwordHash   String?
   /** מזהה ייחודי מחשבון Google (sub בתוך ה-JWT של Google) */

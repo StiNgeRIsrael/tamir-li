@@ -18,6 +18,7 @@ import {
 import {
   computePremiumPeriodEnd,
   parseGrantCreditsAmount,
+  parseGrantConversionsAmount,
   parsePremiumGrantDuration,
 } from '../lib/admin-grant';
 import {
@@ -203,6 +204,7 @@ router.get('/users', async (req: Request, res: Response) => {
         roles: u.roles.map((r) => r.role),
         createdAt: u.createdAt,
         aiCreditsBalance: u.aiCredits?.balance ?? 0,
+        bonusConversions: u.bonusConversions,
         subscription: u.subscription
           ? {
               status: u.subscription.status,
@@ -427,6 +429,49 @@ router.patch('/users/:id/grant-credits', async (req: Request, res: Response) => 
   } catch (e) {
     console.error('[admin/users grant-credits]', e);
     res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not grant credits' });
+  }
+});
+
+router.post('/users/:id/grant-conversions', async (req: Request, res: Response) => {
+  try {
+    const rawId = req.params.id;
+    const targetId = typeof rawId === 'string' ? rawId : rawId?.[0];
+    if (!targetId) {
+      res.status(400).json({ error: 'INVALID_PARAMS', message: 'Missing user id' });
+      return;
+    }
+
+    const body = req.body as { amount?: unknown; note?: unknown };
+    const amount = parseGrantConversionsAmount(body.amount);
+    if (amount === null) {
+      res.status(400).json({
+        error: 'INVALID_BODY',
+        message: 'amount must be an integer from 1 to 100',
+      });
+      return;
+    }
+
+    const note = typeof body.note === 'string' ? body.note.trim().slice(0, 500) : undefined;
+    if (note) {
+      console.info('[admin/users grant-conversions] note:', { targetId, note });
+    }
+
+    const target = await prisma.user.findUnique({ where: { id: targetId } });
+    if (!target) {
+      res.status(404).json({ error: 'NOT_FOUND', message: 'User not found' });
+      return;
+    }
+
+    const row = await prisma.user.update({
+      where: { id: targetId },
+      data: { bonusConversions: { increment: amount } },
+      select: { bonusConversions: true },
+    });
+
+    res.json({ granted: amount, bonusConversions: row.bonusConversions });
+  } catch (e) {
+    console.error('[admin/users grant-conversions]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not grant conversions' });
   }
 });
 

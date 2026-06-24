@@ -10,6 +10,7 @@ export type UsageSnapshot = {
   max: number | null;
   isPremium: boolean;
   remaining: number | null;
+  bonusConversions?: number;
 };
 
 function todayKey(): string {
@@ -160,7 +161,7 @@ export function useUsage() {
     isPremium: snapshot.isPremium,
     loading: apiAvailable && isLoading && !isError,
     fetchFailed: apiAvailable && isError,
-    atLimit: !snapshot.isPremium && snapshot.used >= MAX_DAILY_FREE,
+    atLimit: !snapshot.isPremium && (snapshot.remaining ?? 0) <= 0,
     recordUsage,
     refetch: () => queryClient.invalidateQueries({ queryKey: ["usage-today", api] }),
   };

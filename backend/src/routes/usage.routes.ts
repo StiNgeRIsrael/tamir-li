@@ -5,6 +5,7 @@ import {
   checkLimitAndRecordUsage,
   countTodayUsage,
   getOrCreateSessionId,
+  getUserBonusConversions,
   isPremiumUser,
 } from '../lib/usage-shared';
 
@@ -16,7 +17,8 @@ router.get('/today', optionalAuth, async (req: Request, res: Response) => {
     const sessionId = getOrCreateSessionId(req, res);
     const premium = userId ? await isPremiumUser(userId) : false;
     const used = await countTodayUsage(userId, sessionId);
-    res.json(buildUsageResponse(used, premium));
+    const bonusConversions = premium ? 0 : await getUserBonusConversions(userId);
+    res.json(buildUsageResponse(used, premium, bonusConversions));
   } catch (e) {
     console.error('[usage/today]', e);
     res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not load usage' });
@@ -50,13 +52,14 @@ router.post('/record', optionalAuth, async (req: Request, res: Response) => {
       res.status(429).json({
         error: 'DAILY_LIMIT',
         message: 'Daily conversion limit reached',
-        ...buildUsageResponse(usageResult.used, false),
+        ...buildUsageResponse(usageResult.used, false, usageResult.bonusConversions),
       });
       return;
     }
 
     const usedAfter = await countTodayUsage(userId, sessionId);
-    res.json(buildUsageResponse(usedAfter, premium));
+    const bonusAfter = premium ? 0 : await getUserBonusConversions(userId);
+    res.json(buildUsageResponse(usedAfter, premium, bonusAfter));
   } catch (e) {
     console.error('[usage/record]', e);
     res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not record usage' });

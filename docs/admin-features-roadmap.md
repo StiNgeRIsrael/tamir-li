@@ -8,6 +8,7 @@ Operational admin tools for tamir.li site management. Prioritized for support, b
 |---|---------|-------------|----------|--------|---------------|
 | 1 | **Grant premium manually** | Comp or support grant: set ACTIVE subscription for 30d / 90d / 1y / lifetime without PayPal/Stripe checkout. Grants initial monthly AI credits. | **P0** | S | `PATCH /api/admin/users/:id/grant-premium` |
 | 2 | **Grant AI credits** | Add purchasable-style credits to a user's balance (support compensation, promos). | **P0** | S | `PATCH /api/admin/users/:id/grant-credits` |
+| 2b | **Grant bonus conversions** | Add conversion quota beyond daily free limit (persistent pool on `User.bonusConversions`). | **P0** | S | `POST /api/admin/users/:id/grant-conversions` |
 | 3 | **Revoke premium manually** | End comp or paid access immediately (set CANCELED / past period end); optional note. | P1 | S | `PATCH /api/admin/users/:id/revoke-premium` |
 | 4 | **Extend subscription end date** | Push `currentPeriodEnd` for active subs (goodwill extension, billing fixes). | P1 | S | `PATCH /api/admin/billing/subscriptions/:id/extend` |
 | 5 | **Reset daily usage count** | Delete today's `UsageLog` rows for a user/session so free tier limit resets. | P1 | S | `DELETE /api/admin/users/:id/usage/today` |
@@ -23,8 +24,9 @@ Operational admin tools for tamir.li site management. Prioritized for support, b
 
 1. Grant premium manually — API + AdminUsers dialog
 2. Grant AI credits — API + AdminUsers dialog
-3. **AI admin settings** — `GET/PATCH /api/admin/ai/settings`, `POST /api/ai/generate-image`, AdminAi page at `/admin/ai`
-4. **Per-task AI cost log** — `AiGenerationLog` table, `GET /api/admin/ai/generations`, user AI stats at `GET /api/admin/users/:id/ai-stats`
+3. **Grant bonus conversions** — `POST /api/admin/users/:id/grant-conversions`, `User.bonusConversions`, AdminUsers dialog
+4. **AI admin settings** — `GET/PATCH /api/admin/ai/settings`, `POST /api/ai/generate-image`, AdminAi page at `/admin/ai`
+5. **Per-task AI cost log** — `AiGenerationLog` table, `GET /api/admin/ai/generations`, user AI stats at `GET /api/admin/users/:id/ai-stats`
 
 ### Related (already partial)
 

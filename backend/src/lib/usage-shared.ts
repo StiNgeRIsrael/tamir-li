@@ -39,6 +39,15 @@ export async function isPremiumUser(userId: string): Promise<boolean> {
   return true;
 }
 
+export async function getUserBonusConversions(userId: string | undefined): Promise<number> {
+  if (!userId) return 0;
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { bonusConversions: true },
+  });
+  return user?.bonusConversions ?? 0;
+}
+
 async function countTodayUsageInTx(
   tx: Prisma.TransactionClient,
   userId: string | undefined,
@@ -79,10 +88,12 @@ function usageLogData(params: RecordUsageParams) {
   };
 }
 
-/** Enforce free-tier daily quota and insert UsageLog (transactional for non-premium). */
+/** Enforce free-tier daily quota (+ optional bonus pool) and insert UsageLog. */
 export async function checkLimitAndRecordUsage(
   params: RecordUsageParams
-): Promise<{ ok: true } | { ok: false; used: number }> {
+): Promise<
+  { ok: true } | { ok: false; used: number; bonusConversions: number }
+> {
   const data = usageLogData(params);
 
   if (params.isPremium) {
@@ -92,16 +103,44 @@ export async function checkLimitAndRecordUsage(
 
   return prisma.$transaction(async (tx) => {
     const used = await countTodayUsageInTx(tx, params.userId, params.sessionId);
-    if (used >= MAX_DAILY_FREE) {
-      return { ok: false as const, used };
+    if (used < MAX_DAILY_FREE) {
+      await tx.usageLog.create({ data });
+      return { ok: true as const };
     }
-    await tx.usageLog.create({ data });
-    return { ok: true as const };
+
+    if (params.userId) {
+      const user = await tx.user.findUnique({
+        where: { id: params.userId },
+        select: { bonusConversions: true },
+      });
+      const bonus = user?.bonusConversions ?? 0;
+      if (bonus > 0) {
+        await tx.user.update({
+          where: { id: params.userId },
+          data: { bonusConversions: { decrement: 1 } },
+        });
+        await tx.usageLog.create({ data });
+        return { ok: true as const };
+      }
+      return { ok: false as const, used, bonusConversions: bonus };
+    }
+
+    return { ok: false as const, used, bonusConversions: 0 };
   });
 }
 
-export function buildUsageResponse(used: number, isPremium: boolean) {
-  const max = isPremium ? null : MAX_DAILY_FREE;
-  const remaining = isPremium ? null : Math.max(0, MAX_DAILY_FREE - used);
-  return { used, max, isPremium, remaining };
+export function buildUsageResponse(used: number, isPremium: boolean, bonusConversions = 0) {
+  if (isPremium) {
+    return {
+      used,
+      max: null as number | null,
+      isPremium: true,
+      remaining: null as number | null,
+      bonusConversions: 0,
+    };
+  }
+  const freeRemaining = Math.max(0, MAX_DAILY_FREE - used);
+  const remaining = freeRemaining + bonusConversions;
+  const max = used + remaining;
+  return { used, max, isPremium: false, remaining, bonusConversions };
 }
