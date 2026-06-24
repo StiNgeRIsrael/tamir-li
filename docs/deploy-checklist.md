@@ -23,7 +23,7 @@ Triggers on push to `main` or manual **workflow_dispatch**.
 | Lockfile or migrations changed | Re-run workflow with **run_server_setup** checked **or** Plesk → `run setup` |
 | Code-only | Auto-restart only — no server `npm install` |
 
-**CI build-time env** (baked into `dist/`): `VITE_SITE_ORIGIN`, `VITE_API_URL` (vars); `VITE_GOOGLE_CLIENT_ID`, `VITE_GTM_ID` (secrets). Ad zone keys: **prefer `/admin/ads`** (runtime DB) — optional `VITE_ADSTERRA_ZONE_*` secrets as fallback when DB row is empty. Add other `VITE_*` to the workflow if needed (`VITE_PAYPAL_CLIENT_ID`, `VITE_GA4_ID`, etc.).
+**CI build-time env** (baked into `dist/`): `VITE_SITE_ORIGIN`, `VITE_API_URL`, `VITE_GA4_ID` (vars; GA4 defaults to `G-EBE6D6BPZ0` in workflow); `VITE_GOOGLE_CLIENT_ID` (secret). Do **not** set `VITE_GTM_ID` when using direct GA4. Ad zone keys: **prefer `/admin/ads`** (runtime DB) — optional `VITE_ADSTERRA_ZONE_*` secrets as fallback when DB row is empty. Add other `VITE_*` to the workflow if needed (`VITE_PAYPAL_CLIENT_ID`, etc.).
 
 **CI secrets for deploy/restart:** `PLESK_SSH_HOST` / `PLESK_FTP_HOST`, `PLESK_SSH_USER`, `PLESK_SSH_PASSWORD` (FTP fallbacks OK). Optional vars: `PLESK_HTTPDOCS_DIR` (default `httpdocs/`), `PLESK_NODE_APP_DIR` (default `httpdocs/deploy`), `PLESK_DOMAIN` (default `tamir.li`).
 
@@ -46,7 +46,7 @@ Set before `npm run build` / CI deploy; rebuild required after changes.
 | `VITE_SITE_ORIGIN` | `https://tamir.li` |
 | `VITE_API_URL` | `https://tamir.li` (same-origin monolith) |
 | `VITE_GOOGLE_CLIENT_ID` | OAuth Web client ID (must match Plesk `GOOGLE_CLIENT_ID`) |
-| `VITE_GTM_ID` or `VITE_GA4_ID` | Analytics (not both) |
+| `VITE_GA4_ID` | `G-EBE6D6BPZ0` (direct gtag.js — do **not** also set `VITE_GTM_ID`) |
 | `VITE_ADSTERRA_ZONE_*` | Optional fallback only — **use `/admin/ads`** for production keys |
 | `VITE_PAYPAL_CLIENT_ID` | Same PayPal app as server (optional; not in workflow by default) |
 | `VITE_STRIPE_PUBLISHABLE_KEY` | Only if `ENABLE_STRIPE=true` on backend |
