@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useT } from "@/lib/i18n";
 import { useSubscription, type CheckoutPlan } from "@/hooks/useSubscription";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
+import { PremiumPriceLabel } from "@/components/PremiumPriceLabel";
 
 interface CreditPackage {
   id: string;
@@ -137,8 +137,11 @@ export function CreditPackages({ onClose }: { onClose?: () => void }) {
         ))}
       </div>
       <div className="bg-muted/50 rounded-lg p-3 text-center space-y-1">
-        <p className="text-xs text-muted-foreground">
-          <Crown className="w-3 h-3 inline me-1 text-premium" />{p.premiumNote(p.price)}
+        <p className="text-xs text-muted-foreground flex flex-wrap items-center justify-center gap-x-1">
+          <Crown className="w-3 h-3 shrink-0 text-premium" />
+          <span>{p.premiumNoteBefore}</span>
+          <PremiumPriceLabel />
+          <span>{p.premiumNoteAfter}</span>
         </p>
       </div>
     </div>

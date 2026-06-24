@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getApiBaseUrl } from "@/lib/api/client";
-import { setAdRuntimeConfig, type AdRuntimeConfig } from "@/lib/ads/adsterra";
+import { setAdRuntimeConfig, prefetchAdZoneScripts, hasAdsConsent, type AdRuntimeConfig } from "@/lib/ads/adsterra";
 
 export type AdConfigContextValue = {
   loading: boolean;
@@ -33,6 +33,7 @@ export function AdConfigProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (data) {
       setAdRuntimeConfig(data);
+      if (hasAdsConsent()) prefetchAdZoneScripts();
     } else if (isError) {
       setAdRuntimeConfig(null);
     }

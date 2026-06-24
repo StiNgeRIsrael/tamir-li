@@ -310,6 +310,8 @@ export const ruTranslations = {
     adPlaying: "Минутку...", closeIn: (s: number) => `Ещё ${s}с`,
     dailyUsage: "Сегодня", remaining: (n: number) => `${n} осталось сегодня`,
     almostDone: (p: string) => `Сегодня почти исчерпано — ${p} снимает лимит`,
+    almostDoneBefore: "Сегодня почти исчерпано —",
+    almostDoneAfter: "снимает лимит",
     remainingToday: (n: number) => `${n} конвертаций осталось сегодня`,
     upgradeNow: (p: string) => `Премиум — ${p}`, upgradeForUnlimited: "Премиум = без ежедневного подсчёта",
     credits: "кредитов", premiumSub: "Премиум подписка — 6 кредитов в месяц", buyCredits: "Купить Кредиты",
@@ -317,6 +319,8 @@ export const ruTranslations = {
     images: "изображений", saving: (s: string) => `Экономия ${s}`, perImage: (p: string) => `${p}/изображение`,
     mostPopular: "Самый Популярный", purchasePackage: "Купить Пакет",
     premiumNote: (p: string) => `Подписчики Премиум (${p}) получают 6 кредитов/мес + безлимитные конвертации`,
+    premiumNoteBefore: "Подписчики Премиум (",
+    premiumNoteAfter: ") получают 6 кредитов/мес + безлимитные конвертации",
   },
   fileDropZone: {
     dragHere: "Перетащите файлы сюда",

@@ -385,6 +385,8 @@ export const enTranslations = {
     adPlaying: "One moment...", closeIn: (s: number) => `${s}s left`,
     dailyUsage: "Today", remaining: (n: number) => `${n} left today`,
     almostDone: (p: string) => `Running low today — ${p} lifts the cap`,
+    almostDoneBefore: "Running low today —",
+    almostDoneAfter: "lifts the cap",
     remainingToday: (n: number) => `${n} conversions left today`,
     upgradeNow: (p: string) => `Premium — ${p}`, upgradeForUnlimited: "Premium = no daily counting",
     credits: "credits", premiumSub: "Premium subscription — 6 monthly credits", buyCredits: "Buy Credits",
@@ -393,6 +395,8 @@ export const enTranslations = {
     images: "images", saving: (s: string) => `Save ${s}`, perImage: (p: string) => `${p}/image`,
     mostPopular: "Most Popular", purchasePackage: "Purchase Package",
     premiumNote: (p: string) => `Premium subscribers (${p}) get 6 credits/month + unlimited conversions`,
+    premiumNoteBefore: "Premium subscribers (",
+    premiumNoteAfter: ") get 6 credits/month + unlimited conversions",
   },
   fileDropZone: {
     dragHere: "Drag files here",

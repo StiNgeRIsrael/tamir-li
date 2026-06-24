@@ -406,6 +406,8 @@ export const heTranslations = {
     adPlaying: "רגע...", closeIn: (s: number) => `עוד ${s} שניות`,
     dailyUsage: "היום", remaining: (n: number) => `${n} נשארו להיום`,
     almostDone: (p: string) => `נשארו מעט להיום — ב-${p} בלי מגבלה`,
+    almostDoneBefore: "נשארו מעט להיום — ב-",
+    almostDoneAfter: "בלי מגבלה",
     remainingToday: (n: number) => `עוד ${n} המרות להיום`,
     upgradeNow: (p: string) => `פרימיום — ${p}`, upgradeForUnlimited: "פרימיום = בלי לספור כל יום",
     credits: "קרדיטים", premiumSub: "מנוי פרימיום — 6 קרדיטים חודשיים", buyCredits: "קנה קרדיטים",
@@ -414,6 +416,8 @@ export const heTranslations = {
     images: "תמונות", saving: (s: string) => `חיסכון ${s}`, perImage: (p: string) => `${p} לתמונה`,
     mostPopular: "הכי פופולרי", purchasePackage: "רכוש חבילה",
     premiumNote: (p: string) => `מנויי פרימיום (${p}) מקבלים 6 קרדיטים בחודש + המרות ללא הגבלה`,
+    premiumNoteBefore: "מנויי פרימיום (",
+    premiumNoteAfter: ") מקבלים 6 קרדיטים בחודש + המרות ללא הגבלה",
   },
   fileDropZone: {
     dragHere: "גרור קבצים לכאן",

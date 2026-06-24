@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useLocale, localePath } from "@/lib/i18n";
 import { Link } from "react-router-dom";
 import { useSubscription } from "@/hooks/useSubscription";
+import { PremiumPriceLabel } from "@/components/PremiumPriceLabel";
 
 export function PremiumBanner() {
   const { locale, t } = useLocale();
@@ -22,7 +23,7 @@ export function PremiumBanner() {
       <Button asChild className="bg-[hsl(var(--premium-foreground))] text-[hsl(var(--premium))] hover:bg-[hsl(var(--premium-foreground)/0.9)] font-bold whitespace-nowrap">
         <Link to={localePath("/premium", locale)}>
           <Zap className="w-4 h-4 me-1" />
-          {p.price}
+          <PremiumPriceLabel />
         </Link>
       </Button>
     </div>
@@ -87,7 +88,8 @@ export function PremiumLock({ onUnlock }: { onUnlock?: () => void }) {
         <span className="text-xs text-muted-foreground">{p.or}</span>
         <Button asChild className="bg-premium text-premium-foreground hover:bg-premium/90 font-bold" size="lg">
           <Link to={localePath("/premium", locale)}>
-            <Zap className="w-4 h-4 me-1" />{p.upgradeBtn(p.price)}
+            <Zap className="w-4 h-4 me-1" />
+            {p.upgradeTo} — <PremiumPriceLabel />
           </Link>
         </Button>
       </div>
@@ -110,8 +112,11 @@ export function UsageLimitNotice({ used, max }: { used: number; max: number }) {
         <div className="h-full bg-primary rounded-full transition-all duration-500" style={{ width: `${Math.min((used / max) * 100, 100)}%` }} />
       </div>
       {remaining <= 2 && (
-        <p className="text-xs text-accent font-medium">
-          <Zap className="w-3 h-3 inline me-1" />{p.almostDone(p.price)}
+        <p className="text-xs text-accent font-medium flex flex-wrap items-center gap-x-1">
+          <Zap className="w-3 h-3 shrink-0" />
+          <span>{p.almostDoneBefore}</span>
+          <PremiumPriceLabel />
+          <span>{p.almostDoneAfter}</span>
         </p>
       )}
     </div>
@@ -128,7 +133,8 @@ export function ConversionSuccessUsage({ used, max }: { used: number; max: numbe
       {remaining <= 2 ? (
         <Button asChild className="bg-premium text-premium-foreground hover:bg-premium/90 font-bold text-sm">
           <Link to={localePath("/premium", locale)}>
-            <Zap className="w-3.5 h-3.5 me-1" />{p.upgradeNow(p.price)}
+            <Zap className="w-3.5 h-3.5 me-1" />
+            {p.upgradeTo} — <PremiumPriceLabel />
           </Link>
         </Button>
       ) : (

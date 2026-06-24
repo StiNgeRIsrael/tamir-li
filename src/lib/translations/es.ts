@@ -362,6 +362,8 @@ export const esTranslations = {
     adPlaying: "Un momento...", closeIn: (s: number) => `${s}s restantes`,
     dailyUsage: "Hoy", remaining: (n: number) => `${n} restantes hoy`,
     almostDone: (p: string) => `Casi agotado hoy — ${p} quita el límite`,
+    almostDoneBefore: "Casi agotado hoy —",
+    almostDoneAfter: "quita el límite",
     remainingToday: (n: number) => `${n} conversiones restantes hoy`,
     upgradeNow: (p: string) => `Premium — ${p}`, upgradeForUnlimited: "Premium = sin contar cada día",
     credits: "créditos", premiumSub: "Suscripción Premium — 6 créditos mensuales", buyCredits: "Comprar Créditos",
@@ -369,6 +371,8 @@ export const esTranslations = {
     images: "imágenes", saving: (s: string) => `Ahorro ${s}`, perImage: (p: string) => `${p}/imagen`,
     mostPopular: "Más Popular", purchasePackage: "Comprar Paquete",
     premiumNote: (p: string) => `Suscriptores Premium (${p}) reciben 6 créditos/mes + conversiones ilimitadas`,
+    premiumNoteBefore: "Suscriptores Premium (",
+    premiumNoteAfter: ") reciben 6 créditos/mes + conversiones ilimitadas",
   },
   fileDropZone: {
     dragHere: "Arrastra archivos aquí",

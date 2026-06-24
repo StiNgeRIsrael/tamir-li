@@ -292,9 +292,10 @@ router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
 
     const planId = getPayPalPlanId(plan as 'monthly' | 'yearly');
     if (!planId) {
+      const envVar = plan === 'yearly' ? 'PAYPAL_PLAN_YEARLY' : 'PAYPAL_PLAN_MONTHLY';
       res.status(503).json({
         error: 'PLAN_NOT_CONFIGURED',
-        message: `PayPal plan for "${plan}" is not configured.`,
+        message: `PayPal plan for "${plan}" is not configured. Set ${envVar} in the server environment (Plesk → Node.js → Environment variables) with the Plan ID (P-...) from PayPal Dashboard → Subscriptions.`,
       });
       return;
     }

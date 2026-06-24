@@ -306,6 +306,8 @@ export const itTranslations = {
     adPlaying: "Un momento...", closeIn: (s: number) => `Ancora ${s}s`,
     dailyUsage: "Oggi", remaining: (n: number) => `${n} rimaste oggi`,
     almostDone: (p: string) => `Quasi esaurito oggi — ${p} toglie il limite`,
+    almostDoneBefore: "Quasi esaurito oggi —",
+    almostDoneAfter: "toglie il limite",
     remainingToday: (n: number) => `${n} conversioni rimaste oggi`,
     upgradeNow: (p: string) => `Premium — ${p}`, upgradeForUnlimited: "Premium = senza contare ogni giorno",
     credits: "crediti", premiumSub: "Abbonamento Premium — 6 crediti mensili", buyCredits: "Acquista Crediti",
@@ -313,6 +315,8 @@ export const itTranslations = {
     images: "immagini", saving: (s: string) => `Risparmio ${s}`, perImage: (p: string) => `${p}/immagine`,
     mostPopular: "Il Più Popolare", purchasePackage: "Acquista Pacchetto",
     premiumNote: (p: string) => `Abbonati Premium (${p}) ricevono 6 crediti/mese + conversioni illimitate`,
+    premiumNoteBefore: "Abbonati Premium (",
+    premiumNoteAfter: ") ricevono 6 crediti/mese + conversioni illimitate",
   },
   fileDropZone: {
     dragHere: "Trascina i file qui",

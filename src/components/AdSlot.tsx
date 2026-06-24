@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
@@ -62,11 +62,11 @@ function AdFallbackMessage({ label, className }: { label: string; className?: st
   );
 }
 
-export function AdSlot({ type, className = "", slotId, eager = false }: AdSlotProps) {
+export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotProps) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
-  // Subscribe to runtime config from /api/ads/config (admin DB) without hiding slots while loading.
-  const { config: adRuntimeConfig } = useAdConfig();
+  // Re-render when /api/ads/config settles so zone keys from DB replace env fallback.
+  useAdConfig();
   const hasConsent = useAdsConsent();
   const L = layout[type];
   const label = t.adLabel || "Ad";
@@ -79,19 +79,21 @@ export function AdSlot({ type, className = "", slotId, eager = false }: AdSlotPr
   const pendingSlot = clientReady && !hasAdsterraZone(type, slotId);
 
   const [adStatus, setAdStatus] = useState<AdLoadStatus>("loading");
+  const loadedRef = useRef(false);
 
   const iframeSrcdoc = useMemo(() => {
     if (!showLiveAd || !zoneKey) return undefined;
     return buildAdIframeSrcdoc(zoneKey, dims.width, dims.height, slotId);
-  }, [showLiveAd, zoneKey, dims.width, dims.height, slotId, adRuntimeConfig]);
+  }, [showLiveAd, zoneKey, dims.width, dims.height, slotId]);
 
   useEffect(() => {
     if (!showLiveAd) {
+      loadedRef.current = false;
       setAdStatus("failed");
       return;
     }
 
-    setAdStatus("loading");
+    setAdStatus((current) => (loadedRef.current ? "loaded" : "loading"));
     const slotKey = slotId ?? "";
 
     const onMessage = (event: MessageEvent) => {
@@ -99,22 +101,29 @@ export function AdSlot({ type, className = "", slotId, eager = false }: AdSlotPr
       if (!data || data.tamirAdSlot !== slotKey) return;
 
       if (data.status === "loaded") {
+        loadedRef.current = true;
         setAdStatus("loaded");
-      } else if (data.status === "blocked" || data.status === "timeout") {
+      } else if (
+        !loadedRef.current &&
+        (data.status === "blocked" || data.status === "timeout")
+      ) {
         setAdStatus("failed");
       }
     };
 
     window.addEventListener("message", onMessage);
     const failTimer = window.setTimeout(() => {
-      setAdStatus((current) => (current === "loading" ? "failed" : current));
-    }, 9000);
+      setAdStatus((current) => {
+        if (loadedRef.current || current === "loaded") return "loaded";
+        return current === "loading" ? "failed" : current;
+      });
+    }, 14000);
 
     return () => {
       window.removeEventListener("message", onMessage);
       window.clearTimeout(failTimer);
     };
-  }, [showLiveAd, slotId, iframeSrcdoc, adRuntimeConfig]);
+  }, [showLiveAd, slotId, zoneKey]);
 
   const envHint =
     type === "sidebar" && slotId?.endsWith("-2")

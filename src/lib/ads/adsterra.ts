@@ -146,7 +146,34 @@ export function buildAdIframeSrcdoc(
     params: {},
   });
   const slotJson = JSON.stringify(slotId ?? "");
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>html,body{margin:0;padding:0;overflow:hidden;background:transparent;}</style></head><body><script type="text/javascript">atOptions = ${atOptions};</script><script type="text/javascript">(function(){var slot=${slotJson};function notify(status){try{parent.postMessage({tamirAdSlot:slot,status:status},'*');}catch(e){}}notify('loading');var s=document.createElement('script');s.type='text/javascript';s.src='https://${host}/${key}/invoke.js';s.onload=function(){notify('loaded');};s.onerror=function(){notify('blocked');};document.body.appendChild(s);setTimeout(function(){notify('timeout');},8000);})();</script></body></html>`;
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>html,body{margin:0;padding:0;overflow:hidden;background:transparent;}</style></head><body><script type="text/javascript">atOptions = ${atOptions};</script><script type="text/javascript">(function(){var slot=${slotJson};var done=false;function notify(status){if(done&&status!=='loaded')return;try{parent.postMessage({tamirAdSlot:slot,status:status},'*');}catch(e){}if(status==='loaded')done=true;}notify('loading');var s=document.createElement('script');s.type='text/javascript';s.src='https://${host}/${key}/invoke.js';s.onload=function(){notify('loaded');};s.onerror=function(){notify('blocked');};document.body.appendChild(s);setTimeout(function(){if(!done)notify('timeout');},12000);})();</script></body></html>`;
+}
+
+/** Preload invoke.js for configured zones after consent (warms CDN cache before iframes mount). */
+export function prefetchAdZoneScripts(): void {
+  if (premiumUser || !hasAdsConsent()) return;
+
+  const host = getInvokeHost();
+  const keys = new Set<string>();
+  for (const type of ["banner", "sidebar", "inline"] as AdPlacementType[]) {
+    const key = getAdsterraZoneKey(type);
+    if (key) keys.add(key);
+    if (type === "sidebar") {
+      const alt = resolveConfigValue("zoneSidebar2");
+      if (alt) keys.add(alt);
+    }
+  }
+
+  for (const key of keys) {
+    const id = `adsterra-prefetch-${key}`;
+    if (document.getElementById(id)) continue;
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "preload";
+    link.as = "script";
+    link.href = `https://${host}/${key}/invoke.js`;
+    document.head.appendChild(link);
+  }
 }
 
 /** Load popunder / social-bar script once after ad consent (paste full URL from Adsterra dashboard). */

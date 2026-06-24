@@ -10,6 +10,7 @@ import { BrandWordmark } from "@/components/BrandWordmark";
 import { isToolFunctional } from "@/lib/tool-availability";
 import { ToolSoonBadge } from "@/components/ToolSoonBadge";
 import { cn } from "@/lib/utils";
+import { PremiumPriceLabel } from "@/components/PremiumPriceLabel";
 
 const categories: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
 
@@ -144,6 +145,9 @@ export function ToolsSidebar() {
           <Crown className="w-5 h-5 mx-auto mb-1" />
           <p className="text-xs font-bold">{t.sidebarUpgrade}</p>
           <p className="text-[10px] opacity-80 mt-0.5">{t.sidebarNoAds}</p>
+          <p className="text-[10px] font-bold mt-1 flex justify-center">
+            <PremiumPriceLabel size="sm" />
+          </p>
         </Link>
       </div>
     </aside>
