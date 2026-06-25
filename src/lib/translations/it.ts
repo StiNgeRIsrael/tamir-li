@@ -543,6 +543,39 @@ export const itTranslations = {
     },
   },
 
+  aboutPage: {
+    seoTitle: "Informazioni su Tamir.li",
+    seoDesc: "Informazioni su Tamir.li — conversione file in ebraico per Israele. Immagini, video, audio e documenti.",
+    title: "Informazioni su Tamir.li",
+    intro:
+      "Tamir.li è un sito di conversione file pensato per gli utenti in Israele — veloce, semplice, senza installare software. Gestiamo tamir.li come servizio indipendente in ebraico, con conversioni nel browser e rispetto della privacy.",
+    sections: [
+      {
+        heading: "Chi siamo",
+        body: [
+          "Tamir.li è gestito da un piccolo team che crea strumenti pratici per utenti in Israele e parlanti ebraico nel mondo.",
+          "La nostra missione: rendere le conversioni quotidiane tra formati rapide e accessibili senza software desktop.",
+        ],
+      },
+      {
+        heading: "Cosa facciamo",
+        body: [
+          "Convertiamo tra formati comuni di immagini, video, audio e documenti — direttamente nel browser.",
+          "Il sito è in ebraico per impostazione predefinita e disponibile in altre lingue per utenti internazionali.",
+        ],
+      },
+      {
+        heading: "Perché sceglierci",
+        body: [
+          "Interfaccia in ebraico, focus su Israele, ampio supporto di formati.",
+          "Piano gratuito con limiti giornalieri; Premium senza pubblicità e conversioni illimitate.",
+        ],
+      },
+    ],
+    contactPrompt: "Hai una domanda?",
+    contactLink: "Contattaci",
+  },
+
   pwaUpdate: {
     message: "Nuova versione disponibile — aggiorna la pagina",
     messageCountdown: (seconds: number) =>
