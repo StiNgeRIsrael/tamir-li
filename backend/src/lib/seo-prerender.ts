@@ -34,7 +34,7 @@ export function loadSeoManifest(distDir: string): SeoManifest | null {
   }
 }
 
-/** Normalize request path to manifest key (strip locale prefix, default Hebrew). */
+/** Normalize request path to Hebrew manifest key (strip locale prefix). */
 export function normalizeManifestPath(urlPath: string): string {
   const locales = ["en", "es", "ru", "de", "fr", "it"];
   for (const loc of locales) {
@@ -47,9 +47,29 @@ export function normalizeManifestPath(urlPath: string): string {
   return urlPath || "/";
 }
 
-export function buildBotHtml(entry: SeoManifestEntry, canonicalUrl: string): string {
+export function extractManifestLocale(urlPath: string): "he" | "en" {
+  if (urlPath === "/en" || urlPath.startsWith("/en/")) return "en";
+  return "he";
+}
+
+function resolveManifestEntry(
+  manifest: SeoManifest,
+  urlPath: string
+): SeoManifestEntry | undefined {
+  const exact = manifest.routes[urlPath || "/"];
+  if (exact) return exact;
+  return manifest.routes[normalizeManifestPath(urlPath)];
+}
+
+export function buildBotHtml(
+  entry: SeoManifestEntry,
+  canonicalUrl: string,
+  locale: "he" | "en" = "he"
+): string {
   const escapedTitle = entry.title.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const escapedDesc = entry.description.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const htmlLang = locale === "en" ? "en" : "he-IL";
+  const htmlDir = locale === "en" ? "ltr" : "rtl";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -59,7 +79,7 @@ export function buildBotHtml(entry: SeoManifestEntry, canonicalUrl: string): str
   };
 
   return `<!DOCTYPE html>
-<html lang="he-IL" dir="rtl">
+<html lang="${htmlLang}" dir="${htmlDir}">
 <head>
   <meta charset="UTF-8" />
   <title>${escapedTitle}</title>
@@ -86,11 +106,10 @@ export function trySeoPrerender(
   const manifest = loadSeoManifest(distDir);
   if (!manifest) return null;
 
-  const key = normalizeManifestPath(urlPath);
-  const entry = manifest.routes[key];
+  const entry = resolveManifestEntry(manifest, urlPath);
   if (!entry) return null;
 
   const canonicalPath = urlPath || "/";
   const canonicalUrl = `${origin.replace(/\/$/, "")}${canonicalPath === "/" ? "/" : canonicalPath}`;
-  return buildBotHtml(entry, canonicalUrl);
+  return buildBotHtml(entry, canonicalUrl, extractManifestLocale(canonicalPath));
 }

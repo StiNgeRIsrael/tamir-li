@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-25T21:59:18.768Z",
+  "generatedAt": "2026-06-25T22:05:24.238Z",
   "origin": "https://tamir.li",
   "routes": {
     "/": {
@@ -12,19 +12,63 @@
     },
     "/tools/image": {
       "title": "כלי תמונות | תמיר לי",
-      "description": "כל כלי ההמרה לתמונות ב-תמיר לי — חינם בדפדפן."
+      "description": "כל כלי ההמרה והעריכה לתמונות ב-tamir.li — חינם בדפדפן, בעברית."
+    },
+    "/tools/video": {
+      "title": "כלי וידאו | תמיר לי",
+      "description": "כל כלי ההמרה והעריכה לוידאו ב-tamir.li — חינם בדפדפן, בעברית."
+    },
+    "/tools/audio": {
+      "title": "כלי אודיו | תמיר לי",
+      "description": "כל כלי ההמרה והעריכה לאודיו ב-tamir.li — חינם בדפדפן, בעברית."
     },
     "/tools/document": {
       "title": "כלי מסמכים | תמיר לי",
-      "description": "כל כלי ההמרה למסמכים ב-תמיר לי — חינם בדפדפן."
+      "description": "כל כלי ההמרה והעריכה למסמכים ב-tamir.li — חינם בדפדפן, בעברית."
     },
-    "/blog": {
-      "title": "בלוג — מדריכים וטיפים להמרת קבצים | תמיר לי",
-      "description": "מדריכים, טיפים, והשוואות מקצועיות על המרת תמונות, וידאו, אודיו ומסמכים. הכל בעברית, חינם."
+    "/tools/ai": {
+      "title": "כלי יצירה עם AI | תמיר לי",
+      "description": "כל כלי ההמרה והעריכה ליצירה עם AI ב-tamir.li — חינם בדפדפן, בעברית."
     },
-    "/jpg-to-png": {
-      "title": "המרת פורמט תמונה — תמיר לי",
-      "description": "כלי המרת תמונות מקוון שמאפשר לכם להמיר בין כל פורמטי התמונה הנפוצים. העלו תמונה בפורמט JPG, PNG, WEBP, GIF, BMP, TIFF או SVG והמירו אותה לכל פורמט אחר תוך שניות, ישירות בדפדפן וללא הורדת תוכנה."
+    "/aac-to-flac": {
+      "title": "המרת AAC ל-FLAC — תמיר לי",
+      "description": "המירו קבצי AAC ל-FLAC בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/aac-to-mp3": {
+      "title": "המרת AAC ל-MP3 — תמיר לי",
+      "description": "המירו קבצי AAC ל-MP3 בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/aac-to-ogg": {
+      "title": "המרת AAC ל-OGG — תמיר לי",
+      "description": "המירו קבצי AAC ל-OGG בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/aac-to-wav": {
+      "title": "המרת AAC ל-WAV — תמיר לי",
+      "description": "המירו קבצי AAC ל-WAV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/doc-to-pdf": {
+      "title": "המרת DOC ל-PDF — תמיר לי",
+      "description": "המירו קבצי DOC ל-PDF בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/docx-to-pdf": {
+      "title": "המרת DOCX ל-PDF — תמיר לי",
+      "description": "המירו קבצי DOCX ל-PDF בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/flac-to-aac": {
+      "title": "המרת FLAC ל-AAC — תמיר לי",
+      "description": "המירו קבצי FLAC ל-AAC בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/flac-to-mp3": {
+      "title": "המרת FLAC ל-MP3 — תמיר לי",
+      "description": "המירו קבצי FLAC ל-MP3 בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/flac-to-ogg": {
+      "title": "המרת FLAC ל-OGG — תמיר לי",
+      "description": "המירו קבצי FLAC ל-OGG בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/flac-to-wav": {
+      "title": "המרת FLAC ל-WAV — תמיר לי",
+      "description": "המירו קבצי FLAC ל-WAV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
     },
     "/image-compressor": {
       "title": "דחיסת תמונה — תמיר לי",
@@ -34,29 +78,253 @@
       "title": "שינוי גודל תמונה — תמיר לי",
       "description": "שנו את גודל התמונות שלכם לכל רזולוציה רצויה. מתאים להתאמת תמונות לרשתות חברתיות, אתרי אינטרנט, מצגות ועוד."
     },
-    "/png-to-ico": {
-      "title": "PNG ל-ICO — תמיר לי",
-      "description": "המירו תמונות PNG לפורמט ICO ליצירת אייקונים לאתרי אינטרנט (favicon) או לאפליקציות."
+    "/jpg-to-png": {
+      "title": "המרת JPG ל-PNG — תמיר לי",
+      "description": "המירו קבצי JPG ל-PNG בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
     },
-    "/svg-to-png": {
-      "title": "SVG ל-PNG — תמיר לי",
-      "description": "המירו גרפיקה וקטורית בפורמט SVG לתמונות PNG באיכות גבוהה."
-    },
-    "/mp3-to-wav": {
-      "title": "המרת פורמט אודיו — תמיר לי",
-      "description": "המירו קבצי שמע בין כל הפורמטים הנפוצים. מ-MP3 ל-WAV, מ-FLAC ל-MP3, ועוד."
-    },
-    "/docx-to-pdf": {
-      "title": "Word ל-PDF — תמיר לי",
-      "description": "המירו מסמכי Word (DOC, DOCX) לפורמט PDF אוניברסלי."
+    "/jpg-to-webp": {
+      "title": "המרת JPG ל-WEBP — תמיר לי",
+      "description": "המירו קבצי JPG ל-WEBP בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
     },
     "/merge-pdf": {
       "title": "מנהל PDF — תמיר לי",
       "description": "מנהל PDF מתקדם — העלו מספר קבצי PDF, סדרו את העמודים מחדש בגרירה, סובבו עמודים בודדים, ומזגו הכל לקובץ PDF אחד מסודר. מושלם לחוזים, דוחות וחשבוניות."
     },
+    "/mp3-to-aac": {
+      "title": "המרת MP3 ל-AAC — תמיר לי",
+      "description": "המירו קבצי MP3 ל-AAC בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/mp3-to-flac": {
+      "title": "המרת MP3 ל-FLAC — תמיר לי",
+      "description": "המירו קבצי MP3 ל-FLAC בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/mp3-to-ogg": {
+      "title": "המרת MP3 ל-OGG — תמיר לי",
+      "description": "המירו קבצי MP3 ל-OGG בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/mp3-to-wav": {
+      "title": "המרת MP3 ל-WAV — תמיר לי",
+      "description": "המירו קבצי MP3 ל-WAV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/ogg-to-aac": {
+      "title": "המרת OGG ל-AAC — תמיר לי",
+      "description": "המירו קבצי OGG ל-AAC בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/ogg-to-flac": {
+      "title": "המרת OGG ל-FLAC — תמיר לי",
+      "description": "המירו קבצי OGG ל-FLAC בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/ogg-to-mp3": {
+      "title": "המרת OGG ל-MP3 — תמיר לי",
+      "description": "המירו קבצי OGG ל-MP3 בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/ogg-to-wav": {
+      "title": "המרת OGG ל-WAV — תמיר לי",
+      "description": "המירו קבצי OGG ל-WAV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/png-to-ico": {
+      "title": "המרת PNG ל-ICO — תמיר לי",
+      "description": "המירו קבצי PNG ל-ICO בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/png-to-jpg": {
+      "title": "המרת PNG ל-JPG — תמיר לי",
+      "description": "המירו קבצי PNG ל-JPG בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/png-to-webp": {
+      "title": "המרת PNG ל-WEBP — תמיר לי",
+      "description": "המירו קבצי PNG ל-WEBP בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/svg-to-png": {
+      "title": "המרת SVG ל-PNG — תמיר לי",
+      "description": "המירו קבצי SVG ל-PNG בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
     "/text-tools": {
       "title": "כלי טקסט — תמיר לי",
       "description": "כלי טקסט מתקדם: המירו בין פורמט טקסט רגיל, Markdown ו-HTML. כולל ספירת מילים ותווים, המרת אותיות, ניקוי רווחים ועוד."
+    },
+    "/wav-to-aac": {
+      "title": "המרת WAV ל-AAC — תמיר לי",
+      "description": "המירו קבצי WAV ל-AAC בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/wav-to-flac": {
+      "title": "המרת WAV ל-FLAC — תמיר לי",
+      "description": "המירו קבצי WAV ל-FLAC בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/wav-to-mp3": {
+      "title": "המרת WAV ל-MP3 — תמיר לי",
+      "description": "המירו קבצי WAV ל-MP3 בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/wav-to-ogg": {
+      "title": "המרת WAV ל-OGG — תמיר לי",
+      "description": "המירו קבצי WAV ל-OGG בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/webp-to-jpg": {
+      "title": "המרת WEBP ל-JPG — תמיר לי",
+      "description": "המירו קבצי WEBP ל-JPG בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/en": {
+      "title": "Tamir.li — Online file conversion",
+      "description": "Tamir.li helps you convert files between common formats — images, video, audio and documents — quickly and with a clear free tier. Examples: PNG to JPG, compressing video, WAV to MP3, or PDF to Word for editing."
+    },
+    "/en/premium": {
+      "title": "Upgrade to Premium — Tamirly",
+      "description": "Get unlimited conversions, no ads, AI image generation and faster processing for just ₪19.90/month (was ₪150)."
+    },
+    "/en/tools/image": {
+      "title": "Images tools | Tamir.li",
+      "description": "All Images conversion and editing tools on Tamir.li — free in your browser."
+    },
+    "/en/tools/video": {
+      "title": "Video tools | Tamir.li",
+      "description": "All Video conversion and editing tools on Tamir.li — free in your browser."
+    },
+    "/en/tools/audio": {
+      "title": "Audio tools | Tamir.li",
+      "description": "All Audio conversion and editing tools on Tamir.li — free in your browser."
+    },
+    "/en/tools/document": {
+      "title": "Documents tools | Tamir.li",
+      "description": "All Documents conversion and editing tools on Tamir.li — free in your browser."
+    },
+    "/en/tools/ai": {
+      "title": "AI Creation tools | Tamir.li",
+      "description": "All AI Creation conversion and editing tools on Tamir.li — free in your browser."
+    },
+    "/en/aac-to-flac": {
+      "title": "Convert AAC to FLAC — Tamir.li",
+      "description": "Convert AAC files to FLAC for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/aac-to-mp3": {
+      "title": "Convert AAC to MP3 — Tamir.li",
+      "description": "Convert AAC files to MP3 for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/aac-to-ogg": {
+      "title": "Convert AAC to OGG — Tamir.li",
+      "description": "Convert AAC files to OGG for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/aac-to-wav": {
+      "title": "Convert AAC to WAV — Tamir.li",
+      "description": "Convert AAC files to WAV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/doc-to-pdf": {
+      "title": "Convert DOC to PDF — Tamir.li",
+      "description": "Convert DOC files to PDF for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/docx-to-pdf": {
+      "title": "Convert DOCX to PDF — Tamir.li",
+      "description": "Convert DOCX files to PDF for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/flac-to-aac": {
+      "title": "Convert FLAC to AAC — Tamir.li",
+      "description": "Convert FLAC files to AAC for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/flac-to-mp3": {
+      "title": "Convert FLAC to MP3 — Tamir.li",
+      "description": "Convert FLAC files to MP3 for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/flac-to-ogg": {
+      "title": "Convert FLAC to OGG — Tamir.li",
+      "description": "Convert FLAC files to OGG for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/flac-to-wav": {
+      "title": "Convert FLAC to WAV — Tamir.li",
+      "description": "Convert FLAC files to WAV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/image-compressor": {
+      "title": "Image Compressor — Tamir.li",
+      "description": "Compress your images and save storage space and data. Our tool reduces file size while maintaining maximum quality."
+    },
+    "/en/image-resizer": {
+      "title": "Image Resizer — Tamir.li",
+      "description": "Change the size of your images to any desired resolution. Perfect for adapting images for social media, websites, presentations and more."
+    },
+    "/en/jpg-to-png": {
+      "title": "Convert JPG to PNG — Tamir.li",
+      "description": "Convert JPG files to PNG for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/jpg-to-webp": {
+      "title": "Convert JPG to WEBP — Tamir.li",
+      "description": "Convert JPG files to WEBP for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/merge-pdf": {
+      "title": "PDF Manager — Tamir.li",
+      "description": "Advanced PDF manager — upload multiple PDF files, reorder pages by dragging, rotate individual pages, and merge everything into one organized PDF file. Perfect for contracts, reports and invoices."
+    },
+    "/en/mp3-to-aac": {
+      "title": "Convert MP3 to AAC — Tamir.li",
+      "description": "Convert MP3 files to AAC for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/mp3-to-flac": {
+      "title": "Convert MP3 to FLAC — Tamir.li",
+      "description": "Convert MP3 files to FLAC for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/mp3-to-ogg": {
+      "title": "Convert MP3 to OGG — Tamir.li",
+      "description": "Convert MP3 files to OGG for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/mp3-to-wav": {
+      "title": "Convert MP3 to WAV — Tamir.li",
+      "description": "Convert MP3 files to WAV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/ogg-to-aac": {
+      "title": "Convert OGG to AAC — Tamir.li",
+      "description": "Convert OGG files to AAC for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/ogg-to-flac": {
+      "title": "Convert OGG to FLAC — Tamir.li",
+      "description": "Convert OGG files to FLAC for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/ogg-to-mp3": {
+      "title": "Convert OGG to MP3 — Tamir.li",
+      "description": "Convert OGG files to MP3 for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/ogg-to-wav": {
+      "title": "Convert OGG to WAV — Tamir.li",
+      "description": "Convert OGG files to WAV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/png-to-ico": {
+      "title": "Convert PNG to ICO — Tamir.li",
+      "description": "Convert PNG files to ICO for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/png-to-jpg": {
+      "title": "Convert PNG to JPG — Tamir.li",
+      "description": "Convert PNG files to JPG for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/png-to-webp": {
+      "title": "Convert PNG to WEBP — Tamir.li",
+      "description": "Convert PNG files to WEBP for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/svg-to-png": {
+      "title": "Convert SVG to PNG — Tamir.li",
+      "description": "Convert SVG files to PNG for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/text-tools": {
+      "title": "Text Tools — Tamir.li",
+      "description": "Advanced text tool: convert between plain text, Markdown and HTML formats. Includes word and character counting, letter case conversion, space cleaning and more."
+    },
+    "/en/wav-to-aac": {
+      "title": "Convert WAV to AAC — Tamir.li",
+      "description": "Convert WAV files to AAC for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/wav-to-flac": {
+      "title": "Convert WAV to FLAC — Tamir.li",
+      "description": "Convert WAV files to FLAC for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/wav-to-mp3": {
+      "title": "Convert WAV to MP3 — Tamir.li",
+      "description": "Convert WAV files to MP3 for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/wav-to-ogg": {
+      "title": "Convert WAV to OGG — Tamir.li",
+      "description": "Convert WAV files to OGG for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/webp-to-jpg": {
+      "title": "Convert WEBP to JPG — Tamir.li",
+      "description": "Convert WEBP files to JPG for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/blog": {
+      "title": "בלוג — מדריכים וטיפים להמרת קבצים | תמיר לי",
+      "description": "מדריכים, טיפים, והשוואות מקצועיות על המרת תמונות, וידאו, אודיו ומסמכים. הכל בעברית, חינם."
     }
   }
 }
