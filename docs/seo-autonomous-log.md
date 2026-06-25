@@ -212,5 +212,42 @@ From `seo-mastery` checklist vs repo:
 
 **IndexNow:** Not run ? `INDEXNOW_KEY` not set in env (user must set key + host `{key}.txt` at site root).
 
-**Commit/push:** `4caf58e` ? *Expand seo-manifest to 81 routes for Hebrew and English bot prerender.*
+**Commit/push:** `24859b3` ? *Expand seo-manifest to 81 routes for Hebrew and English bot prerender.* Pushed to `origin/main`.
+
+---
+
+## Iteration 4 ? Manifest deploy verification ? 2026-06-26
+
+**Push ref:** `24859b3` (`496f643..24859b3 main ? main`)
+
+### Production poll (`https://tamir.li/seo-manifest.json`)
+
+| Signal | Pre-deploy | Post-deploy (~2.5 min) |
+|--------|------------|------------------------|
+| Route count | **14** | **81** |
+| `generatedAt` | `2026-06-25T22:03:30.142Z` | `2026-06-25T22:06:55.067Z` |
+| HTTP status | 200 | 200 |
+
+**Deploy confirmed:** yes ? expanded manifest live on production.
+
+### Manifest breakdown (local = prod)
+
+- **81 routes:** Hebrew (`/`, `/premium`, 5× `/tools/*`, 33 tool slugs, `/blog`) + English mirror (`/en`, `/en/premium`, 5× `/en/tools/*`, 33× `/en/{slug}`).
+- All entries sourced from `collectToolSlugs()` + `CATEGORY_HUB_CATEGORIES` via `isToolFunctional()`.
+
+### IndexNow
+
+- Still skipped ? **`INDEXNOW_KEY` not set** in env. User should set key, host `{key}.txt` at site root, then run `npm run indexnow` for tier-1 + hub/tool URLs.
+
+### GSC / indexing (unchanged since Iteration 3)
+
+- Still **2 indexed URLs** (`/`, `/en`) ? manifest expansion enables bot prerender on first crawl; indexing lag expected until sitemap re-read + crawl budget.
+- GSC sitemap still stale at **847 URLs** (prod **337**).
+
+### Next loop priorities
+
+1. User: set **`INDEXNOW_KEY`** and ping tier-1 URLs + top tool/hub slugs.
+2. GSC: resubmit sitemap or wait for recrawl to **337 URLs**.
+3. Request indexing for `/jpg-to-png`, `/tools/image`, `/en/jpg-to-png` once sitemap refresh confirmed.
+4. Re-check GSC indexed count in **48?72h** after IndexNow + sitemap refresh.
 
