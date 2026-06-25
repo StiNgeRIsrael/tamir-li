@@ -254,40 +254,67 @@ From `seo-mastery` checklist vs repo:
 
 ---
 
-## Iteration 5 — Post–81-route manifest deploy + GSC — 2026-06-26
+## Iteration 5 ? Post?81-route manifest + GSC + slug FAQs ? 2026-06-26
 
-**Push ref:** `24859b3` (`Expand seo-manifest to 81 routes for Hebrew and English bot prerender.`)
+**Deploy ref:** `24859b3` / log `5c9e726` (81-route manifest live on prod).
 
-### Agent handoff (524ac71 / de5543f5 follow-up)
+### Production poll
 
-- Local working tree **clean** — manifest expansion already committed and on `origin/main` (no duplicate commit).
-- `git push origin main` → **Everything up-to-date**.
-
-### Production poll (`https://tamir.li/seo-manifest.json`)
-
-| Poll | Route count | `generatedAt` |
-|------|-------------|-----------------|
-| 1–3 | **14** | `2026-06-25T22:03:30.142Z` |
-| 4 | **81** | `2026-06-25T22:06:55.067Z` |
-
-**Prod manifest route count:** **81**
+| Signal | Value |
+|--------|-------|
+| `seo-manifest.json` routes | **81** |
+| `generatedAt` | `2026-06-25T22:06:55.067Z` (prod) |
+| Sitemap URLs | **337** (prod) |
+| GSC sitemap count | **847** (stale ? not re-read since prune) |
 
 ### Bot prerender spot-check
 
-- Googlebot UA `GET https://tamir.li/jpg-to-png` → **200**, tool-specific `<title>` (not homepage), `lang="he-IL"`.
+- Googlebot UA `GET https://tamir.li/jpg-to-png` ? **200**, tool-specific `<title>` (contains JPG/PNG, not homepage title), `lang="he-IL"`.
+- **Confirmed:** 81-route manifest prerender working on production.
 
-### GSC MCP (`sc-domain:tamir.li`) — `inspect_url_enhanced`
+### GSC MCP (`sc-domain:tamir.li`) ? `inspect_url_enhanced`
 
-| URL | Verdict | Coverage | Last crawled | Delta vs Iter 2 |
+**Delta vs Iteration 3** (indexed count still **2**: `/`, `/en`):
+
+| URL | Verdict | Coverage | Last crawled | Delta vs Iter 3 |
 |-----|---------|----------|--------------|-----------------|
-| `https://tamir.li/jpg-to-png` | NEUTRAL | **Discovered — currently not indexed** | — | **Improved** vs “Unknown to Google” (now in discovery queue) |
+| `https://tamir.li/` | PASS | Submitted and indexed | 2026-06-25 | No change |
+| `https://tamir.li/jpg-to-png` | NEUTRAL | Unknown to Google | ? | No change |
+| `https://tamir.li/en/jpg-to-png` | NEUTRAL | **Discovered ? currently not indexed** | ? | **New** ? English tool URL entered discovery queue |
+| `https://tamir.li/tools/image` | NEUTRAL | Unknown to Google | ? | No change |
+| `https://tamir.li/premium` | NEUTRAL | Unknown to Google | ? | No change |
 
-**Takeaway:** 81-route manifest live; tool URL discovered but not yet indexed — expected until crawl + sitemap refresh. Request indexing / IndexNow when `INDEXNOW_KEY` is set.
+**Takeaway:** Manifest expansion enables bot prerender; first English tool URL discovered but **no new indexing** yet. Hebrew `/jpg-to-png` still unknown ? crawl/indexing lag expected until sitemap refresh + IndexNow.
+
+### Slug-specific FAQ content (`tool-seo-content.ts`)
+
+Added slug-level blocks (7 locales each, with `directAnswer` + 3 FAQs):
+
+| Slug | Tool | Status |
+|------|------|--------|
+| `mp3-to-wav` | audio-converter | **Added** (functional) |
+| `docx-to-pdf` | word-to-pdf | **Added** (functional; sitemap slug) |
+| `pdf-to-word` | pdf-to-word | **Skipped** (not functional ? Coming Soon) |
+
+### IndexNow
+
+- **`INDEXNOW_KEY` still not set** ? user must set env var + host `{key}.txt` at site root, then run `npm run indexnow` for tier-1 + hub/tool URLs.
+
+### Verification
+
+- `npm test` ? 142 passed
+- `npm run build` ? success (337 sitemap URLs, 81 manifest routes)
+
+### Git / deploy
+
+- **Commit:** *(this iteration)* ? *Add slug-specific SEO FAQs for mp3-to-wav and docx-to-pdf.*
+- Pushed to `origin/main` ? Plesk auto-deploy (~5 min).
 
 ### Next loop priorities
 
-1. Set **`INDEXNOW_KEY`** and ping tier-1 + `/jpg-to-png`, `/en/jpg-to-png`, category hubs.
-2. GSC: resubmit sitemap (still **847** in GSC vs **337** prod) or wait for recrawl.
-3. Re-inspect `/jpg-to-png` in **48–72h** for first crawl after manifest expansion.
-4. Expand manifest to **es/ru/de/fr/it** tool paths (he + en only today).
+1. User: set **`INDEXNOW_KEY`** and ping `/`, `/en/jpg-to-png`, `/jpg-to-png`, `/tools/image`, `/premium`.
+2. GSC: resubmit sitemap or wait for recrawl (**847 ? 337**).
+3. Request indexing in GSC for discovered `/en/jpg-to-png` + Hebrew tool URLs.
+4. Re-check indexed count in **48?72h** after IndexNow + sitemap refresh.
+5. Expand manifest to **es/ru/de/fr/it** locale paths (he + en only today).
 

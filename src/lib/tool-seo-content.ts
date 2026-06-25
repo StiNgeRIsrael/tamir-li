@@ -106,6 +106,15 @@ const he: LocalizedContent = {
       { q: "האם נשמרים מטא-דאטה (שם אמן, אלבום)?", a: "רוב המטא-דאטה נשמר בהמרה בין פורמטים נפוצים." },
     ],
   },
+  "mp3-to-wav": {
+    directAnswer:
+      "המרת MP3 ל-WAV מחזירה איכות שמע מלאה ללא דחיסה — מצוינת לעריכה באולפן, DJ ומיקס. העלו MP3, לחצו המרה והורידו WAV. ההמרה מתבצעת בדפדפן, בלי שמירה בשרת.",
+    faqs: [
+      { q: "למה להמיר MP3 ל-WAV?", a: "WAV הוא פורמט ללא אובדן — מתאים לעריכה, מיקס ושמירת איכות מקסימלית. MP3 דחוס ומתאים להאזנה, לא לעריכה מקצועית." },
+      { q: "האם הקובץ יגדל?", a: "כן — WAV גדול פי 5–10 מ-MP3. מומלץ לעריכה ואולפן, לא לשיתוף יומיומי." },
+      { q: "האם איכות MP3 משתפרת?", a: "לא — פרטים שאבדו בדחיסת MP3 לא חוזרים. WAV שומר על מה שנשאר באיכות מלאה, ללא דחיסה נוספת." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "האם העיצוב נשמר בהמרה?", a: "הכלי שומר על מבנה המסמך, כותרות וטבלאות. עיצוב מורכב מאוד עשוי לדרוש התאמות קלות ב-Word." },
@@ -118,6 +127,15 @@ const he: LocalizedContent = {
       { q: "למה להמיר Word ל-PDF?", a: "PDF שומר על עיצוב קבוע בכל מכשיר — מושלם לשליחה, הדפסה וחתימה דיגיטלית." },
       { q: "האם גופנים נשמרים?", a: "כן — הגופנים מוטמעים ב-PDF כך שהמסמך נראה זהה בכל מקום." },
       { q: "DOC או DOCX?", a: "שני הפורמטים נתמכים. DOCX מומלץ לתוצאה מיטבית." },
+    ],
+  },
+  "docx-to-pdf": {
+    directAnswer:
+      "המרת DOCX ל-PDF שומרת על עיצוב, גופנים וטבלאות בכל מכשיר — מושלמת לשליחה ללקוחות, הגשות וחתימה דיגיטלית. העלו DOCX, לחצו המרה והורידו PDF מיד — בדפדפן, בלי שמירה בשרת.",
+    faqs: [
+      { q: "למה להמיר DOCX ל-PDF?", a: "PDF נראה זהה בכל מחשב וטלפון — Word עלול לשנות עיצוב לפי גרסה וגופנים מותקנים." },
+      { q: "האם גופנים וטבלאות נשמרים?", a: "כן — הגופנים מוטמעים ב-PDF והטבלאות נשארות במקום. מתאים למסמכים רשמיים וחוזים." },
+      { q: "DOCX או DOC — מה עדיף?", a: "DOCX מומלץ לתוצאה מיטבית. DOC (Word ישן) נתמך גם כן." },
     ],
   },
   "merge-pdf": {
@@ -227,6 +245,15 @@ const en: LocalizedContent = {
       { q: "Is metadata (artist, album) preserved?", a: "Most metadata is preserved when converting between common formats." },
     ],
   },
+  "mp3-to-wav": {
+    directAnswer:
+      "Converting MP3 to WAV restores uncompressed, full-quality audio — ideal for studio editing, DJ sets and mixing. Upload MP3, click convert, download WAV. Processing happens in your browser with no server storage.",
+    faqs: [
+      { q: "Why convert MP3 to WAV?", a: "WAV is lossless — best for editing, mixing and maximum quality. MP3 is compressed and suited for listening, not pro editing." },
+      { q: "Will the file get bigger?", a: "Yes — WAV is typically 5–10× larger than MP3. Best for studio work, not everyday sharing." },
+      { q: "Does MP3 quality improve?", a: "No — detail lost in MP3 compression can't be recovered. WAV preserves what's left at full quality without further compression." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "Is formatting preserved?", a: "The tool keeps document structure, headings and tables. Very complex layouts may need minor tweaks in Word." },
@@ -239,6 +266,15 @@ const en: LocalizedContent = {
       { q: "Why convert Word to PDF?", a: "PDF locks layout on any device — perfect for sending, printing and digital signatures." },
       { q: "Are fonts preserved?", a: "Yes — fonts are embedded in the PDF so the document looks identical everywhere." },
       { q: "DOC or DOCX?", a: "Both formats are supported. DOCX is recommended for best results." },
+    ],
+  },
+  "docx-to-pdf": {
+    directAnswer:
+      "Converting DOCX to PDF locks layout, fonts and tables on any device — perfect for clients, submissions and e-signatures. Upload DOCX, click convert, download PDF instantly — in your browser, with no server storage.",
+    faqs: [
+      { q: "Why convert DOCX to PDF?", a: "PDF looks identical on every computer and phone — Word may shift layout depending on version and installed fonts." },
+      { q: "Are fonts and tables preserved?", a: "Yes — fonts are embedded and tables stay in place. Ideal for official documents and contracts." },
+      { q: "DOCX or DOC — which is better?", a: "DOCX is recommended for best results. Legacy DOC (old Word) is also supported." },
     ],
   },
   "merge-pdf": {
@@ -348,6 +384,15 @@ const es: LocalizedContent = {
       { q: "¿Se conservan los metadatos (artista, álbum)?", a: "La mayoría de los metadatos se conservan al convertir entre formatos comunes." },
     ],
   },
+  "mp3-to-wav": {
+    directAnswer:
+      "Convertir MP3 a WAV devuelve audio sin comprimir y de calidad total — ideal para edición de estudio, DJ y mezcla. Sube MP3, pulsa convertir y descarga WAV. El procesamiento ocurre en tu navegador sin almacenamiento en servidor.",
+    faqs: [
+      { q: "¿Por qué convertir MP3 a WAV?", a: "WAV es sin pérdida — mejor para editar, mezclar y máxima calidad. MP3 está comprimido y sirve para escuchar, no para edición profesional." },
+      { q: "¿El archivo será más grande?", a: "Sí — WAV suele ser 5–10 veces más grande que MP3. Mejor para estudio, no para compartir a diario." },
+      { q: "¿Mejora la calidad del MP3?", a: "No — el detalle perdido en la compresión MP3 no se recupera. WAV preserva lo que queda a calidad plena sin más compresión." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "¿Se conserva el formato?", a: "La herramienta mantiene la estructura del documento, encabezados y tablas. Diseños muy complejos pueden requerir pequeños ajustes en Word." },
@@ -360,6 +405,15 @@ const es: LocalizedContent = {
       { q: "¿Por qué convertir Word a PDF?", a: "PDF fija el diseño en cualquier dispositivo — perfecto para enviar, imprimir y firmas digitales." },
       { q: "¿Se conservan las fuentes?", a: "Sí — las fuentes se incrustan en el PDF para que el documento se vea igual en cualquier lugar." },
       { q: "¿DOC o DOCX?", a: "Ambos formatos son compatibles. DOCX se recomienda para mejores resultados." },
+    ],
+  },
+  "docx-to-pdf": {
+    directAnswer:
+      "Convertir DOCX a PDF fija diseño, fuentes y tablas en cualquier dispositivo — perfecto para clientes, entregas y firmas digitales. Sube DOCX, pulsa convertir y descarga PDF al instante — en tu navegador, sin almacenamiento en servidor.",
+    faqs: [
+      { q: "¿Por qué convertir DOCX a PDF?", a: "PDF se ve igual en todo ordenador y móvil — Word puede cambiar el diseño según versión y fuentes instaladas." },
+      { q: "¿Se conservan fuentes y tablas?", a: "Sí — las fuentes se incrustan y las tablas permanecen en su lugar. Ideal para documentos oficiales y contratos." },
+      { q: "¿DOCX o DOC — cuál es mejor?", a: "DOCX se recomienda para mejores resultados. DOC antiguo también es compatible." },
     ],
   },
   "merge-pdf": {
@@ -469,6 +523,15 @@ const fr: LocalizedContent = {
       { q: "Les métadonnées (artiste, album) sont-elles conservées ?", a: "La plupart des métadonnées sont conservées lors de la conversion entre formats courants." },
     ],
   },
+  "mp3-to-wav": {
+    directAnswer:
+      "Convertir MP3 en WAV restitue un audio non compressé de qualité maximale — idéal pour le montage studio, DJ et mixage. Téléversez un MP3, cliquez sur convertir et téléchargez le WAV. Traitement dans le navigateur, sans stockage serveur.",
+    faqs: [
+      { q: "Pourquoi convertir MP3 en WAV ?", a: "WAV est sans perte — idéal pour l'édition, le mixage et la qualité maximale. MP3 est compressé, adapté à l'écoute, pas à l'édition pro." },
+      { q: "Le fichier sera-t-il plus gros ?", a: "Oui — WAV est souvent 5 à 10 fois plus volumineux que MP3. Mieux pour le studio, pas pour le partage quotidien." },
+      { q: "La qualité MP3 s'améliore-t-elle ?", a: "Non — le détail perdu dans la compression MP3 ne revient pas. WAV préserve ce qui reste en qualité pleine, sans compression supplémentaire." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "La mise en forme est-elle conservée ?", a: "L'outil conserve la structure du document, les titres et les tableaux. Les mises en page très complexes peuvent nécessiter de légers ajustements dans Word." },
@@ -481,6 +544,15 @@ const fr: LocalizedContent = {
       { q: "Pourquoi convertir Word en PDF ?", a: "Le PDF fixe la mise en page sur tout appareil — parfait pour l'envoi, l'impression et les signatures numériques." },
       { q: "Les polices sont-elles conservées ?", a: "Oui — les polices sont intégrées au PDF pour que le document soit identique partout." },
       { q: "DOC ou DOCX ?", a: "Les deux formats sont pris en charge. DOCX est recommandé pour de meilleurs résultats." },
+    ],
+  },
+  "docx-to-pdf": {
+    directAnswer:
+      "Convertir DOCX en PDF fixe la mise en page, les polices et les tableaux sur tout appareil — parfait pour clients, soumissions et signatures numériques. Téléversez un DOCX, cliquez sur convertir et téléchargez le PDF — dans le navigateur, sans stockage serveur.",
+    faqs: [
+      { q: "Pourquoi convertir DOCX en PDF ?", a: "Le PDF s'affiche identique sur tout ordinateur et téléphone — Word peut décaler la mise en page selon la version et les polices installées." },
+      { q: "Les polices et tableaux sont-ils conservés ?", a: "Oui — les polices sont intégrées et les tableaux restent en place. Idéal pour documents officiels et contrats." },
+      { q: "DOCX ou DOC — lequel est préférable ?", a: "DOCX est recommandé pour de meilleurs résultats. L'ancien DOC est aussi pris en charge." },
     ],
   },
   "merge-pdf": {
@@ -590,6 +662,15 @@ const ru: LocalizedContent = {
       { q: "Сохраняются ли метаданные (исполнитель, альбом)?", a: "Большинство метаданных сохраняется при конвертации между распространёнными форматами." },
     ],
   },
+  "mp3-to-wav": {
+    directAnswer:
+      "Конвертация MP3 в WAV возвращает несжатое аудио полного качества — идеально для студийного монтажа, DJ и сведения. Загрузите MP3, нажмите конвертировать и скачайте WAV. Обработка в браузере, без хранения на сервере.",
+    faqs: [
+      { q: "Зачем конвертировать MP3 в WAV?", a: "WAV без потерь — лучше для редактирования, сведения и максимального качества. MP3 сжат и подходит для прослушивания, не для профессионального монтажа." },
+      { q: "Файл станет больше?", a: "Да — WAV обычно в 5–10 раз больше MP3. Лучше для студии, не для повседневного обмена." },
+      { q: "Улучшится ли качество MP3?", a: "Нет — детали, потерянные при сжатии MP3, не восстановятся. WAV сохраняет оставшееся в полном качестве без дополнительного сжатия." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "Сохраняется ли форматирование?", a: "Инструмент сохраняет структуру документа, заголовки и таблицы. Очень сложные макеты могут потребовать небольших правок в Word." },
@@ -602,6 +683,15 @@ const ru: LocalizedContent = {
       { q: "Зачем конвертировать Word в PDF?", a: "PDF сохраняет вёрстку на любом устройстве — идеально для отправки, печати и электронной подписи." },
       { q: "Сохраняются ли шрифты?", a: "Да — шрифты встраиваются в PDF, поэтому документ выглядит одинаково везде." },
       { q: "DOC или DOCX?", a: "Поддерживаются оба формата. DOCX рекомендуется для лучшего результата." },
+    ],
+  },
+  "docx-to-pdf": {
+    directAnswer:
+      "Конвертация DOCX в PDF фиксирует вёрстку, шрифты и таблицы на любом устройстве — идеально для клиентов, подачи документов и электронной подписи. Загрузите DOCX, нажмите конвертировать и скачайте PDF — в браузере, без хранения на сервере.",
+    faqs: [
+      { q: "Зачем конвертировать DOCX в PDF?", a: "PDF выглядит одинаково на любом компьютере и телефоне — Word может сдвинуть вёрстку в зависимости от версии и установленных шрифтов." },
+      { q: "Сохраняются ли шрифты и таблицы?", a: "Да — шрифты встраиваются, таблицы остаются на месте. Подходит для официальных документов и договоров." },
+      { q: "DOCX или DOC — что лучше?", a: "DOCX рекомендуется для лучшего результата. Старый DOC тоже поддерживается." },
     ],
   },
   "merge-pdf": {
@@ -711,6 +801,15 @@ const de: LocalizedContent = {
       { q: "Bleiben Metadaten (Künstler, Album) erhalten?", a: "Die meisten Metadaten bleiben bei der Konvertierung zwischen gängigen Formaten erhalten." },
     ],
   },
+  "mp3-to-wav": {
+    directAnswer:
+      "MP3 in WAV konvertieren liefert unkomprimiertes Audio in voller Qualität — ideal für Studio-Bearbeitung, DJ und Mixing. MP3 hochladen, konvertieren klicken, WAV herunterladen. Verarbeitung im Browser, ohne Server-Speicherung.",
+    faqs: [
+      { q: "Warum MP3 in WAV konvertieren?", a: "WAV ist verlustfrei — am besten für Bearbeitung, Mixing und maximale Qualität. MP3 ist komprimiert und für Zuhören, nicht für Profi-Bearbeitung." },
+      { q: "Wird die Datei größer?", a: "Ja — WAV ist typischerweise 5–10× größer als MP3. Besser fürs Studio, nicht für den Alltag." },
+      { q: "Verbessert sich die MP3-Qualität?", a: "Nein — bei MP3-Kompression verlorene Details kehren nicht zurück. WAV bewahrt den Rest in voller Qualität ohne weitere Kompression." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "Bleibt die Formatierung erhalten?", a: "Das Tool behält Dokumentstruktur, Überschriften und Tabellen bei. Sehr komplexe Layouts können geringfügige Anpassungen in Word erfordern." },
@@ -723,6 +822,15 @@ const de: LocalizedContent = {
       { q: "Warum Word in PDF konvertieren?", a: "PDF fixiert das Layout auf jedem Gerät — perfekt zum Senden, Drucken und für digitale Signaturen." },
       { q: "Bleiben Schriftarten erhalten?", a: "Ja — Schriftarten werden im PDF eingebettet, sodass das Dokument überall identisch aussieht." },
       { q: "DOC oder DOCX?", a: "Beide Formate werden unterstützt. DOCX wird für beste Ergebnisse empfohlen." },
+    ],
+  },
+  "docx-to-pdf": {
+    directAnswer:
+      "DOCX in PDF konvertieren fixiert Layout, Schriftarten und Tabellen auf jedem Gerät — perfekt für Kunden, Einreichungen und digitale Signaturen. DOCX hochladen, konvertieren klicken, PDF sofort herunterladen — im Browser, ohne Server-Speicherung.",
+    faqs: [
+      { q: "Warum DOCX in PDF konvertieren?", a: "PDF sieht auf jedem Computer und Handy gleich aus — Word kann das Layout je nach Version und installierten Schriftarten verschieben." },
+      { q: "Bleiben Schriftarten und Tabellen erhalten?", a: "Ja — Schriftarten werden eingebettet und Tabellen bleiben an Ort und Stelle. Ideal für offizielle Dokumente und Verträge." },
+      { q: "DOCX oder DOC — was ist besser?", a: "DOCX wird für beste Ergebnisse empfohlen. Legacy-DOC wird ebenfalls unterstützt." },
     ],
   },
   "merge-pdf": {
@@ -832,6 +940,15 @@ const it: LocalizedContent = {
       { q: "I metadati (artista, album) vengono conservati?", a: "La maggior parte dei metadati si conserva convertendo tra formati comuni." },
     ],
   },
+  "mp3-to-wav": {
+    directAnswer:
+      "Convertire MP3 in WAV restituisce audio non compresso a qualità piena — ideale per montaggio in studio, DJ e mixaggio. Carica MP3, clicca converti e scarica WAV. Elaborazione nel browser, senza archiviazione sul server.",
+    faqs: [
+      { q: "Perché convertire MP3 in WAV?", a: "WAV è senza perdita — ideale per editing, mixaggio e qualità massima. MP3 è compresso e adatto all'ascolto, non all'editing professionale." },
+      { q: "Il file diventerà più grande?", a: "Sì — WAV è tipicamente 5–10 volte più grande di MP3. Meglio per lo studio, non per la condivisione quotidiana." },
+      { q: "Migliora la qualità dell'MP3?", a: "No — i dettagli persi nella compressione MP3 non tornano. WAV preserva ciò che resta a qualità piena senza ulteriore compressione." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "La formattazione viene conservata?", a: "Lo strumento mantiene struttura del documento, titoli e tabelle. Layout molto complessi possono richiedere piccoli aggiustamenti in Word." },
@@ -844,6 +961,15 @@ const it: LocalizedContent = {
       { q: "Perché convertire Word in PDF?", a: "Il PDF mantiene il layout su qualsiasi dispositivo — perfetto per invio, stampa e firme digitali." },
       { q: "I font vengono conservati?", a: "Sì — i font sono incorporati nel PDF così il documento appare identico ovunque." },
       { q: "DOC o DOCX?", a: "Entrambi i formati sono supportati. DOCX è consigliato per i migliori risultati." },
+    ],
+  },
+  "docx-to-pdf": {
+    directAnswer:
+      "Convertire DOCX in PDF fissa layout, font e tabelle su qualsiasi dispositivo — perfetto per clienti, consegne e firme digitali. Carica DOCX, clicca converti e scarica PDF subito — nel browser, senza archiviazione sul server.",
+    faqs: [
+      { q: "Perché convertire DOCX in PDF?", a: "Il PDF appare identico su ogni computer e telefono — Word può spostare il layout a seconda della versione e dei font installati." },
+      { q: "Font e tabelle vengono conservati?", a: "Sì — i font sono incorporati e le tabelle restano al posto giusto. Ideale per documenti ufficiali e contratti." },
+      { q: "DOCX o DOC — quale è meglio?", a: "DOCX è consigliato per i migliori risultati. Anche il vecchio DOC è supportato." },
     ],
   },
   "merge-pdf": {
