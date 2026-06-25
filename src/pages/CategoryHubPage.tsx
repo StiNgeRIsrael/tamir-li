@@ -33,6 +33,9 @@ export default function CategoryHubPage() {
   const catLabels = t.categories as Record<string, string>;
   const toolNames = t.toolNames as Record<string, string>;
   const categoryLabel = catLabels[category] ?? category;
+  const metaDescription =
+    hub.seoDescByCategory?.[category as keyof typeof hub.seoDescByCategory] ??
+    hub.seoDesc(categoryLabel);
 
   const categoryTools = filterTools(tools.filter((tool) => tool.category === category));
   const functionalTools = categoryTools.filter((tool) => isToolFunctional(tool.id));
@@ -47,7 +50,7 @@ export default function CategoryHubPage() {
       {
         "@type": "CollectionPage",
         name: hub.seoTitle(categoryLabel),
-        description: hub.seoDesc(categoryLabel),
+        description: metaDescription,
         url: hubUrl,
         mainEntity: {
           "@type": "ItemList",
@@ -73,7 +76,7 @@ export default function CategoryHubPage() {
     <AppLayout>
       <SEOHead
         title={hub.seoTitle(categoryLabel)}
-        description={hub.seoDesc(categoryLabel)}
+        description={metaDescription}
         ogImage={toolCategoryOgImage(category)}
         jsonLd={jsonLd}
       />

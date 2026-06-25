@@ -223,6 +223,13 @@ export const heTranslations = {
   categoryHub: {
     seoTitle: (category: string) => `כלי ${category} | תמיר לי`,
     seoDesc: (category: string) => `כל כלי ההמרה והעריכה ל${category} ב-tamir.li — חינם בדפדפן, בעברית.`,
+    seoDescByCategory: {
+      image: "המרת JPG, PNG, WEBP, דחיסה ושינוי גודל תמונות — כל כלי התמונות של tamir.li בחינם בדפדפן, בעברית.",
+      video: "המרת MP4, WEBM, MOV ופורמטי וידאו נוספים — כלי וידאו מקוונים ב-tamir.li, בלי התקנה.",
+      audio: "המרת MP3, WAV, FLAC ו-AAC — כלי אודיו מקוונים להמרה מהירה בדפדפן, בעברית.",
+      document: "PDF ל-Word, Word ל-PDF, מיזוג PDF ועריכת טקסט — כלי מסמכים ב-tamir.li, חינם בדפדפן.",
+      ai: "יצירת תמונות AI בפרימיום — 6 קרדיטים בחודש, סגנונות מגוונים והורדה ב-PNG.",
+    },
     intro: (category: string) => `בחרו כלי ${category} מהרשימה. כלים שמסומנים כ«בקרוב» עדיין בפיתוח.`,
     empty: "אין כלים פעילים בקטגוריה זו כרגע.",
   },

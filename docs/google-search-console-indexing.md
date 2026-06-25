@@ -30,6 +30,7 @@ After you add the JSON file, **fully quit and restart Cursor**. Manual URL Inspe
    - Build runs `npm run generate:sitemap` (uses `VITE_SITE_ORIGIN`, default `https://tamir.li`).
 3. **Submit the sitemap once**: **Sitemaps** → add `https://tamir.li/sitemap.xml` → Submit.
    - Re-submit only after meaningful URL changes (new tools, locales, blog posts). You do not need to resubmit daily.
+   - **After the 2026 prune (847 → 337 URLs):** resubmit so GSC re-reads the file. The live sitemap includes **`xhtml:link` hreflang alternates** for all 7 locales (`he-IL`, `en`, `es`, `ru`, `de`, `fr`, `it`, `x-default`) on each URL — Google uses these to associate language variants. Until GSC refreshes, the Sitemaps report may still show the old 847-URL count.
 4. Confirm **Coverage** / **Pages** over the next days — most long-tail URLs will be crawled from the sitemap without manual requests.
 
 ---
@@ -105,7 +106,7 @@ Hebrew (`https://tamir.li/...`) and English (`https://tamir.li/en/...`) usually 
 
 | Method | Role |
 |--------|------|
-| **Sitemap** | Required baseline. Tells Google all canonical URLs. Submit once; keep accurate on deploy. |
+| **Sitemap** | Required baseline. Tells Google all canonical URLs. Submit once; keep accurate on deploy. Each `<url>` includes hreflang alternates (`xhtml:link`) for locale variants — resubmit after major sitemap changes so GSC picks up the new URL set and hreflang graph. |
 | **URL Inspection → Request indexing** | Nudge for **priority** URLs or after fixes. Not a substitute for sitemap; not scalable to 847 URLs by hand. |
 
 Both together work best: sitemap for completeness, manual inspection for pages that matter for traffic or were recently updated.

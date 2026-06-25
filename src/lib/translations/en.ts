@@ -216,6 +216,13 @@ export const enTranslations = {
   categoryHub: {
     seoTitle: (category: string) => `${category} tools | Tamir.li`,
     seoDesc: (category: string) => `All ${category} conversion and editing tools on Tamir.li — free in your browser.`,
+    seoDescByCategory: {
+      image: "Convert JPG, PNG, WEBP, compress and resize images — all Tamir.li image tools free in your browser.",
+      video: "Convert MP4, WEBM, MOV and more — online video conversion tools on Tamir.li, no install required.",
+      audio: "Convert MP3, WAV, FLAC and AAC — fast audio format conversion in your browser on Tamir.li.",
+      document: "PDF to Word, Word to PDF, merge PDFs and text tools — document converters on Tamir.li, free online.",
+      ai: "AI image generation for Premium — 6 credits per month, multiple styles and PNG download.",
+    },
     intro: (category: string) => `Choose a ${category} tool below. Items marked coming soon are still in development.`,
     empty: "No active tools in this category yet.",
   },
