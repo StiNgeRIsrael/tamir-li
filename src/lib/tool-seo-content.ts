@@ -73,6 +73,24 @@ const he: LocalizedContent = {
       { q: "האם כל דפדפן תומך ב-WEBP?", a: "Chrome, Firefox, Edge ו-Safari מודרניים כן. דפדפנים ישנים מאוד — לא; השתמשו ב-JPG fallback." },
     ],
   },
+  "png-to-webp": {
+    directAnswer:
+      "המרת PNG ל-WEBP מקטינה משמעותית את משקל התמונה — מצוינת לגרפיקה web, אייקונים ואתרים מהירים. שקיפות נשמרת ב-WEBP. העלו PNG, לחצו המרה והורידו WEBP בדפדפן, בלי שמירה בשרת.",
+    faqs: [
+      { q: "מתי כדאי להמיר PNG ל-WEBP?", a: "לאתרים ואפליקציות — WEBP קטן מ-PNG ב-25%–50% בממוצע, עם תמיכה בשקיפות. לעריכה גרפית — PNG עדיף." },
+      { q: "האם שקיפות נשמרת?", a: "כן — WEBP תומך בשקיפות כמו PNG. אזורים שקופים נשמרים בהמרה." },
+      { q: "האם איכות נפגעת?", a: "WEBP דוחס ביעילות — לרוב בלתי מורגש לגרפיקה web. לתמונות הדפסה — PNG עדיף." },
+    ],
+  },
+  "svg-to-png": {
+    directAnswer:
+      "המרת SVG ל-PNG הופכת גרפיקה וקטורית לתמונת רסטר באיכות גבוהה — מושלמת ללוגואים, אייקונים, מצגות ורשתות חברתיות. העלו SVG, לחצו המרה והורידו PNG בדפדפן, בלי שמירה בשרת.",
+    faqs: [
+      { q: "למה להמיר SVG ל-PNG?", a: "PNG נתמך בכל תוכנה — PowerPoint, Word, מערכות CRM ורשתות שלא מציגות SVG. PNG מתאים לשיתוף ולהדפסה." },
+      { q: "האם איכות נשמרת?", a: "כן — ההמרה מרסטרת את הוקטור ברזולוציה גבוהה. לוגואים ואייקונים יוצאים חדים." },
+      { q: "האם שקיפות נשמרת?", a: "כן — PNG תומך בשקיפות. רקע שקוף ב-SVG נשמר ב-PNG." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "כמה אפשר לדחוס תמונה?", a: "תלוי בפורמט המקורי. JPG ו-WEBP ניתנים לדחיסה משמעותית; PNG פחות — אך עדיין ניתן להקטין משקל." },
@@ -124,6 +142,15 @@ const he: LocalizedContent = {
       { q: "האם איכות MP3 משתפרת?", a: "לא — פרטים שאבדו בדחיסת MP3 לא חוזרים. WAV שומר על מה שנשאר באיכות מלאה, ללא דחיסה נוספת." },
     ],
   },
+  "wav-to-mp3": {
+    directAnswer:
+      "המרת WAV ל-MP3 מקטינה משמעותית את גודל קובץ השמע — מצוינת לשיתוף, סטרימינג ואחסון. העלו WAV, בחרו איכות והורידו MP3 תוך שניות. ההמרה בדפדפן, בלי שמירה בשרת.",
+    faqs: [
+      { q: "למה להמיר WAV ל-MP3?", a: "MP3 קטן פי 5–10 מ-WAV — מתאים לוואטסאפ, מייל, נגנים וטלפון. WAV נשאר לעריכה מקצועית." },
+      { q: "האם איכות השמע נפגעת?", a: "MP3 דוחס עם אובדן קל — ב-256–320 kbps האוזן רוב האנשים לא תשמיע הבדל מה-WAV המקורי." },
+      { q: "איזו איכות MP3 לבחור?", a: "256 kbps לאיכות גבוהה, 320 kbps למקסימום — 128 kbps מספיק לדיבור ופודקאsts." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "האם העיצוב נשמר בהמרה?", a: "הכלי שומר על מבנה המסמך, כותרות וטבלאות. עיצוב מורכב מאוד עשוי לדרוש התאמות קלות ב-Word." },
@@ -148,6 +175,8 @@ const he: LocalizedContent = {
     ],
   },
   "merge-pdf": {
+    directAnswer:
+      "מיזוג PDF מאחד מספר קבצים לקובץ אחד — סדרו עמודים בגרירה, סובבו בודדים והורידו PDF מסודר. מושלם לחוזים, דוחות וחשבוניות. בדפדפן, בלי שמירה בשרת.",
     faqs: [
       { q: "איך ממזגים כמה קבצי PDF?", a: "העלו את כל הקבצים, סדרו את העמודים בגרירה, ולחצו מיזוג — תקבלו PDF אחד." },
       { q: "האם אפשר לסובב עמודים?", a: "כן — ניתן לסובב עמודים בודדים לפני ההורדה." },
@@ -221,6 +250,24 @@ const en: LocalizedContent = {
       { q: "Do all browsers support WEBP?", a: "Modern Chrome, Firefox, Edge and Safari do. Very old browsers don't — use JPG as fallback." },
     ],
   },
+  "png-to-webp": {
+    directAnswer:
+      "Converting PNG to WEBP shrinks file size dramatically while preserving transparency — ideal for web graphics, icons and fast-loading sites. Upload PNG, click convert, download WEBP in your browser with no server storage.",
+    faqs: [
+      { q: "When should I convert PNG to WEBP?", a: "For websites and apps — WEBP is typically 25%–50% smaller than PNG with transparency support. For graphic editing, keep PNG." },
+      { q: "Is transparency preserved?", a: "Yes — WEBP supports transparency like PNG. Transparent areas stay transparent after conversion." },
+      { q: "Does quality suffer?", a: "WEBP compresses efficiently — usually unnoticeable for web graphics. For print, prefer PNG." },
+    ],
+  },
+  "svg-to-png": {
+    directAnswer:
+      "Converting SVG to PNG rasterizes vector graphics into high-quality images — perfect for logos, icons, presentations and social media. Upload SVG, click convert, download PNG in your browser with no server storage.",
+    faqs: [
+      { q: "Why convert SVG to PNG?", a: "PNG works in every app — PowerPoint, Word, CRM systems and platforms that don't render SVG. PNG is ideal for sharing and printing." },
+      { q: "Is quality preserved?", a: "Yes — the tool rasterizes the vector at high resolution. Logos and icons come out sharp." },
+      { q: "Is transparency preserved?", a: "Yes — PNG supports transparency. A transparent SVG background stays transparent in PNG." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "How much can I compress an image?", a: "Depends on the source format. JPG and WEBP compress significantly; PNG less so but can still be reduced." },
@@ -272,6 +319,15 @@ const en: LocalizedContent = {
       { q: "Does MP3 quality improve?", a: "No — detail lost in MP3 compression can't be recovered. WAV preserves what's left at full quality without further compression." },
     ],
   },
+  "wav-to-mp3": {
+    directAnswer:
+      "Converting WAV to MP3 shrinks audio file size dramatically — great for sharing, streaming and storage. Upload WAV, pick quality, download MP3 in seconds. Processing in your browser with no server storage.",
+    faqs: [
+      { q: "Why convert WAV to MP3?", a: "MP3 is 5–10× smaller than WAV — perfect for WhatsApp, email, players and phones. Keep WAV for pro editing." },
+      { q: "Does audio quality suffer?", a: "MP3 uses slight lossy compression — at 256–320 kbps most listeners won't hear a difference from the original WAV." },
+      { q: "Which MP3 quality should I pick?", a: "256 kbps for high quality, 320 kbps for maximum — 128 kbps is enough for speech and podcasts." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "Is formatting preserved?", a: "The tool keeps document structure, headings and tables. Very complex layouts may need minor tweaks in Word." },
@@ -296,6 +352,8 @@ const en: LocalizedContent = {
     ],
   },
   "merge-pdf": {
+    directAnswer:
+      "Merge PDF combines multiple files into one — reorder pages by drag-and-drop, rotate individual pages and download a single organized PDF. Perfect for contracts, reports and invoices. In your browser, no server storage.",
     faqs: [
       { q: "How do I merge PDF files?", a: "Upload all files, reorder pages by drag-and-drop, then merge — you get one PDF." },
       { q: "Can I rotate pages?", a: "Yes — rotate individual pages before downloading." },
@@ -369,6 +427,24 @@ const es: LocalizedContent = {
       { q: "¿Todos los navegadores soportan WEBP?", a: "Chrome, Firefox, Edge y Safari modernos sí. Navegadores muy antiguos no — usa JPG como respaldo." },
     ],
   },
+  "png-to-webp": {
+    directAnswer:
+      "Convertir PNG a WEBP reduce mucho el tamaño manteniendo la transparencia — ideal para gráficos web, iconos y sitios rápidos. Sube PNG, convierte y descarga WEBP en el navegador sin almacenamiento en servidor.",
+    faqs: [
+      { q: "¿Cuándo convertir PNG a WEBP?", a: "Para sitios web y apps — WEBP suele ser 25%–50% más pequeño que PNG con soporte de transparencia. Para edición gráfica, mantén PNG." },
+      { q: "¿Se conserva la transparencia?", a: "Sí — WEBP soporta transparencia como PNG. Las zonas transparentes se mantienen tras la conversión." },
+      { q: "¿Pierde calidad?", a: "WEBP comprime con eficiencia — normalmente imperceptible en gráficos web. Para impresión, prefiere PNG." },
+    ],
+  },
+  "svg-to-png": {
+    directAnswer:
+      "Convertir SVG a PNG rasteriza gráficos vectoriales en imágenes de alta calidad — perfecto para logos, iconos, presentaciones y redes sociales. Sube SVG, convierte y descarga PNG en el navegador sin almacenamiento en servidor.",
+    faqs: [
+      { q: "¿Por qué convertir SVG a PNG?", a: "PNG funciona en toda app — PowerPoint, Word, CRM y plataformas que no renderizan SVG. PNG es ideal para compartir e imprimir." },
+      { q: "¿Se conserva la calidad?", a: "Sí — la herramienta rasteriza el vector en alta resolución. Logos e iconos salen nítidos." },
+      { q: "¿Se conserva la transparencia?", a: "Sí — PNG soporta transparencia. Un fondo transparente en SVG se mantiene en PNG." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "¿Cuánto puedo comprimir una imagen?", a: "Depende del formato original. JPG y WEBP se comprimen significativamente; PNG menos, pero aún se puede reducir el peso." },
@@ -420,6 +496,15 @@ const es: LocalizedContent = {
       { q: "¿Mejora la calidad del MP3?", a: "No — el detalle perdido en la compresión MP3 no se recupera. WAV preserva lo que queda a calidad plena sin más compresión." },
     ],
   },
+  "wav-to-mp3": {
+    directAnswer:
+      "Convertir WAV a MP3 reduce mucho el tamaño del archivo de audio — ideal para compartir, streaming y almacenamiento. Sube WAV, elige calidad y descarga MP3 en segundos. En el navegador, sin almacenamiento en servidor.",
+    faqs: [
+      { q: "¿Por qué convertir WAV a MP3?", a: "MP3 es 5–10 veces más pequeño que WAV — perfecto para WhatsApp, email y móviles. Reserva WAV para edición profesional." },
+      { q: "¿Pierde calidad el audio?", a: "MP3 comprime con pérdida leve — a 256–320 kbps la mayoría no notará diferencia respecto al WAV original." },
+      { q: "¿Qué calidad MP3 elegir?", a: "256 kbps para alta calidad, 320 kbps para máximo — 128 kbps basta para voz y podcasts." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "¿Se conserva el formato?", a: "La herramienta mantiene la estructura del documento, encabezados y tablas. Diseños muy complejos pueden requerir pequeños ajustes en Word." },
@@ -444,6 +529,8 @@ const es: LocalizedContent = {
     ],
   },
   "merge-pdf": {
+    directAnswer:
+      "Fusionar PDF combina varios archivos en uno — reordena páginas arrastrando, rota individuales y descarga un PDF organizado. Perfecto para contratos, informes y facturas. En el navegador, sin almacenamiento en servidor.",
     faqs: [
       { q: "¿Cómo fusiono archivos PDF?", a: "Sube todos los archivos, reordena las páginas arrastrándolas y fusiona — obtendrás un solo PDF." },
       { q: "¿Puedo rotar páginas?", a: "Sí — rota páginas individuales antes de descargar." },
@@ -517,6 +604,24 @@ const fr: LocalizedContent = {
       { q: "Tous les navigateurs supportent WEBP ?", a: "Chrome, Firefox, Edge et Safari modernes oui. Très vieux navigateurs non — utilisez JPG en secours." },
     ],
   },
+  "png-to-webp": {
+    directAnswer:
+      "Convertir PNG en WEBP réduit fortement la taille tout en conservant la transparence — idéal pour graphiques web, icônes et sites rapides. Téléversez PNG, convertissez et téléchargez WEBP dans le navigateur, sans stockage serveur.",
+    faqs: [
+      { q: "Quand convertir PNG en WEBP ?", a: "Pour sites web et apps — WEBP est souvent 25%–50% plus léger que PNG avec transparence. Pour édition graphique, gardez PNG." },
+      { q: "La transparence est-elle conservée ?", a: "Oui — WEBP supporte la transparence comme PNG. Les zones transparentes restent transparentes." },
+      { q: "Perte de qualité ?", a: "WEBP compresse efficacement — souvent imperceptible pour graphiques web. Pour l'impression, préférez PNG." },
+    ],
+  },
+  "svg-to-png": {
+    directAnswer:
+      "Convertir SVG en PNG rasterise les graphiques vectoriels en images haute qualité — parfait pour logos, icônes, présentations et réseaux sociaux. Téléversez SVG, convertissez et téléchargez PNG dans le navigateur, sans stockage serveur.",
+    faqs: [
+      { q: "Pourquoi convertir SVG en PNG ?", a: "PNG fonctionne dans toute app — PowerPoint, Word, CRM et plateformes qui n'affichent pas SVG. PNG est idéal pour partage et impression." },
+      { q: "La qualité est-elle préservée ?", a: "Oui — l'outil rasterise le vecteur en haute résolution. Logos et icônes restent nets." },
+      { q: "La transparence est-elle conservée ?", a: "Oui — PNG supporte la transparence. Un fond transparent SVG reste transparent en PNG." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "De combien puis-je compresser une image ?", a: "Cela dépend du format d'origine. JPG et WEBP se compressent nettement ; PNG moins, mais le poids peut quand même être réduit." },
@@ -568,6 +673,15 @@ const fr: LocalizedContent = {
       { q: "La qualité MP3 s'améliore-t-elle ?", a: "Non — le détail perdu dans la compression MP3 ne revient pas. WAV préserve ce qui reste en qualité pleine, sans compression supplémentaire." },
     ],
   },
+  "wav-to-mp3": {
+    directAnswer:
+      "Convertir WAV en MP3 réduit fortement la taille du fichier audio — parfait pour partage, streaming et stockage. Téléversez WAV, choisissez la qualité, téléchargez MP3 en secondes. Dans le navigateur, sans stockage serveur.",
+    faqs: [
+      { q: "Pourquoi convertir WAV en MP3 ?", a: "MP3 est 5 à 10 fois plus léger que WAV — idéal pour WhatsApp, e-mail et mobile. Gardez WAV pour l'édition pro." },
+      { q: "La qualité audio baisse-t-elle ?", a: "MP3 compresse légèrement avec perte — à 256–320 kbps la plupart n'entendent pas la différence avec le WAV d'origine." },
+      { q: "Quelle qualité MP3 choisir ?", a: "256 kbps pour haute qualité, 320 kbps pour le maximum — 128 kbps suffit pour la voix et les podcasts." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "La mise en forme est-elle conservée ?", a: "L'outil conserve la structure du document, les titres et les tableaux. Les mises en page très complexes peuvent nécessiter de légers ajustements dans Word." },
@@ -592,6 +706,8 @@ const fr: LocalizedContent = {
     ],
   },
   "merge-pdf": {
+    directAnswer:
+      "Fusionner PDF combine plusieurs fichiers en un seul — réorganisez les pages par glisser-déposer, faites pivoter des pages et téléchargez un PDF organisé. Parfait pour contrats, rapports et factures. Dans le navigateur, sans stockage serveur.",
     faqs: [
       { q: "Comment fusionner des fichiers PDF ?", a: "Téléversez tous les fichiers, réorganisez les pages par glisser-déposer, puis fusionnez — vous obtenez un seul PDF." },
       { q: "Puis-je faire pivoter des pages ?", a: "Oui — faites pivoter des pages individuelles avant le téléchargement." },
@@ -665,6 +781,24 @@ const ru: LocalizedContent = {
       { q: "Все ли браузеры поддерживают WEBP?", a: "Современные Chrome, Firefox, Edge и Safari — да. Очень старые — нет; используйте JPG как запасной вариант." },
     ],
   },
+  "png-to-webp": {
+    directAnswer:
+      "Конвертация PNG в WEBP сильно уменьшает размер с сохранением прозрачности — идеально для веб-графики, иконок и быстрых сайтов. Загрузите PNG, нажмите «Конвертировать» и скачайте WEBP в браузере без хранения на сервере.",
+    faqs: [
+      { q: "Когда конвертировать PNG в WEBP?", a: "Для сайтов и приложений — WEBP обычно на 25%–50% меньше PNG с поддержкой прозрачности. Для графического редактирования оставляйте PNG." },
+      { q: "Сохраняется ли прозрачность?", a: "Да — WEBP поддерживает прозрачность как PNG. Прозрачные области остаются прозрачными." },
+      { q: "Падает ли качество?", a: "WEBP сжимает эффективно — для веб-графики обычно незаметно. Для печати лучше PNG." },
+    ],
+  },
+  "svg-to-png": {
+    directAnswer:
+      "Конвертация SVG в PNG растеризует векторную графику в качественные изображения — отлично для логотипов, иконок, презентаций и соцсетей. Загрузите SVG, нажмите «Конвертировать» и скачайте PNG в браузере без хранения на сервере.",
+    faqs: [
+      { q: "Зачем конвертировать SVG в PNG?", a: "PNG работает в любой программе — PowerPoint, Word, CRM и платформах без поддержки SVG. PNG удобен для отправки и печати." },
+      { q: "Сохраняется ли качество?", a: "Да — инструмент растеризует вектор в высоком разрешении. Логотипы и иконки получаются чёткими." },
+      { q: "Сохраняется ли прозрачность?", a: "Да — PNG поддерживает прозрачность. Прозрачный фон SVG сохраняется в PNG." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "Насколько можно сжать изображение?", a: "Зависит от исходного формата. JPG и WEBP сжимаются значительно; PNG меньше, но размер всё равно можно уменьшить." },
@@ -716,6 +850,15 @@ const ru: LocalizedContent = {
       { q: "Улучшится ли качество MP3?", a: "Нет — детали, потерянные при сжатии MP3, не восстановятся. WAV сохраняет оставшееся в полном качестве без дополнительного сжатия." },
     ],
   },
+  "wav-to-mp3": {
+    directAnswer:
+      "Конвертация WAV в MP3 сильно уменьшает размер аудиофайла — удобно для обмена, стриминга и хранения. Загрузите WAV, выберите качество и скачайте MP3 за секунды. В браузере, без хранения на сервере.",
+    faqs: [
+      { q: "Зачем конвертировать WAV в MP3?", a: "MP3 в 5–10 раз меньше WAV — идеально для WhatsApp, почты и телефона. WAV оставляйте для профессионального монтажа." },
+      { q: "Падает ли качество звука?", a: "MP3 слегка сжимает с потерями — при 256–320 kbps большинство не услышит разницы с исходным WAV." },
+      { q: "Какое качество MP3 выбрать?", a: "256 kbps для высокого качества, 320 kbps для максимума — 128 kbps достаточно для речи и подкастов." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "Сохраняется ли форматирование?", a: "Инструмент сохраняет структуру документа, заголовки и таблицы. Очень сложные макеты могут потребовать небольших правок в Word." },
@@ -740,6 +883,8 @@ const ru: LocalizedContent = {
     ],
   },
   "merge-pdf": {
+    directAnswer:
+      "Объединение PDF склеивает несколько файлов в один — упорядочьте страницы перетаскиванием, поверните отдельные и скачайте один PDF. Идеально для договоров, отчётов и счетов. В браузере, без хранения на сервере.",
     faqs: [
       { q: "Как объединить PDF-файлы?", a: "Загрузите все файлы, упорядочьте страницы перетаскиванием и нажмите «Объединить» — получите один PDF." },
       { q: "Можно ли поворачивать страницы?", a: "Да — поворачивайте отдельные страницы перед скачиванием." },
@@ -813,6 +958,24 @@ const de: LocalizedContent = {
       { q: "Unterstützen alle Browser WEBP?", a: "Moderne Chrome, Firefox, Edge und Safari ja. Sehr alte Browser nein — JPG als Fallback." },
     ],
   },
+  "png-to-webp": {
+    directAnswer:
+      "PNG in WEBP konvertieren verkleinert die Datei deutlich bei erhaltener Transparenz — ideal für Webgrafiken, Icons und schnelle Sites. PNG hochladen, konvertieren klicken, WEBP im Browser herunterladen — ohne Server-Speicherung.",
+    faqs: [
+      { q: "Wann PNG zu WEBP?", a: "Für Websites und Apps — WEBP ist oft 25%–50% kleiner als PNG mit Transparenz. Für Grafikbearbeitung PNG behalten." },
+      { q: "Bleibt Transparenz erhalten?", a: "Ja — WEBP unterstützt Transparenz wie PNG. Transparente Bereiche bleiben transparent." },
+      { q: "Qualitätsverlust?", a: "WEBP komprimiert effizient — für Webgrafiken meist unsichtbar. Für Druck PNG bevorzugen." },
+    ],
+  },
+  "svg-to-png": {
+    directAnswer:
+      "SVG in PNG konvertieren rasterisiert Vektorgrafiken in hochwertige Bilder — perfekt für Logos, Icons, Präsentationen und Social Media. SVG hochladen, konvertieren klicken, PNG im Browser herunterladen — ohne Server-Speicherung.",
+    faqs: [
+      { q: "Warum SVG zu PNG?", a: "PNG funktioniert in jeder App — PowerPoint, Word, CRM und Plattformen ohne SVG-Darstellung. PNG ideal zum Teilen und Drucken." },
+      { q: "Bleibt die Qualität erhalten?", a: "Ja — das Tool rasterisiert den Vektor in hoher Auflösung. Logos und Icons bleiben scharf." },
+      { q: "Bleibt Transparenz erhalten?", a: "Ja — PNG unterstützt Transparenz. Transparenter SVG-Hintergrund bleibt in PNG transparent." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "Wie stark kann ich ein Bild komprimieren?", a: "Hängt vom Quellformat ab. JPG und WEBP lassen sich deutlich komprimieren; PNG weniger, aber die Dateigröße kann trotzdem reduziert werden." },
@@ -864,6 +1027,15 @@ const de: LocalizedContent = {
       { q: "Verbessert sich die MP3-Qualität?", a: "Nein — bei MP3-Kompression verlorene Details kehren nicht zurück. WAV bewahrt den Rest in voller Qualität ohne weitere Kompression." },
     ],
   },
+  "wav-to-mp3": {
+    directAnswer:
+      "WAV in MP3 konvertieren verkleinert Audiodateien deutlich — ideal zum Teilen, Streamen und Speichern. WAV hochladen, Qualität wählen, MP3 in Sekunden laden. Im Browser, ohne Server-Speicherung.",
+    faqs: [
+      { q: "Warum WAV in MP3?", a: "MP3 ist 5–10× kleiner als WAV — perfekt für WhatsApp, E-Mail und Handy. WAV für Profi-Bearbeitung behalten." },
+      { q: "Leidet die Audioqualität?", a: "MP3 komprimiert leicht verlustbehaftet — bei 256–320 kbps hören die meisten keinen Unterschied zum WAV-Original." },
+      { q: "Welche MP3-Qualität wählen?", a: "256 kbps für hohe Qualität, 320 kbps für Maximum — 128 kbps reicht für Sprache und Podcasts." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "Bleibt die Formatierung erhalten?", a: "Das Tool behält Dokumentstruktur, Überschriften und Tabellen bei. Sehr komplexe Layouts können geringfügige Anpassungen in Word erfordern." },
@@ -888,6 +1060,8 @@ const de: LocalizedContent = {
     ],
   },
   "merge-pdf": {
+    directAnswer:
+      "PDF zusammenführen kombiniert mehrere Dateien zu einer — Seiten per Drag-and-Drop sortieren, einzelne drehen und ein organisiertes PDF laden. Perfekt für Verträge, Berichte und Rechnungen. Im Browser, ohne Server-Speicherung.",
     faqs: [
       { q: "Wie füge ich PDF-Dateien zusammen?", a: "Laden Sie alle Dateien hoch, ordnen Sie die Seiten per Drag-and-Drop und klicken Sie auf Zusammenführen — Sie erhalten ein PDF." },
       { q: "Kann ich Seiten drehen?", a: "Ja — drehen Sie einzelne Seiten vor dem Download." },
@@ -961,6 +1135,24 @@ const it: LocalizedContent = {
       { q: "Tutti i browser supportano WEBP?", a: "Chrome, Firefox, Edge e Safari moderni sì. Browser molto vecchi no — usa JPG come fallback." },
     ],
   },
+  "png-to-webp": {
+    directAnswer:
+      "Convertire PNG in WEBP riduce molto la dimensione mantenendo la trasparenza — ideale per grafica web, icone e siti veloci. Carica PNG, clicca converti e scarica WEBP nel browser, senza archiviazione sul server.",
+    faqs: [
+      { q: "Quando convertire PNG in WEBP?", a: "Per siti web e app — WEBP è spesso 25%–50% più piccolo di PNG con supporto trasparenza. Per editing grafico, mantieni PNG." },
+      { q: "La trasparenza si conserva?", a: "Sì — WEBP supporta la trasparenza come PNG. Le aree trasparenti restano trasparenti." },
+      { q: "Perdita di qualità?", a: "WEBP comprime in modo efficiente — di solito impercettibile per grafica web. Per stampa, preferisci PNG." },
+    ],
+  },
+  "svg-to-png": {
+    directAnswer:
+      "Convertire SVG in PNG rasterizza grafica vettoriale in immagini di alta qualità — perfetto per loghi, icone, presentazioni e social media. Carica SVG, clicca converti e scarica PNG nel browser, senza archiviazione sul server.",
+    faqs: [
+      { q: "Perché convertire SVG in PNG?", a: "PNG funziona in ogni app — PowerPoint, Word, CRM e piattaforme che non renderizzano SVG. PNG è ideale per condivisione e stampa." },
+      { q: "La qualità si conserva?", a: "Sì — lo strumento rasterizza il vettore ad alta risoluzione. Loghi e icone restano nitidi." },
+      { q: "La trasparenza si conserva?", a: "Sì — PNG supporta la trasparenza. Uno sfondo trasparente SVG resta trasparente in PNG." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "Quanto posso comprimere un'immagine?", a: "Dipende dal formato originale. JPG e WEBP si comprimono significativamente; PNG meno, ma il peso può comunque essere ridotto." },
@@ -1012,6 +1204,15 @@ const it: LocalizedContent = {
       { q: "Migliora la qualità dell'MP3?", a: "No — i dettagli persi nella compressione MP3 non tornano. WAV preserva ciò che resta a qualità piena senza ulteriore compressione." },
     ],
   },
+  "wav-to-mp3": {
+    directAnswer:
+      "Convertire WAV in MP3 riduce molto la dimensione del file audio — ottimo per condivisione, streaming e archiviazione. Carica WAV, scegli qualità e scarica MP3 in pochi secondi. Nel browser, senza archiviazione sul server.",
+    faqs: [
+      { q: "Perché convertire WAV in MP3?", a: "MP3 è 5–10 volte più piccolo di WAV — perfetto per WhatsApp, email e telefono. Tieni WAV per editing professionale." },
+      { q: "La qualità audio cala?", a: "MP3 comprime leggermente con perdita — a 256–320 kbps la maggior parte non sente differenza dal WAV originale." },
+      { q: "Quale qualità MP3 scegliere?", a: "256 kbps per alta qualità, 320 kbps per il massimo — 128 kbps basta per voce e podcast." },
+    ],
+  },
   "pdf-to-word": {
     faqs: [
       { q: "La formattazione viene conservata?", a: "Lo strumento mantiene struttura del documento, titoli e tabelle. Layout molto complessi possono richiedere piccoli aggiustamenti in Word." },
@@ -1036,6 +1237,8 @@ const it: LocalizedContent = {
     ],
   },
   "merge-pdf": {
+    directAnswer:
+      "Unire PDF combina più file in uno — riordina le pagine trascinando, ruota singole pagine e scarica un PDF organizzato. Perfetto per contratti, report e fatture. Nel browser, senza archiviazione sul server.",
     faqs: [
       { q: "Come unisco file PDF?", a: "Carica tutti i file, riordina le pagine trascinandole e clicca Unisci — otterrai un unico PDF." },
       { q: "Posso ruotare le pagine?", a: "Sì — ruota le singole pagine prima del download." },
