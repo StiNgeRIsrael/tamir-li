@@ -207,6 +207,9 @@ export const deTranslations = {
   toolSeoBlocks: {
     faqTitle: "Häufige Fragen zum Tool",
     comparisonTitle: "Formatvergleich",
+    trustTitle: "Datenschutz & Sicherheit",
+    trustBody:
+      "Dateien werden in Ihrem Browser verarbeitet — nach der Konvertierung nicht auf unseren Servern gespeichert. Die Verbindung ist verschlüsselt (HTTPS), für die kostenlose Nutzung ist keine Anmeldung nötig.",
   },
   whyChoose: "Warum Tamir.li?",
   features: [
@@ -538,6 +541,39 @@ export const deTranslations = {
       cta: "Jahresplan ansehen",
       dismiss: "Kostenlos weitermachen",
     },
+  },
+
+  aboutPage: {
+    seoTitle: "Über Tamir.li",
+    seoDesc: "Über Tamir.li — hebräisch-first Dateikonvertierung für Israel. Bilder, Video, Audio und Dokumente.",
+    title: "Über Tamir.li",
+    intro:
+      "Tamir.li ist eine Dateikonvertierungs-Website für Nutzer in Israel — schnell, einfach, ohne Software-Installation. Wir betreiben tamir.li als unabhängigen hebräisch-first Dienst mit Fokus auf browserbasierte Konvertierung und Datenschutz.",
+    sections: [
+      {
+        heading: "Wer wir sind",
+        body: [
+          "Tamir.li wird von einem kleinen Team betrieben, das praktische Datei-Tools für israelische Nutzer und Hebräischsprecher weltweit entwickelt.",
+          "Unsere Mission: alltägliche Formatkonvertierungen schnell und zugänglich machen — ohne Desktop-Software.",
+        ],
+      },
+      {
+        heading: "Was wir tun",
+        body: [
+          "Konvertierung zwischen gängigen Bild-, Video-, Audio- und Dokumentformaten — direkt im Browser.",
+          "Die Seite ist standardmäßig auf Hebräisch und in weiteren Sprachen für internationale Nutzer verfügbar.",
+        ],
+      },
+      {
+        heading: "Warum wir",
+        body: [
+          "Hebräisch-first Oberfläche, Israel-Fokus, breite Formatunterstützung.",
+          "Kostenloser Plan mit Tageslimits; Premium ohne Werbung und mit unbegrenzten Konversionen.",
+        ],
+      },
+    ],
+    contactPrompt: "Fragen?",
+    contactLink: "Kontakt",
   },
 
   pwaUpdate: {

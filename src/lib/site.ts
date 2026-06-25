@@ -34,3 +34,24 @@ export function absoluteImageUrl(pathOrUrl: string): string {
   }
   return siteUrl(pathOrUrl.startsWith("/") ? pathOrUrl : `/${pathOrUrl}`);
 }
+
+/** Known OG/Twitter image dimensions for meta tags. */
+export const OG_IMAGE_DIMENSIONS: Record<string, { width: number; height: number }> = {
+  [DEFAULT_OG_IMAGE]: { width: 512, height: 512 },
+  ...Object.fromEntries(
+    Object.values(CATEGORY_OG_IMAGE).map((path) => [path, { width: 1200, height: 630 }])
+  ),
+};
+
+export function getOgImageDimensions(pathOrUrl: string): { width: number; height: number } {
+  let path = pathOrUrl;
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    try {
+      path = new URL(path).pathname;
+    } catch {
+      return OG_IMAGE_DIMENSIONS[DEFAULT_OG_IMAGE];
+    }
+  }
+  if (!path.startsWith("/")) path = `/${path}`;
+  return OG_IMAGE_DIMENSIONS[path] ?? OG_IMAGE_DIMENSIONS[DEFAULT_OG_IMAGE];
+}

@@ -37,6 +37,33 @@ const he: LocalizedContent = {
       { q: "כמה קבצים אפשר להמיר בבת אחת?", a: "ניתן להעלות מספר קבצים ולהמיר אותם ברצף. בתוכנית החינמית — עד 5 המרות ביום." },
     ],
   },
+  "jpg-to-png": {
+    directAnswer:
+      "המרת JPG ל-PNG שומרת על איכות מלאה ומוסיפה תמיכה בשקיפות — אידיאלי ללוגואים, אייקונים וגרפיקה לאתר. העלו JPG, לחצו המרה והורידו PNG — בדפדפן, בלי שמירה בשרת.",
+    faqs: [
+      { q: "מתי כדאי להמיר JPG ל-PNG?", a: "כשצריך שקיפות, קווים חדים או גרפיקה עם טקסט. לתמונות צילום — JPG עדיין קטן יותר." },
+      { q: "האם איכות התמונה נשמרת?", a: "כן — PNG הוא פורמט ללא אובדן. המרה מ-JPG לא תוסיף פרטים שאבדו בדחיסה המקורית." },
+      { q: "האם הקובץ יגדל?", a: "בדרך כלל כן — PNG גדול מ-JPG. מומלץ לגרפיקה עם שקיפות, לא לגלריות צילום." },
+    ],
+  },
+  "png-to-jpg": {
+    directAnswer:
+      "המרת PNG ל-JPG מקטינה משמעותית את גודל הקובץ — מצוין לשיתוף במייל, רשתות חברתיות ואתרים. שקיפות תוחלף ברקע לבן. העלו PNG והורידו JPG תוך שניות.",
+    faqs: [
+      { q: "האם השקיפות נשמרת?", a: "לא — JPG לא תומך בשקיפות. אזורים שקופים יהפכו לרקע לבן (או צבע אחיד)." },
+      { q: "כמה הקובץ יקטן?", a: "לרוב 50%–80% — תלוי בתוכן התמונה. גרפיקה עם הרבה צבעים אחידים מתדחסת יותר." },
+      { q: "האם מתאים ללוגו?", a: "רק אם אין צורך בשקיפות. ללוגואים — השאירו PNG או WEBP." },
+    ],
+  },
+  "webp-to-jpg": {
+    directAnswer:
+      "WEBP חוסך משקל, אבל לא כל תוכנה תומכת בו. המרה ל-JPG מבטיחה תאימות מלאה — Outlook, תוכנות ישנות ומדפסות. העלו WEBP והורידו JPG מיד.",
+    faqs: [
+      { q: "למה להמיר WEBP ל-JPG?", a: "JPG נתמך בכל מכשיר ותוכנה — מושלם לשליחה ללקוחות, מערכות CRM או תוכנות שלא קוראות WEBP." },
+      { q: "האם איכות נפגעת?", a: "JPG דוחס עם אובדן קל — לרוב בלתי מורגש לתמונות ולשיתוף יומיומי." },
+      { q: "האם שקיפות נשמרת?", a: "לא — JPG לא תומך בשקיפות. אזורים שקופים ב-WEBP יקבלו רקע לבן." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "כמה אפשר לדחוס תמונה?", a: "תלוי בפורמט המקורי. JPG ו-WEBP ניתנים לדחיסה משמעותית; PNG פחות — אך עדיין ניתן להקטין משקל." },
@@ -129,6 +156,33 @@ const en: LocalizedContent = {
       { q: "What's the difference between JPG and PNG?", a: "JPG uses lossy compression — great for photos. PNG is lossless with transparency — ideal for logos and graphics." },
       { q: "Does conversion reduce quality?", a: "Converting to PNG or TIFF preserves full quality. JPG or WEBP may compress slightly — choose based on your use case." },
       { q: "How many files can I convert at once?", a: "Upload multiple files and convert in batch. Free plan: up to 5 conversions per day." },
+    ],
+  },
+  "jpg-to-png": {
+    directAnswer:
+      "Converting JPG to PNG preserves full quality and adds transparency support — ideal for logos, icons and web graphics. Upload a JPG, click convert, download PNG — in your browser, with no server storage.",
+    faqs: [
+      { q: "When should I convert JPG to PNG?", a: "When you need transparency, sharp lines or graphics with text. For photos, JPG stays smaller." },
+      { q: "Is quality preserved?", a: "Yes — PNG is lossless. Converting from JPG won't recover detail lost in the original compression." },
+      { q: "Will the file get bigger?", a: "Usually yes — PNG is larger than JPG. Best for graphics with transparency, not photo galleries." },
+    ],
+  },
+  "png-to-jpg": {
+    directAnswer:
+      "Converting PNG to JPG shrinks file size dramatically — great for email, social media and websites. Transparency becomes a white background. Upload PNG, download JPG in seconds.",
+    faqs: [
+      { q: "Is transparency kept?", a: "No — JPG has no transparency. Transparent areas become white (or a solid color)." },
+      { q: "How much smaller?", a: "Often 50%–80% — depends on image content. Flat-color graphics compress more." },
+      { q: "Good for logos?", a: "Only if you don't need transparency. For logos, keep PNG or WEBP." },
+    ],
+  },
+  "webp-to-jpg": {
+    directAnswer:
+      "WEBP saves weight but not every app supports it. Converting to JPG ensures universal compatibility — Outlook, legacy software and printers. Upload WEBP, download JPG instantly.",
+    faqs: [
+      { q: "Why convert WEBP to JPG?", a: "JPG works on every device and app — perfect for clients, CRM systems or software that can't read WEBP." },
+      { q: "Does quality suffer?", a: "JPG uses slight lossy compression — usually unnoticeable for photos and everyday sharing." },
+      { q: "Is transparency preserved?", a: "No — JPG has no transparency. Transparent WEBP areas get a white background." },
     ],
   },
   "image-compressor": {
@@ -225,6 +279,33 @@ const es: LocalizedContent = {
       { q: "¿Cuántos archivos puedo convertir a la vez?", a: "Sube varios archivos y conviértelos en lote. Plan gratuito: hasta 5 conversiones al día." },
     ],
   },
+  "jpg-to-png": {
+    directAnswer:
+      "Convertir JPG a PNG conserva la calidad total y añade transparencia — ideal para logos, iconos y gráficos web. Sube un JPG, convierte y descarga PNG en el navegador, sin almacenamiento en servidor.",
+    faqs: [
+      { q: "¿Cuándo convertir JPG a PNG?", a: "Cuando necesitas transparencia, líneas nítidas o gráficos con texto. Para fotos, JPG sigue siendo más pequeño." },
+      { q: "¿Se conserva la calidad?", a: "Sí — PNG es sin pérdida. Convertir desde JPG no recupera detalle ya perdido en la compresión original." },
+      { q: "¿El archivo será más grande?", a: "Normalmente sí — PNG pesa más que JPG. Mejor para gráficos con transparencia, no para galerías de fotos." },
+    ],
+  },
+  "png-to-jpg": {
+    directAnswer:
+      "Convertir PNG a JPG reduce mucho el tamaño — perfecto para email, redes sociales y sitios web. La transparencia pasa a fondo blanco. Sube PNG y descarga JPG en segundos.",
+    faqs: [
+      { q: "¿Se mantiene la transparencia?", a: "No — JPG no admite transparencia. Las zonas transparentes se vuelven blancas." },
+      { q: "¿Cuánto se reduce?", a: "A menudo 50%–80% — depende del contenido. Gráficos con colores planos se comprimen más." },
+      { q: "¿Sirve para logos?", a: "Solo si no necesitas transparencia. Para logos, mantén PNG o WEBP." },
+    ],
+  },
+  "webp-to-jpg": {
+    directAnswer:
+      "WEBP ahorra peso pero no todas las apps lo soportan. Convertir a JPG garantiza compatibilidad universal — Outlook, software antiguo e impresoras. Sube WEBP y descarga JPG al instante.",
+    faqs: [
+      { q: "¿Por qué convertir WEBP a JPG?", a: "JPG funciona en todo dispositivo y app — ideal para clientes, CRM o software que no lee WEBP." },
+      { q: "¿Pierde calidad?", a: "JPG usa compresión con pérdida leve — normalmente imperceptible para fotos y uso diario." },
+      { q: "¿Se conserva la transparencia?", a: "No — JPG no tiene transparencia. Las zonas transparentes de WEBP quedan con fondo blanco." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "¿Cuánto puedo comprimir una imagen?", a: "Depende del formato original. JPG y WEBP se comprimen significativamente; PNG menos, pero aún se puede reducir el peso." },
@@ -317,6 +398,33 @@ const fr: LocalizedContent = {
       { q: "Quelle est la différence entre JPG et PNG ?", a: "JPG utilise une compression avec perte — idéal pour les photos. PNG est sans perte et prend en charge la transparence — parfait pour les logos et graphiques." },
       { q: "La conversion réduit-elle la qualité ?", a: "Convertir en PNG ou TIFF conserve la qualité complète. JPG ou WEBP peuvent compresser légèrement — choisissez selon votre usage." },
       { q: "Combien de fichiers puis-je convertir à la fois ?", a: "Téléversez plusieurs fichiers et convertissez-les par lot. Offre gratuite : jusqu'à 5 conversions par jour." },
+    ],
+  },
+  "jpg-to-png": {
+    directAnswer:
+      "Convertir JPG en PNG conserve une qualité maximale et ajoute la transparence — idéal pour logos, icônes et graphiques web. Téléversez un JPG, convertissez et téléchargez un PNG dans le navigateur, sans stockage serveur.",
+    faqs: [
+      { q: "Quand convertir JPG en PNG ?", a: "Quand vous avez besoin de transparence, de lignes nettes ou de graphiques avec texte. Pour les photos, JPG reste plus léger." },
+      { q: "La qualité est-elle préservée ?", a: "Oui — PNG est sans perte. La conversion depuis JPG ne récupère pas le détail perdu à la compression d'origine." },
+      { q: "Le fichier sera-t-il plus gros ?", a: "En général oui — PNG est plus volumineux que JPG. Mieux pour les graphiques transparents, pas les galeries photo." },
+    ],
+  },
+  "png-to-jpg": {
+    directAnswer:
+      "Convertir PNG en JPG réduit fortement la taille — parfait pour e-mail, réseaux sociaux et sites. La transparence devient un fond blanc. Téléversez un PNG, téléchargez un JPG en secondes.",
+    faqs: [
+      { q: "La transparence est-elle conservée ?", a: "Non — JPG ne gère pas la transparence. Les zones transparentes deviennent blanches." },
+      { q: "Quelle réduction de taille ?", a: "Souvent 50%–80% — selon le contenu. Les graphiques à aplats se compressent davantage." },
+      { q: "Convient aux logos ?", a: "Seulement sans besoin de transparence. Pour les logos, gardez PNG ou WEBP." },
+    ],
+  },
+  "webp-to-jpg": {
+    directAnswer:
+      "WEBP allège les fichiers mais toutes les apps ne le lisent pas. Convertir en JPG assure une compatibilité universelle — Outlook, logiciels anciens et imprimantes. Téléversez WEBP, téléchargez JPG instantanément.",
+    faqs: [
+      { q: "Pourquoi convertir WEBP en JPG ?", a: "JPG fonctionne partout — idéal pour clients, CRM ou logiciels qui ne lisent pas WEBP." },
+      { q: "Perte de qualité ?", a: "JPG compresse légèrement avec perte — souvent imperceptible pour photos et partage courant." },
+      { q: "Transparence conservée ?", a: "Non — JPG n'a pas de transparence. Les zones transparentes WEBP passent en fond blanc." },
     ],
   },
   "image-compressor": {
@@ -413,6 +521,33 @@ const ru: LocalizedContent = {
       { q: "Сколько файлов можно конвертировать за раз?", a: "Загрузите несколько файлов и конвертируйте пакетом. Бесплатный план: до 5 конвертаций в день." },
     ],
   },
+  "jpg-to-png": {
+    directAnswer:
+      "Конвертация JPG в PNG сохраняет полное качество и добавляет прозрачность — идеально для логотипов, иконок и веб-графики. Загрузите JPG, нажмите «Конвертировать» и скачайте PNG в браузере без хранения на сервере.",
+    faqs: [
+      { q: "Когда конвертировать JPG в PNG?", a: "Когда нужна прозрачность, чёткие линии или графика с текстом. Для фото JPG остаётся меньше." },
+      { q: "Сохраняется ли качество?", a: "Да — PNG без потерь. Конвертация из JPG не вернёт детали, потерянные при исходном сжатии." },
+      { q: "Файл станет больше?", a: "Обычно да — PNG тяжелее JPG. Лучше для прозрачной графики, не для фотогалерей." },
+    ],
+  },
+  "png-to-jpg": {
+    directAnswer:
+      "Конвертация PNG в JPG сильно уменьшает размер — удобно для почты, соцсетей и сайтов. Прозрачность заменяется белым фоном. Загрузите PNG и скачайте JPG за секунды.",
+    faqs: [
+      { q: "Сохраняется ли прозрачность?", a: "Нет — JPG не поддерживает прозрачность. Прозрачные области станут белыми." },
+      { q: "Насколько меньше файл?", a: "Часто на 50%–80% — зависит от содержимого. Плоские цвета сжимаются сильнее." },
+      { q: "Подходит для логотипов?", a: "Только если прозрачность не нужна. Для логотипов оставляйте PNG или WEBP." },
+    ],
+  },
+  "webp-to-jpg": {
+    directAnswer:
+      "WEBP экономит место, но не все программы его читают. Конвертация в JPG даёт универсальную совместимость — Outlook, старые приложения и принтеры. Загрузите WEBP и скачайте JPG мгновенно.",
+    faqs: [
+      { q: "Зачем конвертировать WEBP в JPG?", a: "JPG работает на любом устройстве — идеально для клиентов, CRM или ПО без поддержки WEBP." },
+      { q: "Падает ли качество?", a: "JPG слегка сжимает с потерями — для фото и повседневного обмена обычно незаметно." },
+      { q: "Сохраняется ли прозрачность?", a: "Нет — у JPG нет прозрачности. Прозрачные области WEBP получат белый фон." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "Насколько можно сжать изображение?", a: "Зависит от исходного формата. JPG и WEBP сжимаются значительно; PNG меньше, но размер всё равно можно уменьшить." },
@@ -505,6 +640,33 @@ const de: LocalizedContent = {
       { q: "Was ist der Unterschied zwischen JPG und PNG?", a: "JPG verwendet verlustbehaftete Kompression — ideal für Fotos. PNG ist verlustfrei und unterstützt Transparenz — perfekt für Logos und Grafiken." },
       { q: "Reduziert die Konvertierung die Qualität?", a: "Die Konvertierung in PNG oder TIFF behält die volle Qualität. JPG oder WEBP können leicht komprimieren — wählen Sie je nach Verwendung." },
       { q: "Wie viele Dateien kann ich gleichzeitig konvertieren?", a: "Laden Sie mehrere Dateien hoch und konvertieren Sie sie im Stapel. Kostenloser Plan: bis zu 5 Konversionen pro Tag." },
+    ],
+  },
+  "jpg-to-png": {
+    directAnswer:
+      "JPG in PNG konvertieren erhält volle Qualität und fügt Transparenz hinzu — ideal für Logos, Icons und Web-Grafik. JPG hochladen, konvertieren, PNG herunterladen — im Browser, ohne Server-Speicherung.",
+    faqs: [
+      { q: "Wann JPG zu PNG?", a: "Bei Transparenz, scharfen Linien oder Grafik mit Text. Für Fotos bleibt JPG kleiner." },
+      { q: "Bleibt die Qualität erhalten?", a: "Ja — PNG ist verlustfrei. Konvertierung aus JPG stellt bereits verlorene JPG-Details nicht wieder her." },
+      { q: "Wird die Datei größer?", a: "Meist ja — PNG ist größer als JPG. Besser für transparente Grafik, nicht für Fotogalerien." },
+    ],
+  },
+  "png-to-jpg": {
+    directAnswer:
+      "PNG in JPG konvertieren verkleinert die Datei deutlich — perfekt für E-Mail, Social Media und Websites. Transparenz wird weißer Hintergrund. PNG hochladen, JPG in Sekunden herunterladen.",
+    faqs: [
+      { q: "Bleibt Transparenz erhalten?", a: "Nein — JPG unterstützt keine Transparenz. Transparente Bereiche werden weiß." },
+      { q: "Wie viel kleiner?", a: "Oft 50%–80% — je nach Inhalt. Flächige Farben komprimieren stärker." },
+      { q: "Für Logos geeignet?", a: "Nur ohne Transparenzbedarf. Für Logos PNG oder WEBP behalten." },
+    ],
+  },
+  "webp-to-jpg": {
+    directAnswer:
+      "WEBP spart Größe, aber nicht jede App unterstützt es. Konvertierung zu JPG sorgt für universelle Kompatibilität — Outlook, alte Software und Drucker. WEBP hochladen, JPG sofort laden.",
+    faqs: [
+      { q: "Warum WEBP zu JPG?", a: "JPG läuft auf jedem Gerät — ideal für Kunden, CRM oder Software ohne WEBP-Unterstützung." },
+      { q: "Qualitätsverlust?", a: "JPG komprimiert leicht verlustbehaftet — für Fotos und Alltag meist unsichtbar." },
+      { q: "Transparenz erhalten?", a: "Nein — JPG hat keine Transparenz. Transparente WEBP-Bereiche werden weiß." },
     ],
   },
   "image-compressor": {
@@ -601,6 +763,33 @@ const it: LocalizedContent = {
       { q: "Quanti file posso convertire contemporaneamente?", a: "Carica più file e convertili in batch. Piano gratuito: fino a 5 conversioni al giorno." },
     ],
   },
+  "jpg-to-png": {
+    directAnswer:
+      "Convertire JPG in PNG mantiene la qualità piena e aggiunge la trasparenza — ideale per loghi, icone e grafica web. Carica un JPG, converti e scarica PNG nel browser, senza archiviazione sul server.",
+    faqs: [
+      { q: "Quando convertire JPG in PNG?", a: "Quando servono trasparenza, linee nitide o grafica con testo. Per le foto, JPG resta più leggero." },
+      { q: "La qualità si conserva?", a: "Sì — PNG è lossless. La conversione da JPG non recupera dettagli persi nella compressione originale." },
+      { q: "Il file diventa più grande?", a: "Di solito sì — PNG pesa più di JPG. Meglio per grafica trasparente, non gallerie fotografiche." },
+    ],
+  },
+  "png-to-jpg": {
+    directAnswer:
+      "Convertire PNG in JPG riduce molto la dimensione — ottimo per email, social e siti. La trasparenza diventa sfondo bianco. Carica PNG e scarica JPG in pochi secondi.",
+    faqs: [
+      { q: "La trasparenza resta?", a: "No — JPG non supporta la trasparenza. Le aree trasparenti diventano bianche." },
+      { q: "Quanto si riduce?", a: "Spesso 50%–80% — dipende dal contenuto. Grafica a colori piatti si comprime di più." },
+      { q: "Adatto ai loghi?", a: "Solo senza bisogno di trasparenza. Per i loghi, mantieni PNG o WEBP." },
+    ],
+  },
+  "webp-to-jpg": {
+    directAnswer:
+      "WEBP risparmia peso ma non tutte le app lo leggono. Convertire in JPG garantisce compatibilità universale — Outlook, software legacy e stampanti. Carica WEBP e scarica JPG subito.",
+    faqs: [
+      { q: "Perché convertire WEBP in JPG?", a: "JPG funziona ovunque — ideale per clienti, CRM o software senza supporto WEBP." },
+      { q: "Perdita di qualità?", a: "JPG comprime leggermente con perdita — di solito impercettibile per foto e uso quotidiano." },
+      { q: "Trasparenza conservata?", a: "No — JPG non ha trasparenza. Le aree trasparenti WEBP avranno sfondo bianco." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "Quanto posso comprimere un'immagine?", a: "Dipende dal formato originale. JPG e WEBP si comprimono significativamente; PNG meno, ma il peso può comunque essere ridotto." },
@@ -683,8 +872,17 @@ const it: LocalizedContent = {
 const byLocale: Partial<Record<Locale, LocalizedContent>> = { he, en, es, ru, fr, de, it };
 
 /** Top-tool SEO blocks (FAQ + optional format comparison). Falls back to English. */
-export function getToolSeoContent(toolId: string, locale: Locale): ToolSeoContent | null {
-  const content = byLocale[locale]?.[toolId] ?? en[toolId];
+export function getToolSeoContent(
+  toolId: string,
+  locale: Locale,
+  formatSlug?: string
+): ToolSeoContent | null {
+  const loc = byLocale[locale] ?? en;
+  if (formatSlug) {
+    const slugContent = loc[formatSlug] ?? en[formatSlug];
+    if (slugContent) return slugContent;
+  }
+  const content = loc[toolId] ?? en[toolId];
   return content ?? null;
 }
 

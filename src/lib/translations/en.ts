@@ -229,6 +229,9 @@ export const enTranslations = {
   toolSeoBlocks: {
     faqTitle: "Tool FAQ",
     comparisonTitle: "Format Comparison",
+    trustTitle: "Privacy & security",
+    trustBody:
+      "Files are processed in your browser — not stored on our servers after conversion. Connection is encrypted (HTTPS), and no signup is required for free use.",
   },
   whyChoose: "Why choose Tamir.li?",
   features: [

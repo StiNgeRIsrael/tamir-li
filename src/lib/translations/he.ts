@@ -236,6 +236,9 @@ export const heTranslations = {
   toolSeoBlocks: {
     faqTitle: "שאלות נפוצות על הכלי",
     comparisonTitle: "השוואת פורמטים",
+    trustTitle: "פרטיות ואבטחה",
+    trustBody:
+      "הקבצים מעובדים בדפדפן שלך — לא נשמרים בשרתים שלנו לאחר ההמרה. החיבור מוצפן (HTTPS), ואין צורך בהרשמה לשימוש חינמי.",
   },
   whyChoose: "למה לבחור בתמיר לי?",
   features: [

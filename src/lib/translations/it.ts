@@ -207,6 +207,9 @@ export const itTranslations = {
   toolSeoBlocks: {
     faqTitle: "Domande frequenti sullo strumento",
     comparisonTitle: "Confronto formati",
+    trustTitle: "Privacy e sicurezza",
+    trustBody:
+      "I file vengono elaborati nel browser — non archiviati sui nostri server dopo la conversione. Connessione crittografata (HTTPS), nessuna registrazione per l'uso gratuito.",
   },
   whyChoose: "Perché scegliere Tamir.li?",
   features: [

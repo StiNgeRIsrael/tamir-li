@@ -90,6 +90,7 @@ export function trySeoPrerender(
   const entry = manifest.routes[key];
   if (!entry) return null;
 
-  const canonicalUrl = `${origin.replace(/\/$/, "")}${key === "/" ? "/" : key}`;
+  const canonicalPath = urlPath || "/";
+  const canonicalUrl = `${origin.replace(/\/$/, "")}${canonicalPath === "/" ? "/" : canonicalPath}`;
   return buildBotHtml(entry, canonicalUrl);
 }

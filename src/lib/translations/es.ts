@@ -213,6 +213,9 @@ export const esTranslations = {
   toolSeoBlocks: {
     faqTitle: "Preguntas frecuentes sobre la herramienta",
     comparisonTitle: "Comparación de formatos",
+    trustTitle: "Privacidad y seguridad",
+    trustBody:
+      "Los archivos se procesan en tu navegador — no se almacenan en nuestros servidores tras la conversión. La conexión está cifrada (HTTPS) y no hace falta registrarse para el plan gratuito.",
   },
   whyChoose: "¿Por qué elegir Tamir.li?",
   features: [
@@ -594,6 +597,39 @@ export const esTranslations = {
       cta: "Ver plan anual",
       dismiss: "Seguir gratis",
     },
+  },
+
+  aboutPage: {
+    seoTitle: "Acerca de Tamir.li",
+    seoDesc: "Acerca de Tamir.li — conversión de archivos en hebreo para Israel. Imágenes, video, audio y documentos.",
+    title: "Acerca de Tamir.li",
+    intro:
+      "Tamir.li es un sitio de conversión de archivos pensado para usuarios en Israel — rápido, sencillo y sin instalar software. Operamos tamir.li como servicio independiente en hebreo, con conversiones en el navegador y respeto a la privacidad.",
+    sections: [
+      {
+        heading: "Quiénes somos",
+        body: [
+          "Tamir.li lo gestiona un equipo pequeño que crea herramientas prácticas para usuarios en Israel y hablantes de hebreo en todo el mundo.",
+          "Nuestra misión: hacer las conversiones diarias entre formatos rápidas y accesibles sin instalar programas.",
+        ],
+      },
+      {
+        heading: "Qué hacemos",
+        body: [
+          "Convertimos entre formatos habituales de imagen, video, audio y documentos — directamente en el navegador.",
+          "El sitio está en hebreo por defecto y en más idiomas para usuarios internacionales.",
+        ],
+      },
+      {
+        heading: "Por qué elegirnos",
+        body: [
+          "Interfaz en hebreo, enfoque Israel, amplio soporte de formatos.",
+          "Plan gratuito con límites diarios; Premium sin anuncios y conversiones ilimitadas.",
+        ],
+      },
+    ],
+    contactPrompt: "¿Tienes una pregunta?",
+    contactLink: "Contáctanos",
   },
 
   pwaUpdate: {

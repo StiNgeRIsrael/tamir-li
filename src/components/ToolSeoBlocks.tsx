@@ -5,21 +5,32 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 interface ToolSeoBlocksProps {
   toolId: string;
+  /** Format-pair slug (e.g. jpg-to-png) for slug-specific SEO content. */
+  formatSlug?: string;
 }
 
-export function ToolSeoBlocks({ toolId }: ToolSeoBlocksProps) {
+export function ToolSeoBlocks({ toolId, formatSlug }: ToolSeoBlocksProps) {
   const { locale, t } = useLocale();
-  const content = getToolSeoContent(toolId, locale);
+  const content = getToolSeoContent(toolId, locale, formatSlug);
   if (!content) return null;
 
   const directAnswer = getToolDirectAnswer(content);
   const labels = t.toolSeoBlocks as {
     faqTitle: string;
     comparisonTitle: string;
+    trustTitle?: string;
+    trustBody?: string;
   };
 
   return (
     <div className="space-y-6">
+      {labels.trustTitle && labels.trustBody && (
+        <section className="rounded-md border border-border bg-card p-4 lg:p-5">
+          <h2 className="text-sm font-bold text-foreground lg:text-base">{labels.trustTitle}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{labels.trustBody}</p>
+        </section>
+      )}
+
       {directAnswer && (
         <section className="rounded-md border border-border bg-muted/30 p-4 lg:p-5">
           <p className="text-sm leading-relaxed text-foreground">{directAnswer}</p>
@@ -76,8 +87,12 @@ export function ToolSeoBlocks({ toolId }: ToolSeoBlocksProps) {
 }
 
 /** FAQ JSON-LD fragment for top tools. */
-export function toolFaqJsonLd(toolId: string, locale: import("@/lib/i18n").Locale) {
-  const content = getToolSeoContent(toolId, locale);
+export function toolFaqJsonLd(
+  toolId: string,
+  locale: import("@/lib/i18n").Locale,
+  formatSlug?: string
+) {
+  const content = getToolSeoContent(toolId, locale, formatSlug);
   if (!content?.faqs.length) return null;
   return buildFaqPageJsonLd(content.faqs);
 }

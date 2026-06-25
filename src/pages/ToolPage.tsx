@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { SEOHead, toolCategoryOgImage } from "@/components/SEOHead";
 import { ToolSeoBlocks, toolFaqJsonLd } from "@/components/ToolSeoBlocks";
 import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
-import { TOP_TOOL_IDS } from "@/lib/tool-seo-content";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
 import { PdfManagerTool } from "@/components/tools/PdfManagerTool";
 import { TextToolsComponent } from "@/components/tools/TextToolsComponent";
 import { AiImageGeneratorTool } from "@/components/tools/AiImageGeneratorTool";
@@ -557,8 +557,11 @@ export default function ToolPage() {
   const toolPageUrl = siteUrl(localePath(toolPagePath, locale));
   const homeUrl = siteUrl(localePath("/", locale));
 
-  const faqLd =
-    toolIsFunctional && TOP_TOOL_IDS.includes(tool.id) ? toolFaqJsonLd(tool.id, locale) : null;
+  const formatSeoSlug = formatMatch && slug ? slug : undefined;
+  const toolSeoContent =
+    toolIsFunctional ? getToolSeoContent(tool.id, locale, formatSeoSlug) : null;
+
+  const faqLd = toolSeoContent ? toolFaqJsonLd(tool.id, locale, formatSeoSlug) : null;
   const categoryHubPath = localePath(getCategoryHubPath(tool.category), locale);
   const categoryUrl = siteUrl(categoryHubPath);
 
@@ -1052,7 +1055,9 @@ export default function ToolPage() {
 
         <FreePremiumComparison />
 
-        {toolIsFunctional && TOP_TOOL_IDS.includes(tool.id) && <ToolSeoBlocks toolId={tool.id} />}
+        {toolSeoContent && (
+          <ToolSeoBlocks toolId={tool.id} formatSlug={formatSeoSlug} />
+        )}
 
         <InternalToolLinks />
 
