@@ -490,7 +490,7 @@ Already shipped in `7d3fe01` ? directAnswer + 3 FAQs ? 7 locales. Both in sitema
 
 ### Slug SEO (image pairs)
 
-All 6 sitemap image pairs now have `directAnswer` + FAQs × 7 locales (shipped in `6e6bddb` + `7d3fe01`): jpg-to-png, png-to-jpg, webp-to-jpg, jpg-to-webp, **png-to-webp**, **svg-to-png**. No additional slug blocks needed this iteration.
+All 6 sitemap image pairs now have `directAnswer` + FAQs Ã— 7 locales (shipped in `6e6bddb` + `7d3fe01`): jpg-to-png, png-to-jpg, webp-to-jpg, jpg-to-webp, **png-to-webp**, **svg-to-png**. No additional slug blocks needed this iteration.
 
 ### IndexNow
 
@@ -513,8 +513,9 @@ All 6 sitemap image pairs now have `directAnswer` + FAQs × 7 locales (shipped in
 
 ### Git / deploy
 
-- **Commit:** *(this iteration)* ? category hub meta + ru/it About pages + iteration 8 log
-- Push to `origin/main` ? Plesk auto-deploy (~5 min)
+- **Commit:** `de246b1` â€” ru/it `aboutPage` E-E-A-T (`2c178c0` category hub meta + iter 8 log).
+- **Push:** `de246b1` on `origin/main` (2026-06-26); `npm test` 142 pass, `npm run build` OK (337 sitemap, 81 manifest).
+- **Follow-up (iter 6 a438afd1):** skipped duplicate GSC inspect â€” same indexed-2 / stale-847 sitemap as iter 7.
 
 ### Next loop priorities
 
