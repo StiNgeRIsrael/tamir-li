@@ -6,7 +6,8 @@ import {
   getSitemapChangefreq,
   getSitemapPriority,
 } from "../src/lib/sitemap-paths";
-import { LOCALES, localePath, type Locale } from "../src/lib/i18n";
+import { localePath, type Locale } from "../src/lib/i18n";
+import { getLocalesForSitemapEntry } from "../src/lib/sitemap-paths";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outPath = resolve(__dirname, "../public/sitemap.xml");
@@ -20,7 +21,7 @@ for (const entry of getBasePaths()) {
   const priority = getSitemapPriority(entry.kind);
   const lastmodTag = entry.lastmod ? `\n    <lastmod>${entry.lastmod}</lastmod>` : "";
 
-  for (const locale of LOCALES) {
+  for (const locale of getLocalesForSitemapEntry(entry)) {
     const loc = `${origin}${localePath(entry.path, locale as Locale)}`;
     urlEntries.push(
       `  <url>\n    <loc>${loc}</loc>${lastmodTag}\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`

@@ -18,6 +18,22 @@ export interface Tool {
 
 export type ToolCategory = "image" | "video" | "audio" | "document" | "ai";
 
+export const CATEGORY_HUB_CATEGORIES: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
+
+/** Popular image-converter pairs for sitemap (not full cartesian product). */
+export const IMAGE_CONVERTER_SITEMAP_PAIRS: { from: string; to: string }[] = [
+  { from: "JPG", to: "PNG" },
+  { from: "PNG", to: "JPG" },
+  { from: "WEBP", to: "JPG" },
+  { from: "JPG", to: "WEBP" },
+  { from: "PNG", to: "WEBP" },
+  { from: "SVG", to: "PNG" },
+];
+
+export function getCategoryHubPath(category: ToolCategory): string {
+  return `/tools/${category}`;
+}
+
 export const categoryLabels: Record<ToolCategory, string> = {
   image: "תמונות",
   video: "וידאו",

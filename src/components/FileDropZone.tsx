@@ -1,7 +1,8 @@
 import { useCallback, useState, type DragEvent, type KeyboardEvent } from "react";
+import { Link } from "react-router-dom";
 import { Upload, FileUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useT } from "@/lib/i18n";
+import { useLocale, useT, localePath } from "@/lib/i18n";
 import { filterFilesForTier, maxBatchFiles, maxFileSizeMb, type FileRejectReason } from "@/lib/freemium-limits";
 
 interface FileDropZoneProps {
@@ -30,6 +31,7 @@ export function FileDropZone({
   emphasized = false,
 }: FileDropZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const { locale } = useLocale();
   const t = useT();
   const fdz = t.fileDropZone || { dragHere: "Drag files here", orClick: () => "", selectFiles: "Select Files" };
   const effectiveMaxFiles = maxFiles ?? maxBatchFiles(isPremium);
@@ -116,6 +118,16 @@ export function FileDropZone({
         </Button>
       </div>
       <input id={inputId} type="file" accept={formatAccept} multiple={allowMultiple} onChange={handleFileInput} className="hidden" />
+      <p className="mt-2 text-center text-[11px] text-muted-foreground">
+        {fdz.privacyTermsNote}{" "}
+        <Link to={localePath("/privacy", locale)} className="underline underline-offset-2 hover:text-foreground">
+          {fdz.privacyLink}
+        </Link>{" "}
+        {locale === "he" ? "ו" : "and"}{" "}
+        <Link to={localePath("/terms", locale)} className="underline underline-offset-2 hover:text-foreground">
+          {fdz.termsLink}
+        </Link>
+      </p>
     </div>
   );
 }

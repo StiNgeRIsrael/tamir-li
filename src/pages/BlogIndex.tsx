@@ -6,16 +6,33 @@ import { AdNativeSlot } from "@/components/ads/AdNativeSlot";
 import { blogArticles } from "@/lib/blog-data";
 import { Calendar, Clock } from "lucide-react";
 import { useLocale, localePath } from "@/lib/i18n";
+import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
+import { siteUrl } from "@/lib/site";
 
 export default function BlogIndex() {
   const { locale, t } = useLocale();
   const b = t.blog;
+  const homeUrl = siteUrl(localePath("/", locale));
+  const blogUrl = siteUrl(localePath("/blog", locale));
+  const blogLabel = b.title.split("—")[0].trim();
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      buildBreadcrumbJsonLd([
+        { name: t.tool.breadcrumbHome, item: homeUrl },
+        { name: blogLabel, item: blogUrl },
+      ]),
+    ],
+  };
 
   return (
     <AppLayout>
       <SEOHead
         title={b.seoTitle}
         description={b.seoDesc}
+        jsonLd={jsonLd}
+        hebrewOnlyHreflang
       />
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-8 lg:py-12 space-y-8">
         <header className="space-y-3 animate-fade-in">

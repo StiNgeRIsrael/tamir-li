@@ -79,7 +79,8 @@
     <meta name="apple-mobile-web-app-title" content="תמיר לי" />
     <meta name="mobile-web-app-capable" content="yes" />
 
-    <script type="application/ld+json">
+    <!-- Minimal static JSON-LD for no-JS crawlers; full graph injected by SEOHead on home -->
+    <script id="static-json-ld-org" type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Organization",
@@ -94,10 +95,17 @@
         "height": 512
       },
       "address": { "@type": "PostalAddress", "addressCountry": "IL" },
-      "areaServed": { "@type": "Country", "name": "Israel" }
+      "areaServed": { "@type": "Country", "name": "Israel" },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "email": "support@tamir.li",
+        "availableLanguage": ["Hebrew", "English"],
+        "areaServed": "IL"
+      }
     }
     </script>
-    <script type="application/ld+json">
+    <script id="static-json-ld-website" type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
@@ -115,60 +123,6 @@
         },
         "query-input": "required name=search_term_string"
       }
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "תמיר לי",
-      "alternateName": "Tamir.li",
-      "description": "אתר המרות קבצים בעברית — תמונות, וידאו, אודיו ומסמכים. מיועד למשתמשים בישראל.",
-      "url": "https://tamir.li",
-      "applicationCategory": "UtilityApplication",
-      "operatingSystem": "Any",
-      "browserRequirements": "Requires JavaScript. Modern HTML5 browser.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "ILS",
-        "description": "שימוש יומי חינמי עם מגבלות; פרימיום זמין"
-      },
-      "inLanguage": "he-IL",
-      "availableLanguage": ["he-IL", "en", "es", "ru", "de", "fr", "it"],
-      "spatialCoverage": { "@type": "Country", "name": "Israel" }
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "איך ממירים קובץ?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "גררו את הקובץ לאזור ההעלאה, בחרו את הפורמט הרצוי, ולחצו 'התחל המרה'. תוך שניות הקובץ יהיה מוכן להורדה."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "האם השירות באמת חינמי?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "כן! ניתן לבצע עד 5 המרות בחינם ביום. למנויי פרימיום (₪4.90/חודש) — המרות ללא הגבלה וללא מודעות."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "אילו פורמטים נתמכים?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "אנו תומכים במגוון רחב: תמונות (JPG, PNG, WEBP, GIF, BMP, TIFF, SVG), וידאו (MP4, AVI, MOV, MKV, WEBM), אודיו (MP3, WAV, AAC, OGG, FLAC), ומסמכים (PDF, DOCX, TXT)."
-          }
-        }
-      ]
     }
     </script>
 

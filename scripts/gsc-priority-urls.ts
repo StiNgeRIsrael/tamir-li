@@ -11,9 +11,10 @@
 import { readFileSync, writeFileSync, appendFileSync, existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { getAllSitemapUrls, getBasePaths } from "../src/lib/sitemap-paths";
-import { LOCALES, localePath, type Locale } from "../src/lib/i18n";
+import { getAllSitemapUrls, getBasePaths, getLocalesForSitemapEntry } from "../src/lib/sitemap-paths";
+import { localePath, type Locale } from "../src/lib/i18n";
 import { getDefaultSlug, getPopularTools } from "../src/lib/tools-data";
+import { isToolFunctional } from "../src/lib/tool-availability";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outPath = resolve(__dirname, "../gsc-priority-urls.txt");
@@ -27,17 +28,20 @@ const TIER1_PATHS = ["/", "/premium", "/about", "/contact", "/privacy", "/terms"
 function urlsForPaths(paths: readonly string[]): string[] {
   const urls: string[] = [];
   for (const path of paths) {
-    for (const locale of LOCALES) {
-      urls.push(`${origin}${localePath(path, locale as Locale)}`);
+    const entry = getBasePaths().find((e) => e.path === path);
+    const locales = entry ? getLocalesForSitemapEntry(entry) : (["he"] as Locale[]);
+    for (const locale of locales) {
+      urls.push(`${origin}${localePath(path, locale)}`);
     }
   }
   return urls;
 }
 
-/** Canonical landing path per popular tool (matches homepage / nav prominence). */
+/** Canonical landing path per popular functional tool. */
 function getTier2ToolPaths(): string[] {
   const paths = new Set<string>();
   for (const tool of getPopularTools()) {
+    if (!isToolFunctional(tool.id)) continue;
     if (tool.customComponent) {
       paths.add(`/${tool.id}`);
     } else {
@@ -148,9 +152,9 @@ if (daily !== undefined) {
   }
 } else {
   console.log(`Wrote ${tier1.length + tier2.length + tier3.length} URLs to gsc-priority-urls.txt`);
-  console.log(`  Tier 1: ${tier1.length} (core pages × ${LOCALES.length} locales)`);
-  console.log(`  Tier 2: ${tier2.length} (popular tools × ${LOCALES.length} locales)`);
-  console.log(`  Tier 3: ${tier3.length} (everything else)`);
+  console.log(`  Tier 1: ${tier1.length} (core pages, locale-aware)`);
+  console.log(`  Tier 2: ${tier2.length} (popular functional tools, locale-aware)`);
+  console.log(`  Tier 3: ${tier3.length} (remaining pruned sitemap URLs)`);
   console.log("");
   console.log("Tips:");
   console.log("  npm run generate:gsc-priority -- --tier=1     # print tier 1 only");

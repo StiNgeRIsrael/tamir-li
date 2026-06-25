@@ -28,6 +28,7 @@ const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
+const CategoryHubPage = lazy(() => import("./pages/CategoryHubPage"));
 const AdminOverview = lazy(() => import("@/pages/admin/AdminOverview"));
 const AdminUsers = lazy(() => import("@/pages/admin/AdminUsers"));
 const AdminTools = lazy(() => import("@/pages/admin/AdminTools"));
@@ -78,6 +79,7 @@ const getAppRoutes = (explicitLocale?: Locale) => (
     <Route path="terms" element={<LazyPage><TermsPage /></LazyPage>} />
     <Route path="about" element={<LazyPage><AboutPage /></LazyPage>} />
     <Route path="contact" element={<LazyPage><ContactPage /></LazyPage>} />
+    <Route path="tools/:category" element={<LazyPage><CategoryHubPage /></LazyPage>} />
     <Route
       path="admin"
       element={

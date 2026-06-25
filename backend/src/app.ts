@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
+import { trySeoPrerender } from './lib/seo-prerender.js';
 import authRoutes from './routes/auth.routes';
 import conversionsRoutes from './routes/conversions.routes';
 import toolsRoutes from './routes/tools.routes';
@@ -133,6 +134,27 @@ if (isProduction) {
     }
 
     app.use(express.static(frontendDist, { index: false }));
+    const siteOrigin = (process.env.VITE_SITE_ORIGIN || 'https://tamir.li').replace(/\/$/, '');
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      if (req.method !== 'GET' && req.method !== 'HEAD') {
+        next();
+        return;
+      }
+      if (req.path.startsWith('/api/') || req.path === '/health') {
+        next();
+        return;
+      }
+      if (hasFileExtension(req.path)) {
+        next();
+        return;
+      }
+      const botHtml = trySeoPrerender(frontendDist, req.path, req.get('user-agent'), siteOrigin);
+      if (botHtml) {
+        res.status(200).type('text/html').send(botHtml);
+        return;
+      }
+      next();
+    });
     app.use((req: Request, res: Response, next: NextFunction) => {
       if (req.method !== 'GET' && req.method !== 'HEAD') {
         next();

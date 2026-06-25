@@ -1,8 +1,10 @@
 # Google Search Console indexing for Tamir.li
 
-This site has **~847 URLs** across 7 locales (Hebrew default + `/en`, `/es`, `/ru`, `/de`, `/fr`, `/it`). The sitemap is generated at build time from the same route list as the app (`src/lib/sitemap-paths.ts`).
+This site has **~337 URLs** in the pruned sitemap (functional tools + category hubs + Hebrew-only blog; 7 locales for tools/static pages). Previously ~847 URLs when every tool slug and blog locale was included. The sitemap is generated at build time from the same route list as the app (`src/lib/sitemap-paths.ts` + `src/lib/tool-availability.ts`).
 
 **Per-URL “Request indexing” in Search Console often speeds up discovery for priority pages**, but Google does **not** offer a public bulk API for everyday site owners to request indexing for every URL. Manual inspection plus a correct sitemap is the practical workflow.
+
+**Sitemap prune (2026):** Only functional tools are indexed; `image-converter` uses popular pairs (not all format combinations); blog paths are Hebrew-only (`/blog`, not `/en/blog`); coming-soon tools get `noindex` on their pages but are omitted from the sitemap.
 
 ## Cursor MCP (gscServer) — optional
 

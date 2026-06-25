@@ -1,4 +1,5 @@
-import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { getToolSeoContent, getToolDirectAnswer } from "@/lib/tool-seo-content";
+import { buildFaqPageJsonLd } from "@/lib/structured-data";
 import { useLocale } from "@/lib/i18n";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -11,6 +12,7 @@ export function ToolSeoBlocks({ toolId }: ToolSeoBlocksProps) {
   const content = getToolSeoContent(toolId, locale);
   if (!content) return null;
 
+  const directAnswer = getToolDirectAnswer(content);
   const labels = t.toolSeoBlocks as {
     faqTitle: string;
     comparisonTitle: string;
@@ -18,6 +20,12 @@ export function ToolSeoBlocks({ toolId }: ToolSeoBlocksProps) {
 
   return (
     <div className="space-y-6">
+      {directAnswer && (
+        <section className="rounded-md border border-border bg-muted/30 p-4 lg:p-5">
+          <p className="text-sm leading-relaxed text-foreground">{directAnswer}</p>
+        </section>
+      )}
+
       {content.formatComparison && content.comparisonHeaders && (
         <section className="space-y-3">
           <h2 className="text-base font-bold text-foreground lg:text-lg">{labels.comparisonTitle}</h2>
@@ -71,12 +79,5 @@ export function ToolSeoBlocks({ toolId }: ToolSeoBlocksProps) {
 export function toolFaqJsonLd(toolId: string, locale: import("@/lib/i18n").Locale) {
   const content = getToolSeoContent(toolId, locale);
   if (!content?.faqs.length) return null;
-  return {
-    "@type": "FAQPage",
-    mainEntity: content.faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.q,
-      acceptedAnswer: { "@type": "Answer", text: faq.a },
-    })),
-  };
+  return buildFaqPageJsonLd(content.faqs);
 }

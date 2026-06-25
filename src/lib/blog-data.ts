@@ -9,6 +9,16 @@ export interface BlogArticle {
   readTime: number;
   toolLinks: { text: string; href: string }[];
   content: string;
+  author?: { name: string; role?: string };
+}
+
+export const DEFAULT_BLOG_AUTHOR = {
+  name: "צוות תמיר לי",
+  role: "עורכי תוכן",
+} as const;
+
+export function getBlogAuthor(article: BlogArticle) {
+  return article.author ?? DEFAULT_BLOG_AUTHOR;
 }
 
 export const blogArticles: BlogArticle[] = [

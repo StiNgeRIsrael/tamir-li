@@ -220,6 +220,12 @@ export const heTranslations = {
     noResults: "לא נמצאו כלים — נסו מילה אחרת",
     results: (n: number) => `${n} כלים`,
   },
+  categoryHub: {
+    seoTitle: (category: string) => `כלי ${category} | תמיר לי`,
+    seoDesc: (category: string) => `כל כלי ההמרה והעריכה ל${category} ב-tamir.li — חינם בדפדפן, בעברית.`,
+    intro: (category: string) => `בחרו כלי ${category} מהרשימה. כלים שמסומנים כ«בקרוב» עדיין בפיתוח.`,
+    empty: "אין כלים פעילים בקטגוריה זו כרגע.",
+  },
   internalLinks: {
     title: "המרות פופולריות",
     image: "תמונות",
@@ -279,6 +285,7 @@ export const heTranslations = {
     fastBadge: "מהיר",
     onlineBadge: "אונליין",
     freeBadge: "חינם",
+    supportEmail: "support@tamir.li",
     moreConversions: "המרות נוספות",
     conversionDone: "ההמרה הושלמה!",
     download: "הורדה",
@@ -488,6 +495,9 @@ export const heTranslations = {
     uploadStepTitle: (from: string, to: string) => `העלו קובץ ${from} להמרה ל-${to}`,
     uploadStepHint: "גררו לכאן או לחצו על הכפתור — חינם, ישירות בדפדפן",
     selectFiles: "בחר קבצים",
+    privacyTermsNote: "בהעלאת קבצים אתם מסכימים ל",
+    privacyLink: "מדיניות הפרטיות",
+    termsLink: "תנאי השימוש",
     fileTooLarge: (maxMB: number, name: string) =>
       name ? `${name} חורג ממגבלת ${maxMB}MB` : `הקובץ חורג ממגבלת ${maxMB}MB`,
     batchLimitFree: "בתוכנית החינמית ניתן להעלות קובץ אחד להמרה. שדרגו לפרימיום להעלאה מרובה.",
@@ -760,8 +770,15 @@ export const heTranslations = {
     seoTitle: "אודות תמיר לי | Tamir.li",
     seoDesc: "אודות תמיר לי — שירות המרת קבצים בעברית לישראל. תמונות, וידאו, אודיו ומסמכים.",
     title: "אודות תמיר לי",
-    intro: "תמיר לי (Tamir.li) הוא אתר המרות קבצים בעברית, מותאם למשתמשים בישראל — מהיר, פשוט, וללא צורך בהתקנת תוכנה.",
+    intro: "תמיר לי (Tamir.li) הוא אתר המרות קבצים בעברית, מותאם למשתמשים בישראל — מהיר, פשוט, וללא צורך בהתקנת תוכנה. אנחנו מפעילים את tamir.li כשירות עצמאי בעברית, עם דגש על המרות בדפדפן ושמירה על פרטיות.",
     sections: [
+      {
+        heading: "מי אנחנו",
+        body: [
+          "תמיר לי מופעל על ידי צוות קטן שבונה כלי קבצים מעשיים למשתמשים בישראל ולדוברי עברית ברחבי העולם.",
+          "המשימה שלנו: להפוך המרות יומיומיות בין פורמטים לפשוטות ומהירות — בלי להתקין תוכנה במחשב.",
+        ],
+      },
       {
         heading: "מה אנחנו עושים",
         body: [

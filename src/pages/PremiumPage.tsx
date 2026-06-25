@@ -16,6 +16,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { Link, useSearchParams } from "react-router-dom";
 
 import { useLocale, localePath } from "@/lib/i18n";
+import { siteUrl } from "@/lib/site";
 
 import {
   Crown,
@@ -33,7 +34,7 @@ import {
   X,
 } from "lucide-react";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { trackEvent, ANALYTICS_EVENTS } from "@/lib/analytics/events";
 
@@ -46,6 +47,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 import { GoogleLoginButton } from "@/components/GoogleLoginButton";
+import { buildFaqPageJsonLd } from "@/lib/structured-data";
 
 const featureIcons = [
   FileStack,
@@ -292,9 +294,24 @@ export default function PremiumPage() {
 
   const yearlyBestValue = u.yearlyBestValue as string | undefined;
 
+  const premiumJsonLd = useMemo(() => {
+    const faqLd = buildFaqPageJsonLd(faqs as { q: string; a: string }[]);
+    const pageUrl = siteUrl(localePath("/premium", locale));
+    const graph = [
+      {
+        "@type": "WebPage",
+        name: u.seoTitle || "",
+        description: u.seoDesc || "",
+        url: pageUrl,
+      },
+      ...(faqLd ? [faqLd] : []),
+    ];
+    return { "@context": "https://schema.org", "@graph": graph };
+  }, [faqs, locale, u.seoTitle, u.seoDesc]);
+
   return (
     <AppLayout>
-      <SEOHead title={u.seoTitle || ""} description={u.seoDesc || ""} />
+      <SEOHead title={u.seoTitle || ""} description={u.seoDesc || ""} jsonLd={premiumJsonLd} />
 
       <div className="max-w-4xl mx-auto px-4 py-8 lg:py-14 space-y-12">
         {/* Hero */}

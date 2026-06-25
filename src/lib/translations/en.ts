@@ -213,6 +213,12 @@ export const enTranslations = {
     noResults: "No tools found — try another term",
     results: (n: number) => `${n} tools`,
   },
+  categoryHub: {
+    seoTitle: (category: string) => `${category} tools | Tamir.li`,
+    seoDesc: (category: string) => `All ${category} conversion and editing tools on Tamir.li — free in your browser.`,
+    intro: (category: string) => `Choose a ${category} tool below. Items marked coming soon are still in development.`,
+    empty: "No active tools in this category yet.",
+  },
   internalLinks: {
     title: "Popular Conversions",
     image: "Images",
@@ -270,6 +276,7 @@ export const enTranslations = {
     fastBadge: "Fast",
     onlineBadge: "Online",
     freeBadge: "Free",
+    supportEmail: "support@tamir.li",
     moreConversions: "More Conversions",
     conversionDone: "Conversion Complete!",
     download: "Download",
@@ -467,6 +474,9 @@ export const enTranslations = {
     uploadStepTitle: (from: string, to: string) => `Upload your ${from} file to convert to ${to}`,
     uploadStepHint: "Drag and drop here or click the button — free, in your browser",
     selectFiles: "Select Files",
+    privacyTermsNote: "By uploading files you agree to our",
+    privacyLink: "Privacy Policy",
+    termsLink: "Terms of Service",
     fileTooLarge: (maxMB: number, name: string) =>
       name ? `${name} exceeds the ${maxMB}MB limit` : `File exceeds the ${maxMB}MB limit`,
     batchLimitFree: "Free plan allows one file per conversion. Upgrade to Premium for batch uploads.",
@@ -739,8 +749,15 @@ export const enTranslations = {
     seoTitle: "About Tamir.li",
     seoDesc: "About Tamir.li — Hebrew-first file conversion for Israel. Images, video, audio, and documents.",
     title: "About Tamir.li",
-    intro: "Tamir.li is a file conversion website built for users in Israel — fast, simple, and no software install required.",
+    intro: "Tamir.li is a file conversion website built for users in Israel — fast, simple, and no software install required. We operate tamir.li as an independent Hebrew-first service focused on privacy-respecting, browser-based conversions.",
     sections: [
+      {
+        heading: "Who we are",
+        body: [
+          "Tamir.li is run by a small team building practical file tools for Israeli users and Hebrew speakers worldwide.",
+          "Our mission is to make everyday format conversions fast and accessible without installing desktop software.",
+        ],
+      },
       {
         heading: "What we do",
         body: [

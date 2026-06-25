@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { getToolByFormatSlug, getToolById, getDefaultSlug, buildFormatSlug, getRelatedTools, categoryIcons, type Tool, type ToolCategory } from "@/lib/tools-data";
+import { getToolByFormatSlug, getToolById, getDefaultSlug, buildFormatSlug, getRelatedTools, categoryIcons, getCategoryHubPath, type Tool, type ToolCategory } from "@/lib/tools-data";
 import { AppLayout } from "@/components/AppLayout";
 import { FileDropZone } from "@/components/FileDropZone";
 import { AdSlot } from "@/components/AdSlot";
@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SEOHead, toolCategoryOgImage } from "@/components/SEOHead";
 import { ToolSeoBlocks, toolFaqJsonLd } from "@/components/ToolSeoBlocks";
+import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
 import { TOP_TOOL_IDS } from "@/lib/tool-seo-content";
 import { PdfManagerTool } from "@/components/tools/PdfManagerTool";
 import { TextToolsComponent } from "@/components/tools/TextToolsComponent";
@@ -22,7 +23,7 @@ import { ImageResizerTool } from "@/components/tools/ImageResizerTool";
 import { ImageCompressorTool } from "@/components/tools/ImageCompressorTool";
 import { HebOcrTool } from "@/components/tools/HebOcrTool";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { ArrowLeft, ArrowRight, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe, AlertCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe, AlertCircle, Mail } from "lucide-react";
 import { useLocale, localePath, htmlLangTag } from "@/lib/i18n";
 import { siteUrl, absoluteImageUrl } from "@/lib/site";
 import { allowMockFileConversion } from "@/lib/feature-flags";
@@ -556,7 +557,10 @@ export default function ToolPage() {
   const toolPageUrl = siteUrl(localePath(toolPagePath, locale));
   const homeUrl = siteUrl(localePath("/", locale));
 
-  const faqLd = TOP_TOOL_IDS.includes(tool.id) ? toolFaqJsonLd(tool.id, locale) : null;
+  const faqLd =
+    toolIsFunctional && TOP_TOOL_IDS.includes(tool.id) ? toolFaqJsonLd(tool.id, locale) : null;
+  const categoryHubPath = localePath(getCategoryHubPath(tool.category), locale);
+  const categoryUrl = siteUrl(categoryHubPath);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -573,28 +577,14 @@ export default function ToolPage() {
         inLanguage: htmlLangTag(locale),
         provider: { "@type": "Organization", name: t.brandName, url: siteUrl("/") },
       },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: tt.breadcrumbHome,
-            item: homeUrl,
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: catLabels[tool.category],
-          },
-          {
-            "@type": "ListItem",
-            position: 3,
-            name: isCustom ? toolName : tt.convertTitle(activeFrom, activeTo),
-            item: toolPageUrl,
-          },
-        ],
-      },
+      buildBreadcrumbJsonLd([
+        { name: tt.breadcrumbHome, item: homeUrl },
+        { name: catLabels[tool.category], item: categoryUrl },
+        {
+          name: isCustom ? toolName : tt.convertTitle(activeFrom, activeTo),
+          item: toolPageUrl,
+        },
+      ]),
       ...(faqLd ? [faqLd] : []),
     ],
   };
@@ -609,6 +599,13 @@ export default function ToolPage() {
           <span className="flex items-center gap-2 text-sm text-muted-foreground"><Globe className="w-4 h-4 text-primary shrink-0" /> {tt.online}</span>
           <span className="flex items-center gap-2 text-sm text-muted-foreground"><CheckCircle2 className="w-4 h-4 text-success shrink-0" /> {tt.free}</span>
         </div>
+        <a
+          href={`mailto:${tt.supportEmail}`}
+          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors pt-1 border-t border-border"
+        >
+          <Mail className="w-3.5 h-3.5 shrink-0" aria-hidden />
+          {tt.supportEmail}
+        </a>
       </div>
 
       <AdSlot type="inline" slotId="tool-sidebar-inline" eager={isProcessing || showSuccessPanel} />
@@ -647,13 +644,14 @@ export default function ToolPage() {
         ogImage={toolCategoryOgImage(tool.category)}
         siteName={t.brandName}
         jsonLd={jsonLd}
+        noindex={!toolIsFunctional}
       />
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-6 lg:py-10 space-y-6 lg:space-y-8">
         {/* Breadcrumb */}
         <nav aria-label="breadcrumb" className="flex items-center gap-2 text-sm text-muted-foreground">
           <Link to={localePath("/", locale)} className="hover:text-foreground transition-colors">{tt.breadcrumbHome}</Link>
           <span>/</span>
-          <span>{catLabels[tool.category]}</span>
+          <Link to={categoryHubPath} className="hover:text-foreground transition-colors">{catLabels[tool.category]}</Link>
           <span>/</span>
           <span className="text-foreground font-medium">
             {isCustom ? toolName : tt.convertTitle(activeFrom, activeTo)}
@@ -1054,7 +1052,7 @@ export default function ToolPage() {
 
         <FreePremiumComparison />
 
-        {TOP_TOOL_IDS.includes(tool.id) && <ToolSeoBlocks toolId={tool.id} />}
+        {toolIsFunctional && TOP_TOOL_IDS.includes(tool.id) && <ToolSeoBlocks toolId={tool.id} />}
 
         <InternalToolLinks />
 

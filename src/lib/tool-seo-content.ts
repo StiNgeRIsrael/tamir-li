@@ -14,6 +14,8 @@ export interface FormatComparisonRow {
 
 export interface ToolSeoContent {
   faqs: ToolFaq[];
+  /** 40–60 word direct answer for featured snippets (optional; derived from FAQs if absent). */
+  directAnswer?: string;
   formatComparison?: FormatComparisonRow[];
   comparisonHeaders?: { format: string; bestFor: string; size: string; quality: string };
 }
@@ -684,6 +686,23 @@ const byLocale: Partial<Record<Locale, LocalizedContent>> = { he, en, es, ru, fr
 export function getToolSeoContent(toolId: string, locale: Locale): ToolSeoContent | null {
   const content = byLocale[locale]?.[toolId] ?? en[toolId];
   return content ?? null;
+}
+
+/** Build a 40–60 word snippet for answer blocks from SEO content. */
+export function getToolDirectAnswer(content: ToolSeoContent): string | null {
+  if (content.directAnswer?.trim()) return content.directAnswer.trim();
+
+  const words: string[] = [];
+  for (const faq of content.faqs) {
+    words.push(...faq.a.split(/\s+/).filter(Boolean));
+    if (words.length >= 40) break;
+  }
+  if (words.length < 20) return null;
+
+  const target = words.slice(0, Math.min(words.length, 58));
+  let text = target.join(" ");
+  if (words.length > 58) text += "…";
+  return text;
 }
 
 export const TOP_TOOL_IDS = Object.keys(en);

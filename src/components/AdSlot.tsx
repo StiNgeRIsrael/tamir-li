@@ -35,8 +35,12 @@ const PLACEMENT_META: Record<
   inline: { labelKey: "inline", envVar: "VITE_ADSTERRA_ZONE_INLINE" },
 };
 
-function adSlotAspectStyle(width: number, height: number): CSSProperties {
-  return { aspectRatio: `${width} / ${height}` };
+function adSlotAspectStyle(width: number, height: number, type: AdSlotProps["type"]): CSSProperties {
+  const style: CSSProperties = { aspectRatio: `${width} / ${height}` };
+  if (type === "banner" || type === "inline") {
+    style.minHeight = height;
+  }
+  return style;
 }
 
 export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotProps) {
@@ -48,7 +52,7 @@ export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotPro
   const meta = PLACEMENT_META[type];
   const label = t.adLabel || "Ad";
   const dims = getPlacementLayout(type);
-  const aspectStyle = adSlotAspectStyle(dims.width, dims.height);
+  const aspectStyle = adSlotAspectStyle(dims.width, dims.height, type);
 
   const zoneKey = getAdsterraZoneKey(type, slotId);
   const adsConfigured = isAdsterraConfigured();

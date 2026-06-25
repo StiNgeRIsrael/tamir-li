@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { useLocale, localePath } from "@/lib/i18n";
 import { buildFormatSlug, getToolByFormatSlug, getToolById } from "@/lib/tools-data";
 import { isToolFunctional } from "@/lib/tool-availability";
-import { ToolSoonBadge } from "@/components/ToolSoonBadge";
 
 interface LinkGroup {
   title: string;
@@ -69,19 +68,27 @@ export function InternalToolLinks() {
     video: labels.video,
   };
 
+  const visibleGroups = LINK_GROUPS.map((group) => ({
+    ...group,
+    links: group.links.filter((link) => {
+      const toolId = getToolIdFromSlug(link.slug);
+      return toolId ? isToolFunctional(toolId) : false;
+    }),
+  })).filter((group) => group.links.length > 0);
+
+  if (visibleGroups.length === 0) return null;
+
   return (
     <section className="space-y-3" aria-label={labels.title}>
       <h2 className="text-base font-bold text-foreground lg:text-lg">{labels.title}</h2>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {LINK_GROUPS.map((group) => (
+        {visibleGroups.map((group) => (
           <div key={group.title} className="rounded-md border border-border bg-card p-3 space-y-2">
             <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {catLabels[group.title]}
             </h3>
             <ul className="space-y-1">
               {group.links.map((link) => {
-                const toolId = getToolIdFromSlug(link.slug);
-                const functional = toolId ? isToolFunctional(toolId) : false;
                 const displayLabel = link.label.includes("→")
                   ? link.label
                   : (t.toolNames as Record<string, string>)[link.label] ?? link.label;
@@ -93,7 +100,6 @@ export function InternalToolLinks() {
                       className="inline-flex items-center gap-1.5 text-xs text-foreground/80 hover:text-primary transition-colors"
                     >
                       {displayLabel}
-                      {!functional && <ToolSoonBadge />}
                     </Link>
                   </li>
                 );

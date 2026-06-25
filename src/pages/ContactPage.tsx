@@ -3,14 +3,29 @@ import { SEOHead } from "@/components/SEOHead";
 import { Mail } from "lucide-react";
 import { useLocale } from "@/lib/i18n";
 import { enTranslations } from "@/lib/translations/en";
+import { siteUrl } from "@/lib/site";
 
 export default function ContactPage() {
   const { t } = useLocale();
   const p = t.contactPage ?? enTranslations.contactPage;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: t.brandName,
+    url: siteUrl("/"),
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer support",
+      email: p.email,
+      availableLanguage: ["Hebrew", "English"],
+      areaServed: "IL",
+    },
+  };
+
   return (
     <AppLayout>
-      <SEOHead title={p.seoTitle} description={p.seoDesc} />
+      <SEOHead title={p.seoTitle} description={p.seoDesc} jsonLd={jsonLd} />
       <article className="mx-auto max-w-3xl space-y-8 px-4 py-8 lg:py-12">
         <header className="space-y-3">
           <h1 className="text-3xl font-extrabold text-foreground">{p.title}</h1>

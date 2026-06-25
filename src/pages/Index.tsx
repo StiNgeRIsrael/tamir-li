@@ -1,4 +1,4 @@
-import { useMemo, useState, lazy, Suspense } from "react";
+import { useMemo, useState, useEffect, lazy, Suspense } from "react";
 
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -26,7 +26,14 @@ import { cn } from "@/lib/utils";
 
 import { getFunctionalToolIds } from "@/lib/tool-availability";
 
-import { ToolIconGrid } from "@/components/ToolIconGrid";
+const TOOL_CATEGORIES: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
+
+function parseCategoryParam(value: string | null): ToolCategory | "all" {
+  if (value && TOOL_CATEGORIES.includes(value as ToolCategory)) {
+    return value as ToolCategory;
+  }
+  return "all";
+}
 
 
 
@@ -89,7 +96,7 @@ const FEATURED_FUNCTIONAL_ORDER = [
 const Index = () => {
 
   const { locale, t, dir } = useLocale();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const { filterTools } = useToolConfig();
 
@@ -99,7 +106,48 @@ const Index = () => {
 
   const [search, setSearch] = useState(() => searchParams.get("q") ?? "");
 
-  const [activeCategory, setActiveCategory] = useState<ToolCategory | "all">("all");
+  const [activeCategory, setActiveCategory] = useState<ToolCategory | "all">(() =>
+    parseCategoryParam(searchParams.get("category")),
+  );
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      const q = search.trim();
+      const currentQ = searchParams.get("q") ?? "";
+      if (q === currentQ) return;
+      const next = new URLSearchParams(searchParams);
+      if (q) {
+        next.set("q", q);
+      } else {
+        next.delete("q");
+      }
+      setSearchParams(next, { replace: true });
+    }, 300);
+    return () => window.clearTimeout(timeout);
+  }, [search, searchParams, setSearchParams]);
+
+  useEffect(() => {
+    const fromUrl = searchParams.get("q") ?? "";
+    if (fromUrl !== search) {
+      setSearch(fromUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only sync when URL q changes externally
+  }, [searchParams.get("q")]);
+
+  useEffect(() => {
+    setActiveCategory(parseCategoryParam(searchParams.get("category")));
+  }, [searchParams.get("category")]);
+
+  const setCategoryFilter = (cat: ToolCategory | "all") => {
+    setActiveCategory(cat);
+    const next = new URLSearchParams(searchParams);
+    if (cat === "all") {
+      next.delete("category");
+    } else {
+      next.set("category", cat);
+    }
+    setSearchParams(next, { replace: true });
+  };
 
 
 
@@ -412,7 +460,7 @@ const Index = () => {
 
                 type="button"
 
-                onClick={() => setActiveCategory("all")}
+                onClick={() => setCategoryFilter("all")}
 
                 className={cn(
 
@@ -444,7 +492,7 @@ const Index = () => {
 
                     type="button"
 
-                    onClick={() => setActiveCategory(cat)}
+                    onClick={() => setCategoryFilter(cat)}
 
                     className={cn(
 

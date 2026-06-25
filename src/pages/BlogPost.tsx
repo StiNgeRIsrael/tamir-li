@@ -3,11 +3,12 @@ import { AppLayout } from "@/components/AppLayout";
 import { SEOHead } from "@/components/SEOHead";
 import { AdSlot } from "@/components/AdSlot";
 import { AdNativeSlot } from "@/components/ads/AdNativeSlot";
-import { getBlogArticle, blogArticles } from "@/lib/blog-data";
+import { getBlogArticle, blogArticles, getBlogAuthor } from "@/lib/blog-data";
 import { Calendar, Clock, ArrowRight, ArrowLeft } from "lucide-react";
 import { marked } from "marked";
 import { useLocale, localePath, htmlLangTag } from "@/lib/i18n";
-import { siteUrl } from "@/lib/site";
+import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
+import { siteUrl, DEFAULT_OG_IMAGE, absoluteImageUrl } from "@/lib/site";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -33,27 +34,60 @@ export default function BlogPost() {
 
   const htmlContent = marked.parse(article.content) as string;
   const related = blogArticles.filter(a => a.slug !== article.slug).slice(0, 3);
+  const articleUrl = siteUrl(localePath(`/blog/${article.slug}`, locale));
+  const homeUrl = siteUrl(localePath("/", locale));
+  const blogUrl = siteUrl(localePath("/blog", locale));
+  const blogLabel = b.title.split("—")[0].trim();
+  const logoUrl = absoluteImageUrl(DEFAULT_OG_IMAGE);
+
+  const author = getBlogAuthor(article);
+  const orgUrl = siteUrl("/");
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        headline: article.title,
+        description: article.metaDescription,
+        image: logoUrl,
+        datePublished: article.date,
+        dateModified: article.date,
+        mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
+        author: {
+          "@type": "Person",
+          name: author.name,
+          ...(author.role ? { jobTitle: author.role } : {}),
+          worksFor: { "@type": "Organization", name: t.brandName, url: orgUrl },
+        },
+        publisher: {
+          "@type": "Organization",
+          name: t.brandName,
+          url: orgUrl,
+          logo: {
+            "@type": "ImageObject",
+            url: logoUrl,
+            width: 512,
+            height: 512,
+          },
+        },
+        inLanguage: htmlLangTag(locale),
+      },
+      buildBreadcrumbJsonLd([
+        { name: t.tool.breadcrumbHome, item: homeUrl },
+        { name: blogLabel, item: blogUrl },
+        { name: article.title },
+      ]),
+    ],
+  };
 
   return (
     <AppLayout>
       <SEOHead
         title={article.metaTitle}
         description={article.metaDescription}
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "Article",
-          "headline": article.title,
-          "description": article.metaDescription,
-          "datePublished": article.date,
-          "mainEntityOfPage": { "@type": "WebPage", "@id": siteUrl(localePath(`/blog/${article.slug}`, locale)) },
-          "author": { "@type": "Organization", "name": t.brandName, "url": siteUrl("/") },
-          "publisher": {
-            "@type": "Organization",
-            "name": t.brandName,
-            "url": siteUrl("/"),
-          },
-          "inLanguage": htmlLangTag(locale),
-        }}
+        jsonLd={jsonLd}
+        hebrewOnlyHreflang
       />
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-6 lg:py-10">
         {/* Breadcrumb */}
@@ -72,6 +106,7 @@ export default function BlogPost() {
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" />{article.date}</span>
                 <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" />{b.readTime(article.readTime)}</span>
+                <span>{author.name}</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {article.keywords.slice(0, 5).map(kw => (

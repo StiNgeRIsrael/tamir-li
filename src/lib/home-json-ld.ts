@@ -50,6 +50,14 @@ export function buildHomeJsonLd({ locale, brandName, homeDesc, faqs, navLabels }
         },
         address: { "@type": "PostalAddress", addressCountry: "IL" },
         areaServed: { "@type": "Country", name: "Israel" },
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "customer support",
+          email: "support@tamir.li",
+          availableLanguage: ["Hebrew", "English"],
+          areaServed: "IL",
+        },
+        // sameAs: add official social profile URLs when available
       },
       {
         "@type": "WebSite",

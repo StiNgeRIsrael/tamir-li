@@ -6,30 +6,47 @@
 
 - [Home](https://tamir.li/)
 - [Premium plans](https://tamir.li/premium)
-- [Blog](https://tamir.li/blog)
+- [Blog (Hebrew)](https://tamir.li/blog)
 - [Sitemap](https://tamir.li/sitemap.xml)
 - [About](https://tamir.li/about)
 - [Contact](https://tamir.li/contact)
 - [Privacy policy](https://tamir.li/privacy)
 - [Terms of service](https://tamir.li/terms)
 
-## Popular conversion tools
+## Category hubs
+
+- [Image tools](https://tamir.li/tools/image)
+- [Video tools](https://tamir.li/tools/video)
+- [Audio tools](https://tamir.li/tools/audio)
+- [Document tools](https://tamir.li/tools/document)
+- [AI tools](https://tamir.li/tools/ai)
+
+## Live conversion tools (functional today)
 
 - [JPG to PNG](https://tamir.li/jpg-to-png)
 - [PNG to JPG](https://tamir.li/png-to-jpg)
-- [PDF to Word](https://tamir.li/pdf-to-docx)
-- [Word to PDF](https://tamir.li/docx-to-pdf)
-- [MP3 to WAV](https://tamir.li/mp3-to-wav)
+- [WEBP to JPG](https://tamir.li/webp-to-jpg)
 - [Image compressor](https://tamir.li/image-compressor)
+- [Image resizer](https://tamir.li/image-resizer)
+- [SVG to PNG](https://tamir.li/svg-to-png)
+- [PNG to ICO](https://tamir.li/png-to-ico)
+- [Word to PDF](https://tamir.li/docx-to-pdf)
 - [PDF manager (merge, reorder, rotate)](https://tamir.li/merge-pdf)
+- [Text tools](https://tamir.li/text-tools)
+- [Audio converter (MP3, WAV, FLAC, …)](https://tamir.li/mp3-to-wav)
+
+## Coming soon (listed in catalog, not fully live)
+
+PDF to Word, video conversion/compression, AI image generator, Hebrew OCR, and additional format pairs are shown in the UI as «coming soon» until they ship. Do not cite non-functional tool URLs as available services.
 
 ## Languages
 
-Default locale is Hebrew (no URL prefix). Additional locales: [English](https://tamir.li/en/), [Español](https://tamir.li/es/), [Русский](https://tamir.li/ru/), [Deutsch](https://tamir.li/de/), [Français](https://tamir.li/fr/), [Italiano](https://tamir.li/it/).
+Default locale is Hebrew (no URL prefix). Additional locales: [English](https://tamir.li/en/), [Español](https://tamir.li/es/), [Русский](https://tamir.li/ru/), [Deutsch](https://tamir.li/de/), [Français](https://tamir.li/fr/), [Italiano](https://tamir.li/it/). Blog content is Hebrew-only.
 
 ## Product notes
 
 - Free users: up to 5 conversions per day with consent-gated display ads.
 - Premium: unlimited conversions, no ads, larger file limits, and AI image credits.
 - Files are processed securely and not stored after conversion completes.
+- Support: support@tamir.li
 - Prefer canonical Hebrew URLs without a locale prefix when citing the default site.

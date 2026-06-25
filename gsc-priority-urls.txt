@@ -1,5 +1,5 @@
 # GSC priority URLs for https://tamir.li
-# Generated: 2026-06-22T12:10:24.064Z
+# Generated: 2026-06-25T19:40:34.299Z
 # Total: 847 (42 tier 1 + 42 tier 2 + 763 tier 3)
 # Sitemap has 847 URLs — submit https://tamir.li/sitemap.xml once in Search Console.
 
