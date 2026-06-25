@@ -45,6 +45,7 @@ jobs:
           VITE_SITE_ORIGIN: ${{ vars.VITE_SITE_ORIGIN || 'https://tamir.li' }}
           VITE_API_URL: ${{ vars.VITE_API_URL || 'https://tamir.li' }}
           VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+          VITE_PAYPAL_CLIENT_ID: ${{ secrets.VITE_PAYPAL_CLIENT_ID }}
           # Direct GA4 only — do not also set VITE_GTM_ID (double-counting risk).
           VITE_GA4_ID: ${{ vars.VITE_GA4_ID || 'G-EBE6D6BPZ0' }}
           VITE_ADSTERRA_ZONE_BANNER: ${{ secrets.VITE_ADSTERRA_ZONE_BANNER }}

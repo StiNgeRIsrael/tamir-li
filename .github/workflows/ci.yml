@@ -43,6 +43,7 @@ jobs:
         env:
           VITE_SITE_ORIGIN: ${{ vars.VITE_SITE_ORIGIN || 'https://tamir.li' }}
           VITE_API_URL: ${{ vars.VITE_API_URL || 'https://tamir.li' }}
+          VITE_PAYPAL_CLIENT_ID: ${{ secrets.VITE_PAYPAL_CLIENT_ID }}
         run: npm run build:frontend
 
       - name: Upload dist
@@ -94,6 +95,7 @@ jobs:
         env:
           VITE_SITE_ORIGIN: ${{ vars.VITE_SITE_ORIGIN || 'https://tamir.li' }}
           VITE_API_URL: ${{ vars.VITE_API_URL || 'https://tamir.li' }}
+          VITE_PAYPAL_CLIENT_ID: ${{ secrets.VITE_PAYPAL_CLIENT_ID }}
         run: npm run build
 
       - name: Verify build outputs
