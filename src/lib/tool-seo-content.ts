@@ -64,6 +64,15 @@ const he: LocalizedContent = {
       { q: "האם שקיפות נשמרת?", a: "לא — JPG לא תומך בשקיפות. אזורים שקופים ב-WEBP יקבלו רקע לבן." },
     ],
   },
+  "jpg-to-webp": {
+    directAnswer:
+      "המרת JPG ל-WEBP מקטינה משמעותית את משקל התמונה תוך שמירה על איכות טובה — מצוינת לאתרים, בלוגים וטעינה מהירה. העלו JPG, לחצו המרה והורידו WEBP בדפדפן, בלי שמירה בשרת.",
+    faqs: [
+      { q: "מתי כדאי להמיר JPG ל-WEBP?", a: "לאתרים, אפליקציות וטעינה מהירה — WEBP קטן מ-JPG ב-25%–35% בממוצע. לשליחה ללקוחות ישנים — השאירו JPG." },
+      { q: "האם איכות נפגעת?", a: "WEBP דוחס ביעילות — לרוב בלתי מורגש לתמונות web. לתמונות הדפסה — JPG או PNG עדיפים." },
+      { q: "האם כל דפדפן תומך ב-WEBP?", a: "Chrome, Firefox, Edge ו-Safari מודרניים כן. דפדפנים ישנים מאוד — לא; השתמשו ב-JPG fallback." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "כמה אפשר לדחוס תמונה?", a: "תלוי בפורמט המקורי. JPG ו-WEBP ניתנים לדחיסה משמעותית; PNG פחות — אך עדיין ניתן להקטין משקל." },
@@ -201,6 +210,15 @@ const en: LocalizedContent = {
       { q: "Why convert WEBP to JPG?", a: "JPG works on every device and app — perfect for clients, CRM systems or software that can't read WEBP." },
       { q: "Does quality suffer?", a: "JPG uses slight lossy compression — usually unnoticeable for photos and everyday sharing." },
       { q: "Is transparency preserved?", a: "No — JPG has no transparency. Transparent WEBP areas get a white background." },
+    ],
+  },
+  "jpg-to-webp": {
+    directAnswer:
+      "Converting JPG to WEBP shrinks file size significantly while keeping good quality — ideal for websites, blogs and fast loading. Upload JPG, click convert, download WEBP in your browser with no server storage.",
+    faqs: [
+      { q: "When should I convert JPG to WEBP?", a: "For websites, apps and fast loading — WEBP is typically 25%–35% smaller than JPG. For legacy clients, keep JPG." },
+      { q: "Does quality suffer?", a: "WEBP compresses efficiently — usually unnoticeable for web photos. For print, prefer JPG or PNG." },
+      { q: "Do all browsers support WEBP?", a: "Modern Chrome, Firefox, Edge and Safari do. Very old browsers don't — use JPG as fallback." },
     ],
   },
   "image-compressor": {
@@ -342,6 +360,15 @@ const es: LocalizedContent = {
       { q: "¿Se conserva la transparencia?", a: "No — JPG no tiene transparencia. Las zonas transparentes de WEBP quedan con fondo blanco." },
     ],
   },
+  "jpg-to-webp": {
+    directAnswer:
+      "Convertir JPG a WEBP reduce mucho el tamaño manteniendo buena calidad — ideal para sitios web, blogs y carga rápida. Sube JPG, convierte y descarga WEBP en el navegador sin almacenamiento en servidor.",
+    faqs: [
+      { q: "¿Cuándo convertir JPG a WEBP?", a: "Para sitios web, apps y carga rápida — WEBP suele ser 25%–35% más pequeño que JPG. Para clientes antiguos, mantén JPG." },
+      { q: "¿Pierde calidad?", a: "WEBP comprime con eficiencia — normalmente imperceptible en fotos web. Para impresión, prefiere JPG o PNG." },
+      { q: "¿Todos los navegadores soportan WEBP?", a: "Chrome, Firefox, Edge y Safari modernos sí. Navegadores muy antiguos no — usa JPG como respaldo." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "¿Cuánto puedo comprimir una imagen?", a: "Depende del formato original. JPG y WEBP se comprimen significativamente; PNG menos, pero aún se puede reducir el peso." },
@@ -479,6 +506,15 @@ const fr: LocalizedContent = {
       { q: "Pourquoi convertir WEBP en JPG ?", a: "JPG fonctionne partout — idéal pour clients, CRM ou logiciels qui ne lisent pas WEBP." },
       { q: "Perte de qualité ?", a: "JPG compresse légèrement avec perte — souvent imperceptible pour photos et partage courant." },
       { q: "Transparence conservée ?", a: "Non — JPG n'a pas de transparence. Les zones transparentes WEBP passent en fond blanc." },
+    ],
+  },
+  "jpg-to-webp": {
+    directAnswer:
+      "Convertir JPG en WEBP réduit fortement la taille tout en gardant une bonne qualité — idéal pour sites web, blogs et chargement rapide. Téléversez un JPG, convertissez et téléchargez WEBP dans le navigateur, sans stockage serveur.",
+    faqs: [
+      { q: "Quand convertir JPG en WEBP ?", a: "Pour sites web, apps et chargement rapide — WEBP est souvent 25%–35% plus léger que JPG. Pour clients anciens, gardez JPG." },
+      { q: "Perte de qualité ?", a: "WEBP compresse efficacement — souvent imperceptible pour photos web. Pour l'impression, préférez JPG ou PNG." },
+      { q: "Tous les navigateurs supportent WEBP ?", a: "Chrome, Firefox, Edge et Safari modernes oui. Très vieux navigateurs non — utilisez JPG en secours." },
     ],
   },
   "image-compressor": {
@@ -620,6 +656,15 @@ const ru: LocalizedContent = {
       { q: "Сохраняется ли прозрачность?", a: "Нет — у JPG нет прозрачности. Прозрачные области WEBP получат белый фон." },
     ],
   },
+  "jpg-to-webp": {
+    directAnswer:
+      "Конвертация JPG в WEBP сильно уменьшает размер при хорошем качестве — идеально для сайтов, блогов и быстрой загрузки. Загрузите JPG, нажмите «Конвертировать» и скачайте WEBP в браузере без хранения на сервере.",
+    faqs: [
+      { q: "Когда конвертировать JPG в WEBP?", a: "Для сайтов, приложений и быстрой загрузки — WEBP обычно на 25%–35% меньше JPG. Для старых клиентов оставляйте JPG." },
+      { q: "Падает ли качество?", a: "WEBP сжимает эффективно — для веб-фото обычно незаметно. Для печати лучше JPG или PNG." },
+      { q: "Все ли браузеры поддерживают WEBP?", a: "Современные Chrome, Firefox, Edge и Safari — да. Очень старые — нет; используйте JPG как запасной вариант." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "Насколько можно сжать изображение?", a: "Зависит от исходного формата. JPG и WEBP сжимаются значительно; PNG меньше, но размер всё равно можно уменьшить." },
@@ -759,6 +804,15 @@ const de: LocalizedContent = {
       { q: "Transparenz erhalten?", a: "Nein — JPG hat keine Transparenz. Transparente WEBP-Bereiche werden weiß." },
     ],
   },
+  "jpg-to-webp": {
+    directAnswer:
+      "JPG in WEBP konvertieren verkleinert die Datei deutlich bei guter Qualität — ideal für Websites, Blogs und schnelles Laden. JPG hochladen, konvertieren klicken, WEBP im Browser herunterladen — ohne Server-Speicherung.",
+    faqs: [
+      { q: "Wann JPG zu WEBP?", a: "Für Websites, Apps und schnelles Laden — WEBP ist oft 25%–35% kleiner als JPG. Für Legacy-Kunden JPG behalten." },
+      { q: "Qualitätsverlust?", a: "WEBP komprimiert effizient — für Webfotos meist unsichtbar. Für Druck JPG oder PNG bevorzugen." },
+      { q: "Unterstützen alle Browser WEBP?", a: "Moderne Chrome, Firefox, Edge und Safari ja. Sehr alte Browser nein — JPG als Fallback." },
+    ],
+  },
   "image-compressor": {
     faqs: [
       { q: "Wie stark kann ich ein Bild komprimieren?", a: "Hängt vom Quellformat ab. JPG und WEBP lassen sich deutlich komprimieren; PNG weniger, aber die Dateigröße kann trotzdem reduziert werden." },
@@ -896,6 +950,15 @@ const it: LocalizedContent = {
       { q: "Perché convertire WEBP in JPG?", a: "JPG funziona ovunque — ideale per clienti, CRM o software senza supporto WEBP." },
       { q: "Perdita di qualità?", a: "JPG comprime leggermente con perdita — di solito impercettibile per foto e uso quotidiano." },
       { q: "Trasparenza conservata?", a: "No — JPG non ha trasparenza. Le aree trasparenti WEBP avranno sfondo bianco." },
+    ],
+  },
+  "jpg-to-webp": {
+    directAnswer:
+      "Convertire JPG in WEBP riduce molto la dimensione mantenendo buona qualità — ideale per siti web, blog e caricamento rapido. Carica JPG, clicca converti e scarica WEBP nel browser, senza archiviazione sul server.",
+    faqs: [
+      { q: "Quando convertire JPG in WEBP?", a: "Per siti web, app e caricamento rapido — WEBP è spesso 25%–35% più piccolo di JPG. Per clienti legacy, mantieni JPG." },
+      { q: "Perdita di qualità?", a: "WEBP comprime in modo efficiente — di solito impercettibile per foto web. Per stampa, preferisci JPG o PNG." },
+      { q: "Tutti i browser supportano WEBP?", a: "Chrome, Firefox, Edge e Safari moderni sì. Browser molto vecchi no — usa JPG come fallback." },
     ],
   },
   "image-compressor": {

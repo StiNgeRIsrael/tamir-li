@@ -1,6 +1,6 @@
 import { Link, useParams, Navigate } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
-import { SEOHead } from "@/components/SEOHead";
+import { SEOHead, toolCategoryOgImage } from "@/components/SEOHead";
 import {
   tools,
   categoryIcons,
@@ -74,6 +74,7 @@ export default function CategoryHubPage() {
       <SEOHead
         title={hub.seoTitle(categoryLabel)}
         description={hub.seoDesc(categoryLabel)}
+        ogImage={toolCategoryOgImage(category)}
         jsonLd={jsonLd}
       />
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-8 lg:py-12 space-y-8">

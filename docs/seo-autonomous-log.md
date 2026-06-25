@@ -318,3 +318,43 @@ Added slug-level blocks (7 locales each, with `directAnswer` + 3 FAQs):
 4. Re-check indexed count in **48?72h** after IndexNow + sitemap refresh.
 5. Expand manifest to **es/ru/de/fr/it** locale paths (he + en only today).
 
+---
+
+## Iteration 6 ? Slug FAQ deploy + GSC re-check ? 2026-06-26
+
+**Prior push:** `239d1ef` ? *Add slug-specific SEO FAQs for mp3-to-wav and docx-to-pdf.* (126 lines, 7 locales each; iteration 5 log merged in same commit.)
+
+**Note:** `ac379fd6` not found in repo history (likely agent session ID). Iteration 5 manifest/GSC work was already complete at `348b544` + `239d1ef`.
+
+### GSC MCP (`sc-domain:tamir.li`) ? `inspect_url_enhanced`
+
+| URL | Verdict | Coverage | Last crawled | Delta vs Iter 5 |
+|-----|---------|----------|--------------|-----------------|
+| `https://tamir.li/jpg-to-png` | NEUTRAL | **URL is unknown to Google** | ? | **Regressed** vs Iter 5 interim ?Discovered ? not indexed? (GSC state can fluctuate pre-crawl) |
+
+**Takeaway:** Still **not indexed**; Hebrew tier-1 tool URL not yet in stable discovery queue. Bot prerender live (`81` manifest routes); indexing blocked on sitemap refresh (GSC still **847** vs prod **337**) + `INDEXNOW_KEY`.
+
+### This iteration changes
+
+| Change | Files | Rationale |
+|--------|-------|-----------|
+| Category hub `og:image` | `CategoryHubPage.tsx` | `/tools/{category}` now uses category SVG OG images (same as tool pages) |
+| `jpg-to-webp` slug FAQs | `tool-seo-content.ts` | Remaining sitemap image pair; `directAnswer` + 3 FAQs × 7 locales |
+
+### Verification
+
+- `npm test` ? 142 passed
+- `npm run build` ? success (337 sitemap URLs, 81 manifest routes)
+
+### Git / deploy
+
+- **Commit:** *(this iteration)* ? category hub OG + jpg-to-webp slug SEO
+- Push to `origin/main` ? Plesk auto-deploy (~5 min)
+
+### Next loop priorities
+
+1. User: set **`INDEXNOW_KEY`** and ping `/jpg-to-png`, `/jpg-to-webp`, `/en/jpg-to-png`, category hubs.
+2. GSC: resubmit sitemap (**847 ? 337**).
+3. Add slug content for **`png-to-webp`**, **`svg-to-png`** (remaining sitemap image pairs).
+4. Re-inspect `/jpg-to-png` in **48?72h** after IndexNow + sitemap refresh.
+
