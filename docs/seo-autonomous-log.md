@@ -320,26 +320,62 @@ Added slug-level blocks (7 locales each, with `directAnswer` + 3 FAQs):
 
 ---
 
-## Iteration 6 ? Slug FAQ deploy + GSC re-check ? 2026-06-26
+## Iteration 6 ? GSC tier-1 batch + slug FAQs + category meta ? 2026-06-26
 
-**Prior push:** `239d1ef` ? *Add slug-specific SEO FAQs for mp3-to-wav and docx-to-pdf.* (126 lines, 7 locales each; iteration 5 log merged in same commit.)
+**Prior push ref:** `239d1ef` / `6e6bddb` / `7d3fe01`. **Manifest ref:** `24859b3` (81 routes live).
 
-**Note:** `ac379fd6` not found in repo history (likely agent session ID). Iteration 5 manifest/GSC work was already complete at `348b544` + `239d1ef`.
+### USER ACTION REQUIRED
 
-### GSC MCP (`sc-domain:tamir.li`) ? `inspect_url_enhanced`
+> **Resubmit sitemap in GSC UI:** [Search Console ? Sitemaps](https://search.google.com/search-console/sitemaps) ? `https://tamir.li/sitemap.xml` ? **Resubmit** (or remove and re-add). GSC still reports **847 URLs** (last read 2026-06-25); production sitemap is **337 URLs** with hreflang `xhtml:link` alternates. This cannot be reliably automated via MCP ? manual resubmit triggers Google to re-fetch the pruned sitemap and hreflang graph.
 
-| URL | Verdict | Coverage | Last crawled | Delta vs Iter 5 |
-|-----|---------|----------|--------------|-----------------|
-| `https://tamir.li/jpg-to-png` | NEUTRAL | **URL is unknown to Google** | ? | **Regressed** vs Iter 5 interim ?Discovered ? not indexed? (GSC state can fluctuate pre-crawl) |
+Also: set **`INDEXNOW_KEY`** + host `{key}.txt`, then `npm run indexnow` for tier-1 URLs.
 
-**Takeaway:** Still **not indexed**; Hebrew tier-1 tool URL not yet in stable discovery queue. Bot prerender live (`81` manifest routes); indexing blocked on sitemap refresh (GSC still **847** vs prod **337**) + `INDEXNOW_KEY`.
+### GSC MCP (`sc-domain:tamir.li`)
 
-### This iteration changes
+**`check_indexing_issues` ? tier-1 sample (first 10 URLs):**
 
-| Change | Files | Rationale |
-|--------|-------|-----------|
-| Category hub `og:image` | `CategoryHubPage.tsx` | `/tools/{category}` now uses category SVG OG images (same as tool pages) |
-| `jpg-to-webp` slug FAQs | `tool-seo-content.ts` | Remaining sitemap image pair; `directAnswer` + 3 FAQs × 7 locales |
+| URL | Status |
+|-----|--------|
+| `https://tamir.li/` | **Indexed** |
+| `https://tamir.li/en` | **Indexed** |
+| `https://tamir.li/es` | Unknown to Google |
+| `https://tamir.li/ru` | Discovered ? currently not indexed |
+| `https://tamir.li/de` | Unknown to Google |
+| `https://tamir.li/fr` | Unknown to Google |
+| `https://tamir.li/it` | Discovered ? currently not indexed |
+| `https://tamir.li/premium` | Unknown to Google |
+| `https://tamir.li/en/premium` | Discovered ? currently not indexed |
+| `https://tamir.li/es/premium` | Unknown to Google |
+
+**Summary:** 2 indexed / 8 not indexed. No canonical conflicts or robots blocks.
+
+**`batch_url_inspection` ? tool URLs (delta vs Iter 5):**
+
+| URL | Verdict | Coverage | Delta vs Iter 5 |
+|-----|---------|----------|-----------------|
+| `https://tamir.li/jpg-to-png` | NEUTRAL | **Discovered ? currently not indexed** | **Improved** (was Unknown to Google) |
+| `https://tamir.li/en/jpg-to-png` | NEUTRAL | Discovered ? currently not indexed | No change |
+| `https://tamir.li/tools/image` | NEUTRAL | Unknown to Google | No change |
+| `https://tamir.li/wav-to-mp3` | NEUTRAL | Unknown to Google | New sample |
+| `https://tamir.li/merge-pdf` | NEUTRAL | Unknown to Google | New sample |
+
+**Takeaway:** Hebrew `/jpg-to-png` entered discovery queue (progress). Still **2 indexed URLs** total. Sitemap stale at 847 in GSC blocks full crawl refresh.
+
+### Content changes (this iteration)
+
+| Slug / area | Status |
+|-------------|--------|
+| `wav-to-mp3` | **Added** directAnswer + FAQs ? 7 locales (`7d3fe01`) |
+| `merge-pdf` | **Added** directAnswer ? 7 locales (`7d3fe01`) |
+| `jpg-to-webp`, `png-to-webp`, `svg-to-png` | Already present (`6e6bddb` and prior) |
+| Category hub meta | **Added** `seoDescByCategory` per category (he/en) |
+| GSC docs | hreflang note on sitemap resubmit after prune |
+
+### Duplicate FAQ commit check (`5ac4db14`)
+
+- Commit `5ac4db14` **not found** in repo (likely typo or external branch).
+- Prior FAQ localization commits (`5e5186c`, `0a7773a`, etc.) are **already on `main`**.
+- No duplicate merge needed ? slug-level blocks complement tool-level FAQs.
 
 ### Verification
 
@@ -348,13 +384,75 @@ Added slug-level blocks (7 locales each, with `directAnswer` + 3 FAQs):
 
 ### Git / deploy
 
-- **Commit:** *(this iteration)* ? category hub OG + jpg-to-webp slug SEO
+- **Commits:** `6e6bddb` (category hub OG + jpg-to-webp), `7d3fe01` (wav-to-mp3 + merge-pdf directAnswer), follow-up (category meta + docs + log)
 - Push to `origin/main` ? Plesk auto-deploy (~5 min)
 
 ### Next loop priorities
 
-1. User: set **`INDEXNOW_KEY`** and ping `/jpg-to-png`, `/jpg-to-webp`, `/en/jpg-to-png`, category hubs.
-2. GSC: resubmit sitemap (**847 ? 337**).
-3. Add slug content for **`png-to-webp`**, **`svg-to-png`** (remaining sitemap image pairs).
-4. Re-inspect `/jpg-to-png` in **48?72h** after IndexNow + sitemap refresh.
+1. **USER: resubmit sitemap** in GSC (847 ? 337 + hreflang).
+2. **USER: set INDEXNOW_KEY** and ping tier-1 + `/jpg-to-png`, `/en/jpg-to-png`, `/wav-to-mp3`, `/merge-pdf`.
+3. Request indexing for discovered `/jpg-to-png` and `/en/jpg-to-png`.
+4. Re-check indexed count in **48?72h** after sitemap refresh.
+5. Expand seo-manifest to es/ru/de/fr/it locale paths.
+
+---
+
+## Iteration 7 ? GSC tier-1 batch + deploy verify ? 2026-06-26
+
+**Prior push:** `6e6bddb` (jpg-to-webp, category hub OG). **Overlap:** `7d3fe01` already on `origin/main` with `png-to-webp`, `svg-to-png`, `wav-to-mp3`, `merge-pdf` slug SEO (`a438afd1` not found in git ? parallel agent session).
+
+### USER ACTION REQUIRED
+
+> **Resubmit sitemap in GSC UI:** [Search Console ? Sitemaps](https://search.google.com/search-console/sitemaps) ? `https://tamir.li/sitemap.xml` ? **Resubmit**. GSC still **847 URLs** vs prod **337**.
+
+Also: set **`INDEXNOW_KEY`** + host `{key}.txt`, then `npm run indexnow` for tier-1 + `/png-to-webp`, `/svg-to-png`, `/jpg-to-png`.
+
+### Production deploy verify (post-`6e6bddb` / `7d3fe01`)
+
+| Signal | Result |
+|--------|--------|
+| `/health` | **200** |
+| Static JSON-LD on `/` | **yes** |
+| Sitemap URLs | **337** (hreflang) |
+| `/jpg-to-webp` prerender | **yes** |
+| `/png-to-webp` prerender | **yes** |
+| `/tools/image` category OG | **yes** |
+
+**Verdict:** Latest SEO deploy confirmed live.
+
+### GSC MCP ? `batch_url_inspection` (first 8 tier-1 URLs)
+
+| URL | Verdict | Coverage | Last crawled |
+|-----|---------|----------|--------------|
+| `https://tamir.li/` | **PASS** | Submitted and indexed | 2026-06-25 |
+| `https://tamir.li/en` | **PASS** | Submitted and indexed | 2026-06-22 |
+| `https://tamir.li/es` | NEUTRAL | Discovered ? currently not indexed | Never |
+| `https://tamir.li/ru` | NEUTRAL | Discovered ? currently not indexed | Never |
+| `https://tamir.li/de` | NEUTRAL | URL is unknown to Google | Never |
+| `https://tamir.li/fr` | NEUTRAL | URL is unknown to Google | Never |
+| `https://tamir.li/it` | NEUTRAL | URL is unknown to Google | Never |
+| `https://tamir.li/premium` | NEUTRAL | URL is unknown to Google | Never |
+
+**Summary:** **2 indexed / 6 not indexed**. `/es` and `/ru` in discovery queue; `/de`, `/fr`, `/it`, `/premium` unknown. No canonical/robots issues.
+
+### Slug SEO (`png-to-webp`, `svg-to-png`)
+
+Already shipped in `7d3fe01` ? directAnswer + 3 FAQs × 7 locales. Both in sitemap and functional (client-side conversion). No new code changes this iteration.
+
+### Verification
+
+- `npm test` ? 142 passed
+- `npm run build` ? success (337 sitemap URLs, 81 manifest routes)
+
+### Git / deploy
+
+- **Commit:** *(this iteration)* ? iteration 7 log
+- **Code already on main:** `7d3fe01`
+
+### Next loop priorities
+
+1. User: **resubmit sitemap** + **INDEXNOW_KEY** (blocking).
+2. GSC: request indexing for `/es`, `/ru` (discovered).
+3. Re-inspect tier-1 in **48?72h** post-sitemap refresh.
+4. Expand seo-manifest to es/ru/de/fr/it paths.
 
