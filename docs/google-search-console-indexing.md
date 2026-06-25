@@ -1,5 +1,7 @@
 # Google Search Console indexing for Tamir.li
 
+
+**Deploy:** Pushing to main on GitHub triggers an automatic build on [tamir.li](https://tamir.li) (Plesk Node.js); allow ~5 minutes before production reflects new sitemap/SEO assets.
 This site has **~337 URLs** in the pruned sitemap (functional tools + category hubs + Hebrew-only blog; 7 locales for tools/static pages). Previously ~847 URLs when every tool slug and blog locale was included. The sitemap is generated at build time from the same route list as the app (`src/lib/sitemap-paths.ts` + `src/lib/tool-availability.ts`).
 
 **Per-URL “Request indexing” in Search Console often speeds up discovery for priority pages**, but Google does **not** offer a public bulk API for everyday site owners to request indexing for every URL. Manual inspection plus a correct sitemap is the practical workflow.
