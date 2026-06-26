@@ -3,6 +3,7 @@ import { BrandWordmark } from "@/components/BrandWordmark";
 import { useLocale, localePath } from "@/lib/i18n";
 import { CATEGORY_HUB_CATEGORIES, getCategoryHubPath } from "@/lib/tools-data";
 import { getAlternativePath } from "@/lib/alternative-pages-data";
+import { getUseCasePath } from "@/lib/use-case-pages-data";
 import { enTranslations } from "@/lib/translations/en";
 
 export function SiteFooter() {
@@ -31,6 +32,20 @@ export function SiteFooter() {
             <li><Link to={localePath("/pdf-to-docx", locale)} className="hover:text-foreground transition-colors">PDF → Word</Link></li>
             <li><Link to={localePath("/docx-to-pdf", locale)} className="hover:text-foreground transition-colors">Word → PDF</Link></li>
             <li><Link to={localePath("/merge-pdf", locale)} className="hover:text-foreground transition-colors">{t.toolNames["merge-pdf"]}</Link></li>
+            {(locale === "he" || locale === "en") && (
+              <>
+                <li>
+                  <Link to={localePath(getUseCasePath("convert-to-pdf"), locale)} className="hover:text-foreground transition-colors">
+                    {(t.useCasePage?.["convert-to-pdf"] as { title?: string } | undefined)?.title ?? "Convert to PDF"}
+                  </Link>
+                </li>
+                <li>
+                  <Link to={localePath(getUseCasePath("pdf-compress"), locale)} className="hover:text-foreground transition-colors">
+                    {(t.useCasePage?.["pdf-compress"] as { title?: string } | undefined)?.title ?? "Compress PDF"}
+                  </Link>
+                </li>
+              </>
+            )}
             <li><Link to={localePath("/mp3-to-wav", locale)} className="hover:text-foreground transition-colors">MP3 → WAV</Link></li>
             <li><Link to={localePath("/text-tools", locale)} className="hover:text-foreground transition-colors">{t.toolNames["text-tools"]}</Link></li>
           </ul>
@@ -75,6 +90,13 @@ export function SiteFooter() {
                   className="hover:text-foreground transition-colors"
                 >
                   {f.freeconvertAlt ?? enTranslations.footer.freeconvertAlt}
+                </Link>
+              </li>
+            )}
+            {(locale === "he" || locale === "en") && (
+              <li>
+                <Link to={localePath("/widget", locale)} className="hover:text-foreground transition-colors">
+                  {f.embedWidget ?? enTranslations.footer.embedWidget}
                 </Link>
               </li>
             )}

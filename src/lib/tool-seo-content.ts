@@ -92,7 +92,10 @@ const he: LocalizedContent = {
     ],
   },
   "image-compressor": {
+    directAnswer:
+      "הקטנת קבצים (תמונות) אונליין — דחסו JPG, PNG או WEBP בדפדפן וחסכו עד 80% ממשקל הקובץ. אידיאלי לפני שליחה במייל, וואטסאפ או העלאה לאתר. העלו תמונה, בחרו רמת דחיסה והורידו — בחינם, בלי שמירה בשרת.",
     faqs: [
+      { q: "איך מקטינים קבצים אונליין?", a: "לתמונות — העלו JPG, PNG או WEBP לכלי הדחיסה, בחרו רמת איכות והורידו. ל-PDF — דחסו תמונות לפני ההמרה, או השתמשו במדריך הקטנת PDF באתר." },
       { q: "כמה אפשר לדחוס תמונה?", a: "תלוי בפורמט המקורי. JPG ו-WEBP ניתנים לדחיסה משמעותית; PNG פחות — אך עדיין ניתן להקטין משקל." },
       { q: "האם הדחיסה פוגעת באיכות?", a: "הכלי מאזן בין גודל לאיכות. לרוב האתרים, דחיסה בינונית כמעט בלתי מורגשת לעין." },
       { q: "לאיזה פורמט כדאי לדחוס?", a: "לתמונות באתר — WEBP או JPG. לגרפיקה עם שקיפות — PNG דחוס." },
@@ -159,7 +162,10 @@ const he: LocalizedContent = {
     ],
   },
   "word-to-pdf": {
+    directAnswer:
+      "המרת קבצים ל-PDF חינם — העלו Word (DOC/DOCX), לחצו המרה והורידו PDF עם עיצוב קבוע בכל מכשיר. מושלם לשליחה במייל, הדפסה וחתימה דיגיטלית. בדפדפן, בלי תוכנה ובלי שמירה בשרת.",
     faqs: [
+      { q: "איך ממירים קבצים ל-PDF בחינם?", a: "העלו קובץ Word (DOC או DOCX), לחצו המרה והורידו PDF — עד 5 פעולות ביום בחינם, בלי הרשמה." },
       { q: "למה להמיר Word ל-PDF?", a: "PDF שומר על עיצוב קבוע בכל מכשיר — מושלם לשליחה, הדפסה וחתימה דיגיטלית." },
       { q: "האם גופנים נשמרים?", a: "כן — הגופנים מוטמעים ב-PDF כך שהמסמך נראה זהה בכל מקום." },
       { q: "DOC או DOCX?", a: "שני הפורמטים נתמכים. DOCX מומלץ לתוצאה מיטבית." },
@@ -167,7 +173,7 @@ const he: LocalizedContent = {
   },
   "docx-to-pdf": {
     directAnswer:
-      "המרת DOCX ל-PDF שומרת על עיצוב, גופנים וטבלאות בכל מכשיר — מושלמת לשליחה ללקוחות, הגשות וחתימה דיגיטלית. העלו DOCX, לחצו המרה והורידו PDF מיד — בדפדפן, בלי שמירה בשרת.",
+      "המרת קבצים ל-PDF — DOCX ל-PDF שומרת על עיצוב, גופנים וטבלאות בכל מכשיר. מושלמת לשליחה ללקוחות, הגשות וחתימה דיגיטלית. העלו DOCX, לחצו המרה והורידו PDF מיד — בדפדפן, בלי שמירה בשרת.",
     faqs: [
       { q: "למה להמיר DOCX ל-PDF?", a: "PDF נראה זהה בכל מחשב וטלפון — Word עלול לשנות עיצוב לפי גרסה וגופנים מותקנים." },
       { q: "האם גופנים וטבלאות נשמרים?", a: "כן — הגופנים מוטמעים ב-PDF והטבלאות נשארות במקום. מתאים למסמכים רשמיים וחוזים." },
@@ -178,6 +184,7 @@ const he: LocalizedContent = {
     directAnswer:
       "מיזוג PDF מאחד מספר קבצים לקובץ אחד — סדרו עמודים בגרירה, סובבו בודדים והורידו PDF מסודר. מושלם לחוזים, דוחות וחשבוניות. בדפדפן, בלי שמירה בשרת.",
     faqs: [
+      { q: "איך מקטינים קובץ PDF?", a: "דחסו תמונות לפני ההמרה ל-PDF, הסירו עמודים מיותרים במנהל PDF, והימנעו מסריקות ברזולוציה גבוהה מדי. כלי דחיסת PDF ייעודי בפיתוח." },
       { q: "איך ממזגים כמה קבצי PDF?", a: "העלו את כל הקבצים, סדרו את העמודים בגרירה, ולחצו מיזוג — תקבלו PDF אחד." },
       { q: "האם אפשר לסובב עמודים?", a: "כן — ניתן לסובב עמודים בודדים לפני ההורדה." },
       { q: "האם יש מגבלת קבצים?", a: "בתוכנית החינמית — עד 5 פעולות ביום. בפרימיום — ללא הגבלה." },
@@ -269,7 +276,10 @@ const en: LocalizedContent = {
     ],
   },
   "image-compressor": {
+    directAnswer:
+      "Reduce file size online — compress JPG, PNG or WEBP in your browser and save up to 80% of file weight. Ideal before email, WhatsApp or web upload. Upload, pick compression level, download — free, no server storage.",
     faqs: [
+      { q: "How do I reduce file size online?", a: "For images — upload JPG, PNG or WEBP to the compressor, choose quality and download. For PDFs — compress images before converting, or see our PDF compression guide." },
       { q: "How much can I compress an image?", a: "Depends on the source format. JPG and WEBP compress significantly; PNG less so but can still be reduced." },
       { q: "Will compression hurt quality?", a: "The tool balances size and quality. For most websites, moderate compression is barely noticeable." },
       { q: "Which format should I compress to?", a: "For web photos — WEBP or JPG. For graphics with transparency — compressed PNG." },
@@ -336,7 +346,10 @@ const en: LocalizedContent = {
     ],
   },
   "word-to-pdf": {
+    directAnswer:
+      "Convert files to PDF free — upload Word (DOC/DOCX), click convert and download a PDF with fixed layout on any device. Perfect for email, printing and e-signatures. In your browser, no software, no server storage.",
     faqs: [
+      { q: "How do I convert files to PDF for free?", a: "Upload a Word file (DOC or DOCX), click convert and download PDF — up to 5 free actions per day, no signup." },
       { q: "Why convert Word to PDF?", a: "PDF locks layout on any device — perfect for sending, printing and digital signatures." },
       { q: "Are fonts preserved?", a: "Yes — fonts are embedded in the PDF so the document looks identical everywhere." },
       { q: "DOC or DOCX?", a: "Both formats are supported. DOCX is recommended for best results." },
@@ -344,7 +357,7 @@ const en: LocalizedContent = {
   },
   "docx-to-pdf": {
     directAnswer:
-      "Converting DOCX to PDF locks layout, fonts and tables on any device — perfect for clients, submissions and e-signatures. Upload DOCX, click convert, download PDF instantly — in your browser, with no server storage.",
+      "Convert files to PDF — DOCX to PDF locks layout, fonts and tables on any device. Perfect for clients, submissions and e-signatures. Upload DOCX, click convert, download PDF instantly — in your browser, with no server storage.",
     faqs: [
       { q: "Why convert DOCX to PDF?", a: "PDF looks identical on every computer and phone — Word may shift layout depending on version and installed fonts." },
       { q: "Are fonts and tables preserved?", a: "Yes — fonts are embedded and tables stay in place. Ideal for official documents and contracts." },
@@ -355,6 +368,7 @@ const en: LocalizedContent = {
     directAnswer:
       "Merge PDF combines multiple files into one — reorder pages by drag-and-drop, rotate individual pages and download a single organized PDF. Perfect for contracts, reports and invoices. In your browser, no server storage.",
     faqs: [
+      { q: "How do I reduce PDF file size?", a: "Compress images before converting to PDF, remove unnecessary pages in the PDF manager, and avoid high-resolution scans. A dedicated PDF compressor is in development." },
       { q: "How do I merge PDF files?", a: "Upload all files, reorder pages by drag-and-drop, then merge — you get one PDF." },
       { q: "Can I rotate pages?", a: "Yes — rotate individual pages before downloading." },
       { q: "Is there a file limit?", a: "Free plan: up to 5 operations per day. Premium: unlimited." },

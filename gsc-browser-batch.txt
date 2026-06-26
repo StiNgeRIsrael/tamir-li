@@ -1,0 +1,30 @@
+# Browser agent: URL Inspection → Request indexing (sc-domain:tamir.li)
+# Generated: 2026-06-26 from MCP batch_url_inspection (tier-1 batch 1)
+# Max ~15/day — stop after these unless quota remains
+
+# Keyword Planner tier-1 (הקטנת קבצי pdf 5K/mo) — added 2026-06-26
+https://tamir.li/use-cases/pdf-compress
+https://tamir.li/en/use-cases/pdf-compress
+https://tamir.li/use-cases/convert-to-pdf
+https://tamir.li/en/use-cases/convert-to-pdf
+https://tamir.li/docx-to-pdf
+https://tamir.li/image-compressor
+https://tamir.li/widget
+https://tamir.li/en/widget
+https://tamir.li/alternatives/freeconvert
+
+https://tamir.li/premium
+https://tamir.li/about
+https://tamir.li/en/premium
+https://tamir.li/en/about
+https://tamir.li/es
+https://tamir.li/ru
+https://tamir.li/de
+https://tamir.li/es/premium
+https://tamir.li/fr
+https://tamir.li/it
+https://tamir.li/de/premium
+https://tamir.li/es/about
+https://tamir.li/ru/about
+https://tamir.li/fr/about
+https://tamir.li/ru/premium

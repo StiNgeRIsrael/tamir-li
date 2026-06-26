@@ -4168,6 +4168,38 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://tamir.li/use-cases/pdf-compress</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/use-cases/pdf-compress" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/use-cases/pdf-compress" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/use-cases/pdf-compress" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/use-cases/pdf-compress</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/use-cases/pdf-compress" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/use-cases/pdf-compress" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/use-cases/pdf-compress" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/use-cases/convert-to-pdf</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/use-cases/convert-to-pdf" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/use-cases/convert-to-pdf" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/use-cases/convert-to-pdf" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/use-cases/convert-to-pdf</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/use-cases/convert-to-pdf" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/use-cases/convert-to-pdf" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/use-cases/convert-to-pdf" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://tamir.li/blog/how-to-convert-jpg-to-png</loc>
     <lastmod>2026-02-15</lastmod>
     <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/blog/how-to-convert-jpg-to-png" />

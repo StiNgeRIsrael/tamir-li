@@ -421,6 +421,7 @@ export const enTranslations = {
     copyright: (year: number) => `© ${year} Tamir.li • All rights reserved`,
     categoryHubs: "Tool categories",
     freeconvertAlt: "FreeConvert alternative",
+    embedWidget: "Embed widget",
   },
   useCasePage: {
     "whatsapp-image-compress": {
@@ -467,6 +468,52 @@ export const enTranslations = {
         "/image-compressor": "Image compressor",
       },
       ctaButton: "Convert Word to PDF",
+    },
+    "pdf-compress": {
+      seoTitle: "Compress PDF Files — Guide & Free Tools | Tamir.li",
+      seoDesc:
+        "How to reduce PDF file size before email or upload? Guide to compressing PDFs — image compression, page merge and free browser tools.",
+      title: "Compress PDF Files",
+      intro:
+        "Reducing PDF file size is one of the most common searches — especially before email attachments or online submissions. A dedicated PDF compressor is in development; meanwhile you can significantly shrink PDFs with existing site tools.",
+      stepsTitle: "How to reduce PDF size today",
+      steps: [
+        "If the PDF is built from images — compress each image before converting to PDF (JPG or WEBP instead of PNG).",
+        "If you have several files — merge into one PDF with the PDF manager and remove unnecessary pages.",
+        "Convert Word documents to PDF directly (instead of scanning) — smaller file, better quality.",
+        "Check final size; if still above 10 MB — compress images again or remove pages.",
+      ],
+      toolsTitle: "Relevant tools",
+      toolLabels: {
+        "/image-compressor": "Image compressor (reduce file size)",
+        "/merge-pdf": "PDF manager — merge & reorder",
+        "/docx-to-pdf": "Word to PDF",
+      },
+      cta: "Start with image compression — the first step when your PDF is built from photos.",
+      ctaButton: "Compress image now",
+    },
+    "convert-to-pdf": {
+      seoTitle: "Convert Files to PDF Free — Guide | Tamir.li",
+      seoDesc:
+        "How to convert files to PDF for free? Word to PDF, merge documents and browser tools — no software, no signup.",
+      title: "Convert Files to PDF",
+      intro:
+        "Need to convert files to PDF? On tamir.li you can convert Word (DOC/DOCX) to PDF in seconds, merge multiple files into one PDF, and compress images before converting — all in your browser, free (up to 5 actions per day).",
+      stepsTitle: "Recommended steps",
+      steps: [
+        "Prepare your document in Word (DOCX) — recommended for best results.",
+        "Open the Word to PDF tool, upload and click convert.",
+        "If you have several documents — merge them into one PDF with the PDF manager.",
+        "Download the final PDF — ready to send, print or submit.",
+      ],
+      toolsTitle: "Relevant tools",
+      toolLabels: {
+        "/docx-to-pdf": "Word to PDF (DOCX)",
+        "/word-to-pdf": "Word to PDF (DOC/DOCX)",
+        "/merge-pdf": "PDF manager — merge",
+      },
+      cta: "Start with Word to PDF — drag a file, download PDF in seconds.",
+      ctaButton: "Convert to PDF now",
     },
   },
 
@@ -548,9 +595,9 @@ export const enTranslations = {
     readingMinutes: "min read",
   },
   seo: {
-    homeTitle: "Tamir.li — Free Online File Converter (Israel)",
+    homeTitle: "Tamir.li — Free File Converter & PDF Tools (Israel)",
     homeDesc:
-      "Tamir.li — free file converter: JPG, PNG, PDF, MP4, MP3 and more. Drag, pick a format, download. 5 free conversions/day. Hebrew-first, built for Israel.",
+      "Tamir.li — free file converter: convert to PDF, compress files, JPG, PNG, MP4, MP3 and more. Drag, pick a format, download. 5 free conversions/day. Hebrew-first.",
   },
   install: {
     title: "Download Tamirly",
