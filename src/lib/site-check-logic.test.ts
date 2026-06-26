@@ -15,7 +15,7 @@ describe("site-check logic", () => {
 
   it("keeps stub tools non-functional", () => {
     const functional = new Set(getFunctionalToolIds());
-    expect(functional.has("ai-image-generator")).toBe(false);
+    expect(functional.has("video-compressor")).toBe(false);
   });
 
   it("routes document tools through client conversion", () => {
@@ -23,12 +23,13 @@ describe("site-check logic", () => {
     expect(usesClientDocumentConversion("pdf-to-word")).toBe(true);
   });
 
-  it("tracks twelve functional tools including video and pdf-to-word", () => {
+  it("tracks thirteen functional tools including AI image gen", () => {
     const ids = getFunctionalToolIds();
     expect(ids).toContain("word-to-pdf");
     expect(ids).toContain("pdf-to-word");
     expect(ids).toContain("video-converter");
     expect(ids).toContain("hebrew-ocr");
-    expect(ids.length).toBe(12);
+    expect(ids).toContain("ai-image-generator");
+    expect(ids.length).toBe(13);
   });
 });

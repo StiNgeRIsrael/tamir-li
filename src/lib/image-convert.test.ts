@@ -110,10 +110,11 @@ describe("tool-availability", () => {
     expect(isToolFunctional("word-to-pdf")).toBe(true);
     expect(isToolFunctional("pdf-to-word")).toBe(true);
     expect(isToolFunctional("hebrew-ocr")).toBe(true);
+    expect(isToolFunctional("ai-image-generator")).toBe(true);
   });
 
-  it("keeps mock/stub tools non-functional", () => {
-    expect(isToolFunctional("ai-image-generator")).toBe(false);
+  it("keeps unshipped premium tools non-functional", () => {
+    expect(isToolFunctional("video-compressor")).toBe(false);
   });
 
   it("functional list matches expectations", () => {
@@ -124,6 +125,7 @@ describe("tool-availability", () => {
     expect(ids).toContain("word-to-pdf");
     expect(ids).toContain("pdf-to-word");
     expect(ids).toContain("hebrew-ocr");
-    expect(ids.length).toBe(12);
+    expect(ids).toContain("ai-image-generator");
+    expect(ids.length).toBe(13);
   });
 });

@@ -15,6 +15,7 @@ const FUNCTIONAL_TOOL_IDS = new Set([
   "video-converter",
   "word-to-pdf",
   "pdf-to-word",
+  "ai-image-generator",
 ]);
 
 export function isToolFunctional(toolId: string): boolean {
