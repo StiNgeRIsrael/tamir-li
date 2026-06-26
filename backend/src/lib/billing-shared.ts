@@ -30,8 +30,17 @@ export const CHECKOUT_PLANS: CheckoutPlan[] = [
 ];
 
 export function getFrontendOrigin(): string {
+  const explicit =
+    process.env.FRONTEND_URL?.trim() ||
+    process.env.SITE_URL?.trim() ||
+    process.env.VITE_SITE_ORIGIN?.trim();
+  if (explicit) return explicit.replace(/\/$/, '');
+
   const fromCors = process.env.CORS_ORIGIN?.split(',')[0]?.trim();
-  return fromCors || 'http://localhost:8080';
+  if (fromCors) return fromCors.replace(/\/$/, '');
+
+  if (process.env.NODE_ENV === 'production') return 'https://tamir.li';
+  return 'http://localhost:8080';
 }
 
 export function isActivePremium(

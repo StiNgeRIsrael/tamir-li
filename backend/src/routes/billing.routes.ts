@@ -35,6 +35,8 @@ import {
   capturePayPalOrder,
   createPayPalOrder,
   createPayPalSubscription,
+  formatBillingCheckoutError,
+  getPayPalBillingReadiness,
   getPayPalManageUrl,
   getPayPalSubscription,
   ilsToAgorot,
@@ -458,8 +460,13 @@ router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
     res.json({ url: approvalUrl, provider: 'paypal' });
   } catch (e) {
     console.error('[billing/checkout]', e);
-    res.status(500).json({ error: 'CHECKOUT_FAILED', message: 'Could not start checkout' });
+    const { message, status } = formatBillingCheckoutError(e);
+    res.status(status).json({ error: 'CHECKOUT_FAILED', message });
   }
+});
+
+router.get('/readiness', (_req: Request, res: Response) => {
+  res.json(getPayPalBillingReadiness());
 });
 
 router.post('/paypal/activate-subscription', requireAuth, async (req: Request, res: Response) => {

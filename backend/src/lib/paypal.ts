@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { getFrontendOrigin } from './billing-shared';
 
 const SANDBOX_BASE = 'https://api-m.sandbox.paypal.com';
 const LIVE_BASE = 'https://api-m.paypal.com';
@@ -215,4 +216,79 @@ export function ilsToAgorot(value: string | undefined): number {
   const n = parseFloat(value);
   if (Number.isNaN(n)) return 0;
   return Math.round(n * 100);
+}
+
+/** Map PayPal / config errors to a safe client message and HTTP status. */
+export function formatBillingCheckoutError(e: unknown): { message: string; status: number } {
+  const fallback = {
+    message: 'Could not start checkout',
+    status: 500,
+  };
+
+  if (!(e instanceof Error)) return fallback;
+
+  const msg = e.message;
+
+  if (msg.includes('PayPal auth failed')) {
+    return {
+      message:
+        'PayPal credentials are invalid. Check PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET on the server.',
+      status: 503,
+    };
+  }
+
+  if (msg.includes('PayPal POST') || msg.includes('PayPal GET')) {
+    const jsonStart = msg.indexOf('{');
+    if (jsonStart >= 0) {
+      try {
+        const parsed = JSON.parse(msg.slice(jsonStart)) as {
+          message?: string;
+          name?: string;
+          details?: Array<{ issue?: string; description?: string }>;
+        };
+        const detail = parsed.details?.[0]?.description ?? parsed.details?.[0]?.issue;
+        const paypalMessage = detail || parsed.message || parsed.name;
+        if (paypalMessage) {
+          const lower = paypalMessage.toLowerCase();
+          const status =
+            lower.includes('plan') ||
+            lower.includes('return_url') ||
+            lower.includes('return url') ||
+            lower.includes('not found') ||
+            lower.includes('invalid')
+              ? 503
+              : 500;
+          return { message: paypalMessage, status };
+        }
+      } catch {
+        /* ignore parse errors */
+      }
+    }
+  }
+
+  if (msg.includes('missing approval URL')) {
+    return {
+      message: 'PayPal did not return a checkout URL. Verify subscription plans are active in PayPal.',
+      status: 503,
+    };
+  }
+
+  return { message: msg || fallback.message, status: fallback.status };
+}
+
+export function getPayPalBillingReadiness(): {
+  configured: boolean;
+  mode: 'sandbox' | 'live' | null;
+  plans: { monthly: boolean; yearly: boolean };
+  frontendOrigin: string;
+} {
+  return {
+    configured: isPayPalConfigured(),
+    mode: process.env.PAYPAL_MODE === 'live' ? 'live' : isPayPalConfigured() ? 'sandbox' : null,
+    plans: {
+      monthly: !!process.env.PAYPAL_PLAN_MONTHLY?.trim(),
+      yearly: !!process.env.PAYPAL_PLAN_YEARLY?.trim(),
+    },
+    frontendOrigin: getFrontendOrigin(),
+  };
 }
