@@ -39,8 +39,10 @@ export function getFrontendOrigin(): string {
   const fromCors = process.env.CORS_ORIGIN?.split(',')[0]?.trim();
   if (fromCors) return fromCors.replace(/\/$/, '');
 
-  if (process.env.NODE_ENV === 'production') return 'https://tamir.li';
-  return 'http://localhost:8080';
+  if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+    return 'http://localhost:8080';
+  }
+  return 'https://tamir.li';
 }
 
 export function isActivePremium(

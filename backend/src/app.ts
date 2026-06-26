@@ -22,6 +22,7 @@ import { pingAdSettingsTable } from './lib/ad-settings';
 import { pingAiSettingsTable } from './lib/ai-settings';
 import { getStartupMigrateStatus } from './lib/startup-migrate';
 import { isDatabaseUrlSet, parseDatabaseUrlSafe, pingDatabase } from './lib/db-health';
+import { getPayPalBillingReadiness } from './lib/paypal';
 
 dotenv.config();
 
@@ -112,6 +113,7 @@ app.get('/health', async (_req: Request, res: Response) => {
     aiSettingsTable: aiSettingsTable.ok
       ? { ok: true }
       : { ok: false, error: aiSettingsTable.error },
+    billing: getPayPalBillingReadiness(),
   });
 });
 
