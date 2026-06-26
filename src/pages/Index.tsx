@@ -25,6 +25,7 @@ import { usePublicStats } from "@/hooks/usePublicStats";
 import { cn } from "@/lib/utils";
 
 import { getFunctionalToolIds } from "@/lib/tool-availability";
+import { ToolIconGrid } from "@/components/ToolIconGrid";
 
 const TOOL_CATEGORIES: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
 
