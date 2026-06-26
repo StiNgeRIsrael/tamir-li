@@ -13,23 +13,19 @@ describe("site-check logic", () => {
     }
   });
 
-  it("keeps stub tools non-functional", () => {
-    const functional = new Set(getFunctionalToolIds());
-    expect(functional.has("video-compressor")).toBe(false);
+  it("tracks fourteen functional tools including video compressor", () => {
+    const ids = getFunctionalToolIds();
+    expect(ids).toContain("word-to-pdf");
+    expect(ids).toContain("pdf-to-word");
+    expect(ids).toContain("video-converter");
+    expect(ids).toContain("video-compressor");
+    expect(ids).toContain("hebrew-ocr");
+    expect(ids).toContain("ai-image-generator");
+    expect(ids.length).toBe(14);
   });
 
   it("routes document tools through client conversion", () => {
     expect(usesClientDocumentConversion("word-to-pdf")).toBe(true);
     expect(usesClientDocumentConversion("pdf-to-word")).toBe(true);
-  });
-
-  it("tracks thirteen functional tools including AI image gen", () => {
-    const ids = getFunctionalToolIds();
-    expect(ids).toContain("word-to-pdf");
-    expect(ids).toContain("pdf-to-word");
-    expect(ids).toContain("video-converter");
-    expect(ids).toContain("hebrew-ocr");
-    expect(ids).toContain("ai-image-generator");
-    expect(ids.length).toBe(13);
   });
 });

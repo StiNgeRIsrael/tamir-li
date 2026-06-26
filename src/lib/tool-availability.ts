@@ -13,6 +13,7 @@ const FUNCTIONAL_TOOL_IDS = new Set([
   "hebrew-ocr",
   "audio-converter",
   "video-converter",
+  "video-compressor",
   "word-to-pdf",
   "pdf-to-word",
   "ai-image-generator",

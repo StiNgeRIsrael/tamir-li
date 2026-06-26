@@ -11,9 +11,9 @@ describe("public-stats", () => {
     expect(stats.functionalToolCount).toBeLessThanOrEqual(stats.toolCount);
   });
 
-  it("shows 13 live tools out of 14 in catalog", () => {
+  it("shows all catalog tools as live", () => {
     const stats = getDerivedHomeStatsFromTools(tools);
-    expect(stats.functionalToolCount).toBe(13);
+    expect(stats.functionalToolCount).toBe(14);
     expect(stats.toolCount).toBe(14);
   });
 

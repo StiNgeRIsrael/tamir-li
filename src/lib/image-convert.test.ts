@@ -111,10 +111,7 @@ describe("tool-availability", () => {
     expect(isToolFunctional("pdf-to-word")).toBe(true);
     expect(isToolFunctional("hebrew-ocr")).toBe(true);
     expect(isToolFunctional("ai-image-generator")).toBe(true);
-  });
-
-  it("keeps unshipped premium tools non-functional", () => {
-    expect(isToolFunctional("video-compressor")).toBe(false);
+    expect(isToolFunctional("video-compressor")).toBe(true);
   });
 
   it("functional list matches expectations", () => {
@@ -122,10 +119,11 @@ describe("tool-availability", () => {
     expect(ids).toContain("image-compressor");
     expect(ids).toContain("audio-converter");
     expect(ids).toContain("video-converter");
+    expect(ids).toContain("video-compressor");
     expect(ids).toContain("word-to-pdf");
     expect(ids).toContain("pdf-to-word");
     expect(ids).toContain("hebrew-ocr");
     expect(ids).toContain("ai-image-generator");
-    expect(ids.length).toBe(13);
+    expect(ids.length).toBe(14);
   });
 });

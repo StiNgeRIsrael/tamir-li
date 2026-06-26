@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T23:00:18.461Z",
+  "generatedAt": "2026-06-26T23:18:57.470Z",
   "origin": "https://tamir.li",
   "routes": {
     "/": {
@@ -45,6 +45,10 @@
     "/aac-to-wav": {
       "title": "המרת AAC ל-WAV — תמיר לי",
       "description": "המירו קבצי AAC ל-WAV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/ai-image-generator": {
+      "title": "יצירת תמונות AI — תמיר לי",
+      "description": "כלי יצירת תמונות מתקדם עם בינה מלאכותית. תארו את התמונה שאתם רוצים בטקסט חופשי, בחרו סגנון ויחס תמונה, וה-AI ייצור תמונה מקורית תוך שניות. זמין למנויי פרימיום בלבד."
     },
     "/avi-to-mkv": {
       "title": "המרת AVI ל-MKV — תמיר לי",
@@ -214,6 +218,10 @@
       "title": "כלי טקסט — תמיר לי",
       "description": "כלי טקסט מתקדם: המירו בין פורמט טקסט רגיל, Markdown ו-HTML. כולל ספירת מילים ותווים, המרת אותיות, ניקוי רווחים ועוד."
     },
+    "/video-compressor": {
+      "title": "דחיסת וידאו — תמיר לי",
+      "description": "דחסו סרטונים לגודל קטן יותר לשליחה ב-WhatsApp, מייל או העלאה לרשתות חברתיות."
+    },
     "/wav-to-aac": {
       "title": "המרת WAV ל-AAC — תמיר לי",
       "description": "המירו קבצי WAV ל-AAC בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
@@ -293,6 +301,10 @@
     "/en/aac-to-wav": {
       "title": "Convert AAC to WAV — Tamir.li",
       "description": "Convert AAC files to WAV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/ai-image-generator": {
+      "title": "AI Image Generator — Tamir.li",
+      "description": "Advanced AI image creation tool. Describe the image you want in free text, choose a style and aspect ratio, and the AI will generate an original image in seconds. Available for Premium subscribers only."
     },
     "/en/avi-to-mkv": {
       "title": "Convert AVI to MKV — Tamir.li",
@@ -462,6 +474,10 @@
       "title": "Text Tools — Tamir.li",
       "description": "Advanced text tool: convert between plain text, Markdown and HTML formats. Includes word and character counting, letter case conversion, space cleaning and more."
     },
+    "/en/video-compressor": {
+      "title": "Video Compressor — Tamir.li",
+      "description": "Compress videos to a smaller size for sharing via WhatsApp, email or uploading to social media."
+    },
     "/en/wav-to-aac": {
       "title": "Convert WAV to AAC — Tamir.li",
       "description": "Convert WAV files to AAC for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
@@ -541,6 +557,10 @@
     "/es/aac-to-wav": {
       "title": "Convertir AAC a WAV — Tamirly",
       "description": "Convierte archivos AAC a WAV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/ai-image-generator": {
+      "title": "Generador de Imágenes IA — Tamirly",
+      "description": "Herramienta avanzada de creación de imágenes con IA. Describe la imagen que quieres, elige un estilo y proporción, y la IA generará una imagen original en segundos."
     },
     "/es/avi-to-mkv": {
       "title": "Convertir AVI a MKV — Tamirly",
@@ -710,6 +730,10 @@
       "title": "Herramientas de Texto — Tamirly",
       "description": "Herramienta de texto avanzada: convierte entre texto plano, Markdown y HTML. Incluye conteo de palabras y caracteres, conversión de mayúsculas y más."
     },
+    "/es/video-compressor": {
+      "title": "Compresor de Video — Tamirly",
+      "description": "Comprime videos a un tamaño más pequeño para compartir por WhatsApp, email o redes sociales."
+    },
     "/es/wav-to-aac": {
       "title": "Convertir WAV a AAC — Tamirly",
       "description": "Convierte archivos WAV a AAC gratis, directo en tu navegador. Rápido, seguro y sin software."
@@ -789,6 +813,10 @@
     "/ru/aac-to-wav": {
       "title": "Конвертировать AAC в WAV — Tamirly",
       "description": "Конвертируйте AAC в WAV бесплатно, прямо в браузере."
+    },
+    "/ru/ai-image-generator": {
+      "title": "ИИ Генератор Изображений — Tamirly",
+      "description": "Продвинутый инструмент создания изображений с ИИ. Опишите изображение, выберите стиль и соотношение сторон."
     },
     "/ru/avi-to-mkv": {
       "title": "Конвертировать AVI в MKV — Tamirly",
@@ -958,6 +986,10 @@
       "title": "Текстовые Инструменты — Tamirly",
       "description": "Продвинутый текстовый инструмент: конвертация между текстом, Markdown и HTML. Подсчёт слов, символов и многое другое."
     },
+    "/ru/video-compressor": {
+      "title": "Сжатие Видео — Tamirly",
+      "description": "Сжимайте видео для отправки через WhatsApp, email или загрузки в соцсети."
+    },
     "/ru/wav-to-aac": {
       "title": "Конвертировать WAV в AAC — Tamirly",
       "description": "Конвертируйте WAV в AAC бесплатно, прямо в браузере."
@@ -1037,6 +1069,10 @@
     "/de/aac-to-wav": {
       "title": "AAC in WAV konvertieren — Tamirly",
       "description": "Konvertieren Sie AAC in WAV kostenlos, direkt im Browser."
+    },
+    "/de/ai-image-generator": {
+      "title": "KI-Bildgenerator — Tamirly",
+      "description": "Erweitertes KI-Bildgenerierungstool. Beschreiben Sie das gewünschte Bild, wählen Sie Stil und Seitenverhältnis."
     },
     "/de/avi-to-mkv": {
       "title": "AVI in MKV konvertieren — Tamirly",
@@ -1206,6 +1242,10 @@
       "title": "Text-Tools — Tamirly",
       "description": "Erweitertes Text-Tool: Konvertierung zwischen Text, Markdown und HTML. Wort- und Zeichenzählung und mehr."
     },
+    "/de/video-compressor": {
+      "title": "Videokompressor — Tamirly",
+      "description": "Komprimieren Sie Videos zum Teilen über WhatsApp, E-Mail oder Social Media."
+    },
     "/de/wav-to-aac": {
       "title": "WAV in AAC konvertieren — Tamirly",
       "description": "Konvertieren Sie WAV in AAC kostenlos, direkt im Browser."
@@ -1285,6 +1325,10 @@
     "/fr/aac-to-wav": {
       "title": "Convertir AAC en WAV — Tamirly",
       "description": "Convertissez AAC en WAV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/ai-image-generator": {
+      "title": "Générateur d'Images IA — Tamirly",
+      "description": "Outil avancé de création d'images par IA. Décrivez l'image souhaitée, choisissez un style et un ratio d'aspect."
     },
     "/fr/avi-to-mkv": {
       "title": "Convertir AVI en MKV — Tamirly",
@@ -1454,6 +1498,10 @@
       "title": "Outils Texte — Tamirly",
       "description": "Outil de texte avancé : conversion entre texte, Markdown et HTML. Comptage de mots et caractères et plus encore."
     },
+    "/fr/video-compressor": {
+      "title": "Compresseur Vidéo — Tamirly",
+      "description": "Compressez des vidéos pour les partager via WhatsApp, email ou réseaux sociaux."
+    },
     "/fr/wav-to-aac": {
       "title": "Convertir WAV en AAC — Tamirly",
       "description": "Convertissez WAV en AAC gratuitement, directement dans votre navigateur."
@@ -1533,6 +1581,10 @@
     "/it/aac-to-wav": {
       "title": "Convertire AAC in WAV — Tamirly",
       "description": "Converti file AAC in WAV gratis, direttamente nel browser."
+    },
+    "/it/ai-image-generator": {
+      "title": "Generatore Immagini IA — Tamirly",
+      "description": "Strumento avanzato di creazione immagini con IA. Descrivi l'immagine desiderata, scegli stile e proporzioni."
     },
     "/it/avi-to-mkv": {
       "title": "Convertire AVI in MKV — Tamirly",
@@ -1701,6 +1753,10 @@
     "/it/text-tools": {
       "title": "Strumenti Testo — Tamirly",
       "description": "Strumento di testo avanzato: conversione tra testo, Markdown e HTML. Conteggio parole e caratteri e altro ancora."
+    },
+    "/it/video-compressor": {
+      "title": "Compressore Video — Tamirly",
+      "description": "Comprimi video per condividerli via WhatsApp, email o social media."
     },
     "/it/wav-to-aac": {
       "title": "Convertire WAV in AAC — Tamirly",

@@ -22,6 +22,7 @@ import { TextToolsComponent } from "@/components/tools/TextToolsComponent";
 import { AiImageGeneratorTool } from "@/components/tools/AiImageGeneratorTool";
 import { ImageResizerTool } from "@/components/tools/ImageResizerTool";
 import { ImageCompressorTool } from "@/components/tools/ImageCompressorTool";
+import { VideoCompressorTool } from "@/components/tools/VideoCompressorTool";
 import { HebOcrTool } from "@/components/tools/HebOcrTool";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowRight, Download, Loader2, CheckCircle2, Crown, X, RefreshCw, Plus, ImageIcon, FileText, FileVideo, FileAudio, Shield, Zap, Globe, AlertCircle, Mail } from "lucide-react";
@@ -768,6 +769,8 @@ export default function ToolPage() {
               <ImageResizerTool freemium={customFreemium} />
             ) : tool.customComponent === "image-compressor" ? (
               <ImageCompressorTool freemium={customFreemium} />
+            ) : tool.customComponent === "video-compressor" ? (
+              <VideoCompressorTool freemium={customFreemium} />
             ) : tool.customComponent === "heb-ocr" ? (
               <HebOcrTool />
             ) : showSuccessPanel ? (
