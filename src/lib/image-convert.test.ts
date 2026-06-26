@@ -106,13 +106,13 @@ describe("tool-availability", () => {
     expect(isToolFunctional("merge-pdf")).toBe(true);
     expect(isToolFunctional("text-tools")).toBe(true);
     expect(isToolFunctional("audio-converter")).toBe(true);
+    expect(isToolFunctional("video-converter")).toBe(true);
     expect(isToolFunctional("word-to-pdf")).toBe(true);
+    expect(isToolFunctional("pdf-to-word")).toBe(true);
     expect(isToolFunctional("hebrew-ocr")).toBe(true);
   });
 
   it("keeps mock/stub tools non-functional", () => {
-    expect(isToolFunctional("pdf-to-word")).toBe(false);
-    expect(isToolFunctional("video-converter")).toBe(false);
     expect(isToolFunctional("ai-image-generator")).toBe(false);
   });
 
@@ -120,8 +120,10 @@ describe("tool-availability", () => {
     const ids = getFunctionalToolIds();
     expect(ids).toContain("image-compressor");
     expect(ids).toContain("audio-converter");
+    expect(ids).toContain("video-converter");
     expect(ids).toContain("word-to-pdf");
+    expect(ids).toContain("pdf-to-word");
     expect(ids).toContain("hebrew-ocr");
-    expect(ids.length).toBe(10);
+    expect(ids.length).toBe(12);
   });
 });

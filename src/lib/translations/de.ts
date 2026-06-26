@@ -279,6 +279,9 @@ export const deTranslations = {
       "Dieses Tool wandelt Dokumenttext im Browser in ein einfaches PDF um. Erweiterte Formatierung (Überschriften, Bilder, Tabellen) bleibt möglicherweise nicht erhalten — am besten für einfache Textdokumente.",
     wordToPdfLegacyDocError: "Ältere .doc-Dateien werden im Browser nicht unterstützt. Speichern Sie in Word als DOCX und versuchen Sie es erneut.",
     wordToPdfEmptyDocError: "Das Dokument scheint leer zu sein oder der Inhalt konnte nicht gelesen werden.",
+    pdfToWordEmptyPdfError: "In diesem PDF wurde kein lesbarer Text gefunden. Gescannte PDFs benötigen zuerst OCR.",
+    pdfToWordExportNotice:
+      "Dieses Tool extrahiert Text aus PDF und speichert ihn als bearbeitbares DOCX im Browser. Layout, Bilder und Tabellen bleiben nicht erhalten.",
     documentConversionError: "Konvertierung fehlgeschlagen. Stellen Sie sicher, dass die Datei eine gültige DOCX ist.",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) => isCustom ? `So verwenden Sie ${name}` : `So konvertieren Sie ${from} in ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [

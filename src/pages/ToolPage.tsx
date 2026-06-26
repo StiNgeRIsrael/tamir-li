@@ -40,6 +40,7 @@ import { isToolFunctional } from "@/lib/tool-availability";
 import { convertImageFile, isOutputFormatSupported, usesClientImageConversion } from "@/lib/image-convert";
 import { usesClientDocumentConversion } from "@/lib/document-convert";
 import { convertWordFileToPdf } from "@/lib/word-to-pdf";
+import { convertPdfFileToDocx } from "@/lib/pdf-to-docx";
 import { isServerUnavailableError } from "@/lib/conversion-errors";
 import { isConversionBlockedOnNative } from "@/lib/conversion-eligibility";
 import { ComingSoonPanel } from "@/components/ComingSoonPanel";
@@ -366,7 +367,10 @@ export default function ToolPage() {
 
         try {
           const item = fileItems[index];
-          const blob = await convertWordFileToPdf(item.file);
+          const blob =
+            tool.id === "pdf-to-word"
+              ? await convertPdfFileToDocx(item.file)
+              : await convertWordFileToPdf(item.file);
           setFileItems((prev) =>
             prev.map((it, i) =>
               i === index ? { ...it, status: "done", progress: 100, resultBlob: blob } : it
@@ -380,7 +384,9 @@ export default function ToolPage() {
               ? tt.wordToPdfLegacyDocError
               : code === "EMPTY_DOCUMENT"
                 ? tt.wordToPdfEmptyDocError
-                : tt.documentConversionError;
+                : code === "EMPTY_PDF"
+                  ? tt.pdfToWordEmptyPdfError
+                  : tt.documentConversionError;
           setFileItems((prev) =>
             prev.map((it, i) =>
               i === index ? { ...it, status: "error", progress: 0, errorMessage } : it
@@ -687,7 +693,7 @@ export default function ToolPage() {
                   {isCustom ? toolName : tt.convertTitle(activeFrom, activeTo)}
                 </h1>
                 {tool.premium && <Crown className="w-5 h-5 text-premium shrink-0" />}
-                {tool.id === "word-to-pdf" && (
+                {(tool.id === "word-to-pdf" || tool.id === "pdf-to-word") && (
                   <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/25">
                     {tt.basicExportBadge}
                   </span>
@@ -835,6 +841,14 @@ export default function ToolPage() {
                     <AlertCircle className="h-4 w-4 text-amber-700 dark:text-amber-400" />
                     <AlertDescription className="text-sm text-muted-foreground leading-relaxed">
                       {tt.basicExportNotice}
+                    </AlertDescription>
+                  </Alert>
+                )}
+                {tool.id === "pdf-to-word" && (
+                  <Alert className="border-amber-500/25 bg-amber-500/5">
+                    <AlertCircle className="h-4 w-4 text-amber-700 dark:text-amber-400" />
+                    <AlertDescription className="text-sm text-muted-foreground leading-relaxed">
+                      {tt.pdfToWordExportNotice}
                     </AlertDescription>
                   </Alert>
                 )}

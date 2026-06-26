@@ -299,6 +299,9 @@ export const esTranslations = {
       "Esta herramienta convierte el texto del documento a un PDF simple en el navegador. El diseño avanzado (títulos, imágenes, tablas) puede no conservarse — ideal para documentos de texto plano.",
     wordToPdfLegacyDocError: "Los archivos .doc antiguos no son compatibles en el navegador. Guarde como DOCX en Word e intente de nuevo.",
     wordToPdfEmptyDocError: "El documento parece vacío o no se pudo leer su contenido.",
+    pdfToWordEmptyPdfError: "No se encontró texto legible en este PDF. Los PDF escaneados requieren OCR primero.",
+    pdfToWordExportNotice:
+      "Esta herramienta extrae texto del PDF y lo guarda como DOCX editable en el navegador. El diseño, imágenes y tablas no se conservan.",
     documentConversionError: "La conversión falló. Asegúrese de que el archivo sea un DOCX válido.",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) =>
       isCustom ? `Cómo Usar ${name}` : `Cómo Convertir ${from} a ${to}`,

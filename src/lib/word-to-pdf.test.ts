@@ -4,9 +4,9 @@ import { usesClientDocumentConversion } from "./document-convert";
 import { PDFDocument, StandardFonts } from "pdf-lib";
 
 describe("document-convert", () => {
-  it("routes word-to-pdf through client conversion", () => {
+  it("routes document tools through client conversion", () => {
     expect(usesClientDocumentConversion("word-to-pdf")).toBe(true);
-    expect(usesClientDocumentConversion("pdf-to-word")).toBe(false);
+    expect(usesClientDocumentConversion("pdf-to-word")).toBe(true);
   });
 });
 

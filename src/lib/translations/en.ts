@@ -330,6 +330,9 @@ export const enTranslations = {
       "This tool converts document text to a simple PDF in your browser. Advanced layout (headings, images, tables) may not be preserved — best for plain-text documents.",
     wordToPdfLegacyDocError: "Legacy .doc files are not supported in the browser. Save as DOCX in Word and try again.",
     wordToPdfEmptyDocError: "The document appears empty or its content could not be read.",
+    pdfToWordEmptyPdfError: "No readable text was found in this PDF. Scanned PDFs need OCR first — try Hebrew OCR.",
+    pdfToWordExportNotice:
+      "This tool extracts text from PDF and saves it as an editable DOCX in your browser. Layout, images and tables are not preserved — best for text-based PDFs.",
     documentConversionError: "Conversion failed. Make sure the file is a valid DOCX.",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) =>
       isCustom ? `How to Use ${name}` : `How to Convert ${from} to ${to}`,

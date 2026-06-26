@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T22:55:25.854Z",
+  "generatedAt": "2026-06-26T23:00:18.461Z",
   "origin": "https://tamir.li",
   "routes": {
     "/": {
@@ -46,6 +46,22 @@
       "title": "המרת AAC ל-WAV — תמיר לי",
       "description": "המירו קבצי AAC ל-WAV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
     },
+    "/avi-to-mkv": {
+      "title": "המרת AVI ל-MKV — תמיר לי",
+      "description": "המירו קבצי AVI ל-MKV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/avi-to-mov": {
+      "title": "המרת AVI ל-MOV — תמיר לי",
+      "description": "המירו קבצי AVI ל-MOV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/avi-to-mp4": {
+      "title": "המרת AVI ל-MP4 — תמיר לי",
+      "description": "המירו קבצי AVI ל-MP4 בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/avi-to-webm": {
+      "title": "המרת AVI ל-WEBM — תמיר לי",
+      "description": "המירו קבצי AVI ל-WEBM בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
     "/doc-to-pdf": {
       "title": "המרת DOC ל-PDF — תמיר לי",
       "description": "המירו קבצי DOC ל-PDF בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
@@ -70,6 +86,10 @@
       "title": "המרת FLAC ל-WAV — תמיר לי",
       "description": "המירו קבצי FLAC ל-WAV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
     },
+    "/hebrew-ocr": {
+      "title": "פענוח עברית (OCR) — תמיר לי",
+      "description": "העלו PDF או תמונה של מסמך מודפס בעברית — הכלי מפענח את הטקסט ומייצא קובץ טקסט לעריכה. מתאים לחשבוניות, טפסים ומכתבים סרוקים."
+    },
     "/image-compressor": {
       "title": "דחיסת תמונה — תמיר לי",
       "description": "דחסו את התמונות שלכם וחסכו מקום אחסון ונתונים. הכלי שלנו מקטין את גודל הקובץ תוך שמירה על איכות מקסימלית."
@@ -90,6 +110,38 @@
       "title": "מנהל PDF — תמיר לי",
       "description": "מנהל PDF מתקדם — העלו מספר קבצי PDF, סדרו את העמודים מחדש בגרירה, סובבו עמודים בודדים, ומזגו הכל לקובץ PDF אחד מסודר. מושלם לחוזים, דוחות וחשבוניות."
     },
+    "/mkv-to-avi": {
+      "title": "המרת MKV ל-AVI — תמיר לי",
+      "description": "המירו קבצי MKV ל-AVI בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/mkv-to-mov": {
+      "title": "המרת MKV ל-MOV — תמיר לי",
+      "description": "המירו קבצי MKV ל-MOV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/mkv-to-mp4": {
+      "title": "המרת MKV ל-MP4 — תמיר לי",
+      "description": "המירו קבצי MKV ל-MP4 בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/mkv-to-webm": {
+      "title": "המרת MKV ל-WEBM — תמיר לי",
+      "description": "המירו קבצי MKV ל-WEBM בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/mov-to-avi": {
+      "title": "המרת MOV ל-AVI — תמיר לי",
+      "description": "המירו קבצי MOV ל-AVI בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/mov-to-mkv": {
+      "title": "המרת MOV ל-MKV — תמיר לי",
+      "description": "המירו קבצי MOV ל-MKV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/mov-to-mp4": {
+      "title": "המרת MOV ל-MP4 — תמיר לי",
+      "description": "המירו קבצי MOV ל-MP4 בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/mov-to-webm": {
+      "title": "המרת MOV ל-WEBM — תמיר לי",
+      "description": "המירו קבצי MOV ל-WEBM בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
     "/mp3-to-aac": {
       "title": "המרת MP3 ל-AAC — תמיר לי",
       "description": "המירו קבצי MP3 ל-AAC בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
@@ -106,6 +158,22 @@
       "title": "המרת MP3 ל-WAV — תמיר לי",
       "description": "המירו קבצי MP3 ל-WAV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
     },
+    "/mp4-to-avi": {
+      "title": "המרת MP4 ל-AVI — תמיר לי",
+      "description": "המירו קבצי MP4 ל-AVI בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/mp4-to-mkv": {
+      "title": "המרת MP4 ל-MKV — תמיר לי",
+      "description": "המירו קבצי MP4 ל-MKV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/mp4-to-mov": {
+      "title": "המרת MP4 ל-MOV — תמיר לי",
+      "description": "המירו קבצי MP4 ל-MOV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/mp4-to-webm": {
+      "title": "המרת MP4 ל-WEBM — תמיר לי",
+      "description": "המירו קבצי MP4 ל-WEBM בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
     "/ogg-to-aac": {
       "title": "המרת OGG ל-AAC — תמיר לי",
       "description": "המירו קבצי OGG ל-AAC בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
@@ -121,6 +189,10 @@
     "/ogg-to-wav": {
       "title": "המרת OGG ל-WAV — תמיר לי",
       "description": "המירו קבצי OGG ל-WAV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/pdf-to-docx": {
+      "title": "המרת PDF ל-DOCX — תמיר לי",
+      "description": "המירו קבצי PDF ל-DOCX בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
     },
     "/png-to-ico": {
       "title": "המרת PNG ל-ICO — תמיר לי",
@@ -157,6 +229,22 @@
     "/wav-to-ogg": {
       "title": "המרת WAV ל-OGG — תמיר לי",
       "description": "המירו קבצי WAV ל-OGG בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/webm-to-avi": {
+      "title": "המרת WEBM ל-AVI — תמיר לי",
+      "description": "המירו קבצי WEBM ל-AVI בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/webm-to-mkv": {
+      "title": "המרת WEBM ל-MKV — תמיר לי",
+      "description": "המירו קבצי WEBM ל-MKV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/webm-to-mov": {
+      "title": "המרת WEBM ל-MOV — תמיר לי",
+      "description": "המירו קבצי WEBM ל-MOV בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
+    },
+    "/webm-to-mp4": {
+      "title": "המרת WEBM ל-MP4 — תמיר לי",
+      "description": "המירו קבצי WEBM ל-MP4 בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
     },
     "/webp-to-jpg": {
       "title": "המרת WEBP ל-JPG — תמיר לי",
@@ -206,6 +294,22 @@
       "title": "Convert AAC to WAV — Tamir.li",
       "description": "Convert AAC files to WAV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
     },
+    "/en/avi-to-mkv": {
+      "title": "Convert AVI to MKV — Tamir.li",
+      "description": "Convert AVI files to MKV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/avi-to-mov": {
+      "title": "Convert AVI to MOV — Tamir.li",
+      "description": "Convert AVI files to MOV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/avi-to-mp4": {
+      "title": "Convert AVI to MP4 — Tamir.li",
+      "description": "Convert AVI files to MP4 for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/avi-to-webm": {
+      "title": "Convert AVI to WEBM — Tamir.li",
+      "description": "Convert AVI files to WEBM for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
     "/en/doc-to-pdf": {
       "title": "Convert DOC to PDF — Tamir.li",
       "description": "Convert DOC files to PDF for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
@@ -230,6 +334,10 @@
       "title": "Convert FLAC to WAV — Tamir.li",
       "description": "Convert FLAC files to WAV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
     },
+    "/en/hebrew-ocr": {
+      "title": "פענוח עברית (OCR) — Tamir.li",
+      "description": "העלו PDF או תמונה של מסמך מודפס בעברית — הכלי מפענח את הטקסט ומייצא קובץ טקסט לעריכה. מתאים לחשבוניות, טפסים ומכתבים סרוקים."
+    },
     "/en/image-compressor": {
       "title": "Image Compressor — Tamir.li",
       "description": "Compress your images and save storage space and data. Our tool reduces file size while maintaining maximum quality."
@@ -250,6 +358,38 @@
       "title": "PDF Manager — Tamir.li",
       "description": "Advanced PDF manager — upload multiple PDF files, reorder pages by dragging, rotate individual pages, and merge everything into one organized PDF file. Perfect for contracts, reports and invoices."
     },
+    "/en/mkv-to-avi": {
+      "title": "Convert MKV to AVI — Tamir.li",
+      "description": "Convert MKV files to AVI for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/mkv-to-mov": {
+      "title": "Convert MKV to MOV — Tamir.li",
+      "description": "Convert MKV files to MOV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/mkv-to-mp4": {
+      "title": "Convert MKV to MP4 — Tamir.li",
+      "description": "Convert MKV files to MP4 for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/mkv-to-webm": {
+      "title": "Convert MKV to WEBM — Tamir.li",
+      "description": "Convert MKV files to WEBM for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/mov-to-avi": {
+      "title": "Convert MOV to AVI — Tamir.li",
+      "description": "Convert MOV files to AVI for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/mov-to-mkv": {
+      "title": "Convert MOV to MKV — Tamir.li",
+      "description": "Convert MOV files to MKV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/mov-to-mp4": {
+      "title": "Convert MOV to MP4 — Tamir.li",
+      "description": "Convert MOV files to MP4 for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/mov-to-webm": {
+      "title": "Convert MOV to WEBM — Tamir.li",
+      "description": "Convert MOV files to WEBM for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
     "/en/mp3-to-aac": {
       "title": "Convert MP3 to AAC — Tamir.li",
       "description": "Convert MP3 files to AAC for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
@@ -266,6 +406,22 @@
       "title": "Convert MP3 to WAV — Tamir.li",
       "description": "Convert MP3 files to WAV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
     },
+    "/en/mp4-to-avi": {
+      "title": "Convert MP4 to AVI — Tamir.li",
+      "description": "Convert MP4 files to AVI for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/mp4-to-mkv": {
+      "title": "Convert MP4 to MKV — Tamir.li",
+      "description": "Convert MP4 files to MKV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/mp4-to-mov": {
+      "title": "Convert MP4 to MOV — Tamir.li",
+      "description": "Convert MP4 files to MOV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/mp4-to-webm": {
+      "title": "Convert MP4 to WEBM — Tamir.li",
+      "description": "Convert MP4 files to WEBM for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
     "/en/ogg-to-aac": {
       "title": "Convert OGG to AAC — Tamir.li",
       "description": "Convert OGG files to AAC for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
@@ -281,6 +437,10 @@
     "/en/ogg-to-wav": {
       "title": "Convert OGG to WAV — Tamir.li",
       "description": "Convert OGG files to WAV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/pdf-to-docx": {
+      "title": "Convert PDF to DOCX — Tamir.li",
+      "description": "Convert PDF files to DOCX for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
     },
     "/en/png-to-ico": {
       "title": "Convert PNG to ICO — Tamir.li",
@@ -317,6 +477,22 @@
     "/en/wav-to-ogg": {
       "title": "Convert WAV to OGG — Tamir.li",
       "description": "Convert WAV files to OGG for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/webm-to-avi": {
+      "title": "Convert WEBM to AVI — Tamir.li",
+      "description": "Convert WEBM files to AVI for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/webm-to-mkv": {
+      "title": "Convert WEBM to MKV — Tamir.li",
+      "description": "Convert WEBM files to MKV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/webm-to-mov": {
+      "title": "Convert WEBM to MOV — Tamir.li",
+      "description": "Convert WEBM files to MOV for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/webm-to-mp4": {
+      "title": "Convert WEBM to MP4 — Tamir.li",
+      "description": "Convert WEBM files to MP4 for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
     },
     "/en/webp-to-jpg": {
       "title": "Convert WEBP to JPG — Tamir.li",
@@ -366,6 +542,22 @@
       "title": "Convertir AAC a WAV — Tamirly",
       "description": "Convierte archivos AAC a WAV gratis, directo en tu navegador. Rápido, seguro y sin software."
     },
+    "/es/avi-to-mkv": {
+      "title": "Convertir AVI a MKV — Tamirly",
+      "description": "Convierte archivos AVI a MKV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/avi-to-mov": {
+      "title": "Convertir AVI a MOV — Tamirly",
+      "description": "Convierte archivos AVI a MOV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/avi-to-mp4": {
+      "title": "Convertir AVI a MP4 — Tamirly",
+      "description": "Convierte archivos AVI a MP4 gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/avi-to-webm": {
+      "title": "Convertir AVI a WEBM — Tamirly",
+      "description": "Convierte archivos AVI a WEBM gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
     "/es/doc-to-pdf": {
       "title": "Convertir DOC a PDF — Tamirly",
       "description": "Convierte archivos DOC a PDF gratis, directo en tu navegador. Rápido, seguro y sin software."
@@ -390,6 +582,10 @@
       "title": "Convertir FLAC a WAV — Tamirly",
       "description": "Convierte archivos FLAC a WAV gratis, directo en tu navegador. Rápido, seguro y sin software."
     },
+    "/es/hebrew-ocr": {
+      "title": "פענוח עברית (OCR) — Tamirly",
+      "description": "העלו PDF או תמונה של מסמך מודפס בעברית — הכלי מפענח את הטקסט ומייצא קובץ טקסט לעריכה. מתאים לחשבוניות, טפסים ומכתבים סרוקים."
+    },
     "/es/image-compressor": {
       "title": "Compresor de Imágenes — Tamirly",
       "description": "Comprime tus imágenes y ahorra espacio de almacenamiento. Nuestro herramienta reduce el tamaño del archivo manteniendo la máxima calidad."
@@ -410,6 +606,38 @@
       "title": "Gestor de PDF — Tamirly",
       "description": "Gestor PDF avanzado — sube múltiples archivos PDF, reordena páginas arrastrando, rota páginas individuales y fusiona todo en un PDF organizado."
     },
+    "/es/mkv-to-avi": {
+      "title": "Convertir MKV a AVI — Tamirly",
+      "description": "Convierte archivos MKV a AVI gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/mkv-to-mov": {
+      "title": "Convertir MKV a MOV — Tamirly",
+      "description": "Convierte archivos MKV a MOV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/mkv-to-mp4": {
+      "title": "Convertir MKV a MP4 — Tamirly",
+      "description": "Convierte archivos MKV a MP4 gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/mkv-to-webm": {
+      "title": "Convertir MKV a WEBM — Tamirly",
+      "description": "Convierte archivos MKV a WEBM gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/mov-to-avi": {
+      "title": "Convertir MOV a AVI — Tamirly",
+      "description": "Convierte archivos MOV a AVI gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/mov-to-mkv": {
+      "title": "Convertir MOV a MKV — Tamirly",
+      "description": "Convierte archivos MOV a MKV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/mov-to-mp4": {
+      "title": "Convertir MOV a MP4 — Tamirly",
+      "description": "Convierte archivos MOV a MP4 gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/mov-to-webm": {
+      "title": "Convertir MOV a WEBM — Tamirly",
+      "description": "Convierte archivos MOV a WEBM gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
     "/es/mp3-to-aac": {
       "title": "Convertir MP3 a AAC — Tamirly",
       "description": "Convierte archivos MP3 a AAC gratis, directo en tu navegador. Rápido, seguro y sin software."
@@ -426,6 +654,22 @@
       "title": "Convertir MP3 a WAV — Tamirly",
       "description": "Convierte archivos MP3 a WAV gratis, directo en tu navegador. Rápido, seguro y sin software."
     },
+    "/es/mp4-to-avi": {
+      "title": "Convertir MP4 a AVI — Tamirly",
+      "description": "Convierte archivos MP4 a AVI gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/mp4-to-mkv": {
+      "title": "Convertir MP4 a MKV — Tamirly",
+      "description": "Convierte archivos MP4 a MKV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/mp4-to-mov": {
+      "title": "Convertir MP4 a MOV — Tamirly",
+      "description": "Convierte archivos MP4 a MOV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/mp4-to-webm": {
+      "title": "Convertir MP4 a WEBM — Tamirly",
+      "description": "Convierte archivos MP4 a WEBM gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
     "/es/ogg-to-aac": {
       "title": "Convertir OGG a AAC — Tamirly",
       "description": "Convierte archivos OGG a AAC gratis, directo en tu navegador. Rápido, seguro y sin software."
@@ -441,6 +685,10 @@
     "/es/ogg-to-wav": {
       "title": "Convertir OGG a WAV — Tamirly",
       "description": "Convierte archivos OGG a WAV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/pdf-to-docx": {
+      "title": "Convertir PDF a DOCX — Tamirly",
+      "description": "Convierte archivos PDF a DOCX gratis, directo en tu navegador. Rápido, seguro y sin software."
     },
     "/es/png-to-ico": {
       "title": "Convertir PNG a ICO — Tamirly",
@@ -477,6 +725,22 @@
     "/es/wav-to-ogg": {
       "title": "Convertir WAV a OGG — Tamirly",
       "description": "Convierte archivos WAV a OGG gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/webm-to-avi": {
+      "title": "Convertir WEBM a AVI — Tamirly",
+      "description": "Convierte archivos WEBM a AVI gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/webm-to-mkv": {
+      "title": "Convertir WEBM a MKV — Tamirly",
+      "description": "Convierte archivos WEBM a MKV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/webm-to-mov": {
+      "title": "Convertir WEBM a MOV — Tamirly",
+      "description": "Convierte archivos WEBM a MOV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/webm-to-mp4": {
+      "title": "Convertir WEBM a MP4 — Tamirly",
+      "description": "Convierte archivos WEBM a MP4 gratis, directo en tu navegador. Rápido, seguro y sin software."
     },
     "/es/webp-to-jpg": {
       "title": "Convertir WEBP a JPG — Tamirly",
@@ -526,6 +790,22 @@
       "title": "Конвертировать AAC в WAV — Tamirly",
       "description": "Конвертируйте AAC в WAV бесплатно, прямо в браузере."
     },
+    "/ru/avi-to-mkv": {
+      "title": "Конвертировать AVI в MKV — Tamirly",
+      "description": "Конвертируйте AVI в MKV бесплатно, прямо в браузере."
+    },
+    "/ru/avi-to-mov": {
+      "title": "Конвертировать AVI в MOV — Tamirly",
+      "description": "Конвертируйте AVI в MOV бесплатно, прямо в браузере."
+    },
+    "/ru/avi-to-mp4": {
+      "title": "Конвертировать AVI в MP4 — Tamirly",
+      "description": "Конвертируйте AVI в MP4 бесплатно, прямо в браузере."
+    },
+    "/ru/avi-to-webm": {
+      "title": "Конвертировать AVI в WEBM — Tamirly",
+      "description": "Конвертируйте AVI в WEBM бесплатно, прямо в браузере."
+    },
     "/ru/doc-to-pdf": {
       "title": "Конвертировать DOC в PDF — Tamirly",
       "description": "Конвертируйте DOC в PDF бесплатно, прямо в браузере."
@@ -550,6 +830,10 @@
       "title": "Конвертировать FLAC в WAV — Tamirly",
       "description": "Конвертируйте FLAC в WAV бесплатно, прямо в браузере."
     },
+    "/ru/hebrew-ocr": {
+      "title": "פענוח עברית (OCR) — Tamirly",
+      "description": "העלו PDF או תמונה של מסמך מודפס בעברית — הכלי מפענח את הטקסט ומייצא קובץ טקסט לעריכה. מתאים לחשבוניות, טפסים ומכתבים סרוקים."
+    },
     "/ru/image-compressor": {
       "title": "Сжатие Изображений — Tamirly",
       "description": "Сжимайте изображения и экономьте место. Наш инструмент уменьшает размер файла, сохраняя максимальное качество."
@@ -570,6 +854,38 @@
       "title": "Менеджер PDF — Tamirly",
       "description": "Продвинутый PDF-менеджер — загружайте несколько PDF, перетаскивайте страницы, поворачивайте и объединяйте в один файл."
     },
+    "/ru/mkv-to-avi": {
+      "title": "Конвертировать MKV в AVI — Tamirly",
+      "description": "Конвертируйте MKV в AVI бесплатно, прямо в браузере."
+    },
+    "/ru/mkv-to-mov": {
+      "title": "Конвертировать MKV в MOV — Tamirly",
+      "description": "Конвертируйте MKV в MOV бесплатно, прямо в браузере."
+    },
+    "/ru/mkv-to-mp4": {
+      "title": "Конвертировать MKV в MP4 — Tamirly",
+      "description": "Конвертируйте MKV в MP4 бесплатно, прямо в браузере."
+    },
+    "/ru/mkv-to-webm": {
+      "title": "Конвертировать MKV в WEBM — Tamirly",
+      "description": "Конвертируйте MKV в WEBM бесплатно, прямо в браузере."
+    },
+    "/ru/mov-to-avi": {
+      "title": "Конвертировать MOV в AVI — Tamirly",
+      "description": "Конвертируйте MOV в AVI бесплатно, прямо в браузере."
+    },
+    "/ru/mov-to-mkv": {
+      "title": "Конвертировать MOV в MKV — Tamirly",
+      "description": "Конвертируйте MOV в MKV бесплатно, прямо в браузере."
+    },
+    "/ru/mov-to-mp4": {
+      "title": "Конвертировать MOV в MP4 — Tamirly",
+      "description": "Конвертируйте MOV в MP4 бесплатно, прямо в браузере."
+    },
+    "/ru/mov-to-webm": {
+      "title": "Конвертировать MOV в WEBM — Tamirly",
+      "description": "Конвертируйте MOV в WEBM бесплатно, прямо в браузере."
+    },
     "/ru/mp3-to-aac": {
       "title": "Конвертировать MP3 в AAC — Tamirly",
       "description": "Конвертируйте MP3 в AAC бесплатно, прямо в браузере."
@@ -586,6 +902,22 @@
       "title": "Конвертировать MP3 в WAV — Tamirly",
       "description": "Конвертируйте MP3 в WAV бесплатно, прямо в браузере."
     },
+    "/ru/mp4-to-avi": {
+      "title": "Конвертировать MP4 в AVI — Tamirly",
+      "description": "Конвертируйте MP4 в AVI бесплатно, прямо в браузере."
+    },
+    "/ru/mp4-to-mkv": {
+      "title": "Конвертировать MP4 в MKV — Tamirly",
+      "description": "Конвертируйте MP4 в MKV бесплатно, прямо в браузере."
+    },
+    "/ru/mp4-to-mov": {
+      "title": "Конвертировать MP4 в MOV — Tamirly",
+      "description": "Конвертируйте MP4 в MOV бесплатно, прямо в браузере."
+    },
+    "/ru/mp4-to-webm": {
+      "title": "Конвертировать MP4 в WEBM — Tamirly",
+      "description": "Конвертируйте MP4 в WEBM бесплатно, прямо в браузере."
+    },
     "/ru/ogg-to-aac": {
       "title": "Конвертировать OGG в AAC — Tamirly",
       "description": "Конвертируйте OGG в AAC бесплатно, прямо в браузере."
@@ -601,6 +933,10 @@
     "/ru/ogg-to-wav": {
       "title": "Конвертировать OGG в WAV — Tamirly",
       "description": "Конвертируйте OGG в WAV бесплатно, прямо в браузере."
+    },
+    "/ru/pdf-to-docx": {
+      "title": "Конвертировать PDF в DOCX — Tamirly",
+      "description": "Конвертируйте PDF в DOCX бесплатно, прямо в браузере."
     },
     "/ru/png-to-ico": {
       "title": "Конвертировать PNG в ICO — Tamirly",
@@ -637,6 +973,22 @@
     "/ru/wav-to-ogg": {
       "title": "Конвертировать WAV в OGG — Tamirly",
       "description": "Конвертируйте WAV в OGG бесплатно, прямо в браузере."
+    },
+    "/ru/webm-to-avi": {
+      "title": "Конвертировать WEBM в AVI — Tamirly",
+      "description": "Конвертируйте WEBM в AVI бесплатно, прямо в браузере."
+    },
+    "/ru/webm-to-mkv": {
+      "title": "Конвертировать WEBM в MKV — Tamirly",
+      "description": "Конвертируйте WEBM в MKV бесплатно, прямо в браузере."
+    },
+    "/ru/webm-to-mov": {
+      "title": "Конвертировать WEBM в MOV — Tamirly",
+      "description": "Конвертируйте WEBM в MOV бесплатно, прямо в браузере."
+    },
+    "/ru/webm-to-mp4": {
+      "title": "Конвертировать WEBM в MP4 — Tamirly",
+      "description": "Конвертируйте WEBM в MP4 бесплатно, прямо в браузере."
     },
     "/ru/webp-to-jpg": {
       "title": "Конвертировать WEBP в JPG — Tamirly",
@@ -686,6 +1038,22 @@
       "title": "AAC in WAV konvertieren — Tamirly",
       "description": "Konvertieren Sie AAC in WAV kostenlos, direkt im Browser."
     },
+    "/de/avi-to-mkv": {
+      "title": "AVI in MKV konvertieren — Tamirly",
+      "description": "Konvertieren Sie AVI in MKV kostenlos, direkt im Browser."
+    },
+    "/de/avi-to-mov": {
+      "title": "AVI in MOV konvertieren — Tamirly",
+      "description": "Konvertieren Sie AVI in MOV kostenlos, direkt im Browser."
+    },
+    "/de/avi-to-mp4": {
+      "title": "AVI in MP4 konvertieren — Tamirly",
+      "description": "Konvertieren Sie AVI in MP4 kostenlos, direkt im Browser."
+    },
+    "/de/avi-to-webm": {
+      "title": "AVI in WEBM konvertieren — Tamirly",
+      "description": "Konvertieren Sie AVI in WEBM kostenlos, direkt im Browser."
+    },
     "/de/doc-to-pdf": {
       "title": "DOC in PDF konvertieren — Tamirly",
       "description": "Konvertieren Sie DOC in PDF kostenlos, direkt im Browser."
@@ -710,6 +1078,10 @@
       "title": "FLAC in WAV konvertieren — Tamirly",
       "description": "Konvertieren Sie FLAC in WAV kostenlos, direkt im Browser."
     },
+    "/de/hebrew-ocr": {
+      "title": "פענוח עברית (OCR) — Tamirly",
+      "description": "העלו PDF או תמונה של מסמך מודפס בעברית — הכלי מפענח את הטקסט ומייצא קובץ טקסט לעריכה. מתאים לחשבוניות, טפסים ומכתבים סרוקים."
+    },
     "/de/image-compressor": {
       "title": "Bildkompressor — Tamirly",
       "description": "Komprimieren Sie Ihre Bilder und sparen Sie Speicherplatz. Unser Tool reduziert die Dateigröße bei maximaler Qualität."
@@ -730,6 +1102,38 @@
       "title": "PDF-Manager — Tamirly",
       "description": "Erweiterter PDF-Manager — laden Sie mehrere PDFs hoch, ordnen Sie Seiten per Drag & Drop, drehen Sie einzelne Seiten und führen Sie alles zusammen."
     },
+    "/de/mkv-to-avi": {
+      "title": "MKV in AVI konvertieren — Tamirly",
+      "description": "Konvertieren Sie MKV in AVI kostenlos, direkt im Browser."
+    },
+    "/de/mkv-to-mov": {
+      "title": "MKV in MOV konvertieren — Tamirly",
+      "description": "Konvertieren Sie MKV in MOV kostenlos, direkt im Browser."
+    },
+    "/de/mkv-to-mp4": {
+      "title": "MKV in MP4 konvertieren — Tamirly",
+      "description": "Konvertieren Sie MKV in MP4 kostenlos, direkt im Browser."
+    },
+    "/de/mkv-to-webm": {
+      "title": "MKV in WEBM konvertieren — Tamirly",
+      "description": "Konvertieren Sie MKV in WEBM kostenlos, direkt im Browser."
+    },
+    "/de/mov-to-avi": {
+      "title": "MOV in AVI konvertieren — Tamirly",
+      "description": "Konvertieren Sie MOV in AVI kostenlos, direkt im Browser."
+    },
+    "/de/mov-to-mkv": {
+      "title": "MOV in MKV konvertieren — Tamirly",
+      "description": "Konvertieren Sie MOV in MKV kostenlos, direkt im Browser."
+    },
+    "/de/mov-to-mp4": {
+      "title": "MOV in MP4 konvertieren — Tamirly",
+      "description": "Konvertieren Sie MOV in MP4 kostenlos, direkt im Browser."
+    },
+    "/de/mov-to-webm": {
+      "title": "MOV in WEBM konvertieren — Tamirly",
+      "description": "Konvertieren Sie MOV in WEBM kostenlos, direkt im Browser."
+    },
     "/de/mp3-to-aac": {
       "title": "MP3 in AAC konvertieren — Tamirly",
       "description": "Konvertieren Sie MP3 in AAC kostenlos, direkt im Browser."
@@ -746,6 +1150,22 @@
       "title": "MP3 in WAV konvertieren — Tamirly",
       "description": "Konvertieren Sie MP3 in WAV kostenlos, direkt im Browser."
     },
+    "/de/mp4-to-avi": {
+      "title": "MP4 in AVI konvertieren — Tamirly",
+      "description": "Konvertieren Sie MP4 in AVI kostenlos, direkt im Browser."
+    },
+    "/de/mp4-to-mkv": {
+      "title": "MP4 in MKV konvertieren — Tamirly",
+      "description": "Konvertieren Sie MP4 in MKV kostenlos, direkt im Browser."
+    },
+    "/de/mp4-to-mov": {
+      "title": "MP4 in MOV konvertieren — Tamirly",
+      "description": "Konvertieren Sie MP4 in MOV kostenlos, direkt im Browser."
+    },
+    "/de/mp4-to-webm": {
+      "title": "MP4 in WEBM konvertieren — Tamirly",
+      "description": "Konvertieren Sie MP4 in WEBM kostenlos, direkt im Browser."
+    },
     "/de/ogg-to-aac": {
       "title": "OGG in AAC konvertieren — Tamirly",
       "description": "Konvertieren Sie OGG in AAC kostenlos, direkt im Browser."
@@ -761,6 +1181,10 @@
     "/de/ogg-to-wav": {
       "title": "OGG in WAV konvertieren — Tamirly",
       "description": "Konvertieren Sie OGG in WAV kostenlos, direkt im Browser."
+    },
+    "/de/pdf-to-docx": {
+      "title": "PDF in DOCX konvertieren — Tamirly",
+      "description": "Konvertieren Sie PDF in DOCX kostenlos, direkt im Browser."
     },
     "/de/png-to-ico": {
       "title": "PNG in ICO konvertieren — Tamirly",
@@ -797,6 +1221,22 @@
     "/de/wav-to-ogg": {
       "title": "WAV in OGG konvertieren — Tamirly",
       "description": "Konvertieren Sie WAV in OGG kostenlos, direkt im Browser."
+    },
+    "/de/webm-to-avi": {
+      "title": "WEBM in AVI konvertieren — Tamirly",
+      "description": "Konvertieren Sie WEBM in AVI kostenlos, direkt im Browser."
+    },
+    "/de/webm-to-mkv": {
+      "title": "WEBM in MKV konvertieren — Tamirly",
+      "description": "Konvertieren Sie WEBM in MKV kostenlos, direkt im Browser."
+    },
+    "/de/webm-to-mov": {
+      "title": "WEBM in MOV konvertieren — Tamirly",
+      "description": "Konvertieren Sie WEBM in MOV kostenlos, direkt im Browser."
+    },
+    "/de/webm-to-mp4": {
+      "title": "WEBM in MP4 konvertieren — Tamirly",
+      "description": "Konvertieren Sie WEBM in MP4 kostenlos, direkt im Browser."
     },
     "/de/webp-to-jpg": {
       "title": "WEBP in JPG konvertieren — Tamirly",
@@ -846,6 +1286,22 @@
       "title": "Convertir AAC en WAV — Tamirly",
       "description": "Convertissez AAC en WAV gratuitement, directement dans votre navigateur."
     },
+    "/fr/avi-to-mkv": {
+      "title": "Convertir AVI en MKV — Tamirly",
+      "description": "Convertissez AVI en MKV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/avi-to-mov": {
+      "title": "Convertir AVI en MOV — Tamirly",
+      "description": "Convertissez AVI en MOV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/avi-to-mp4": {
+      "title": "Convertir AVI en MP4 — Tamirly",
+      "description": "Convertissez AVI en MP4 gratuitement, directement dans votre navigateur."
+    },
+    "/fr/avi-to-webm": {
+      "title": "Convertir AVI en WEBM — Tamirly",
+      "description": "Convertissez AVI en WEBM gratuitement, directement dans votre navigateur."
+    },
     "/fr/doc-to-pdf": {
       "title": "Convertir DOC en PDF — Tamirly",
       "description": "Convertissez DOC en PDF gratuitement, directement dans votre navigateur."
@@ -870,6 +1326,10 @@
       "title": "Convertir FLAC en WAV — Tamirly",
       "description": "Convertissez FLAC en WAV gratuitement, directement dans votre navigateur."
     },
+    "/fr/hebrew-ocr": {
+      "title": "פענוח עברית (OCR) — Tamirly",
+      "description": "העלו PDF או תמונה של מסמך מודפס בעברית — הכלי מפענח את הטקסט ומייצא קובץ טקסט לעריכה. מתאים לחשבוניות, טפסים ומכתבים סרוקים."
+    },
     "/fr/image-compressor": {
       "title": "Compresseur d'Images — Tamirly",
       "description": "Compressez vos images et économisez de l'espace de stockage. Notre outil réduit la taille du fichier en conservant la qualité maximale."
@@ -890,6 +1350,38 @@
       "title": "Gestionnaire PDF — Tamirly",
       "description": "Gestionnaire PDF avancé — téléchargez plusieurs PDF, réorganisez les pages par glisser-déposer, faites pivoter des pages et fusionnez le tout."
     },
+    "/fr/mkv-to-avi": {
+      "title": "Convertir MKV en AVI — Tamirly",
+      "description": "Convertissez MKV en AVI gratuitement, directement dans votre navigateur."
+    },
+    "/fr/mkv-to-mov": {
+      "title": "Convertir MKV en MOV — Tamirly",
+      "description": "Convertissez MKV en MOV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/mkv-to-mp4": {
+      "title": "Convertir MKV en MP4 — Tamirly",
+      "description": "Convertissez MKV en MP4 gratuitement, directement dans votre navigateur."
+    },
+    "/fr/mkv-to-webm": {
+      "title": "Convertir MKV en WEBM — Tamirly",
+      "description": "Convertissez MKV en WEBM gratuitement, directement dans votre navigateur."
+    },
+    "/fr/mov-to-avi": {
+      "title": "Convertir MOV en AVI — Tamirly",
+      "description": "Convertissez MOV en AVI gratuitement, directement dans votre navigateur."
+    },
+    "/fr/mov-to-mkv": {
+      "title": "Convertir MOV en MKV — Tamirly",
+      "description": "Convertissez MOV en MKV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/mov-to-mp4": {
+      "title": "Convertir MOV en MP4 — Tamirly",
+      "description": "Convertissez MOV en MP4 gratuitement, directement dans votre navigateur."
+    },
+    "/fr/mov-to-webm": {
+      "title": "Convertir MOV en WEBM — Tamirly",
+      "description": "Convertissez MOV en WEBM gratuitement, directement dans votre navigateur."
+    },
     "/fr/mp3-to-aac": {
       "title": "Convertir MP3 en AAC — Tamirly",
       "description": "Convertissez MP3 en AAC gratuitement, directement dans votre navigateur."
@@ -906,6 +1398,22 @@
       "title": "Convertir MP3 en WAV — Tamirly",
       "description": "Convertissez MP3 en WAV gratuitement, directement dans votre navigateur."
     },
+    "/fr/mp4-to-avi": {
+      "title": "Convertir MP4 en AVI — Tamirly",
+      "description": "Convertissez MP4 en AVI gratuitement, directement dans votre navigateur."
+    },
+    "/fr/mp4-to-mkv": {
+      "title": "Convertir MP4 en MKV — Tamirly",
+      "description": "Convertissez MP4 en MKV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/mp4-to-mov": {
+      "title": "Convertir MP4 en MOV — Tamirly",
+      "description": "Convertissez MP4 en MOV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/mp4-to-webm": {
+      "title": "Convertir MP4 en WEBM — Tamirly",
+      "description": "Convertissez MP4 en WEBM gratuitement, directement dans votre navigateur."
+    },
     "/fr/ogg-to-aac": {
       "title": "Convertir OGG en AAC — Tamirly",
       "description": "Convertissez OGG en AAC gratuitement, directement dans votre navigateur."
@@ -921,6 +1429,10 @@
     "/fr/ogg-to-wav": {
       "title": "Convertir OGG en WAV — Tamirly",
       "description": "Convertissez OGG en WAV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/pdf-to-docx": {
+      "title": "Convertir PDF en DOCX — Tamirly",
+      "description": "Convertissez PDF en DOCX gratuitement, directement dans votre navigateur."
     },
     "/fr/png-to-ico": {
       "title": "Convertir PNG en ICO — Tamirly",
@@ -957,6 +1469,22 @@
     "/fr/wav-to-ogg": {
       "title": "Convertir WAV en OGG — Tamirly",
       "description": "Convertissez WAV en OGG gratuitement, directement dans votre navigateur."
+    },
+    "/fr/webm-to-avi": {
+      "title": "Convertir WEBM en AVI — Tamirly",
+      "description": "Convertissez WEBM en AVI gratuitement, directement dans votre navigateur."
+    },
+    "/fr/webm-to-mkv": {
+      "title": "Convertir WEBM en MKV — Tamirly",
+      "description": "Convertissez WEBM en MKV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/webm-to-mov": {
+      "title": "Convertir WEBM en MOV — Tamirly",
+      "description": "Convertissez WEBM en MOV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/webm-to-mp4": {
+      "title": "Convertir WEBM en MP4 — Tamirly",
+      "description": "Convertissez WEBM en MP4 gratuitement, directement dans votre navigateur."
     },
     "/fr/webp-to-jpg": {
       "title": "Convertir WEBP en JPG — Tamirly",
@@ -1006,6 +1534,22 @@
       "title": "Convertire AAC in WAV — Tamirly",
       "description": "Converti file AAC in WAV gratis, direttamente nel browser."
     },
+    "/it/avi-to-mkv": {
+      "title": "Convertire AVI in MKV — Tamirly",
+      "description": "Converti file AVI in MKV gratis, direttamente nel browser."
+    },
+    "/it/avi-to-mov": {
+      "title": "Convertire AVI in MOV — Tamirly",
+      "description": "Converti file AVI in MOV gratis, direttamente nel browser."
+    },
+    "/it/avi-to-mp4": {
+      "title": "Convertire AVI in MP4 — Tamirly",
+      "description": "Converti file AVI in MP4 gratis, direttamente nel browser."
+    },
+    "/it/avi-to-webm": {
+      "title": "Convertire AVI in WEBM — Tamirly",
+      "description": "Converti file AVI in WEBM gratis, direttamente nel browser."
+    },
     "/it/doc-to-pdf": {
       "title": "Convertire DOC in PDF — Tamirly",
       "description": "Converti file DOC in PDF gratis, direttamente nel browser."
@@ -1030,6 +1574,10 @@
       "title": "Convertire FLAC in WAV — Tamirly",
       "description": "Converti file FLAC in WAV gratis, direttamente nel browser."
     },
+    "/it/hebrew-ocr": {
+      "title": "פענוח עברית (OCR) — Tamirly",
+      "description": "העלו PDF או תמונה של מסמך מודפס בעברית — הכלי מפענח את הטקסט ומייצא קובץ טקסט לעריכה. מתאים לחשבוניות, טפסים ומכתבים סרוקים."
+    },
     "/it/image-compressor": {
       "title": "Compressore Immagini — Tamirly",
       "description": "Comprimi le tue immagini e risparmia spazio di archiviazione. Il nostro strumento riduce la dimensione del file mantenendo la massima qualità."
@@ -1050,6 +1598,38 @@
       "title": "Gestore PDF — Tamirly",
       "description": "Gestore PDF avanzato — carica più PDF, riordina le pagine trascinando, ruota pagine singole e unisci tutto in un unico PDF organizzato."
     },
+    "/it/mkv-to-avi": {
+      "title": "Convertire MKV in AVI — Tamirly",
+      "description": "Converti file MKV in AVI gratis, direttamente nel browser."
+    },
+    "/it/mkv-to-mov": {
+      "title": "Convertire MKV in MOV — Tamirly",
+      "description": "Converti file MKV in MOV gratis, direttamente nel browser."
+    },
+    "/it/mkv-to-mp4": {
+      "title": "Convertire MKV in MP4 — Tamirly",
+      "description": "Converti file MKV in MP4 gratis, direttamente nel browser."
+    },
+    "/it/mkv-to-webm": {
+      "title": "Convertire MKV in WEBM — Tamirly",
+      "description": "Converti file MKV in WEBM gratis, direttamente nel browser."
+    },
+    "/it/mov-to-avi": {
+      "title": "Convertire MOV in AVI — Tamirly",
+      "description": "Converti file MOV in AVI gratis, direttamente nel browser."
+    },
+    "/it/mov-to-mkv": {
+      "title": "Convertire MOV in MKV — Tamirly",
+      "description": "Converti file MOV in MKV gratis, direttamente nel browser."
+    },
+    "/it/mov-to-mp4": {
+      "title": "Convertire MOV in MP4 — Tamirly",
+      "description": "Converti file MOV in MP4 gratis, direttamente nel browser."
+    },
+    "/it/mov-to-webm": {
+      "title": "Convertire MOV in WEBM — Tamirly",
+      "description": "Converti file MOV in WEBM gratis, direttamente nel browser."
+    },
     "/it/mp3-to-aac": {
       "title": "Convertire MP3 in AAC — Tamirly",
       "description": "Converti file MP3 in AAC gratis, direttamente nel browser."
@@ -1066,6 +1646,22 @@
       "title": "Convertire MP3 in WAV — Tamirly",
       "description": "Converti file MP3 in WAV gratis, direttamente nel browser."
     },
+    "/it/mp4-to-avi": {
+      "title": "Convertire MP4 in AVI — Tamirly",
+      "description": "Converti file MP4 in AVI gratis, direttamente nel browser."
+    },
+    "/it/mp4-to-mkv": {
+      "title": "Convertire MP4 in MKV — Tamirly",
+      "description": "Converti file MP4 in MKV gratis, direttamente nel browser."
+    },
+    "/it/mp4-to-mov": {
+      "title": "Convertire MP4 in MOV — Tamirly",
+      "description": "Converti file MP4 in MOV gratis, direttamente nel browser."
+    },
+    "/it/mp4-to-webm": {
+      "title": "Convertire MP4 in WEBM — Tamirly",
+      "description": "Converti file MP4 in WEBM gratis, direttamente nel browser."
+    },
     "/it/ogg-to-aac": {
       "title": "Convertire OGG in AAC — Tamirly",
       "description": "Converti file OGG in AAC gratis, direttamente nel browser."
@@ -1081,6 +1677,10 @@
     "/it/ogg-to-wav": {
       "title": "Convertire OGG in WAV — Tamirly",
       "description": "Converti file OGG in WAV gratis, direttamente nel browser."
+    },
+    "/it/pdf-to-docx": {
+      "title": "Convertire PDF in DOCX — Tamirly",
+      "description": "Converti file PDF in DOCX gratis, direttamente nel browser."
     },
     "/it/png-to-ico": {
       "title": "Convertire PNG in ICO — Tamirly",
@@ -1117,6 +1717,22 @@
     "/it/wav-to-ogg": {
       "title": "Convertire WAV in OGG — Tamirly",
       "description": "Converti file WAV in OGG gratis, direttamente nel browser."
+    },
+    "/it/webm-to-avi": {
+      "title": "Convertire WEBM in AVI — Tamirly",
+      "description": "Converti file WEBM in AVI gratis, direttamente nel browser."
+    },
+    "/it/webm-to-mkv": {
+      "title": "Convertire WEBM in MKV — Tamirly",
+      "description": "Converti file WEBM in MKV gratis, direttamente nel browser."
+    },
+    "/it/webm-to-mov": {
+      "title": "Convertire WEBM in MOV — Tamirly",
+      "description": "Converti file WEBM in MOV gratis, direttamente nel browser."
+    },
+    "/it/webm-to-mp4": {
+      "title": "Convertire WEBM in MP4 — Tamirly",
+      "description": "Converti file WEBM in MP4 gratis, direttamente nel browser."
     },
     "/it/webp-to-jpg": {
       "title": "Convertire WEBP in JPG — Tamirly",

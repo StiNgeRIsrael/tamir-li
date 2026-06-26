@@ -13,7 +13,7 @@ describe("public-stats", () => {
 
   it("shows 10 live tools out of 14 in catalog", () => {
     const stats = getDerivedHomeStatsFromTools(tools);
-    expect(stats.functionalToolCount).toBe(10);
+    expect(stats.functionalToolCount).toBe(12);
     expect(stats.toolCount).toBe(14);
   });
 

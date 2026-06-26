@@ -279,6 +279,9 @@ export const frTranslations = {
       "Cet outil convertit le texte du document en PDF simple dans le navigateur. La mise en page avancée (titres, images, tableaux) peut ne pas être conservée — idéal pour les documents texte simples.",
     wordToPdfLegacyDocError: "Les anciens fichiers .doc ne sont pas pris en charge dans le navigateur. Enregistrez en DOCX dans Word et réessayez.",
     wordToPdfEmptyDocError: "Le document semble vide ou son contenu n'a pas pu être lu.",
+    pdfToWordEmptyPdfError: "Aucun texte lisible trouvé dans ce PDF. Les PDF scannés nécessitent d'abord l'OCR.",
+    pdfToWordExportNotice:
+      "Cet outil extrait le texte du PDF et l'enregistre en DOCX modifiable dans le navigateur. Mise en page, images et tableaux non conservés.",
     documentConversionError: "La conversion a échoué. Vérifiez que le fichier est un DOCX valide.",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) => isCustom ? `Comment Utiliser ${name}` : `Comment Convertir ${from} en ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [

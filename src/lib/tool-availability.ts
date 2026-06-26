@@ -12,7 +12,9 @@ const FUNCTIONAL_TOOL_IDS = new Set([
   "text-tools",
   "hebrew-ocr",
   "audio-converter",
+  "video-converter",
   "word-to-pdf",
+  "pdf-to-word",
 ]);
 
 export function isToolFunctional(toolId: string): boolean {

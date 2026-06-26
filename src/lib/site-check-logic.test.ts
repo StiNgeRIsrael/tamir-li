@@ -15,19 +15,20 @@ describe("site-check logic", () => {
 
   it("keeps stub tools non-functional", () => {
     const functional = new Set(getFunctionalToolIds());
-    expect(functional.has("pdf-to-word")).toBe(false);
-    expect(functional.has("video-converter")).toBe(false);
+    expect(functional.has("ai-image-generator")).toBe(false);
   });
 
-  it("routes word-to-pdf through client document conversion", () => {
+  it("routes document tools through client conversion", () => {
     expect(usesClientDocumentConversion("word-to-pdf")).toBe(true);
-    expect(usesClientDocumentConversion("pdf-to-word")).toBe(false);
+    expect(usesClientDocumentConversion("pdf-to-word")).toBe(true);
   });
 
-  it("tracks ten functional tools including word-to-pdf and hebrew-ocr", () => {
+  it("tracks twelve functional tools including video and pdf-to-word", () => {
     const ids = getFunctionalToolIds();
     expect(ids).toContain("word-to-pdf");
+    expect(ids).toContain("pdf-to-word");
+    expect(ids).toContain("video-converter");
     expect(ids).toContain("hebrew-ocr");
-    expect(ids.length).toBe(10);
+    expect(ids.length).toBe(12);
   });
 });

@@ -83,6 +83,7 @@
     "cmdk": "^1.1.1",
     "country-flag-icons": "^1.6.18",
     "date-fns": "^3.6.0",
+    "docx": "^9.7.1",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.462.0",

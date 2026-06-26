@@ -86,9 +86,13 @@ const FEATURED_FUNCTIONAL_ORDER = [
 
   "word-to-pdf",
 
+  "pdf-to-word",
+
   "text-tools",
 
   "audio-converter",
+
+  "video-converter",
 
 ] as const;
 

@@ -282,6 +282,9 @@ export const ruTranslations = {
       "Инструмент преобразует текст документа в простой PDF в браузере. Сложное оформление (заголовки, изображения, таблицы) может не сохраниться — подходит для простых текстовых документов.",
     wordToPdfLegacyDocError: "Старые файлы .doc не поддерживаются в браузере. Сохраните как DOCX в Word и попробуйте снова.",
     wordToPdfEmptyDocError: "Документ пуст или его содержимое не удалось прочитать.",
+    pdfToWordEmptyPdfError: "В этом PDF не найден читаемый текст. Для сканированных PDF сначала нужен OCR.",
+    pdfToWordExportNotice:
+      "Инструмент извлекает текст из PDF и сохраняет его как редактируемый DOCX в браузере. Вёрстка, изображения и таблицы не сохраняются.",
     documentConversionError: "Конвертация не удалась. Убедитесь, что файл является корректным DOCX.",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) => isCustom ? `Как Использовать ${name}` : `Как Конвертировать ${from} в ${to}`,
     howToSteps: (name: string, from: string, to: string, isCustom: boolean) => [

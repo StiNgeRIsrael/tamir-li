@@ -11,7 +11,11 @@ import {
   getOrCreateSessionId,
   isPremiumUser,
 } from '../lib/usage-shared';
-import { notifyConversionWorker } from '../lib/conversion-worker';
+import {
+  checkFfmpegAvailable,
+  isFfmpegRequiredTool,
+  notifyConversionWorker,
+} from '../lib/conversion-worker';
 import {
   ensureJobDir,
   ensureStorageDir,
@@ -109,6 +113,14 @@ router.post('/', optionalAuth, multipartUpload, async (req: Request, res: Respon
     const { toolId, fromFormat, toFormat, fileSizeBytes } = parseBodyFields(req);
     if (!toolId || !fromFormat || !toFormat) {
       res.status(400).json({ error: 'INVALID_BODY', message: 'toolId, fromFormat, and toFormat are required' });
+      return;
+    }
+
+    if (isFfmpegRequiredTool(toolId) && !(await checkFfmpegAvailable())) {
+      res.status(503).json({
+        error: 'FFMPEG_UNAVAILABLE',
+        message: 'ffmpeg is not installed on the server. Audio and video conversion requires ffmpeg on the host.',
+      });
       return;
     }
 
@@ -210,8 +222,9 @@ router.post('/', optionalAuth, multipartUpload, async (req: Request, res: Respon
   }
 });
 
-router.get('/health', (_req: Request, res: Response) => {
-  res.json({ ok: true, service: 'conversions' });
+router.get('/health', async (_req: Request, res: Response) => {
+  const ffmpeg = await checkFfmpegAvailable();
+  res.json({ ok: true, service: 'conversions', ffmpeg });
 });
 
 router.get('/:id/file', optionalAuth, async (req: Request, res: Response) => {

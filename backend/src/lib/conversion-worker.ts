@@ -1,4 +1,3 @@
-import { spawn } from 'child_process';
 import fs from 'fs';
 
 import { JobStatus } from '@prisma/client';
@@ -9,111 +8,46 @@ import { cleanupExpiredConversionJobs, recoverInterruptedJobs } from './conversi
 
 import { ensureJobDir, outputFilePath } from './conversion-storage';
 
+import { checkFfmpegAvailable, isFfmpegRequiredTool, runFfmpeg } from './ffmpeg';
+
 const POLL_FAST_MS = 5000;
 const POLL_IDLE_MS = 30_000;
 const CLEANUP_INTERVAL_MS = 30 * 60 * 1000;
 /** Cap jobs per tick so ffmpeg-heavy bursts do not starve the event loop. */
 const MAX_JOBS_PER_TICK = 10;
 
-const AUDIO_TOOL_ID = 'audio-converter';
+const FFMPEG_UNAVAILABLE = 'FFMPEG_UNAVAILABLE';
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 let pollMs = POLL_FAST_MS;
 let processing = false;
 let lastCleanupAt = 0;
-let ffmpegAvailable: boolean | null = null;
 
-function getFfmpegPath(): string {
-  const configured = process.env.FFMPEG_PATH?.trim();
-  return configured || 'ffmpeg';
-}
+type FfmpegConvertResult = 'ok' | 'no_ffmpeg' | 'failed';
 
-function isAudioConverterJob(toolId: string): boolean {
-  return toolId === AUDIO_TOOL_ID;
-}
-
-function ffmpegCodecArgs(toFormat: string): string[] {
-  switch (toFormat.toUpperCase()) {
-    case 'MP3':
-      return ['-c:a', 'libmp3lame', '-q:a', '2'];
-    case 'WAV':
-      return ['-c:a', 'pcm_s16le'];
-    case 'AAC':
-      return ['-c:a', 'aac', '-b:a', '192k', '-f', 'adts'];
-    case 'OGG':
-      return ['-c:a', 'libvorbis', '-q:a', '4'];
-    case 'FLAC':
-      return ['-c:a', 'flac'];
-    default:
-      return [];
-  }
-}
-
-async function checkFfmpegAvailable(): Promise<boolean> {
-  if (ffmpegAvailable !== null) return ffmpegAvailable;
-
-  const ffmpeg = getFfmpegPath();
-  ffmpegAvailable = await new Promise<boolean>((resolve) => {
-    const proc = spawn(ffmpeg, ['-version'], { stdio: 'ignore' });
-    proc.on('error', () => resolve(false));
-    proc.on('close', (code) => resolve(code === 0));
-  });
-
-  if (!ffmpegAvailable) {
-    console.warn(
-      `[conversion-worker] ffmpeg not found (${ffmpeg}); audio conversions will use stub passthrough`
-    );
-  }
-
-  return ffmpegAvailable;
-}
-
-function runFfmpeg(
-  inputPath: string,
-  outputPath: string,
-  toFormat: string
-): Promise<void> {
-  const ffmpeg = getFfmpegPath();
-  const args = ['-y', '-i', inputPath, ...ffmpegCodecArgs(toFormat), outputPath];
-
-  return new Promise((resolve, reject) => {
-    const proc = spawn(ffmpeg, args, { stdio: ['ignore', 'ignore', 'pipe'] });
-    let stderr = '';
-    proc.stderr?.on('data', (chunk: Buffer) => {
-      stderr += chunk.toString();
-    });
-    proc.on('error', (err) => reject(err));
-    proc.on('close', (code) => {
-      if (code === 0) resolve();
-      else reject(new Error(`ffmpeg exited ${code}: ${stderr.slice(-500)}`));
-    });
-  });
-}
-
-type AudioConvertResult = 'ok' | 'no_ffmpeg' | 'failed';
-
-async function convertAudioJob(
+async function convertWithFfmpeg(
+  toolId: string,
   inputPath: string | null,
   outputPath: string,
   toFormat: string
-): Promise<AudioConvertResult> {
+): Promise<FfmpegConvertResult> {
   if (!(await checkFfmpegAvailable())) {
     return 'no_ffmpeg';
   }
 
   if (!inputPath || !fs.existsSync(inputPath)) {
-    console.error('[conversion-worker] audio job missing input file');
+    console.error(`[conversion-worker] ${toolId} job missing input file`);
     return 'failed';
   }
 
   try {
-    await runFfmpeg(inputPath, outputPath, toFormat);
+    await runFfmpeg(inputPath, outputPath, toolId, toFormat);
     if (!fs.existsSync(outputPath)) {
       return 'failed';
     }
     return 'ok';
   } catch (e) {
-    console.error('[conversion-worker] ffmpeg conversion failed:', e);
+    console.error(`[conversion-worker] ${toolId} ffmpeg conversion failed:`, e);
     return 'failed';
   }
 }
@@ -156,6 +90,30 @@ async function claimNextPendingJob() {
   });
 }
 
+async function markJobFailed(jobId: string, errorMessage: string): Promise<void> {
+  await prisma.conversionJob.update({
+    where: { id: jobId },
+    data: {
+      status: JobStatus.FAILED,
+      completedAt: new Date(),
+      errorMessage,
+      outputStoragePath: null,
+    },
+  });
+}
+
+async function markJobCompleted(jobId: string, outPath: string): Promise<void> {
+  await prisma.conversionJob.update({
+    where: { id: jobId },
+    data: {
+      status: JobStatus.COMPLETED,
+      completedAt: new Date(),
+      errorMessage: null,
+      outputStoragePath: outPath,
+    },
+  });
+}
+
 /** Returns true when a job was picked up (queue may have more). */
 async function processNextJob(): Promise<boolean> {
   if (processing) return false;
@@ -170,55 +128,32 @@ async function processNextJob(): Promise<boolean> {
     const outPath = outputFilePath(job.id, job.toFormat);
     ensureJobDir(job.id);
 
-    if (isAudioConverterJob(job.toolId)) {
-      const result = await convertAudioJob(job.inputStoragePath, outPath, job.toFormat);
+    if (isFfmpegRequiredTool(job.toolId)) {
+      const result = await convertWithFfmpeg(
+        job.toolId,
+        job.inputStoragePath,
+        outPath,
+        job.toFormat
+      );
 
       if (result === 'ok') {
-        await prisma.conversionJob.update({
-          where: { id: job.id },
-          data: {
-            status: JobStatus.COMPLETED,
-            completedAt: new Date(),
-            errorMessage: null,
-            outputStoragePath: outPath,
-          },
-        });
+        await markJobCompleted(job.id, outPath);
         return true;
       }
 
       if (result === 'no_ffmpeg') {
-        runStubConversion(
-          job.id,
-          job.inputStoragePath,
-          outPath,
-          job.fromFormat,
-          job.toFormat
-        );
-        await prisma.conversionJob.update({
-          where: { id: job.id },
-          data: {
-            status: JobStatus.COMPLETED,
-            completedAt: new Date(),
-            errorMessage: null,
-            outputStoragePath: outPath,
-          },
-        });
+        await markJobFailed(job.id, FFMPEG_UNAVAILABLE);
         return true;
       }
 
-      await prisma.conversionJob.update({
-        where: { id: job.id },
-        data: {
-          status: JobStatus.FAILED,
-          completedAt: new Date(),
-          errorMessage: 'Audio conversion failed',
-          outputStoragePath: null,
-        },
-      });
+      await markJobFailed(
+        job.id,
+        job.toolId === 'video-converter' ? 'Video conversion failed' : 'Audio conversion failed'
+      );
       return true;
     }
 
-    // Stub for other tools until FFmpeg/ImageMagick handlers ship.
+    // Stub for other tools until dedicated handlers ship.
     runStubConversion(
       job.id,
       job.inputStoragePath,
@@ -227,29 +162,14 @@ async function processNextJob(): Promise<boolean> {
       job.toFormat
     );
 
-    await prisma.conversionJob.update({
-      where: { id: job.id },
-      data: {
-        status: JobStatus.COMPLETED,
-        completedAt: new Date(),
-        errorMessage: null,
-        outputStoragePath: outPath,
-      },
-    });
+    await markJobCompleted(job.id, outPath);
     return true;
   } catch (e) {
     console.error('[conversion-worker] unexpected job error:', e);
     if (activeJobId) {
-      await prisma.conversionJob
-        .update({
-          where: { id: activeJobId },
-          data: {
-            status: JobStatus.FAILED,
-            completedAt: new Date(),
-            errorMessage: 'Unexpected worker error',
-          },
-        })
-        .catch((err: unknown) => console.error('[conversion-worker] failed to mark job FAILED:', err));
+      await markJobFailed(activeJobId, 'Unexpected worker error').catch((err: unknown) =>
+        console.error('[conversion-worker] failed to mark job FAILED:', err)
+      );
     }
     return false;
   } finally {
@@ -322,3 +242,5 @@ export function stopConversionWorker(): void {
     timer = null;
   }
 }
+
+export { checkFfmpegAvailable, isFfmpegRequiredTool };

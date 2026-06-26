@@ -339,6 +339,9 @@ export const heTranslations = {
       "הכלי ממיר את תוכן המסמך ל-PDF פשוט בדפדפן. עיצוב מתקדם (כותרות, תמונות, טבלאות) עשוי לא להישמר — מתאים למסמכי טקסט פשוטים.",
     wordToPdfLegacyDocError: "קבצי .doc ישנים אינם נתמכים בדפדפן. שמרו כ-DOCX ב-Word ונסו שוב.",
     wordToPdfEmptyDocError: "המסמך נראה ריק או שלא ניתן לקרוא את התוכן.",
+    pdfToWordEmptyPdfError: "לא נמצא טקסט קריא ב-PDF. ל-PDF סרוק נדרש OCR — נסו OCR עברית.",
+    pdfToWordExportNotice:
+      "הכלי מחלץ טקסט מ-PDF ושומר אותו כ-DOCX לעריכה בדפדפן. עיצוב, תמונות וטבלאות לא נשמרים — מתאים ל-PDF מבוסס טקסט.",
     documentConversionError: "ההמרה נכשלה. ודאו שהקובץ הוא DOCX תקין.",
     howToTitle: (name: string, from: string, to: string, isCustom: boolean) =>
       isCustom ? `איך להשתמש ב${name}?` : `איך להמיר ${from} ל-${to}?`,
