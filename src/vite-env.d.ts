@@ -24,6 +24,12 @@ interface ImportMetaEnv {
   readonly VITE_ADSTERRA_INVOKE_HOST?: string;
   /** Popup URL opened on first download click (two-step download flow). Falls back to vignette if unset. */
   readonly VITE_AD_CLICK_URL?: string;
+  /** AdMob Android app ID (ca-app-pub-…~…). */
+  readonly VITE_ADMOB_APP_ID?: string;
+  readonly VITE_ADMOB_SLOT_BANNER?: string;
+  readonly VITE_ADMOB_SLOT_INTERSTITIAL?: string;
+  readonly VITE_ADMOB_SLOT_REWARDED?: string;
+  readonly VITE_ADMOB_TEST_DEVICE_IDS?: string;
   readonly MODE: string;
   readonly DEV: boolean;
   readonly PROD: boolean;

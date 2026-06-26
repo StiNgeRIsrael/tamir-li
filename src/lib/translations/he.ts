@@ -422,6 +422,7 @@ export const heTranslations = {
     advancedTools: "כלים מתקדמים",
     brand: "תמיר לי",
     installApp: "התקן כאפליקציה",
+    playStore: "הורד מ-Google Play",
     blogAndGuides: "בלוג ומדריכים",
     terms: "תנאי שימוש",
     privacy: "מדיניות פרטיות",

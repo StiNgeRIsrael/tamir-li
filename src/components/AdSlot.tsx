@@ -1,4 +1,4 @@
-import { useMemo, useRef, type CSSProperties } from "react";
+import { useMemo, useRef, useEffect, type CSSProperties } from "react";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
@@ -9,6 +9,7 @@ import {
   isAdsterraConfigured,
   triggerPopunderAd,
 } from "@/lib/ads/adsterra";
+import { hideAdMobBanner, shouldUseAdMob, showAdMobBanner, showAdMobInterstitial } from "@/lib/ads/admob";
 import { useAdConfig } from "@/contexts/AdConfigContext";
 import { useAdsConsent } from "@/hooks/useAdsConsent";
 import { useAdIframeLoad } from "@/hooks/useAdIframeLoad";
@@ -76,12 +77,33 @@ export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotPro
     return buildAdIframeSrcdoc(zoneKey, dims.width, dims.height, slotId);
   }, [showLiveAd, zoneKey, dims.width, dims.height, slotId]);
 
+  useEffect(() => {
+    if (!shouldUseAdMob() || type !== "banner" || isPremium) return;
+    void showAdMobBanner();
+    return () => {
+      void hideAdMobBanner();
+    };
+  }, [type, isPremium]);
+
   const envHint =
     type === "sidebar" && slotId?.endsWith("-2")
       ? "VITE_ADSTERRA_ZONE_SIDEBAR_2"
       : meta.envVar;
 
   if (isPremium) return null;
+
+  if (shouldUseAdMob() && type === "banner") {
+    return (
+      <aside
+        role="complementary"
+        aria-label={label}
+        data-ad-region="admob-banner"
+        data-ad-slot-id={slotId}
+        className={cn("ad-slot ad-slot--admob mx-auto flex w-full max-w-full flex-col", className)}
+        style={aspectStyle}
+      />
+    );
+  }
 
   if (!hasConsent) return null;
 
@@ -165,6 +187,10 @@ export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotPro
 
 /** Call after conversion milestones; shows vignette overlay (with optional popunder). */
 export function triggerInterstitial() {
+  if (shouldUseAdMob()) {
+    void showAdMobInterstitial();
+    return;
+  }
   void showAdVignette({ minMs: 4000, slotId: "convert-success-vignette" });
   triggerPopunderAd();
 }

@@ -79,7 +79,7 @@ export default function PremiumPage() {
 
   const auth = t.auth as { signInRequired?: string } | undefined;
 
-  const { checkout, checkoutLoading, refetch, captureOrder, activateSubscription, isPremium } =
+  const { checkout, checkoutLoading, refetch, captureOrder, activateSubscription, isPremium, nativeBilling } =
     useSubscription();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -243,6 +243,10 @@ export default function PremiumPage() {
 
     try {
       await checkout(plan);
+      if (nativeBilling) {
+        await refetch();
+        toast.success(u.checkoutSuccess ?? "Welcome to Premium!");
+      }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Checkout failed");
     }

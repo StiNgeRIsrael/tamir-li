@@ -2,6 +2,7 @@ import { useCallback, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getApiBaseUrl } from "@/lib/api/client";
 import { setPremiumUser } from "@/lib/ads/adsterra";
+import { useNativeBillingAvailable, usePlayBilling } from "@/hooks/usePlayBilling";
 
 export type CheckoutPlan =
   | "monthly"
@@ -17,6 +18,7 @@ export type BillingStatus = {
   periodEnd: string | null;
   credits: number;
   provider?: string | null;
+  billingProvider?: string | null;
 };
 
 function getAuthHeaders(): HeadersInit {
@@ -106,12 +108,18 @@ export function useSubscription() {
   const api = getApiBaseUrl();
   const queryClient = useQueryClient();
   const loggedIn = hasAuthToken();
+  const nativeBilling = useNativeBillingAvailable();
+  const { purchase: playPurchase, openSubscriptionManagement } = usePlayBilling();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["billing-status", api],
     queryFn: async () => {
-      if (!api) return { isPremium: false, plan: null, periodEnd: null, credits: 0 };
-      if (!loggedIn) return { isPremium: false, plan: null, periodEnd: null, credits: 0 };
+      if (!api) {
+        return { isPremium: false, plan: null, periodEnd: null, credits: 0, billingProvider: null };
+      }
+      if (!loggedIn) {
+        return { isPremium: false, plan: null, periodEnd: null, credits: 0, billingProvider: null };
+      }
       return fetchBillingStatus(api);
     },
     enabled: !!api && loggedIn,
@@ -128,13 +136,26 @@ export function useSubscription() {
   const checkoutMutation = useMutation({
     mutationFn: async (plan: CheckoutPlan) => {
       if (!api) throw new Error("API not configured");
+      if (nativeBilling) {
+        await playPurchase(plan);
+        return;
+      }
       const url = await postCheckout(api, plan);
       window.location.href = url;
+    },
+    onSuccess: () => {
+      if (nativeBilling) {
+        queryClient.invalidateQueries({ queryKey: ["billing-status", api] });
+      }
     },
   });
 
   const portalMutation = useMutation({
     mutationFn: async () => {
+      if (nativeBilling) {
+        await openSubscriptionManagement();
+        return;
+      }
       if (!api) throw new Error("API not configured");
       const url = await postPortal(api);
       window.location.href = url;
@@ -179,6 +200,9 @@ export function useSubscription() {
     plan: data?.plan ?? null,
     periodEnd: data?.periodEnd ?? null,
     credits: data?.credits ?? 0,
+    provider: data?.provider ?? data?.billingProvider ?? null,
+    billingProvider: data?.billingProvider ?? null,
+    nativeBilling,
     loading: !!api && loggedIn && isLoading && !isError,
     checkout,
     checkoutLoading: checkoutMutation.isPending,

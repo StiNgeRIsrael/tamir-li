@@ -409,6 +409,7 @@ export const enTranslations = {
     advancedTools: "Advanced Tools",
     brand: "Tamir.li",
     installApp: "Install as App",
+    playStore: "Get it on Google Play",
     blogAndGuides: "Blog & Guides",
     terms: "Terms of Service",
     privacy: "Privacy Policy",

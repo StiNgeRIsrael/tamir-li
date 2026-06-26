@@ -16,6 +16,9 @@ dist-ssr
 .env
 backend/.env
 
+# Local Android SDK (cap:sync / android:bundle)
+.android-sdk/
+
 # Cursor local (commit shared MCP config only)
 .cursor/*
 !.cursor/mcp.json

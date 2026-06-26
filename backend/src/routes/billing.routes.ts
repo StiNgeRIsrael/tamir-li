@@ -1,6 +1,9 @@
 import { Router, Request, Response } from 'express';
 import {
+  BillingProvider,
   PaymentProvider,
+  PaymentStatus,
+  PaymentType,
   SubscriptionPlan,
   SubscriptionStatus,
 } from '@prisma/client';
@@ -18,6 +21,16 @@ import {
   logSubscriptionPayment,
   resetMonthlyPremiumCredits,
 } from '../lib/billing-shared';
+import {
+  acknowledgeGooglePlaySubscription,
+  GOOGLE_PLAY_CREDIT_PRODUCTS,
+  GOOGLE_PLAY_SUBSCRIPTION_PRODUCTS,
+  isGooglePlayConfigured,
+  parseGooglePlayRtdnBody,
+  subscriptionIdToPlan,
+  verifyGooglePlayProduct,
+  verifyGooglePlaySubscription,
+} from '../lib/google-play';
 import {
   capturePayPalOrder,
   createPayPalOrder,
@@ -75,6 +88,7 @@ async function syncSubscriptionFromPayPal(
     create: {
       userId,
       paymentProvider: PaymentProvider.PAYPAL,
+      billingProvider: BillingProvider.PAYPAL,
       paypalSubscriptionId: paypalSub.id,
       plan,
       status,
@@ -84,6 +98,7 @@ async function syncSubscriptionFromPayPal(
     },
     update: {
       paymentProvider: PaymentProvider.PAYPAL,
+      billingProvider: BillingProvider.PAYPAL,
       paypalSubscriptionId: paypalSub.id,
       plan,
       status,
@@ -126,6 +141,127 @@ function billingUnavailable(res: Response): boolean {
     return true;
   }
   return false;
+}
+
+async function syncGooglePlaySubscription(
+  userId: string,
+  productId: string,
+  purchaseToken: string,
+  verified: Awaited<ReturnType<typeof verifyGooglePlaySubscription>>
+): Promise<void> {
+  const expiryMs = verified.expiryTimeMillis ? Number(verified.expiryTimeMillis) : NaN;
+  const startMs = verified.startTimeMillis ? Number(verified.startTimeMillis) : Date.now();
+  const periodEnd = Number.isFinite(expiryMs) ? new Date(expiryMs) : null;
+  const periodStart = Number.isFinite(startMs) ? new Date(startMs) : new Date();
+  const isActive = periodEnd ? periodEnd > new Date() : verified.paymentState === 1;
+
+  await prisma.subscription.upsert({
+    where: { userId },
+    create: {
+      userId,
+      billingProvider: BillingProvider.GOOGLE_PLAY,
+      googlePlayPurchaseToken: purchaseToken,
+      googlePlayProductId: productId,
+      googlePlayOrderId: verified.orderId ?? null,
+      plan: subscriptionIdToPlan(productId),
+      status: isActive ? SubscriptionStatus.ACTIVE : SubscriptionStatus.CANCELED,
+      currentPeriodStart: periodStart,
+      currentPeriodEnd: periodEnd,
+      cancelAtPeriodEnd: verified.autoRenewing === false,
+    },
+    update: {
+      billingProvider: BillingProvider.GOOGLE_PLAY,
+      googlePlayPurchaseToken: purchaseToken,
+      googlePlayProductId: productId,
+      googlePlayOrderId: verified.orderId ?? undefined,
+      plan: subscriptionIdToPlan(productId),
+      status: isActive ? SubscriptionStatus.ACTIVE : SubscriptionStatus.CANCELED,
+      currentPeriodStart: periodStart,
+      currentPeriodEnd: periodEnd,
+      cancelAtPeriodEnd: verified.autoRenewing === false,
+    },
+  });
+
+  if (isActive) {
+    await grantInitialPremiumCredits(userId);
+  }
+
+  if (verified.acknowledgementState === 0) {
+    await acknowledgeGooglePlaySubscription(productId, purchaseToken);
+  }
+}
+
+async function grantGooglePlayCredits(
+  userId: string,
+  productId: string,
+  orderId: string | undefined
+): Promise<void> {
+  const credits = GOOGLE_PLAY_CREDIT_PRODUCTS[productId];
+  if (!credits) throw new Error('INVALID_PRODUCT');
+
+  if (orderId) {
+    const existing = await prisma.payment.findUnique({
+      where: { googlePlayOrderId: orderId },
+    });
+    if (existing) return;
+  }
+
+  await prisma.$transaction([
+    prisma.payment.create({
+      data: {
+        userId,
+        billingProvider: BillingProvider.GOOGLE_PLAY,
+        googlePlayOrderId: orderId ?? null,
+        amount: 0,
+        currency: 'ils',
+        type: PaymentType.CREDITS,
+        status: PaymentStatus.SUCCEEDED,
+        metadata: { credits, productId },
+      },
+    }),
+    prisma.aiCredit.upsert({
+      where: { userId },
+      create: {
+        userId,
+        balance: credits,
+        lifetimePurchased: credits,
+      },
+      update: {
+        balance: { increment: credits },
+        lifetimePurchased: { increment: credits },
+      },
+    }),
+  ]);
+}
+
+async function handleGooglePlayRtdn(
+  message: ReturnType<typeof parseGooglePlayRtdnBody>
+): Promise<void> {
+  if (!message) return;
+
+  const subNote = message.subscriptionNotification;
+  if (subNote?.purchaseToken && subNote.subscriptionId) {
+    const verified = await verifyGooglePlaySubscription(
+      subNote.subscriptionId,
+      subNote.purchaseToken
+    );
+
+    const sub = await prisma.subscription.findFirst({
+      where: {
+        googlePlayPurchaseToken: subNote.purchaseToken,
+        googlePlayProductId: subNote.subscriptionId,
+      },
+    });
+
+    if (sub) {
+      await syncGooglePlaySubscription(
+        sub.userId,
+        subNote.subscriptionId,
+        subNote.purchaseToken,
+        verified
+      );
+    }
+  }
 }
 
 export async function paypalWebhookHandler(req: Request, res: Response): Promise<void> {
@@ -274,6 +410,19 @@ router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
     const successUrl = `${origin}/premium?checkout=success&plan=${plan}`;
     const cancelUrl = `${origin}/premium?checkout=canceled`;
 
+    const existingSub = await prisma.subscription.findUnique({ where: { userId } });
+    if (
+      existingSub &&
+      isActivePremium(existingSub.status, existingSub.currentPeriodEnd) &&
+      existingSub.billingProvider === BillingProvider.GOOGLE_PLAY
+    ) {
+      res.status(409).json({
+        error: 'USE_GOOGLE_PLAY',
+        message: 'Manage your subscription in Google Play.',
+      });
+      return;
+    }
+
     const isCredit = plan.startsWith('credits_');
 
     if (isCredit) {
@@ -397,7 +546,8 @@ router.get('/status', requireAuth, async (req: Request, res: Response) => {
       plan: isPremium ? sub!.plan.toLowerCase() : null,
       periodEnd: sub?.currentPeriodEnd?.toISOString() ?? null,
       credits: credits?.balance ?? 0,
-      provider: sub?.paymentProvider?.toLowerCase() ?? (isPayPalConfigured() ? 'paypal' : null),
+      provider: sub?.paymentProvider?.toLowerCase() ?? sub?.billingProvider?.toLowerCase() ?? (isPayPalConfigured() ? 'paypal' : null),
+      billingProvider: sub?.billingProvider?.toLowerCase() ?? null,
     });
   } catch (e) {
     console.error('[billing/status]', e);
@@ -406,11 +556,16 @@ router.get('/status', requireAuth, async (req: Request, res: Response) => {
 });
 
 router.post('/portal', requireAuth, async (req: Request, res: Response) => {
-  if (billingUnavailable(res)) return;
-
   try {
     const userId = req.userId!;
     const sub = await prisma.subscription.findUnique({ where: { userId } });
+
+    if (sub?.billingProvider === BillingProvider.GOOGLE_PLAY) {
+      res.json({ url: 'https://play.google.com/store/account/subscriptions', provider: 'google_play' });
+      return;
+    }
+
+    if (billingUnavailable(res)) return;
 
     if (!sub?.paypalSubscriptionId && sub?.paymentProvider !== PaymentProvider.PAYPAL) {
       if (ENABLE_STRIPE) {
@@ -434,6 +589,82 @@ router.post('/portal', requireAuth, async (req: Request, res: Response) => {
   } catch (e) {
     console.error('[billing/portal]', e);
     res.status(500).json({ error: 'PORTAL_FAILED', message: 'Could not open billing portal' });
+  }
+});
+
+router.post('/google/verify', requireAuth, async (req: Request, res: Response) => {
+  if (!isGooglePlayConfigured()) {
+    res.status(503).json({
+      error: 'GOOGLE_PLAY_UNAVAILABLE',
+      message: 'Google Play billing is not configured on the server.',
+    });
+    return;
+  }
+
+  try {
+    const userId = req.userId!;
+    const productId = String(req.body?.productId ?? '').trim();
+    const purchaseToken = String(req.body?.purchaseToken ?? '').trim();
+
+    if (!productId || !purchaseToken) {
+      res.status(400).json({ error: 'INVALID_BODY', message: 'productId and purchaseToken required' });
+      return;
+    }
+
+    const existingSub = await prisma.subscription.findUnique({ where: { userId } });
+    if (
+      existingSub &&
+      isActivePremium(existingSub.status, existingSub.currentPeriodEnd) &&
+      existingSub.billingProvider === BillingProvider.PAYPAL
+    ) {
+      res.status(409).json({
+        error: 'ALREADY_SUBSCRIBED',
+        message: 'You already have an active web subscription.',
+      });
+      return;
+    }
+
+    if (GOOGLE_PLAY_SUBSCRIPTION_PRODUCTS.has(productId)) {
+      const verified = await verifyGooglePlaySubscription(productId, purchaseToken);
+      await syncGooglePlaySubscription(userId, productId, purchaseToken, verified);
+      res.json({ ok: true, type: 'subscription' });
+      return;
+    }
+
+    if (GOOGLE_PLAY_CREDIT_PRODUCTS[productId]) {
+      const verified = await verifyGooglePlayProduct(productId, purchaseToken);
+      if (verified.purchaseState !== 0) {
+        res.status(400).json({ error: 'PURCHASE_NOT_COMPLETED', message: 'Purchase not completed' });
+        return;
+      }
+      await grantGooglePlayCredits(userId, productId, verified.orderId);
+      res.json({ ok: true, type: 'credits' });
+      return;
+    }
+
+    res.status(400).json({ error: 'UNKNOWN_PRODUCT', message: 'Unknown Google Play product' });
+  } catch (e) {
+    console.error('[billing/google/verify]', e);
+    res.status(500).json({
+      error: 'VERIFY_FAILED',
+      message: e instanceof Error ? e.message : 'Could not verify purchase',
+    });
+  }
+});
+
+router.post('/google/rtdn', async (req: Request, res: Response) => {
+  if (!isGooglePlayConfigured()) {
+    res.status(503).json({ error: 'GOOGLE_PLAY_UNAVAILABLE' });
+    return;
+  }
+
+  try {
+    const message = parseGooglePlayRtdnBody(req.body);
+    await handleGooglePlayRtdn(message);
+    res.status(204).send();
+  } catch (e) {
+    console.error('[billing/google/rtdn]', e);
+    res.status(500).json({ error: 'RTDN_ERROR' });
   }
 });
 

@@ -41,6 +41,7 @@ import { convertImageFile, isOutputFormatSupported, usesClientImageConversion } 
 import { usesClientDocumentConversion } from "@/lib/document-convert";
 import { convertWordFileToPdf } from "@/lib/word-to-pdf";
 import { isServerUnavailableError } from "@/lib/conversion-errors";
+import { isConversionBlockedOnNative } from "@/lib/conversion-eligibility";
 import { ComingSoonPanel } from "@/components/ComingSoonPanel";
 import { filterFilesForTier, maxBatchFiles, type FileRejectReason } from "@/lib/freemium-limits";
 
@@ -284,6 +285,11 @@ export default function ToolPage() {
 
   const handleConvert = async () => {
     if (!allHaveFormat || !tool) return;
+
+    if (isConversionBlockedOnNative(tool)) {
+      toast.error(tt.conversionNotReady);
+      return;
+    }
 
     if (atUsageLimit) {
       trackEvent(ANALYTICS_EVENTS.PAYWALL_HIT, { tool_id: tool.id, type: "daily_limit" });

@@ -1,5 +1,6 @@
 import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
 import { showAdVignette } from "@/components/ads/AdVignette";
+import { showAdMobRewarded, shouldUseAdMob, allowWebPopupAds } from "@/lib/ads/admob";
 
 import { formatToExtension } from "@/lib/image-convert";
 
@@ -37,18 +38,35 @@ export async function handleGatedDownload(
   isPremium: boolean,
   resultBlob?: Blob
 ): Promise<{ triggered: boolean; nextState: DownloadGateState }> {
-  if (isPremium || gateState[fileIndex]) {
-    const baseName = file.name.replace(/\.[^.]+$/, "");
+  const baseName = file.name.replace(/\.[^.]+$/, "");
+
+  const doDownload = () => {
     if (resultBlob) {
       triggerBlobDownload(resultBlob, baseName, outputFormat);
     } else {
       triggerFileDownload(file, outputFormat);
     }
+  };
+
+  if (isPremium || gateState[fileIndex]) {
+    doDownload();
     return { triggered: true, nextState: gateState };
   }
 
-  const adUrl = import.meta.env.VITE_AD_CLICK_URL?.trim();
-  trackEvent(ANALYTICS_EVENTS.AD_CLICK_DOWNLOAD, { file_index: fileIndex, method: adUrl ? "popup" : "vignette" });
+  const adUrl = allowWebPopupAds() ? import.meta.env.VITE_AD_CLICK_URL?.trim() : undefined;
+  trackEvent(ANALYTICS_EVENTS.AD_CLICK_DOWNLOAD, {
+    file_index: fileIndex,
+    method: shouldUseAdMob() ? "admob_rewarded" : adUrl ? "popup" : "vignette",
+  });
+
+  if (shouldUseAdMob()) {
+    const rewarded = await showAdMobRewarded();
+    if (rewarded) {
+      doDownload();
+      return { triggered: true, nextState: gateState };
+    }
+    return { triggered: false, nextState: gateState };
+  }
 
   if (adUrl) {
     window.open(adUrl, "_blank", "noopener,noreferrer");

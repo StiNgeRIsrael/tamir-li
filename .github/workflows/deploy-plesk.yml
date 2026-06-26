@@ -106,7 +106,15 @@ jobs:
           echo "plesk-upload/sitemap.xml: ${SITEMAP_BYTES} bytes"
           test "$SITEMAP_BYTES" -gt 100000
 
+      - name: Upload deploy bundle (manual Plesk fallback)
+        uses: actions/upload-artifact@v4
+        with:
+          name: plesk-upload
+          path: plesk-upload/
+          retention-days: 14
+
       - name: Deploy to Plesk (Node app + SEO files)
+        continue-on-error: true
         uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
           server: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}

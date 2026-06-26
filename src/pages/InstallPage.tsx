@@ -5,6 +5,7 @@ import { Download, Smartphone, Check, Zap, Shield, Wifi, WifiOff, Bell, HardDriv
 import { SEOHead } from "@/components/SEOHead";
 import { Link } from "react-router-dom";
 import { useLocale, localePath, useT } from "@/lib/i18n";
+import { isNativeApp, PLAY_STORE_URL } from "@/lib/platform";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -20,13 +21,19 @@ export default function InstallPage() {
   const benefits = ip.benefits || [];
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
+  const nativeApp = isNativeApp();
 
   useEffect(() => {
+    if (nativeApp) setIsInstalled(true);
+  }, [nativeApp]);
+
+  useEffect(() => {
+    if (nativeApp) return;
     const handler = (e: Event) => { e.preventDefault(); setDeferredPrompt(e as BeforeInstallPromptEvent); };
     window.addEventListener("beforeinstallprompt", handler);
     if (window.matchMedia("(display-mode: standalone)").matches) setIsInstalled(true);
     return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
+  }, [nativeApp]);
 
   const handleInstall = async () => {
     if (!deferredPrompt) return;
@@ -56,10 +63,15 @@ export default function InstallPage() {
           </h1>
           {isInstalled ? (
             <div className="inline-flex items-center gap-2 bg-success/10 text-success font-bold px-6 py-3 rounded-xl"><Check className="w-5 h-5" />{ip.alreadyInstalled}</div>
-          ) : deferredPrompt ? (
+          ) : nativeApp ? null : deferredPrompt ? (
             <Button onClick={handleInstall} size="lg" className="font-bold text-base px-8 py-6 rounded-xl shadow-lg"><Download className="w-5 h-5 me-2" />{ip.installNow}</Button>
           ) : (
-            <Button size="lg" className="font-bold text-base px-8 py-6 rounded-xl shadow-lg" onClick={handleInstall}><Download className="w-5 h-5 me-2" />{ip.downloadTheApp}</Button>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button size="lg" className="font-bold text-base px-8 py-6 rounded-xl shadow-lg" onClick={handleInstall}><Download className="w-5 h-5 me-2" />{ip.downloadTheApp}</Button>
+              <Button asChild size="lg" variant="outline" className="font-bold text-base px-8 py-6 rounded-xl">
+                <a href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer">{t.footer?.playStore ?? "Google Play"}</a>
+              </Button>
+            </div>
           )}
           <p className="text-xs text-muted-foreground">{ip.freeLabel}</p>
         </section>

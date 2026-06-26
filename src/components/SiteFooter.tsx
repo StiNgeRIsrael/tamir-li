@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { BrandWordmark } from "@/components/BrandWordmark";
 import { useLocale, localePath } from "@/lib/i18n";
+import { PLAY_STORE_URL, isNativeApp } from "@/lib/platform";
 import { CATEGORY_HUB_CATEGORIES, getCategoryHubPath } from "@/lib/tools-data";
 import { getAlternativePath } from "@/lib/alternative-pages-data";
 import { getUseCasePath } from "@/lib/use-case-pages-data";
@@ -81,6 +82,18 @@ export function SiteFooter() {
         <div className="space-y-3 col-span-2 sm:col-span-1">
           <h4 className="font-bold text-sm text-foreground">{f.brand}</h4>
           <ul className="space-y-2 text-xs text-muted-foreground">
+            {!isNativeApp() && (
+              <li>
+                <a
+                  href={PLAY_STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-foreground transition-colors"
+                >
+                  {f.playStore ?? "Google Play"}
+                </a>
+              </li>
+            )}
             <li><Link to={localePath("/install", locale)} className="hover:text-foreground transition-colors">{f.installApp}</Link></li>
             <li><Link to={localePath("/blog", locale)} className="hover:text-foreground transition-colors">{f.blogAndGuides}</Link></li>
             {(locale === "he" || locale === "en") && (

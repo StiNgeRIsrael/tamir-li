@@ -84,6 +84,11 @@ enum PaymentProvider {
   PAYPAL
 }
 
+enum BillingProvider {
+  PAYPAL
+  GOOGLE_PLAY
+}
+
 enum SubscriptionPlan {
   MONTHLY
   YEARLY
@@ -98,23 +103,28 @@ enum SubscriptionStatus {
 }
 
 model Subscription {
-  id                   String             @id @default(uuid())
-  userId               String             @unique
-  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  paymentProvider      PaymentProvider    @default(PAYPAL)
-  stripeCustomerId     String?
-  stripeSubscriptionId String?            @unique
-  paypalSubscriptionId String?            @unique
-  plan                 SubscriptionPlan
-  status               SubscriptionStatus @default(ACTIVE)
-  currentPeriodStart   DateTime?
-  currentPeriodEnd     DateTime?
-  cancelAtPeriodEnd    Boolean            @default(false)
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
+  id                      String             @id @default(uuid())
+  userId                  String             @unique
+  user                    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paymentProvider         PaymentProvider    @default(PAYPAL)
+  billingProvider         BillingProvider    @default(PAYPAL)
+  stripeCustomerId        String?
+  stripeSubscriptionId    String?            @unique
+  paypalSubscriptionId    String?            @unique
+  googlePlayPurchaseToken String?            @db.VarChar(500)
+  googlePlayProductId     String?
+  googlePlayOrderId       String?            @unique
+  plan                    SubscriptionPlan
+  status                  SubscriptionStatus @default(ACTIVE)
+  currentPeriodStart      DateTime?
+  currentPeriodEnd        DateTime?
+  cancelAtPeriodEnd       Boolean            @default(false)
+  createdAt               DateTime           @default(now())
+  updatedAt               DateTime           @updatedAt
 
   @@index([stripeCustomerId])
   @@index([paypalSubscriptionId])
+  @@index([googlePlayProductId])
 }
 
 enum PaymentType {
@@ -129,17 +139,19 @@ enum PaymentStatus {
 }
 
 model Payment {
-  id                    String        @id @default(uuid())
+  id                    String          @id @default(uuid())
   userId                String
-  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  stripePaymentIntentId String?       @unique
-  paypalTransactionId   String?       @unique
+  user                  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  billingProvider       BillingProvider @default(PAYPAL)
+  stripePaymentIntentId String?         @unique
+  paypalTransactionId   String?         @unique
+  googlePlayOrderId     String?         @unique
   amount                Int // in smallest currency unit (agorot/cents)
-  currency              String        @default("ils")
+  currency              String          @default("ils")
   type                  PaymentType
-  status                PaymentStatus @default(SUCCEEDED)
+  status                PaymentStatus   @default(SUCCEEDED)
   metadata              Json?
-  createdAt             DateTime      @default(now())
+  createdAt             DateTime        @default(now())
 }
 
 model AiCredit {
