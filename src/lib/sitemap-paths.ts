@@ -8,6 +8,8 @@ import {
   getCategoryHubPath,
 } from "./tools-data";
 import { blogArticles } from "./blog-data";
+import { ALTERNATIVE_SLUGS, getAlternativePath } from "./alternative-pages-data";
+import { USE_CASE_SLUGS, getUseCasePath } from "./use-case-pages-data";
 import { LOCALES, localePath, type Locale } from "./i18n";
 import { SITE_ORIGIN } from "./site";
 import { isToolFunctional } from "./tool-availability";
@@ -18,7 +20,10 @@ export type SitemapPathKind =
   | "tool"
   | "blog-index"
   | "blog-post"
-  | "category-hub";
+  | "category-hub"
+  | "alternative"
+  | "use-case"
+  | "widget";
 
 export interface SitemapPathEntry {
   path: string;
@@ -64,6 +69,7 @@ export function getBasePaths(): SitemapPathEntry[] {
     { path: "/about", kind: "static" },
     { path: "/contact", kind: "static" },
     { path: "/blog", kind: "blog-index" },
+    { path: "/widget", kind: "widget" },
   ];
 
   for (const category of CATEGORY_HUB_CATEGORIES) {
@@ -74,6 +80,14 @@ export function getBasePaths(): SitemapPathEntry[] {
     paths.push({ path: `/${slug}`, kind: "tool" });
   }
 
+  for (const slug of ALTERNATIVE_SLUGS) {
+    paths.push({ path: getAlternativePath(slug), kind: "alternative" });
+  }
+
+  for (const slug of USE_CASE_SLUGS) {
+    paths.push({ path: getUseCasePath(slug), kind: "use-case" });
+  }
+
   for (const article of blogArticles) {
     paths.push({ path: `/blog/${article.slug}`, kind: "blog-post", lastmod: article.date });
   }
@@ -81,10 +95,13 @@ export function getBasePaths(): SitemapPathEntry[] {
   return paths;
 }
 
-/** Blog is Hebrew-only in the sitemap; other routes use all locales. */
+/** Blog is Hebrew-only; alternative/use-case/widget are he+en pilots. */
 export function getLocalesForSitemapEntry(entry: SitemapPathEntry): Locale[] {
   if (entry.kind === "blog-index" || entry.kind === "blog-post") {
     return ["he"];
+  }
+  if (entry.kind === "alternative" || entry.kind === "use-case" || entry.kind === "widget") {
+    return ["he", "en"];
   }
   return [...LOCALES];
 }
@@ -97,6 +114,9 @@ export function getSitemapPriority(kind: SitemapPathKind): string {
       return "0.9";
     case "category-hub":
       return "0.85";
+    case "alternative":
+    case "use-case":
+      return "0.8";
     case "blog-index":
       return "0.8";
     case "blog-post":

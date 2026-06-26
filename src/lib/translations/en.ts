@@ -344,6 +344,7 @@ export const enTranslations = {
       `Tamirly lets you ${isCustom ? `use ${name}` : `convert ${from} to ${to} files`} for free, directly in your browser. No software to download, no signup — just upload your file, ${isCustom ? "set your options" : "choose your format"}, and click "Convert". Your files are processed securely and never stored on our servers.`,
     seoFormats: (fromFmts: string[], toFmts: string[]) =>
       `This tool supports conversion between all formats: ${fromFmts.join(", ")} → ${toFmts.join(", ")}. Up to 5 conversions a day — free. Heavy day? Premium is there too.`,
+    relatedGuides: "Related guides",
   },
   toolNames: {
     "image-converter": "Image Format Converter",
@@ -418,6 +419,110 @@ export const enTranslations = {
     seoText2: "Supported formats include images (JPG, PNG, WEBP, GIF, BMP, TIFF, SVG, ICO), video (MP4, AVI, MOV, MKV, WEBM), audio (MP3, WAV, AAC, OGG, FLAC), and documents (PDF, DOCX, DOC, TXT). Processing is designed so files are not kept longer than needed for the conversion.",
     seoText3: "Tamir.li is free — up to 5 conversions a day, no signup. If you work with files all day, Premium removes the daily cap and the ads.",
     copyright: (year: number) => `© ${year} Tamir.li • All rights reserved`,
+    categoryHubs: "Tool categories",
+    freeconvertAlt: "FreeConvert alternative",
+  },
+  useCasePage: {
+    "whatsapp-image-compress": {
+      seoTitle: "Compress Images for WhatsApp — Guide & Tools | Tamir.li",
+      seoDesc:
+        "How to compress an image for WhatsApp without losing quality? Short guide and free tools — compress, convert format, and resize.",
+      title: "Compress Images for WhatsApp",
+      intro:
+        "WhatsApp limits file size and compresses images automatically. Compress or convert before sending so you control quality and uploads finish faster.",
+      stepsTitle: "Recommended steps",
+      steps: [
+        "Check file size — above 5 MB, compress before sending.",
+        "Use the image compressor to reduce weight without visible quality loss.",
+        "If the format isn't supported (e.g. WEBP), convert to JPG first.",
+        "Download the ready file and send via WhatsApp as usual.",
+      ],
+      toolsTitle: "Relevant tools",
+      cta: "Start with image compression — drag a file, download in seconds.",
+      ctaButton: "Compress image now",
+    },
+    "email-pdf-attach": {
+      seoTitle: "Attach PDF to Email — Convert & Merge | Tamir.li",
+      seoDesc:
+        "How to prepare a PDF for email attachment? Word to PDF, merge documents, and compress — free browser tools.",
+      title: "Prepare PDF for Email Attachment",
+      intro:
+        "Most email services cap attachments at 10–25 MB. Word docs, scanned images, or multiple files — merge, convert, and compress before sending.",
+      stepsTitle: "Recommended steps",
+      steps: [
+        "Convert Word (DOCX) files to PDF for a format every recipient can open.",
+        "If you have several files, merge them into one PDF with the PDF manager.",
+        "Check final size; if too large, compress images before converting.",
+        "Attach the final PDF to your email.",
+      ],
+      toolsTitle: "Relevant tools",
+      cta: "Start with Word to PDF or PDF merge — free in the browser.",
+      ctaButton: "Convert Word to PDF",
+    },
+  },
+
+  widgetPage: {
+    seoTitle: "Embed Conversion Widget | Tamir.li",
+    seoDesc:
+      "Embed Tamir.li's JPG to PNG converter on your site with a simple iframe snippet. Free, with attribution to tamir.li.",
+    title: "Embed Conversion Widget",
+    intro:
+      "Add a converter to your site or blog with one line of code. The widget shows Tamir.li's JPG to PNG tool — browser-based, no server upload.",
+    previewTitle: "Preview",
+    iframeTitle: "Tamir.li — JPG to PNG",
+    codeTitle: "Embed code",
+    copyButton: "Copy code",
+    copied: "Copied!",
+    attribution: "Please keep a link or attribution to tamir.li on the page where the widget is embedded.",
+    termsTitle: "Terms of use",
+    termsBody:
+      "Embedding is allowed for non-commercial and commercial use, provided you do not remove branding or present the tool as your own service. Tamir.li may change or discontinue the widget.",
+  },
+
+  alternativePage: {
+    freeconvert: {
+      seoTitle: "Tamir.li vs FreeConvert — Honest Comparison 2026",
+      seoDesc:
+        "Looking for a FreeConvert alternative? Honest feature comparison: free limits, privacy, premium pricing, and Hebrew UI — Tamir.li vs FreeConvert.",
+      title: "Tamir.li — FreeConvert Alternative",
+      intro:
+        "FreeConvert is a popular English file converter. Tamir.li is built for Israel: Hebrew UI, ILS pricing, and in-browser processing for many tools — without uploading files to a server. The table below compares honestly; no exaggerated claims.",
+      tableTitle: "Feature comparison",
+      tableHeaders: {
+        feature: "Feature",
+        tamir: "Tamir.li",
+        competitor: "FreeConvert",
+      },
+      rowLabels: {
+        hebrewUi: "Hebrew interface",
+        freeDaily: "Free conversions per day",
+        browserProcessing: "In-browser processing (no server upload)",
+        signupFree: "Signup required for free tier",
+        premiumPrice: "Premium price",
+        adsFree: "Ads on free tier",
+        fileSizeFree: "Max file size (free)",
+        aiTools: "AI image generation",
+      },
+      cellLabels: {
+        yes: "Yes",
+        no: "No",
+        "5": "Up to 5",
+        "25": "Up to 25",
+        many: "Most image & document tools",
+        upload: "Upload to server",
+        optional: "Optional",
+        ils: "₪19.90/month",
+        usd: "~$9.99/month (USD)",
+        "50mb": "Up to 50 MB",
+        "1gb": "Up to 1.5 GB",
+        premium: "Premium (6 credits/month)",
+        limited: "Limited / paid",
+      },
+      disclaimer:
+        "FreeConvert data is based on their public info as of 2026. Features and limits may change. Tamir.li is not affiliated with FreeConvert.",
+      cta: "Want to try? Drag a file on the homepage — JPG, PNG, PDF, MP3 and more — no signup.",
+      ctaButton: "Start converting free",
+    },
   },
   blog: {
     title: "Blog — Guides & Tips",

@@ -1,15 +1,19 @@
 import { Link } from "react-router-dom";
 import { BrandWordmark } from "@/components/BrandWordmark";
 import { useLocale, localePath } from "@/lib/i18n";
+import { CATEGORY_HUB_CATEGORIES, getCategoryHubPath } from "@/lib/tools-data";
+import { getAlternativePath } from "@/lib/alternative-pages-data";
+import { enTranslations } from "@/lib/translations/en";
 
 export function SiteFooter() {
   const { locale, t } = useLocale();
   const f = t.footer;
+  const catLabels = t.categories as Record<string, string>;
 
   return (
     <footer className="relative border-t border-transparent bg-gradient-to-b from-transparent to-muted/30 pt-10 pb-8 space-y-8 max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 dark:to-muted/10">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" aria-hidden />
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 lg:gap-8">
         <div className="space-y-3">
           <h4 className="font-bold text-sm text-foreground">{f.popularTools}</h4>
           <ul className="space-y-2 text-xs text-muted-foreground">
@@ -33,6 +37,22 @@ export function SiteFooter() {
         </div>
 
         <div className="space-y-3">
+          <h4 className="font-bold text-sm text-foreground">{f.categoryHubs ?? enTranslations.footer.categoryHubs}</h4>
+          <ul className="space-y-2 text-xs text-muted-foreground">
+            {CATEGORY_HUB_CATEGORIES.map((category) => (
+              <li key={category}>
+                <Link
+                  to={localePath(getCategoryHubPath(category), locale)}
+                  className="hover:text-foreground transition-colors"
+                >
+                  {catLabels[category] ?? category}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="space-y-3">
           <h4 className="font-bold text-sm text-foreground">{f.advancedTools}</h4>
           <ul className="space-y-2 text-xs text-muted-foreground">
             <li><Link to={localePath("/image-compressor", locale)} className="hover:text-foreground transition-colors">{t.toolNames["image-compressor"]}</Link></li>
@@ -43,11 +63,21 @@ export function SiteFooter() {
           </ul>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3 col-span-2 sm:col-span-1">
           <h4 className="font-bold text-sm text-foreground">{f.brand}</h4>
           <ul className="space-y-2 text-xs text-muted-foreground">
             <li><Link to={localePath("/install", locale)} className="hover:text-foreground transition-colors">{f.installApp}</Link></li>
             <li><Link to={localePath("/blog", locale)} className="hover:text-foreground transition-colors">{f.blogAndGuides}</Link></li>
+            {(locale === "he" || locale === "en") && (
+              <li>
+                <Link
+                  to={localePath(getAlternativePath("freeconvert"), locale)}
+                  className="hover:text-foreground transition-colors"
+                >
+                  {f.freeconvertAlt ?? enTranslations.footer.freeconvertAlt}
+                </Link>
+              </li>
+            )}
             <li><Link to={localePath("/terms", locale)} className="hover:text-foreground transition-colors">{f.terms}</Link></li>
             <li><Link to={localePath("/privacy", locale)} className="hover:text-foreground transition-colors">{f.privacy}</Link></li>
             <li><Link to={localePath("/contact", locale)} className="hover:text-foreground transition-colors">{f.contact}</Link></li>

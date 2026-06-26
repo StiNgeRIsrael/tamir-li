@@ -16,6 +16,7 @@ import { SEOHead, toolCategoryOgImage } from "@/components/SEOHead";
 import { ToolSeoBlocks, toolFaqJsonLd } from "@/components/ToolSeoBlocks";
 import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
 import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { getBlogArticlesLinkingToPath } from "@/lib/blog-data";
 import { PdfManagerTool } from "@/components/tools/PdfManagerTool";
 import { TextToolsComponent } from "@/components/tools/TextToolsComponent";
 import { AiImageGeneratorTool } from "@/components/tools/AiImageGeneratorTool";
@@ -561,6 +562,8 @@ export default function ToolPage() {
   const toolSeoContent =
     toolIsFunctional ? getToolSeoContent(tool.id, locale, formatSeoSlug) : null;
 
+  const relatedBlogArticles = locale === "he" ? getBlogArticlesLinkingToPath(toolPagePath) : [];
+
   const faqLd = toolSeoContent ? toolFaqJsonLd(tool.id, locale, formatSeoSlug) : null;
   const categoryHubPath = localePath(getCategoryHubPath(tool.category), locale);
   const categoryUrl = siteUrl(categoryHubPath);
@@ -1057,6 +1060,24 @@ export default function ToolPage() {
 
         {toolSeoContent && (
           <ToolSeoBlocks toolId={tool.id} formatSlug={formatSeoSlug} />
+        )}
+
+        {relatedBlogArticles.length > 0 && (
+          <section className="space-y-3">
+            <h2 className="text-base font-bold text-foreground lg:text-lg">{tt.relatedGuides}</h2>
+            <ul className="space-y-2">
+              {relatedBlogArticles.map((article) => (
+                <li key={article.slug}>
+                  <Link
+                    to={localePath(`/blog/${article.slug}`, locale)}
+                    className="text-sm text-primary underline-offset-4 hover:underline"
+                  >
+                    {article.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
 
         <InternalToolLinks />

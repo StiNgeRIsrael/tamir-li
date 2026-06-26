@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-25T22:05:24.238Z",
+  "generatedAt": "2026-06-26T07:52:50.563Z",
   "origin": "https://tamir.li",
   "routes": {
     "/": {
@@ -12,23 +12,23 @@
     },
     "/tools/image": {
       "title": "כלי תמונות | תמיר לי",
-      "description": "כל כלי ההמרה והעריכה לתמונות ב-tamir.li — חינם בדפדפן, בעברית."
+      "description": "המרת JPG, PNG, WEBP, דחיסה ושינוי גודל תמונות — כל כלי התמונות של tamir.li בחינם בדפדפן, בעברית."
     },
     "/tools/video": {
       "title": "כלי וידאו | תמיר לי",
-      "description": "כל כלי ההמרה והעריכה לוידאו ב-tamir.li — חינם בדפדפן, בעברית."
+      "description": "המרת MP4, WEBM, MOV ופורמטי וידאו נוספים — כלי וידאו מקוונים ב-tamir.li, בלי התקנה."
     },
     "/tools/audio": {
       "title": "כלי אודיו | תמיר לי",
-      "description": "כל כלי ההמרה והעריכה לאודיו ב-tamir.li — חינם בדפדפן, בעברית."
+      "description": "המרת MP3, WAV, FLAC ו-AAC — כלי אודיו מקוונים להמרה מהירה בדפדפן, בעברית."
     },
     "/tools/document": {
       "title": "כלי מסמכים | תמיר לי",
-      "description": "כל כלי ההמרה והעריכה למסמכים ב-tamir.li — חינם בדפדפן, בעברית."
+      "description": "PDF ל-Word, Word ל-PDF, מיזוג PDF ועריכת טקסט — כלי מסמכים ב-tamir.li, חינם בדפדפן."
     },
     "/tools/ai": {
       "title": "כלי יצירה עם AI | תמיר לי",
-      "description": "כל כלי ההמרה והעריכה ליצירה עם AI ב-tamir.li — חינם בדפדפן, בעברית."
+      "description": "יצירת תמונות AI בפרימיום — 6 קרדיטים בחודש, סגנונות מגוונים והורדה ב-PNG."
     },
     "/aac-to-flac": {
       "title": "המרת AAC ל-FLAC — תמיר לי",
@@ -162,6 +162,10 @@
       "title": "המרת WEBP ל-JPG — תמיר לי",
       "description": "המירו קבצי WEBP ל-JPG בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
     },
+    "/alternatives/freeconvert": {
+      "title": "Tamir.li vs FreeConvert — Honest Comparison 2026",
+      "description": "Looking for a FreeConvert alternative? Honest feature comparison: free limits, privacy, premium pricing, and Hebrew UI — Tamir.li vs FreeConvert."
+    },
     "/en": {
       "title": "Tamir.li — Online file conversion",
       "description": "Tamir.li helps you convert files between common formats — images, video, audio and documents — quickly and with a clear free tier. Examples: PNG to JPG, compressing video, WAV to MP3, or PDF to Word for editing."
@@ -172,23 +176,23 @@
     },
     "/en/tools/image": {
       "title": "Images tools | Tamir.li",
-      "description": "All Images conversion and editing tools on Tamir.li — free in your browser."
+      "description": "Convert JPG, PNG, WEBP, compress and resize images — all Tamir.li image tools free in your browser."
     },
     "/en/tools/video": {
       "title": "Video tools | Tamir.li",
-      "description": "All Video conversion and editing tools on Tamir.li — free in your browser."
+      "description": "Convert MP4, WEBM, MOV and more — online video conversion tools on Tamir.li, no install required."
     },
     "/en/tools/audio": {
       "title": "Audio tools | Tamir.li",
-      "description": "All Audio conversion and editing tools on Tamir.li — free in your browser."
+      "description": "Convert MP3, WAV, FLAC and AAC — fast audio format conversion in your browser on Tamir.li."
     },
     "/en/tools/document": {
       "title": "Documents tools | Tamir.li",
-      "description": "All Documents conversion and editing tools on Tamir.li — free in your browser."
+      "description": "PDF to Word, Word to PDF, merge PDFs and text tools — document converters on Tamir.li, free online."
     },
     "/en/tools/ai": {
       "title": "AI Creation tools | Tamir.li",
-      "description": "All AI Creation conversion and editing tools on Tamir.li — free in your browser."
+      "description": "AI image generation for Premium — 6 credits per month, multiple styles and PNG download."
     },
     "/en/aac-to-flac": {
       "title": "Convert AAC to FLAC — Tamir.li",
@@ -321,6 +325,810 @@
     "/en/webp-to-jpg": {
       "title": "Convert WEBP to JPG — Tamir.li",
       "description": "Convert WEBP files to JPG for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
+    },
+    "/en/alternatives/freeconvert": {
+      "title": "Tamir.li vs FreeConvert — Honest Comparison 2026",
+      "description": "Looking for a FreeConvert alternative? Honest feature comparison: free limits, privacy, premium pricing, and Hebrew UI — Tamir.li vs FreeConvert."
+    },
+    "/es": {
+      "title": "Tamirly — El Conversor de Archivos Online Líder",
+      "description": "Tamirly es un conversor de archivos online líder que te permite convertir rápida y gratuitamente entre diferentes formatos."
+    },
+    "/es/premium": {
+      "title": "Mejora a Premium — Tamirly",
+      "description": "Conversiones ilimitadas, sin anuncios, imágenes IA — solo ₪19.90/mes (antes ₪150)."
+    },
+    "/es/tools/image": {
+      "title": "Imágenes tools | Tamir.li",
+      "description": "Convert JPG, PNG, WEBP, compress and resize images — all Tamir.li image tools free in your browser."
+    },
+    "/es/tools/video": {
+      "title": "Video tools | Tamir.li",
+      "description": "Convert MP4, WEBM, MOV and more — online video conversion tools on Tamir.li, no install required."
+    },
+    "/es/tools/audio": {
+      "title": "Audio tools | Tamir.li",
+      "description": "Convert MP3, WAV, FLAC and AAC — fast audio format conversion in your browser on Tamir.li."
+    },
+    "/es/tools/document": {
+      "title": "Documentos tools | Tamir.li",
+      "description": "PDF to Word, Word to PDF, merge PDFs and text tools — document converters on Tamir.li, free online."
+    },
+    "/es/tools/ai": {
+      "title": "Creación IA tools | Tamir.li",
+      "description": "AI image generation for Premium — 6 credits per month, multiple styles and PNG download."
+    },
+    "/es/aac-to-flac": {
+      "title": "Convertir AAC a FLAC — Tamirly",
+      "description": "Convierte archivos AAC a FLAC gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/aac-to-mp3": {
+      "title": "Convertir AAC a MP3 — Tamirly",
+      "description": "Convierte archivos AAC a MP3 gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/aac-to-ogg": {
+      "title": "Convertir AAC a OGG — Tamirly",
+      "description": "Convierte archivos AAC a OGG gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/aac-to-wav": {
+      "title": "Convertir AAC a WAV — Tamirly",
+      "description": "Convierte archivos AAC a WAV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/doc-to-pdf": {
+      "title": "Convertir DOC a PDF — Tamirly",
+      "description": "Convierte archivos DOC a PDF gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/docx-to-pdf": {
+      "title": "Convertir DOCX a PDF — Tamirly",
+      "description": "Convierte archivos DOCX a PDF gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/flac-to-aac": {
+      "title": "Convertir FLAC a AAC — Tamirly",
+      "description": "Convierte archivos FLAC a AAC gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/flac-to-mp3": {
+      "title": "Convertir FLAC a MP3 — Tamirly",
+      "description": "Convierte archivos FLAC a MP3 gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/flac-to-ogg": {
+      "title": "Convertir FLAC a OGG — Tamirly",
+      "description": "Convierte archivos FLAC a OGG gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/flac-to-wav": {
+      "title": "Convertir FLAC a WAV — Tamirly",
+      "description": "Convierte archivos FLAC a WAV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/image-compressor": {
+      "title": "Compresor de Imágenes — Tamirly",
+      "description": "Comprime tus imágenes y ahorra espacio de almacenamiento. Nuestro herramienta reduce el tamaño del archivo manteniendo la máxima calidad."
+    },
+    "/es/image-resizer": {
+      "title": "Redimensionar Imagen — Tamirly",
+      "description": "Cambia el tamaño de tus imágenes a cualquier resolución deseada. Perfecto para redes sociales, sitios web y presentaciones."
+    },
+    "/es/jpg-to-png": {
+      "title": "Convertir JPG a PNG — Tamirly",
+      "description": "Convierte archivos JPG a PNG gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/jpg-to-webp": {
+      "title": "Convertir JPG a WEBP — Tamirly",
+      "description": "Convierte archivos JPG a WEBP gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/merge-pdf": {
+      "title": "Gestor de PDF — Tamirly",
+      "description": "Gestor PDF avanzado — sube múltiples archivos PDF, reordena páginas arrastrando, rota páginas individuales y fusiona todo en un PDF organizado."
+    },
+    "/es/mp3-to-aac": {
+      "title": "Convertir MP3 a AAC — Tamirly",
+      "description": "Convierte archivos MP3 a AAC gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/mp3-to-flac": {
+      "title": "Convertir MP3 a FLAC — Tamirly",
+      "description": "Convierte archivos MP3 a FLAC gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/mp3-to-ogg": {
+      "title": "Convertir MP3 a OGG — Tamirly",
+      "description": "Convierte archivos MP3 a OGG gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/mp3-to-wav": {
+      "title": "Convertir MP3 a WAV — Tamirly",
+      "description": "Convierte archivos MP3 a WAV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/ogg-to-aac": {
+      "title": "Convertir OGG a AAC — Tamirly",
+      "description": "Convierte archivos OGG a AAC gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/ogg-to-flac": {
+      "title": "Convertir OGG a FLAC — Tamirly",
+      "description": "Convierte archivos OGG a FLAC gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/ogg-to-mp3": {
+      "title": "Convertir OGG a MP3 — Tamirly",
+      "description": "Convierte archivos OGG a MP3 gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/ogg-to-wav": {
+      "title": "Convertir OGG a WAV — Tamirly",
+      "description": "Convierte archivos OGG a WAV gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/png-to-ico": {
+      "title": "Convertir PNG a ICO — Tamirly",
+      "description": "Convierte archivos PNG a ICO gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/png-to-jpg": {
+      "title": "Convertir PNG a JPG — Tamirly",
+      "description": "Convierte archivos PNG a JPG gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/png-to-webp": {
+      "title": "Convertir PNG a WEBP — Tamirly",
+      "description": "Convierte archivos PNG a WEBP gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/svg-to-png": {
+      "title": "Convertir SVG a PNG — Tamirly",
+      "description": "Convierte archivos SVG a PNG gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/text-tools": {
+      "title": "Herramientas de Texto — Tamirly",
+      "description": "Herramienta de texto avanzada: convierte entre texto plano, Markdown y HTML. Incluye conteo de palabras y caracteres, conversión de mayúsculas y más."
+    },
+    "/es/wav-to-aac": {
+      "title": "Convertir WAV a AAC — Tamirly",
+      "description": "Convierte archivos WAV a AAC gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/wav-to-flac": {
+      "title": "Convertir WAV a FLAC — Tamirly",
+      "description": "Convierte archivos WAV a FLAC gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/wav-to-mp3": {
+      "title": "Convertir WAV a MP3 — Tamirly",
+      "description": "Convierte archivos WAV a MP3 gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/wav-to-ogg": {
+      "title": "Convertir WAV a OGG — Tamirly",
+      "description": "Convierte archivos WAV a OGG gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/es/webp-to-jpg": {
+      "title": "Convertir WEBP a JPG — Tamirly",
+      "description": "Convierte archivos WEBP a JPG gratis, directo en tu navegador. Rápido, seguro y sin software."
+    },
+    "/ru": {
+      "title": "Tamirly — Ведущий Онлайн Конвертер Файлов",
+      "description": "Tamirly — ведущий онлайн-конвертер файлов для быстрой и бесплатной конвертации."
+    },
+    "/ru/premium": {
+      "title": "Премиум подписка — Tamirly",
+      "description": "Безлимитные конвертации, без рекламы — ₪19.90/мес (вместо ₪150)."
+    },
+    "/ru/tools/image": {
+      "title": "Изображения tools | Tamir.li",
+      "description": "Convert JPG, PNG, WEBP, compress and resize images — all Tamir.li image tools free in your browser."
+    },
+    "/ru/tools/video": {
+      "title": "Видео tools | Tamir.li",
+      "description": "Convert MP4, WEBM, MOV and more — online video conversion tools on Tamir.li, no install required."
+    },
+    "/ru/tools/audio": {
+      "title": "Аудио tools | Tamir.li",
+      "description": "Convert MP3, WAV, FLAC and AAC — fast audio format conversion in your browser on Tamir.li."
+    },
+    "/ru/tools/document": {
+      "title": "Документы tools | Tamir.li",
+      "description": "PDF to Word, Word to PDF, merge PDFs and text tools — document converters on Tamir.li, free online."
+    },
+    "/ru/tools/ai": {
+      "title": "ИИ Создание tools | Tamir.li",
+      "description": "AI image generation for Premium — 6 credits per month, multiple styles and PNG download."
+    },
+    "/ru/aac-to-flac": {
+      "title": "Конвертировать AAC в FLAC — Tamirly",
+      "description": "Конвертируйте AAC в FLAC бесплатно, прямо в браузере."
+    },
+    "/ru/aac-to-mp3": {
+      "title": "Конвертировать AAC в MP3 — Tamirly",
+      "description": "Конвертируйте AAC в MP3 бесплатно, прямо в браузере."
+    },
+    "/ru/aac-to-ogg": {
+      "title": "Конвертировать AAC в OGG — Tamirly",
+      "description": "Конвертируйте AAC в OGG бесплатно, прямо в браузере."
+    },
+    "/ru/aac-to-wav": {
+      "title": "Конвертировать AAC в WAV — Tamirly",
+      "description": "Конвертируйте AAC в WAV бесплатно, прямо в браузере."
+    },
+    "/ru/doc-to-pdf": {
+      "title": "Конвертировать DOC в PDF — Tamirly",
+      "description": "Конвертируйте DOC в PDF бесплатно, прямо в браузере."
+    },
+    "/ru/docx-to-pdf": {
+      "title": "Конвертировать DOCX в PDF — Tamirly",
+      "description": "Конвертируйте DOCX в PDF бесплатно, прямо в браузере."
+    },
+    "/ru/flac-to-aac": {
+      "title": "Конвертировать FLAC в AAC — Tamirly",
+      "description": "Конвертируйте FLAC в AAC бесплатно, прямо в браузере."
+    },
+    "/ru/flac-to-mp3": {
+      "title": "Конвертировать FLAC в MP3 — Tamirly",
+      "description": "Конвертируйте FLAC в MP3 бесплатно, прямо в браузере."
+    },
+    "/ru/flac-to-ogg": {
+      "title": "Конвертировать FLAC в OGG — Tamirly",
+      "description": "Конвертируйте FLAC в OGG бесплатно, прямо в браузере."
+    },
+    "/ru/flac-to-wav": {
+      "title": "Конвертировать FLAC в WAV — Tamirly",
+      "description": "Конвертируйте FLAC в WAV бесплатно, прямо в браузере."
+    },
+    "/ru/image-compressor": {
+      "title": "Сжатие Изображений — Tamirly",
+      "description": "Сжимайте изображения и экономьте место. Наш инструмент уменьшает размер файла, сохраняя максимальное качество."
+    },
+    "/ru/image-resizer": {
+      "title": "Изменение Размера — Tamirly",
+      "description": "Измените размер изображений до любого разрешения. Идеально для соцсетей, сайтов и презентаций."
+    },
+    "/ru/jpg-to-png": {
+      "title": "Конвертировать JPG в PNG — Tamirly",
+      "description": "Конвертируйте JPG в PNG бесплатно, прямо в браузере."
+    },
+    "/ru/jpg-to-webp": {
+      "title": "Конвертировать JPG в WEBP — Tamirly",
+      "description": "Конвертируйте JPG в WEBP бесплатно, прямо в браузере."
+    },
+    "/ru/merge-pdf": {
+      "title": "Менеджер PDF — Tamirly",
+      "description": "Продвинутый PDF-менеджер — загружайте несколько PDF, перетаскивайте страницы, поворачивайте и объединяйте в один файл."
+    },
+    "/ru/mp3-to-aac": {
+      "title": "Конвертировать MP3 в AAC — Tamirly",
+      "description": "Конвертируйте MP3 в AAC бесплатно, прямо в браузере."
+    },
+    "/ru/mp3-to-flac": {
+      "title": "Конвертировать MP3 в FLAC — Tamirly",
+      "description": "Конвертируйте MP3 в FLAC бесплатно, прямо в браузере."
+    },
+    "/ru/mp3-to-ogg": {
+      "title": "Конвертировать MP3 в OGG — Tamirly",
+      "description": "Конвертируйте MP3 в OGG бесплатно, прямо в браузере."
+    },
+    "/ru/mp3-to-wav": {
+      "title": "Конвертировать MP3 в WAV — Tamirly",
+      "description": "Конвертируйте MP3 в WAV бесплатно, прямо в браузере."
+    },
+    "/ru/ogg-to-aac": {
+      "title": "Конвертировать OGG в AAC — Tamirly",
+      "description": "Конвертируйте OGG в AAC бесплатно, прямо в браузере."
+    },
+    "/ru/ogg-to-flac": {
+      "title": "Конвертировать OGG в FLAC — Tamirly",
+      "description": "Конвертируйте OGG в FLAC бесплатно, прямо в браузере."
+    },
+    "/ru/ogg-to-mp3": {
+      "title": "Конвертировать OGG в MP3 — Tamirly",
+      "description": "Конвертируйте OGG в MP3 бесплатно, прямо в браузере."
+    },
+    "/ru/ogg-to-wav": {
+      "title": "Конвертировать OGG в WAV — Tamirly",
+      "description": "Конвертируйте OGG в WAV бесплатно, прямо в браузере."
+    },
+    "/ru/png-to-ico": {
+      "title": "Конвертировать PNG в ICO — Tamirly",
+      "description": "Конвертируйте PNG в ICO бесплатно, прямо в браузере."
+    },
+    "/ru/png-to-jpg": {
+      "title": "Конвертировать PNG в JPG — Tamirly",
+      "description": "Конвертируйте PNG в JPG бесплатно, прямо в браузере."
+    },
+    "/ru/png-to-webp": {
+      "title": "Конвертировать PNG в WEBP — Tamirly",
+      "description": "Конвертируйте PNG в WEBP бесплатно, прямо в браузере."
+    },
+    "/ru/svg-to-png": {
+      "title": "Конвертировать SVG в PNG — Tamirly",
+      "description": "Конвертируйте SVG в PNG бесплатно, прямо в браузере."
+    },
+    "/ru/text-tools": {
+      "title": "Текстовые Инструменты — Tamirly",
+      "description": "Продвинутый текстовый инструмент: конвертация между текстом, Markdown и HTML. Подсчёт слов, символов и многое другое."
+    },
+    "/ru/wav-to-aac": {
+      "title": "Конвертировать WAV в AAC — Tamirly",
+      "description": "Конвертируйте WAV в AAC бесплатно, прямо в браузере."
+    },
+    "/ru/wav-to-flac": {
+      "title": "Конвертировать WAV в FLAC — Tamirly",
+      "description": "Конвертируйте WAV в FLAC бесплатно, прямо в браузере."
+    },
+    "/ru/wav-to-mp3": {
+      "title": "Конвертировать WAV в MP3 — Tamirly",
+      "description": "Конвертируйте WAV в MP3 бесплатно, прямо в браузере."
+    },
+    "/ru/wav-to-ogg": {
+      "title": "Конвертировать WAV в OGG — Tamirly",
+      "description": "Конвертируйте WAV в OGG бесплатно, прямо в браузере."
+    },
+    "/ru/webp-to-jpg": {
+      "title": "Конвертировать WEBP в JPG — Tamirly",
+      "description": "Конвертируйте WEBP в JPG бесплатно, прямо в браузере."
+    },
+    "/de": {
+      "title": "Tamirly — Der Führende Online-Dateikonverter",
+      "description": "Tamirly ist ein führender Online-Dateikonverter für schnelle und kostenlose Konvertierung."
+    },
+    "/de/premium": {
+      "title": "Premium Upgrade — Tamirly",
+      "description": "Unbegrenzte Konvertierungen, keine Werbung — nur ₪19.90/Monat (statt ₪150)."
+    },
+    "/de/tools/image": {
+      "title": "Bilder tools | Tamir.li",
+      "description": "Convert JPG, PNG, WEBP, compress and resize images — all Tamir.li image tools free in your browser."
+    },
+    "/de/tools/video": {
+      "title": "Video tools | Tamir.li",
+      "description": "Convert MP4, WEBM, MOV and more — online video conversion tools on Tamir.li, no install required."
+    },
+    "/de/tools/audio": {
+      "title": "Audio tools | Tamir.li",
+      "description": "Convert MP3, WAV, FLAC and AAC — fast audio format conversion in your browser on Tamir.li."
+    },
+    "/de/tools/document": {
+      "title": "Dokumente tools | Tamir.li",
+      "description": "PDF to Word, Word to PDF, merge PDFs and text tools — document converters on Tamir.li, free online."
+    },
+    "/de/tools/ai": {
+      "title": "KI-Erstellung tools | Tamir.li",
+      "description": "AI image generation for Premium — 6 credits per month, multiple styles and PNG download."
+    },
+    "/de/aac-to-flac": {
+      "title": "AAC in FLAC konvertieren — Tamirly",
+      "description": "Konvertieren Sie AAC in FLAC kostenlos, direkt im Browser."
+    },
+    "/de/aac-to-mp3": {
+      "title": "AAC in MP3 konvertieren — Tamirly",
+      "description": "Konvertieren Sie AAC in MP3 kostenlos, direkt im Browser."
+    },
+    "/de/aac-to-ogg": {
+      "title": "AAC in OGG konvertieren — Tamirly",
+      "description": "Konvertieren Sie AAC in OGG kostenlos, direkt im Browser."
+    },
+    "/de/aac-to-wav": {
+      "title": "AAC in WAV konvertieren — Tamirly",
+      "description": "Konvertieren Sie AAC in WAV kostenlos, direkt im Browser."
+    },
+    "/de/doc-to-pdf": {
+      "title": "DOC in PDF konvertieren — Tamirly",
+      "description": "Konvertieren Sie DOC in PDF kostenlos, direkt im Browser."
+    },
+    "/de/docx-to-pdf": {
+      "title": "DOCX in PDF konvertieren — Tamirly",
+      "description": "Konvertieren Sie DOCX in PDF kostenlos, direkt im Browser."
+    },
+    "/de/flac-to-aac": {
+      "title": "FLAC in AAC konvertieren — Tamirly",
+      "description": "Konvertieren Sie FLAC in AAC kostenlos, direkt im Browser."
+    },
+    "/de/flac-to-mp3": {
+      "title": "FLAC in MP3 konvertieren — Tamirly",
+      "description": "Konvertieren Sie FLAC in MP3 kostenlos, direkt im Browser."
+    },
+    "/de/flac-to-ogg": {
+      "title": "FLAC in OGG konvertieren — Tamirly",
+      "description": "Konvertieren Sie FLAC in OGG kostenlos, direkt im Browser."
+    },
+    "/de/flac-to-wav": {
+      "title": "FLAC in WAV konvertieren — Tamirly",
+      "description": "Konvertieren Sie FLAC in WAV kostenlos, direkt im Browser."
+    },
+    "/de/image-compressor": {
+      "title": "Bildkompressor — Tamirly",
+      "description": "Komprimieren Sie Ihre Bilder und sparen Sie Speicherplatz. Unser Tool reduziert die Dateigröße bei maximaler Qualität."
+    },
+    "/de/image-resizer": {
+      "title": "Bildgröße Ändern — Tamirly",
+      "description": "Ändern Sie die Größe Ihrer Bilder auf jede gewünschte Auflösung. Perfekt für Social Media, Websites und Präsentationen."
+    },
+    "/de/jpg-to-png": {
+      "title": "JPG in PNG konvertieren — Tamirly",
+      "description": "Konvertieren Sie JPG in PNG kostenlos, direkt im Browser."
+    },
+    "/de/jpg-to-webp": {
+      "title": "JPG in WEBP konvertieren — Tamirly",
+      "description": "Konvertieren Sie JPG in WEBP kostenlos, direkt im Browser."
+    },
+    "/de/merge-pdf": {
+      "title": "PDF-Manager — Tamirly",
+      "description": "Erweiterter PDF-Manager — laden Sie mehrere PDFs hoch, ordnen Sie Seiten per Drag & Drop, drehen Sie einzelne Seiten und führen Sie alles zusammen."
+    },
+    "/de/mp3-to-aac": {
+      "title": "MP3 in AAC konvertieren — Tamirly",
+      "description": "Konvertieren Sie MP3 in AAC kostenlos, direkt im Browser."
+    },
+    "/de/mp3-to-flac": {
+      "title": "MP3 in FLAC konvertieren — Tamirly",
+      "description": "Konvertieren Sie MP3 in FLAC kostenlos, direkt im Browser."
+    },
+    "/de/mp3-to-ogg": {
+      "title": "MP3 in OGG konvertieren — Tamirly",
+      "description": "Konvertieren Sie MP3 in OGG kostenlos, direkt im Browser."
+    },
+    "/de/mp3-to-wav": {
+      "title": "MP3 in WAV konvertieren — Tamirly",
+      "description": "Konvertieren Sie MP3 in WAV kostenlos, direkt im Browser."
+    },
+    "/de/ogg-to-aac": {
+      "title": "OGG in AAC konvertieren — Tamirly",
+      "description": "Konvertieren Sie OGG in AAC kostenlos, direkt im Browser."
+    },
+    "/de/ogg-to-flac": {
+      "title": "OGG in FLAC konvertieren — Tamirly",
+      "description": "Konvertieren Sie OGG in FLAC kostenlos, direkt im Browser."
+    },
+    "/de/ogg-to-mp3": {
+      "title": "OGG in MP3 konvertieren — Tamirly",
+      "description": "Konvertieren Sie OGG in MP3 kostenlos, direkt im Browser."
+    },
+    "/de/ogg-to-wav": {
+      "title": "OGG in WAV konvertieren — Tamirly",
+      "description": "Konvertieren Sie OGG in WAV kostenlos, direkt im Browser."
+    },
+    "/de/png-to-ico": {
+      "title": "PNG in ICO konvertieren — Tamirly",
+      "description": "Konvertieren Sie PNG in ICO kostenlos, direkt im Browser."
+    },
+    "/de/png-to-jpg": {
+      "title": "PNG in JPG konvertieren — Tamirly",
+      "description": "Konvertieren Sie PNG in JPG kostenlos, direkt im Browser."
+    },
+    "/de/png-to-webp": {
+      "title": "PNG in WEBP konvertieren — Tamirly",
+      "description": "Konvertieren Sie PNG in WEBP kostenlos, direkt im Browser."
+    },
+    "/de/svg-to-png": {
+      "title": "SVG in PNG konvertieren — Tamirly",
+      "description": "Konvertieren Sie SVG in PNG kostenlos, direkt im Browser."
+    },
+    "/de/text-tools": {
+      "title": "Text-Tools — Tamirly",
+      "description": "Erweitertes Text-Tool: Konvertierung zwischen Text, Markdown und HTML. Wort- und Zeichenzählung und mehr."
+    },
+    "/de/wav-to-aac": {
+      "title": "WAV in AAC konvertieren — Tamirly",
+      "description": "Konvertieren Sie WAV in AAC kostenlos, direkt im Browser."
+    },
+    "/de/wav-to-flac": {
+      "title": "WAV in FLAC konvertieren — Tamirly",
+      "description": "Konvertieren Sie WAV in FLAC kostenlos, direkt im Browser."
+    },
+    "/de/wav-to-mp3": {
+      "title": "WAV in MP3 konvertieren — Tamirly",
+      "description": "Konvertieren Sie WAV in MP3 kostenlos, direkt im Browser."
+    },
+    "/de/wav-to-ogg": {
+      "title": "WAV in OGG konvertieren — Tamirly",
+      "description": "Konvertieren Sie WAV in OGG kostenlos, direkt im Browser."
+    },
+    "/de/webp-to-jpg": {
+      "title": "WEBP in JPG konvertieren — Tamirly",
+      "description": "Konvertieren Sie WEBP in JPG kostenlos, direkt im Browser."
+    },
+    "/fr": {
+      "title": "Tamirly — Le Convertisseur de Fichiers en Ligne Leader",
+      "description": "Tamirly est un convertisseur de fichiers en ligne pour une conversion rapide et gratuite."
+    },
+    "/fr/premium": {
+      "title": "Passer à Premium — Tamirly",
+      "description": "Conversions illimitées, sans pub — seulement ₪19.90/mois (au lieu de ₪150)."
+    },
+    "/fr/tools/image": {
+      "title": "Images tools | Tamir.li",
+      "description": "Convert JPG, PNG, WEBP, compress and resize images — all Tamir.li image tools free in your browser."
+    },
+    "/fr/tools/video": {
+      "title": "Vidéo tools | Tamir.li",
+      "description": "Convert MP4, WEBM, MOV and more — online video conversion tools on Tamir.li, no install required."
+    },
+    "/fr/tools/audio": {
+      "title": "Audio tools | Tamir.li",
+      "description": "Convert MP3, WAV, FLAC and AAC — fast audio format conversion in your browser on Tamir.li."
+    },
+    "/fr/tools/document": {
+      "title": "Documents tools | Tamir.li",
+      "description": "PDF to Word, Word to PDF, merge PDFs and text tools — document converters on Tamir.li, free online."
+    },
+    "/fr/tools/ai": {
+      "title": "Création IA tools | Tamir.li",
+      "description": "AI image generation for Premium — 6 credits per month, multiple styles and PNG download."
+    },
+    "/fr/aac-to-flac": {
+      "title": "Convertir AAC en FLAC — Tamirly",
+      "description": "Convertissez AAC en FLAC gratuitement, directement dans votre navigateur."
+    },
+    "/fr/aac-to-mp3": {
+      "title": "Convertir AAC en MP3 — Tamirly",
+      "description": "Convertissez AAC en MP3 gratuitement, directement dans votre navigateur."
+    },
+    "/fr/aac-to-ogg": {
+      "title": "Convertir AAC en OGG — Tamirly",
+      "description": "Convertissez AAC en OGG gratuitement, directement dans votre navigateur."
+    },
+    "/fr/aac-to-wav": {
+      "title": "Convertir AAC en WAV — Tamirly",
+      "description": "Convertissez AAC en WAV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/doc-to-pdf": {
+      "title": "Convertir DOC en PDF — Tamirly",
+      "description": "Convertissez DOC en PDF gratuitement, directement dans votre navigateur."
+    },
+    "/fr/docx-to-pdf": {
+      "title": "Convertir DOCX en PDF — Tamirly",
+      "description": "Convertissez DOCX en PDF gratuitement, directement dans votre navigateur."
+    },
+    "/fr/flac-to-aac": {
+      "title": "Convertir FLAC en AAC — Tamirly",
+      "description": "Convertissez FLAC en AAC gratuitement, directement dans votre navigateur."
+    },
+    "/fr/flac-to-mp3": {
+      "title": "Convertir FLAC en MP3 — Tamirly",
+      "description": "Convertissez FLAC en MP3 gratuitement, directement dans votre navigateur."
+    },
+    "/fr/flac-to-ogg": {
+      "title": "Convertir FLAC en OGG — Tamirly",
+      "description": "Convertissez FLAC en OGG gratuitement, directement dans votre navigateur."
+    },
+    "/fr/flac-to-wav": {
+      "title": "Convertir FLAC en WAV — Tamirly",
+      "description": "Convertissez FLAC en WAV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/image-compressor": {
+      "title": "Compresseur d'Images — Tamirly",
+      "description": "Compressez vos images et économisez de l'espace de stockage. Notre outil réduit la taille du fichier en conservant la qualité maximale."
+    },
+    "/fr/image-resizer": {
+      "title": "Redimensionner Image — Tamirly",
+      "description": "Redimensionnez vos images à n'importe quelle résolution souhaitée. Parfait pour les réseaux sociaux, sites web et présentations."
+    },
+    "/fr/jpg-to-png": {
+      "title": "Convertir JPG en PNG — Tamirly",
+      "description": "Convertissez JPG en PNG gratuitement, directement dans votre navigateur."
+    },
+    "/fr/jpg-to-webp": {
+      "title": "Convertir JPG en WEBP — Tamirly",
+      "description": "Convertissez JPG en WEBP gratuitement, directement dans votre navigateur."
+    },
+    "/fr/merge-pdf": {
+      "title": "Gestionnaire PDF — Tamirly",
+      "description": "Gestionnaire PDF avancé — téléchargez plusieurs PDF, réorganisez les pages par glisser-déposer, faites pivoter des pages et fusionnez le tout."
+    },
+    "/fr/mp3-to-aac": {
+      "title": "Convertir MP3 en AAC — Tamirly",
+      "description": "Convertissez MP3 en AAC gratuitement, directement dans votre navigateur."
+    },
+    "/fr/mp3-to-flac": {
+      "title": "Convertir MP3 en FLAC — Tamirly",
+      "description": "Convertissez MP3 en FLAC gratuitement, directement dans votre navigateur."
+    },
+    "/fr/mp3-to-ogg": {
+      "title": "Convertir MP3 en OGG — Tamirly",
+      "description": "Convertissez MP3 en OGG gratuitement, directement dans votre navigateur."
+    },
+    "/fr/mp3-to-wav": {
+      "title": "Convertir MP3 en WAV — Tamirly",
+      "description": "Convertissez MP3 en WAV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/ogg-to-aac": {
+      "title": "Convertir OGG en AAC — Tamirly",
+      "description": "Convertissez OGG en AAC gratuitement, directement dans votre navigateur."
+    },
+    "/fr/ogg-to-flac": {
+      "title": "Convertir OGG en FLAC — Tamirly",
+      "description": "Convertissez OGG en FLAC gratuitement, directement dans votre navigateur."
+    },
+    "/fr/ogg-to-mp3": {
+      "title": "Convertir OGG en MP3 — Tamirly",
+      "description": "Convertissez OGG en MP3 gratuitement, directement dans votre navigateur."
+    },
+    "/fr/ogg-to-wav": {
+      "title": "Convertir OGG en WAV — Tamirly",
+      "description": "Convertissez OGG en WAV gratuitement, directement dans votre navigateur."
+    },
+    "/fr/png-to-ico": {
+      "title": "Convertir PNG en ICO — Tamirly",
+      "description": "Convertissez PNG en ICO gratuitement, directement dans votre navigateur."
+    },
+    "/fr/png-to-jpg": {
+      "title": "Convertir PNG en JPG — Tamirly",
+      "description": "Convertissez PNG en JPG gratuitement, directement dans votre navigateur."
+    },
+    "/fr/png-to-webp": {
+      "title": "Convertir PNG en WEBP — Tamirly",
+      "description": "Convertissez PNG en WEBP gratuitement, directement dans votre navigateur."
+    },
+    "/fr/svg-to-png": {
+      "title": "Convertir SVG en PNG — Tamirly",
+      "description": "Convertissez SVG en PNG gratuitement, directement dans votre navigateur."
+    },
+    "/fr/text-tools": {
+      "title": "Outils Texte — Tamirly",
+      "description": "Outil de texte avancé : conversion entre texte, Markdown et HTML. Comptage de mots et caractères et plus encore."
+    },
+    "/fr/wav-to-aac": {
+      "title": "Convertir WAV en AAC — Tamirly",
+      "description": "Convertissez WAV en AAC gratuitement, directement dans votre navigateur."
+    },
+    "/fr/wav-to-flac": {
+      "title": "Convertir WAV en FLAC — Tamirly",
+      "description": "Convertissez WAV en FLAC gratuitement, directement dans votre navigateur."
+    },
+    "/fr/wav-to-mp3": {
+      "title": "Convertir WAV en MP3 — Tamirly",
+      "description": "Convertissez WAV en MP3 gratuitement, directement dans votre navigateur."
+    },
+    "/fr/wav-to-ogg": {
+      "title": "Convertir WAV en OGG — Tamirly",
+      "description": "Convertissez WAV en OGG gratuitement, directement dans votre navigateur."
+    },
+    "/fr/webp-to-jpg": {
+      "title": "Convertir WEBP en JPG — Tamirly",
+      "description": "Convertissez WEBP en JPG gratuitement, directement dans votre navigateur."
+    },
+    "/it": {
+      "title": "Tamirly — Il Convertitore di File Online Leader",
+      "description": "Tamirly è un convertitore di file online per conversione rapida e gratuita."
+    },
+    "/it/premium": {
+      "title": "Passa a Premium — Tamirly",
+      "description": "Conversioni illimitate, senza pubblicità — solo ₪19.90/mese (invece di ₪150)."
+    },
+    "/it/tools/image": {
+      "title": "Immagini tools | Tamir.li",
+      "description": "Convert JPG, PNG, WEBP, compress and resize images — all Tamir.li image tools free in your browser."
+    },
+    "/it/tools/video": {
+      "title": "Video tools | Tamir.li",
+      "description": "Convert MP4, WEBM, MOV and more — online video conversion tools on Tamir.li, no install required."
+    },
+    "/it/tools/audio": {
+      "title": "Audio tools | Tamir.li",
+      "description": "Convert MP3, WAV, FLAC and AAC — fast audio format conversion in your browser on Tamir.li."
+    },
+    "/it/tools/document": {
+      "title": "Documenti tools | Tamir.li",
+      "description": "PDF to Word, Word to PDF, merge PDFs and text tools — document converters on Tamir.li, free online."
+    },
+    "/it/tools/ai": {
+      "title": "Creazione IA tools | Tamir.li",
+      "description": "AI image generation for Premium — 6 credits per month, multiple styles and PNG download."
+    },
+    "/it/aac-to-flac": {
+      "title": "Convertire AAC in FLAC — Tamirly",
+      "description": "Converti file AAC in FLAC gratis, direttamente nel browser."
+    },
+    "/it/aac-to-mp3": {
+      "title": "Convertire AAC in MP3 — Tamirly",
+      "description": "Converti file AAC in MP3 gratis, direttamente nel browser."
+    },
+    "/it/aac-to-ogg": {
+      "title": "Convertire AAC in OGG — Tamirly",
+      "description": "Converti file AAC in OGG gratis, direttamente nel browser."
+    },
+    "/it/aac-to-wav": {
+      "title": "Convertire AAC in WAV — Tamirly",
+      "description": "Converti file AAC in WAV gratis, direttamente nel browser."
+    },
+    "/it/doc-to-pdf": {
+      "title": "Convertire DOC in PDF — Tamirly",
+      "description": "Converti file DOC in PDF gratis, direttamente nel browser."
+    },
+    "/it/docx-to-pdf": {
+      "title": "Convertire DOCX in PDF — Tamirly",
+      "description": "Converti file DOCX in PDF gratis, direttamente nel browser."
+    },
+    "/it/flac-to-aac": {
+      "title": "Convertire FLAC in AAC — Tamirly",
+      "description": "Converti file FLAC in AAC gratis, direttamente nel browser."
+    },
+    "/it/flac-to-mp3": {
+      "title": "Convertire FLAC in MP3 — Tamirly",
+      "description": "Converti file FLAC in MP3 gratis, direttamente nel browser."
+    },
+    "/it/flac-to-ogg": {
+      "title": "Convertire FLAC in OGG — Tamirly",
+      "description": "Converti file FLAC in OGG gratis, direttamente nel browser."
+    },
+    "/it/flac-to-wav": {
+      "title": "Convertire FLAC in WAV — Tamirly",
+      "description": "Converti file FLAC in WAV gratis, direttamente nel browser."
+    },
+    "/it/image-compressor": {
+      "title": "Compressore Immagini — Tamirly",
+      "description": "Comprimi le tue immagini e risparmia spazio di archiviazione. Il nostro strumento riduce la dimensione del file mantenendo la massima qualità."
+    },
+    "/it/image-resizer": {
+      "title": "Ridimensiona Immagine — Tamirly",
+      "description": "Ridimensiona le tue immagini a qualsiasi risoluzione desiderata. Perfetto per social media, siti web e presentazioni."
+    },
+    "/it/jpg-to-png": {
+      "title": "Convertire JPG in PNG — Tamirly",
+      "description": "Converti file JPG in PNG gratis, direttamente nel browser."
+    },
+    "/it/jpg-to-webp": {
+      "title": "Convertire JPG in WEBP — Tamirly",
+      "description": "Converti file JPG in WEBP gratis, direttamente nel browser."
+    },
+    "/it/merge-pdf": {
+      "title": "Gestore PDF — Tamirly",
+      "description": "Gestore PDF avanzato — carica più PDF, riordina le pagine trascinando, ruota pagine singole e unisci tutto in un unico PDF organizzato."
+    },
+    "/it/mp3-to-aac": {
+      "title": "Convertire MP3 in AAC — Tamirly",
+      "description": "Converti file MP3 in AAC gratis, direttamente nel browser."
+    },
+    "/it/mp3-to-flac": {
+      "title": "Convertire MP3 in FLAC — Tamirly",
+      "description": "Converti file MP3 in FLAC gratis, direttamente nel browser."
+    },
+    "/it/mp3-to-ogg": {
+      "title": "Convertire MP3 in OGG — Tamirly",
+      "description": "Converti file MP3 in OGG gratis, direttamente nel browser."
+    },
+    "/it/mp3-to-wav": {
+      "title": "Convertire MP3 in WAV — Tamirly",
+      "description": "Converti file MP3 in WAV gratis, direttamente nel browser."
+    },
+    "/it/ogg-to-aac": {
+      "title": "Convertire OGG in AAC — Tamirly",
+      "description": "Converti file OGG in AAC gratis, direttamente nel browser."
+    },
+    "/it/ogg-to-flac": {
+      "title": "Convertire OGG in FLAC — Tamirly",
+      "description": "Converti file OGG in FLAC gratis, direttamente nel browser."
+    },
+    "/it/ogg-to-mp3": {
+      "title": "Convertire OGG in MP3 — Tamirly",
+      "description": "Converti file OGG in MP3 gratis, direttamente nel browser."
+    },
+    "/it/ogg-to-wav": {
+      "title": "Convertire OGG in WAV — Tamirly",
+      "description": "Converti file OGG in WAV gratis, direttamente nel browser."
+    },
+    "/it/png-to-ico": {
+      "title": "Convertire PNG in ICO — Tamirly",
+      "description": "Converti file PNG in ICO gratis, direttamente nel browser."
+    },
+    "/it/png-to-jpg": {
+      "title": "Convertire PNG in JPG — Tamirly",
+      "description": "Converti file PNG in JPG gratis, direttamente nel browser."
+    },
+    "/it/png-to-webp": {
+      "title": "Convertire PNG in WEBP — Tamirly",
+      "description": "Converti file PNG in WEBP gratis, direttamente nel browser."
+    },
+    "/it/svg-to-png": {
+      "title": "Convertire SVG in PNG — Tamirly",
+      "description": "Converti file SVG in PNG gratis, direttamente nel browser."
+    },
+    "/it/text-tools": {
+      "title": "Strumenti Testo — Tamirly",
+      "description": "Strumento di testo avanzato: conversione tra testo, Markdown e HTML. Conteggio parole e caratteri e altro ancora."
+    },
+    "/it/wav-to-aac": {
+      "title": "Convertire WAV in AAC — Tamirly",
+      "description": "Converti file WAV in AAC gratis, direttamente nel browser."
+    },
+    "/it/wav-to-flac": {
+      "title": "Convertire WAV in FLAC — Tamirly",
+      "description": "Converti file WAV in FLAC gratis, direttamente nel browser."
+    },
+    "/it/wav-to-mp3": {
+      "title": "Convertire WAV in MP3 — Tamirly",
+      "description": "Converti file WAV in MP3 gratis, direttamente nel browser."
+    },
+    "/it/wav-to-ogg": {
+      "title": "Convertire WAV in OGG — Tamirly",
+      "description": "Converti file WAV in OGG gratis, direttamente nel browser."
+    },
+    "/it/webp-to-jpg": {
+      "title": "Convertire WEBP in JPG — Tamirly",
+      "description": "Converti file WEBP in JPG gratis, direttamente nel browser."
     },
     "/blog": {
       "title": "בלוג — מדריכים וטיפים להמרת קבצים | תמיר לי",

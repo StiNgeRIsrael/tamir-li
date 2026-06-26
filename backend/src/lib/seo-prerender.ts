@@ -4,6 +4,9 @@ import path from "node:path";
 const BOT_UA =
   /googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|facebookexternalhit|twitterbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest|applebot|semrushbot|ahrefsbot/i;
 
+const NON_HE_LOCALES = ["en", "es", "ru", "de", "fr", "it"] as const;
+type ManifestLocale = "he" | (typeof NON_HE_LOCALES)[number];
+
 export interface SeoManifestEntry {
   title: string;
   description: string;
@@ -36,8 +39,7 @@ export function loadSeoManifest(distDir: string): SeoManifest | null {
 
 /** Normalize request path to Hebrew manifest key (strip locale prefix). */
 export function normalizeManifestPath(urlPath: string): string {
-  const locales = ["en", "es", "ru", "de", "fr", "it"];
-  for (const loc of locales) {
+  for (const loc of NON_HE_LOCALES) {
     const prefix = `/${loc}`;
     if (urlPath === prefix) return "/";
     if (urlPath.startsWith(`${prefix}/`)) {
@@ -47,8 +49,10 @@ export function normalizeManifestPath(urlPath: string): string {
   return urlPath || "/";
 }
 
-export function extractManifestLocale(urlPath: string): "he" | "en" {
-  if (urlPath === "/en" || urlPath.startsWith("/en/")) return "en";
+export function extractManifestLocale(urlPath: string): ManifestLocale {
+  for (const loc of NON_HE_LOCALES) {
+    if (urlPath === `/${loc}` || urlPath.startsWith(`/${loc}/`)) return loc;
+  }
   return "he";
 }
 
@@ -64,12 +68,12 @@ function resolveManifestEntry(
 export function buildBotHtml(
   entry: SeoManifestEntry,
   canonicalUrl: string,
-  locale: "he" | "en" = "he"
+  locale: ManifestLocale = "he"
 ): string {
   const escapedTitle = entry.title.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const escapedDesc = entry.description.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  const htmlLang = locale === "en" ? "en" : "he-IL";
-  const htmlDir = locale === "en" ? "ltr" : "rtl";
+  const htmlLang = locale === "he" ? "he-IL" : locale;
+  const htmlDir = locale === "he" ? "rtl" : "ltr";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",

@@ -9,8 +9,8 @@ import {
   type ToolCategory,
 } from "@/lib/tools-data";
 import { isToolFunctional } from "@/lib/tool-availability";
-import { useLocale, localePath } from "@/lib/i18n";
-import { siteUrl } from "@/lib/site";
+import { useLocale, localePath, htmlLangTag } from "@/lib/i18n";
+import { siteUrl, absoluteImageUrl } from "@/lib/site";
 import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
 import { useToolConfig } from "@/contexts/ToolConfigContext";
 import { ToolSoonBadge } from "@/components/ToolSoonBadge";
@@ -47,6 +47,18 @@ export default function CategoryHubPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        name: hub.seoTitle(categoryLabel),
+        description: metaDescription,
+        url: hubUrl,
+        image: absoluteImageUrl(toolCategoryOgImage(category)),
+        applicationCategory: "UtilityApplication",
+        operatingSystem: "Any",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "ILS" },
+        inLanguage: htmlLangTag(locale),
+        provider: { "@type": "Organization", name: t.brandName, url: siteUrl("/") },
+      },
       {
         "@type": "CollectionPage",
         name: hub.seoTitle(categoryLabel),

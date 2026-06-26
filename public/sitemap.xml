@@ -646,6 +646,22 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://tamir.li/alternatives/freeconvert</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/alternatives/freeconvert" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/alternatives/freeconvert" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/alternatives/freeconvert" />
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/alternatives/freeconvert</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/alternatives/freeconvert" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/alternatives/freeconvert" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/alternatives/freeconvert" />
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
     <loc>https://tamir.li/tools/image</loc>
     <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/tools/image" />
     <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/tools/image" />

@@ -2082,3 +2082,14 @@ WEBP קטן ב-25-34% מ-JPG באותה איכות. השתמשו בכלי [המ�
 export function getBlogArticle(slug: string): BlogArticle | undefined {
   return blogArticles.find(a => a.slug === slug);
 }
+
+/** Blog posts that link to a tool path (e.g. `/jpg-to-png`, `/image-compressor`). */
+export function getBlogArticlesLinkingToPath(toolPath: string): BlogArticle[] {
+  const normalized = toolPath.startsWith("/") ? toolPath : `/${toolPath}`;
+  return blogArticles.filter((article) =>
+    article.toolLinks.some((link) => {
+      const href = link.href.startsWith("/") ? link.href : `/${link.href}`;
+      return href === normalized;
+    }),
+  );
+}

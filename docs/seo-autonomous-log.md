@@ -525,3 +525,59 @@ All 6 sitemap image pairs now have `directAnswer` + FAQs Ã— 7 locales (shipped i
 4. Re-inspect tier-1 tool URLs in **48?72h** post-sitemap refresh.
 5. Expand seo-manifest to es/ru/de/fr/it locale paths.
 
+---
+
+## Iteration 9 ? Untried SEO hacks (comparison pages, manifest ×7, internal links) ? 2026-06-26T10:55+03:00
+
+### GSC browser agent (`8afd50a2`)
+
+- **Status:** Started only ? navigated to GSC, then stalled (transcript ends after opening Search Console; no sitemap resubmit or URL inspection completed).
+- **Blocker:** Likely awaiting user Google login in browser tab.
+
+### Untried hacks inventory
+
+| Hack | Status this iteration |
+|------|-------------------------|
+| Comparison/alternative pages | **Done** ? `/alternatives/freeconvert` (he+en), honest feature table, footer link |
+| seo-manifest all 7 locales | **Done** ? 81 ? **283** bot-prerender routes |
+| Use-case landing pages | Not done (pilot deferred) |
+| llms.txt full catalog expansion | Not done |
+| Blog ? tool reverse links | **Done** ? `getBlogArticlesLinkingToPath` + related guides on ToolPage (he) |
+| SoftwareApplication on category hubs | **Done** ? `CategoryHubPage` JSON-LD |
+| Footer category hubs + top tools | **Done** ? 5-col footer with `/tools/*` column |
+| IndexNow | Skipped (user) |
+| YouTube Shorts / Reddit / Quora | Noted ? off-site, manual |
+| Embeddable widget iframe | Not done |
+| Medium syndication | Not done ? content task |
+
+### Changes made
+
+- `src/pages/AlternativePage.tsx`, `src/lib/alternative-pages-data.ts` ? FreeConvert comparison
+- `scripts/generate-seo-manifest.ts` ? all `LOCALES`; alternative page entries
+- `backend/src/lib/seo-prerender.ts` ? locale `lang`/`dir` for es/ru/de/fr/it
+- `src/lib/sitemap-paths.ts` ? `alternative` kind (+2 URLs ? **339** sitemap total)
+- `src/lib/blog-data.ts` ? `getBlogArticlesLinkingToPath`
+- `src/pages/ToolPage.tsx` ? related blog guides block
+- `src/pages/CategoryHubPage.tsx` ? `SoftwareApplication` schema
+- `src/components/SiteFooter.tsx` ? category hub column + FreeConvert alt link
+- `src/lib/translations/{he,en}.ts` ? alternative page copy, footer keys, `tool.relatedGuides`
+
+### Verification
+
+- `npm test` ? **142 passed**
+- `npm run build` ? success (**339** sitemap URLs, **283** manifest routes)
+
+### Production impact (post-deploy)
+
+- Googlebot on `/es/jpg-to-png`, `/ru/tools/image`, etc. gets locale-specific title/description (was Hebrew/English only).
+- New indexable comparison URL targets «freeconvert alternative» long-tail (he+en).
+- Stronger internal link graph: footer ? category hubs; tool pages ? blog guides.
+- Category hubs gain `SoftwareApplication` structured data for rich-result eligibility.
+
+### Next loop priorities
+
+1. Complete GSC browser batch (login ? sitemap resubmit ? request indexing tier-1).
+2. Use-case pilot: `/compress-image-for-whatsapp` ? image-compressor.
+3. llms.txt full tool catalog with honest coming-soon flags.
+4. Re-inspect `/alternatives/freeconvert`, `/tools/image` in GSC 48h post-deploy.
+
