@@ -141,6 +141,9 @@ Billing checkout is intentionally skipped by the probe (`SKIP_BILLING=true`).
 
 ## Related docs
 
+- [docs/README.md](./README.md) — full internal doc index
+- [android-play-console-setup.md](./android-play-console-setup.md) — Capacitor / Play Store
+- [admob-setup.md](./admob-setup.md) — Android AdMob IDs
 - [plesk-mysql-troubleshooting.md](./plesk-mysql-troubleshooting.md) — fix `db.ok: false` when Node is live
 - [conversion-queue.md](./conversion-queue.md) — server job storage and ffmpeg
 - [production-readiness.md](./production-readiness.md) — feature/status audit

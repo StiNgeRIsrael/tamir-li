@@ -121,6 +121,23 @@ Audit date: **2026-06-24**. Status key: **DONE** / **PARTIAL** / **MISSING**.
 
 ---
 
+## 6. Android app (Capacitor)
+
+| Item | Status | Notes |
+|------|--------|-------|
+| Capacitor shell + remote URL | **DONE** | `li.tamir.app` → `https://tamir.li` |
+| AdMob integration | **DONE** (code) | `.env.production` + `strings.xml`; policy review **pending** |
+| Google Play Billing (client + API) | **DONE** (code) | `usePlayBilling`, `/api/billing/google/verify`, RTDN route |
+| `app-ads.txt` | **DONE** | `public/app-ads.txt` — deploy to tamir.li root |
+| Play Console internal testing | **PENDING** | Signed AAB, operator checklist |
+| Web vs native ad separation | **DONE** | No Adsterra on Android; PayPal web-only checkout |
+
+**Launch blockers:** Play + AdMob account verification; merge Android branch to **StiNgeRIsrael/tamir-li** `main` and deploy; backend `GOOGLE_PLAY_*` on Plesk.
+
+See [android-play-console-setup.md](./android-play-console-setup.md), [admob-setup.md](./admob-setup.md).
+
+---
+
 ## Prioritized execution queue (loops until 10:00)
 
 | # | Task | Est. | Impact |

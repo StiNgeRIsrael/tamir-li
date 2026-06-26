@@ -16,7 +16,8 @@ Status key: **DONE** / **PARTIAL** / **MISSING** · Priority: **P0** (revenue/le
 | `public/ads.txt` | **MISSING** | Paste real Adsterra line from dashboard (`adsterra.com, PUBLISHER_ID, DIRECT`). See [`adsterra-setup.md`](./adsterra-setup.md). |
 | PayPal live plans | **PARTIAL** | Verify `PAYPAL_PLAN_MONTHLY` / `PAYPAL_PLAN_YEARLY` on Plesk match ₪19.90/mo + yearly; register webhook `https://tamir.li/api/billing/paypal/webhook`. See [`paypal-setup.md`](./paypal-setup.md). |
 | ffmpeg on Plesk | **PARTIAL** | Required for audio/video server queue; without it queued jobs fail. See [`plesk-node-deploy.md`](./plesk-node-deploy.md). |
-| AI image API key | **MISSING** | Premium AI tool is UI-only until provider key + credits backend wired. Document env in `.env.example` when added. |
+| AI image API key | **PARTIAL** | Works when set in `/admin/ai`; premium + credits required |
+| Android on production repo | **PARTIAL** | Code on `feat/android-capacitor-production` — merge to **StiNgeRIsrael/tamir-li** `main` |
 
 ---
 

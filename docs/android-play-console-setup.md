@@ -31,7 +31,7 @@ Operator checklist for publishing the Capacitor app (`li.tamir.app`). Cursor imp
 2. **In-app products** (optional): `credits_10`, `credits_30`, `credits_60`, `credits_120`
 3. **Setup** → **API access** → link Google Cloud project → create **service account**
 4. Download JSON → store as `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` on API server
-5. Enable **Real-time developer notifications** (Pub/Sub) → point to `https://api.tamir.li/api/billing/google/rtdn`
+5. Enable **Real-time developer notifications** (Pub/Sub) → point to `https://tamir.li/api/billing/google/rtdn`
 
 ## Build & upload AAB
 

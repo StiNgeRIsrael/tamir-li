@@ -1,10 +1,30 @@
 # Implementation status — tamir.li
 
-Code-level audit of what is **fully implemented**, **partial**, **stubbed**, or **missing**. Cross-checked against `tools-data.ts`, `ToolPage.tsx`, backend routes, and live probes (2026-06-24).
+Code-level audit of what is **fully implemented**, **partial**, **stubbed**, or **missing**. Cross-checked against `tools-data.ts`, `ToolPage.tsx`, backend routes, and live probes.
 
-For **deployment / production routing**, see [production-readiness.md](./production-readiness.md) (note: live `/health` and `/api/*` now return JSON as of 2026-06-24 — earlier static-layer audit was fixed).  
+**Last updated:** 2026-06-26 (Android / AdMob / Google Play Billing added on `feat/android-capacitor-production` branch).
+
+For **deployment / production routing**, see [production-readiness.md](./production-readiness.md).  
 For **tool catalog, SEO slugs, and API reference**, see [tools-and-features.md](./tools-and-features.md).  
-For **monetization launch checklist**, see [monetization-readiness-plan.md](./monetization-readiness-plan.md).
+For **monetization launch checklist**, see [monetization-readiness-plan.md](./monetization-readiness-plan.md).  
+For **Android operator steps**, see [android-play-console-setup.md](./android-play-console-setup.md) and [admob-setup.md](./admob-setup.md).
+
+---
+
+## Android app (Capacitor)
+
+| Item | Status | Notes |
+|------|--------|-------|
+| Capacitor shell `li.tamir.app` | **DONE** | Loads `https://tamir.li` via `server.url` |
+| AdMob (banner / interstitial / rewarded) | **DONE** | `src/lib/ads/admob.ts`; IDs in `.env.production` |
+| WebView ad gate (rewarded download) | **DONE** | `download-gate.ts` — AdMob on Android, Adsterra/vignette on web |
+| Google Play Billing (client) | **DONE** | `usePlayBilling.ts`, `@capgo/native-purchases` |
+| Google Play verify + RTDN (server) | **DONE** | `google-play.ts`, `billing.routes.ts` — needs `GOOGLE_PLAY_*` env |
+| Prisma Google Play fields | **DONE** | Migration `20260627120000_google_play_billing` |
+| `app-ads.txt` | **DONE** | `public/app-ads.txt` → `https://tamir.li/app-ads.txt` after deploy |
+| Play Store listing / signed AAB | **PENDING** | Operator — [android-play-console-setup.md](./android-play-console-setup.md) |
+| AdMob / Play policy approval | **PENDING** | Verification in progress (2026-06-26) |
+| Server tools on native | **GATED** | `conversion-eligibility.ts` blocks risky server-only tools |
 
 ---
 
@@ -14,7 +34,7 @@ Operational gates — not all are code-complete; several need Plesk/env or a man
 
 | Item | Status | Notes |
 |------|--------|-------|
-| [ ] **ads.txt** | **MISSING** | `public/ads.txt` is placeholder comments only; live `https://tamir.li/ads.txt` matches. Paste Adsterra publisher line before network approval. |
+| [ ] **ads.txt** (Adsterra) | **MISSING** | `public/ads.txt` still placeholder comments. **`public/app-ads.txt`** for AdMob is configured separately. |
 | [ ] **PayPal env** | **PARTIAL** | Routes live when API reachable. Plesk needs `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID`, `PAYPAL_PLAN_MONTHLY`, `PAYPAL_PLAN_YEARLY`, `PAYPAL_MODE`; verify plan IDs match ₪19.90/mo pricing. |
 | [ ] **Usage limit enforcement** | **PARTIAL** | Server enforces 5/day on `/api/usage/record` and conversion enqueue. Subscribers skip locks. **Non-subscribers** can still bypass premium/daily locks via 15s fake-ad timer (`premiumUnlocked` / `usageUnlocked`). localStorage fallback when API fails. |
 | [x] **Tool grid** | **DONE** | Homepage + nav show all catalog tools; non-functional ones get SOON badge (`tool-availability.ts`). 9/13 tools marked functional. |
@@ -83,7 +103,7 @@ Quick prod probe (2026-06-24): `GET https://tamir.li/health` → JSON `db.ok`, `
 | Auth session restore | `GET /api/auth/me`; clears invalid/blocked tokens | `AuthContext.tsx` |
 | Premium checkout (PayPal) | Checkout, capture, portal, webhooks | `PremiumPage.tsx`, `billing.routes.ts` |
 | AI credit packs UI | Checkout for `credits_*` plans | `PremiumCredits.tsx` |
-| Download ad gate (2-step) | Vignette or `VITE_AD_CLICK_URL`; skipped for premium | `download-gate.ts` |
+| Download ad gate (2-step) | Vignette/popup on **web**; **AdMob rewarded** on Android | `download-gate.ts` |
 | Cookie consent | Gates analytics + ads | `consent.ts`, `CookieConsent.tsx` |
 | i18n (7 locales) | Hebrew default (no `/he` prefix); RTL for `he` | `i18n.tsx`, `translations/*.ts` |
 | SEO (`SEOHead`, hreflang, OG, JSON-LD) | Per-page metadata; tool FAQ blocks; home `@graph` with SearchAction + SiteNavigationElement; favicons in `public/` | `SEOHead.tsx`, `home-json-ld.ts`, `ToolSeoBlocks.tsx` |
@@ -103,7 +123,8 @@ Quick prod probe (2026-06-24): `GET https://tamir.li/health` → JSON `db.ok`, `
 | `GET /api/conversions/:id`, `GET .../file` | Job poll + download | `conversions.routes.ts` |
 | `GET /api/tools/config` | Public enabled/featured/sort | `tools.routes.ts` |
 | `GET /api/ads/config` | Cached; DB overrides env zone keys | `ads.routes.ts` |
-| Billing (PayPal) | checkout, capture, status, portal, webhook | `billing.routes.ts` |
+| Billing (PayPal web) | checkout, capture, status, portal, webhook | `billing.routes.ts` |
+| Billing (Google Play) | verify, RTDN, `billingProvider` on status | `billing.routes.ts`, `google-play.ts` |
 | `POST /api/ai/generate-image` | Google Gemini/Imagen; credit deduct/refund | `ai.routes.ts`, `ai-generation.ts` |
 | Admin CRUD | stats, users, tools, ads settings, billing tables, AI settings/logs | `admin.routes.ts` |
 | Conversion worker | In-process poll; ffmpeg for audio; cleanup | `conversion-worker.ts`, `conversion-cleanup.ts` |
@@ -130,7 +151,8 @@ Quick prod probe (2026-06-24): `GET https://tamir.li/health` → JSON `db.ok`, `
 | **Usage limits (frontend)** | localStorage fallback when API unreachable; bypassable | `useUsage.ts` |
 | **Premium / daily locks** | `PremiumLock` / `DailyLimitLock` skip for `isPremium` subscribers, but non-subscribers unlock via **15s fake ad timer** (`premiumUnlocked`, `usageUnlocked`) — not a real ad view | `PremiumComponents.tsx`, `ToolPage.tsx` |
 | **Premium subscription → tool access** | `showPremiumToolLock` uses `isSubPremium`, not combined `isPremium` from usage API alone — correct for billing, but fake timer still bypasses for free users | `ToolPage.tsx` |
-| **Adsterra display** | Full iframe/consent/placement code; needs zone keys (admin DB or env) | `adsterra.ts`, `AdSlot.tsx`, `AdminAds.tsx` |
+| AdMob | **Android app only** | `admob.ts`, `AdSlot.tsx`; never on web |
+| Adsterra display | **Web only** | Zone keys in admin DB or env |
 | **Popunder / native ads** | Wired; needs script URLs in admin | `adsterra.ts`, `AdNativeSlot.tsx` |
 | **Analytics** | Consent-gated; needs `VITE_GTM_ID` or `VITE_GA4_ID` (not both) | `analytics/events.ts` |
 | **Blog** | 22 Hebrew articles; UI translated; content Hebrew-only | `blog-data.ts` |
@@ -246,7 +268,8 @@ Ranked by impact on ads + subscriptions + trust:
 | Mock conversions | `VITE_USE_MOCK_CONVERSION` (optional) |
 | SEO / canonical | `VITE_SITE_ORIGIN` |
 | Adsterra | `VITE_ADSTERRA_ZONE_*` or admin `/admin/ads` → DB |
-| Download popup gate | `VITE_AD_CLICK_URL` (optional) |
+| Download popup gate | `VITE_AD_CLICK_URL` (optional) | **Web only** — blocked on Android |
+| AdMob | `.env.production` / `VITE_ADMOB_*` | Android app (site bundle must include IDs) |
 | Analytics | `VITE_GTM_ID` **or** `VITE_GA4_ID` |
 
 ### Backend
@@ -257,6 +280,7 @@ Ranked by impact on ads + subscriptions + trust:
 | Google auth | `GOOGLE_CLIENT_ID` |
 | Admin bootstrap | `ADMIN_EMAILS` |
 | PayPal billing | `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID`, `PAYPAL_PLAN_MONTHLY`, `PAYPAL_PLAN_YEARLY`, `PAYPAL_MODE` |
+| Google Play billing | `GOOGLE_PLAY_PACKAGE_NAME`, `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` (see `backend/.env.example`) |
 | Audio conversion | `FFMPEG_PATH` (optional; default `ffmpeg` on PATH) |
 | AI generation | Google API key via admin DB (`AiSettings`), not env in repo |
 | Stripe (optional) | `ENABLE_STRIPE=true`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` |

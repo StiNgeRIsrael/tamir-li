@@ -1,6 +1,8 @@
 # Deploy tamir.li frontend to Plesk
 
-> **Deprecated for new production deploys.** Use the single Node.js app guide: [`plesk-node-deploy.md`](./plesk-node-deploy.md) (Express serves `/api/*` + Vite `dist/` on `tamir.li`). This doc describes the legacy split: static SPA in `httpdocs` + API on `api.tamir.li`.
+> **Deprecated for new production deploys.** Use [`plesk-node-deploy.md`](./plesk-node-deploy.md) (Node monolith on `tamir.li`).  
+> This doc describes the **legacy** split: static SPA in `httpdocs` + optional `api.tamir.li` subdomain.  
+> **Android note:** the Capacitor app loads the live site — AdMob IDs must be in the production frontend build (`.env.production`), not only in the AAB.
 
 Static SPA (Vite + React Router) hosted on **Plesk** (Apache/nginx). DNS is managed in **Cloudflare** — see [`dns-setup-tamir-li.md`](./dns-setup-tamir-li.md).
 

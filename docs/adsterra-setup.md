@@ -1,6 +1,8 @@
-# Adsterra setup — tamir.li
+# Adsterra setup — tamir.li (web only)
 
-Display ads use **zone keys** from the Adsterra publisher dashboard (script embed). The Publisher API is for stats/management — not required for showing banners in this React app.
+> **Android app:** uses **AdMob**, not Adsterra. See [admob-setup.md](./admob-setup.md). Never enable Adsterra popups or zones in the Capacitor shell.
+
+Display ads use **zone keys** from the Adsterra publisher dashboard (script embed).
 
 ## 1. Add your site in Adsterra
 

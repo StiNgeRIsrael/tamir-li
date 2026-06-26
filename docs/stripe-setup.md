@@ -34,7 +34,7 @@ Prefer a [restricted API key](https://docs.stripe.com/keys/restricted-api-keys) 
 
 ## 3. Webhook endpoint
 
-**URL (production):** `https://api.tamir.li/api/billing/webhook`  
+**URL (production):** `https://tamir.li/api/billing/webhook`  
 **URL (local):** use [Stripe CLI](https://docs.stripe.com/stripe-cli) forwarding:
 
 ```bash
@@ -70,7 +70,7 @@ STRIPE_PRICE_CREDITS_120=price_...
 ## 5. Frontend env
 
 ```env
-VITE_API_URL=https://api.tamir.li
+VITE_API_URL=https://tamir.li
 ```
 
 Checkout is initiated via `POST /api/billing/checkout` (authenticated). No Payment Element on the frontend today.

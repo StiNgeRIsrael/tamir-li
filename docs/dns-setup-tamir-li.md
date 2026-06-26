@@ -1,52 +1,31 @@
 # DNS setup for tamir.li
 
+Step-by-step guide for Cloudflare DNS pointing at **Plesk** (Node.js monolith on `tamir.li`).
 
-
-Step-by-step guide for moving DNS from your domain registrar to Cloudflare and pointing the site at **Plesk** (Apache/nginx on your Plesk server).
-
-
-
-**Repo:** `Parlamentum/tamir-s-conversion-hub`  
-
-**Deploy:** Build locally/CI → upload `dist/` to Plesk `httpdocs` — see [`plesk-deploy.md`](./plesk-deploy.md)  
-
-**Not used for frontend:** GitHub Pages, Cloudflare Pages (optional GitHub Actions workflow remains in repo for reference)
-
-
+**Repo:** [StiNgeRIsrael/tamir-li](https://github.com/StiNgeRIsrael/tamir-li)  
+**Deploy:** push to `main` → GitHub Actions **Deploy to Plesk** — see [`plesk-node-deploy.md`](./plesk-node-deploy.md)  
+**Legacy:** static-only upload to `httpdocs` — [`plesk-deploy.md`](./plesk-deploy.md) (deprecated)
 
 ---
 
-
-
 ## Where tamir.li should point
 
-
-
 | Host | Purpose | Target (production) |
-
 |------|---------|---------------------|
+| `tamir.li` (apex) | Node monolith (SPA + `/api/*`) | **Plesk** server — A record to server IP |
+| `www.tamir.li` | Mirror or redirect to apex | CNAME → `tamir.li` or A → same IP |
 
-| `tamir.li` (apex) | Static SPA (tools, blog, ads.txt, sitemap) | **Plesk** server — A record to server IP |
+**No separate `api.tamir.li` required** for the current monolith — API is same-origin (`https://tamir.li/api/...`). Optional subdomain only if you run a split legacy layout.
 
-| `www.tamir.li` | Mirror or redirect to apex | CNAME → `tamir.li` or A → same IP as apex |
-
-| `api.tamir.li` | Express backend (Stripe, auth, conversions) | **Separate** — Plesk subdomain, VPS, or other host |
-
-
-
-After deploy to Plesk, these URLs must work:
-
-
+After deploy, verify:
 
 - `https://tamir.li/` — site home
-
-- `https://tamir.li/ads.txt` — AdSense (`public/ads.txt` is copied into `dist/` at build)
-
+- `https://tamir.li/health` — JSON health check
+- `https://tamir.li/ads.txt` — Adsterra authorization (when pasted)
+- `https://tamir.li/app-ads.txt` — AdMob (`public/app-ads.txt`)
 - `https://tamir.li/sitemap.xml` — SEO sitemap
 
-
-
-Build and upload: see [`plesk-deploy.md`](./plesk-deploy.md).
+Build and deploy: see [`plesk-node-deploy.md`](./plesk-node-deploy.md) and [`deploy-checklist.md`](./deploy-checklist.md).
 
 
 

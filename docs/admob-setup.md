@@ -17,9 +17,9 @@ Native App ID is in `android/app/src/main/res/values/strings.xml`.
 
 **Status:** AdMob + Play Console verification in progress (2026-06-26). Ads may not serve until approval completes; use Google test IDs for internal QA if needed.
 
-Set the four `VITE_ADMOB_*` values as **GitHub repository Variables** (Settings → Secrets and variables → Actions → **Variables** tab — not Secrets). CI and Plesk deploy read them at build time.
+Set the four `VITE_ADMOB_*` values as **GitHub repository Variables** on [StiNgeRIsrael/tamir-li](https://github.com/StiNgeRIsrael/tamir-li) (Settings → Secrets and variables → Actions → **Variables**), or rely on committed **`.env.production`** (current default for CI builds).
 
-If auto-deploy is not configured, download the `plesk-dist` artifact from the **Deploy to Plesk** workflow run and upload to Plesk `httpdocs`.
+**Deploy:** push to `main` → [Deploy to Plesk](https://github.com/StiNgeRIsrael/tamir-li/actions/workflows/deploy-plesk.yml). Download artifact **`plesk-dist`** if FTP/SFTP is not configured.
 
 ---
 

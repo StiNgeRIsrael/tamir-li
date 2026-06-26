@@ -40,7 +40,7 @@ URL patterns:
 - Format pairs: `/jpg-to-png`, `/mp3-to-wav`, …
 - Custom tools: `/image-compressor`, `/pdf-manager`, `/ai-image-generator`, …
 
-Some tools run fully in the browser (canvas, pdf-lib, pdf.js). Server-side conversion pipeline (`POST /api/conversions`) is stubbed (501) — production behavior depends on client-side/mock paths until workers are wired.
+Some tools run fully in the browser (canvas, pdf-lib, pdf.js). Server-side pipeline: `POST /api/conversions` **enqueues** jobs (202) — **audio** transcodes with ffmpeg when installed; video/PDF-word remain stub passthrough. **Android native app** gates some server-only tools (`conversion-eligibility.ts`).
 
 ### Multi-language (i18n)
 
@@ -78,14 +78,14 @@ Long-form Hebrew SEO articles in `src/lib/blog-data.ts`, linked to relevant tool
 ### Free tier
 
 - **5 conversions per day** (UTC day on server; localStorage fallback when API unavailable)
-- **Ads** after cookie consent (Adsterra)
-- **Two-step download** on free tier: first download click shows an ad vignette (or optional popup URL); second click downloads
+- **Ads** after cookie consent (**web:** Adsterra)
+- **Two-step download** on free tier: **web** — vignette or popup; **Android app** — AdMob rewarded ad
 - Access to non-premium tools only
 - Marketing copy: **50 MB** max file size
 
 ### Premium tier
 
-Subscription via **PayPal** (default) or **Stripe** when `ENABLE_STRIPE=true`.
+Subscription via **PayPal** on **web** (default) or **Stripe** when `ENABLE_STRIPE=true`. **Android app** uses **Google Play Billing** for the same premium benefits.
 
 Benefits (from product copy and code):
 
@@ -107,17 +107,18 @@ Purchasable without subscription: 10 / 30 / 60 / 120 credits (ILS-priced via Pay
 ### Payment flow
 
 1. User signs in with Google
-2. `/premium` → checkout → PayPal or Stripe redirect
-3. Webhook syncs subscription status to Prisma
+2. **Web:** `/premium` → PayPal checkout → webhook sync
+3. **Android app:** `/premium` → Google Play purchase → `POST /api/billing/google/verify`
 4. `GET /api/billing/status` drives `useSubscription()` on the client
 
-Setup guides: [paypal-setup.md](./paypal-setup.md), [stripe-setup.md](./stripe-setup.md).
+Setup guides: [paypal-setup.md](./paypal-setup.md), [android-play-console-setup.md](./android-play-console-setup.md), [stripe-setup.md](./stripe-setup.md) (optional).
 
 ---
 
 ## Ads monetization
 
-**Network:** Adsterra (migrated from AdSense — see [adsterra-setup.md](./adsterra-setup.md)).
+**Web:** Adsterra (see [adsterra-setup.md](./adsterra-setup.md)).  
+**Android app:** AdMob only — never Adsterra on native ([admob-setup.md](./admob-setup.md)).
 
 ### Strategy
 
@@ -182,15 +183,16 @@ GTM container loads GA4 after analytics consent. Custom events: conversions, upg
 ## Architecture snapshot
 
 ```
-Browser (React SPA)
+Browser (React SPA) or Capacitor WebView → tamir.li
   ├── Client-side tools (image, PDF, text)
-  ├── Adsterra iframes (consent + !premium)
+  ├── Web: Adsterra iframes (consent + !premium)
+  ├── Android: AdMob native (banner / interstitial / rewarded)
   └── /api/* → Express
         ├── auth (Google JWT)
         ├── usage (daily limits)
-        ├── billing (PayPal/Stripe webhooks)
+        ├── billing (PayPal webhooks + Google Play verify/RTDN)
         ├── admin
-        └── conversions (501 — workers TBD)
+        └── conversions (202 enqueue — audio real; others stub)
 ```
 
 Production: single Node process on Plesk serves API + static `dist/`. See [plesk-node-deploy.md](./plesk-node-deploy.md).
@@ -203,7 +205,8 @@ Based on current code gaps and sensible next steps:
 
 ### Near-term (in repo or partially built)
 
-- [ ] **Server-side conversion workers** — wire `POST /api/conversions` + `ConversionJob` queue; FFmpeg/ImageMagick on server for video/heavy formats
+- [x] **Android Capacitor app** — shell, AdMob, Google Play Billing (Play Store publish pending)
+- [ ] **Server-side conversion workers** — real video/PDF-word handlers in worker queue
 - [ ] **Hebrew OCR tool** — `HebOcrTool.tsx` exists but not yet in `tools-data.ts`
 - [ ] **Align file-size limits** — enforce 50/200/500 MB consistently in API and UI copy
 - [ ] **More blog posts** — expand topical coverage per locale (currently Hebrew-heavy)
