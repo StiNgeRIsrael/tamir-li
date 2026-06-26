@@ -17,6 +17,7 @@ import usageRoutes from './routes/usage.routes';
 import statsRoutes from './routes/stats.routes';
 import billingRoutes, { paypalWebhookHandler } from './routes/billing.routes';
 import { stripeWebhookHandler } from './routes/billing-stripe.routes';
+import hebrewOcrRoutes from './routes/hebrew-ocr.routes';
 import { pingAdSettingsTable } from './lib/ad-settings';
 import { pingAiSettingsTable } from './lib/ai-settings';
 import { getStartupMigrateStatus } from './lib/startup-migrate';
@@ -84,6 +85,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/usage', usageRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/billing', billingRoutes);
+app.use('/api/tools/hebrew-ocr', hebrewOcrRoutes);
 
 // Health check endpoint (probed by scripts/autonomous-site-check.ts and frontend)
 // Always 200 when the process is up; db.ok reflects MySQL/Prisma reachability.

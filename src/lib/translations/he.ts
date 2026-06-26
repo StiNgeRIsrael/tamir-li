@@ -954,6 +954,20 @@ export const heTranslations = {
     pagesFromFiles: (pages: number, files: number) => `${pages} עמודים מ-${files} קבצים — גררו לסידור מחדש`,
     addPdf: "הוסף PDF", merging: "ממזג...", mergePages: (n: number) => `מזג ${n} עמודים`, page: "עמוד",
   },
+  hebrewOcr: {
+    hint: "מתאים למסמכים מודפסים בעברית — חשבוניות, טפסים ומכתבים.",
+    cancel: "ביטול",
+    start: "פענח טקסט עברי",
+    uploading: "מעלה קובץ...",
+    processing: "מזהה טקסט עברי...",
+    doneTitle: "הפענוח הושלם",
+    doneDesc: "הורידו את קובץ הטקסט.",
+    download: "הורד קובץ טקסט",
+    another: "מסמך נוסף",
+    failed: "הפענוח נכשל",
+    tryAgain: "נסו שוב",
+    noApi: "נדרש שרת API. נסו שוב מאוחר יותר.",
+  },
   installPage: {
     benefits: [
       { title: "גישה מהירה", desc: "פתחו את האפליקציה ישירות מהמסך הביתי בלחיצה אחת" },

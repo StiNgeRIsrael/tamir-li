@@ -24,9 +24,10 @@ describe("site-check logic", () => {
     expect(usesClientDocumentConversion("pdf-to-word")).toBe(false);
   });
 
-  it("tracks nine functional tools including word-to-pdf", () => {
+  it("tracks ten functional tools including word-to-pdf and hebrew-ocr", () => {
     const ids = getFunctionalToolIds();
     expect(ids).toContain("word-to-pdf");
-    expect(ids.length).toBe(9);
+    expect(ids).toContain("hebrew-ocr");
+    expect(ids.length).toBe(10);
   });
 });

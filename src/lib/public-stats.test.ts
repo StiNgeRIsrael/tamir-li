@@ -11,10 +11,10 @@ describe("public-stats", () => {
     expect(stats.functionalToolCount).toBeLessThanOrEqual(stats.toolCount);
   });
 
-  it("shows 9 live tools out of 13 in catalog", () => {
+  it("shows 10 live tools out of 14 in catalog", () => {
     const stats = getDerivedHomeStatsFromTools(tools);
-    expect(stats.functionalToolCount).toBe(9);
-    expect(stats.toolCount).toBe(13);
+    expect(stats.functionalToolCount).toBe(10);
+    expect(stats.toolCount).toBe(14);
   });
 
   describe("formatPublicStatCount", () => {

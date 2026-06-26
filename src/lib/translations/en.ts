@@ -933,6 +933,20 @@ export const enTranslations = {
     pagesFromFiles: (pages: number, files: number) => `${pages} pages from ${files} files — drag to reorder`,
     addPdf: "Add PDF", merging: "Merging...", mergePages: (n: number) => `Merge ${n} pages`, page: "Page",
   },
+  hebrewOcr: {
+    hint: "Best for printed Hebrew documents — invoices, forms, and typed letters.",
+    cancel: "Cancel",
+    start: "Extract Hebrew text",
+    uploading: "Uploading...",
+    processing: "Recognizing Hebrew text...",
+    doneTitle: "OCR complete",
+    doneDesc: "Download the extracted text file.",
+    download: "Download text file",
+    another: "Process another document",
+    failed: "OCR failed",
+    tryAgain: "Try again",
+    noApi: "OCR requires the API server. Please try again later.",
+  },
   installPage: {
     benefits: [
       { title: "Quick Access", desc: "Open the app directly from your home screen with one tap" },

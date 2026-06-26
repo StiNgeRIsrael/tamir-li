@@ -2118,6 +2118,97 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://tamir.li/hebrew-ocr</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/hebrew-ocr" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/hebrew-ocr</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/hebrew-ocr" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/es/hebrew-ocr</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/hebrew-ocr" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/ru/hebrew-ocr</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/hebrew-ocr" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/de/hebrew-ocr</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/hebrew-ocr" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/fr/hebrew-ocr</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/hebrew-ocr" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/it/hebrew-ocr</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/hebrew-ocr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/hebrew-ocr" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://tamir.li/image-compressor</loc>
     <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/image-compressor" />
     <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/image-compressor" />

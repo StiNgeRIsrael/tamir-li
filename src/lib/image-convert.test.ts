@@ -107,6 +107,7 @@ describe("tool-availability", () => {
     expect(isToolFunctional("text-tools")).toBe(true);
     expect(isToolFunctional("audio-converter")).toBe(true);
     expect(isToolFunctional("word-to-pdf")).toBe(true);
+    expect(isToolFunctional("hebrew-ocr")).toBe(true);
   });
 
   it("keeps mock/stub tools non-functional", () => {
@@ -120,6 +121,7 @@ describe("tool-availability", () => {
     expect(ids).toContain("image-compressor");
     expect(ids).toContain("audio-converter");
     expect(ids).toContain("word-to-pdf");
-    expect(ids.length).toBe(9);
+    expect(ids).toContain("hebrew-ocr");
+    expect(ids.length).toBe(10);
   });
 });

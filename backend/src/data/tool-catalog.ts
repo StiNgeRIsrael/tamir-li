@@ -12,6 +12,7 @@ export const KNOWN_TOOL_IDS = [
   'word-to-pdf',
   'merge-pdf',
   'text-tools',
+  'hebrew-ocr',
   'ai-image-generator',
 ] as const;
 
@@ -34,5 +35,6 @@ export const TOOL_CATALOG_META: Record<
   'word-to-pdf': { category: 'document', label: 'Word to PDF', defaultPremium: false },
   'merge-pdf': { category: 'document', label: 'PDF manager', defaultPremium: false },
   'text-tools': { category: 'document', label: 'Text tools', defaultPremium: false },
+  'hebrew-ocr': { category: 'document', label: 'Hebrew OCR', defaultPremium: false },
   'ai-image-generator': { category: 'ai', label: 'AI image generator', defaultPremium: true },
 };

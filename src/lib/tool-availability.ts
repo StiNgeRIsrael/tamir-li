@@ -10,6 +10,7 @@ const FUNCTIONAL_TOOL_IDS = new Set([
   "png-to-ico",
   "merge-pdf",
   "text-tools",
+  "hebrew-ocr",
   "audio-converter",
   "word-to-pdf",
 ]);

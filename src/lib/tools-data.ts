@@ -1,4 +1,4 @@
-import { Image, FileVideo, FileAudio, FileText, ArrowLeftRight, Minimize2, Hash, Palette, Type, FileArchive, Sparkles, Wand2 } from "lucide-react";
+import { Image, FileVideo, FileAudio, FileText, ArrowLeftRight, Minimize2, Hash, Palette, Type, FileArchive, Sparkles, Wand2, ScanText } from "lucide-react";
 import { normalizeFormat } from "./image-convert";
 
 export interface Tool {
@@ -194,6 +194,19 @@ export const tools: Tool[] = [
     icon: Type,
     keywords: ["כלי טקסט", "Markdown ל-HTML", "HTML ל-Markdown", "ספירת מילים"],
     customComponent: "text-tools",
+  },
+  {
+    id: "hebrew-ocr",
+    name: "פענוח עברית (OCR)",
+    description: "המרת מסמכים סרוקים לטקסט עברי ניתן לעריכה",
+    longDescription: "העלו PDF או תמונה של מסמך מודפס בעברית — הכלי מפענח את הטקסט ומייצא קובץ טקסט לעריכה. מתאים לחשבוניות, טפסים ומכתבים סרוקים.",
+    category: "document",
+    fromFormats: ["PDF", "JPG", "PNG"],
+    toFormats: ["DOCX"],
+    icon: ScanText,
+    popular: true,
+    keywords: ["OCR עברית", "פענוח עברית", "PDF לוורד", "סריקה לטקסט", "Hebrew OCR"],
+    customComponent: "heb-ocr",
   },
   {
     id: "ai-image-generator",
