@@ -128,6 +128,12 @@ export default function BlogPost() {
               dangerouslySetInnerHTML={{ __html: htmlContent }}
             />
 
+            {article.syndicationNote && (
+              <p className="mt-6 rounded-lg border border-border bg-muted/40 px-4 py-3 text-xs text-muted-foreground leading-relaxed">
+                {article.syndicationNote}
+              </p>
+            )}
+
             <AdSlot type="inline" slotId="blog-post-mid" className="my-8" />
             <AdNativeSlot slotId="blog-post-native" className="my-8" />
 

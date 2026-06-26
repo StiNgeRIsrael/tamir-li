@@ -646,20 +646,20 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tamir.li/alternatives/freeconvert</loc>
-    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/alternatives/freeconvert" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/alternatives/freeconvert" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/alternatives/freeconvert" />
+    <loc>https://tamir.li/widget</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/widget" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/widget" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/widget" />
     <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tamir.li/en/alternatives/freeconvert</loc>
-    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/alternatives/freeconvert" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/alternatives/freeconvert" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/alternatives/freeconvert" />
+    <loc>https://tamir.li/en/widget</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/widget" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/widget" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/widget" />
     <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://tamir.li/tools/image</loc>
@@ -4118,6 +4118,54 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/webp-to-jpg" />
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/alternatives/freeconvert</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/alternatives/freeconvert" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/alternatives/freeconvert" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/alternatives/freeconvert" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/alternatives/freeconvert</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/alternatives/freeconvert" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/alternatives/freeconvert" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/alternatives/freeconvert" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/use-cases/whatsapp-image-compress</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/use-cases/whatsapp-image-compress" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/use-cases/whatsapp-image-compress" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/use-cases/whatsapp-image-compress" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/use-cases/whatsapp-image-compress</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/use-cases/whatsapp-image-compress" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/use-cases/whatsapp-image-compress" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/use-cases/whatsapp-image-compress" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/use-cases/email-pdf-attach</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/use-cases/email-pdf-attach" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/use-cases/email-pdf-attach" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/use-cases/email-pdf-attach" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/use-cases/email-pdf-attach</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/use-cases/email-pdf-attach" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/use-cases/email-pdf-attach" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/use-cases/email-pdf-attach" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://tamir.li/blog/how-to-convert-jpg-to-png</loc>

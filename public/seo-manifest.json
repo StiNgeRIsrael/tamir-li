@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T07:52:50.563Z",
+  "generatedAt": "2026-06-26T07:55:49.718Z",
   "origin": "https://tamir.li",
   "routes": {
     "/": {
@@ -162,10 +162,6 @@
       "title": "המרת WEBP ל-JPG — תמיר לי",
       "description": "המירו קבצי WEBP ל-JPG בחינם, ישירות בדפדפן. מהיר, מאובטח, וללא הורדת תוכנה. תמיר לי — אתר המרות הקבצים של ישראל."
     },
-    "/alternatives/freeconvert": {
-      "title": "Tamir.li vs FreeConvert — Honest Comparison 2026",
-      "description": "Looking for a FreeConvert alternative? Honest feature comparison: free limits, privacy, premium pricing, and Hebrew UI — Tamir.li vs FreeConvert."
-    },
     "/en": {
       "title": "Tamir.li — Online file conversion",
       "description": "Tamir.li helps you convert files between common formats — images, video, audio and documents — quickly and with a clear free tier. Examples: PNG to JPG, compressing video, WAV to MP3, or PDF to Word for editing."
@@ -326,13 +322,9 @@
       "title": "Convert WEBP to JPG — Tamir.li",
       "description": "Convert WEBP files to JPG for free, directly in your browser. Fast, secure, and no software needed. Tamir.li — online file conversion."
     },
-    "/en/alternatives/freeconvert": {
-      "title": "Tamir.li vs FreeConvert — Honest Comparison 2026",
-      "description": "Looking for a FreeConvert alternative? Honest feature comparison: free limits, privacy, premium pricing, and Hebrew UI — Tamir.li vs FreeConvert."
-    },
     "/es": {
-      "title": "Tamirly — El Conversor de Archivos Online Líder",
-      "description": "Tamirly es un conversor de archivos online líder que te permite convertir rápida y gratuitamente entre diferentes formatos."
+      "title": "Tamir.li — Conversión de Archivos Online Gratis",
+      "description": "Tamir.li — convertidor gratuito: JPG, PNG, PDF, MP4, MP3 y más. Arrastra, elige formato, descarga. 5 conversiones/día gratis. Herramientas en 7 idiomas."
     },
     "/es/premium": {
       "title": "Mejora a Premium — Tamirly",
@@ -491,8 +483,8 @@
       "description": "Convierte archivos WEBP a JPG gratis, directo en tu navegador. Rápido, seguro y sin software."
     },
     "/ru": {
-      "title": "Tamirly — Ведущий Онлайн Конвертер Файлов",
-      "description": "Tamirly — ведущий онлайн-конвертер файлов для быстрой и бесплатной конвертации."
+      "title": "Tamir.li — Бесплатный Онлайн Конвертер Файлов",
+      "description": "Tamir.li — бесплатный конвертер: JPG, PNG, PDF, MP4, MP3 и др. Перетащите файл, выберите формат, скачайте. 5 бесплатных конверсий в день."
     },
     "/ru/premium": {
       "title": "Премиум подписка — Tamirly",
@@ -651,8 +643,8 @@
       "description": "Конвертируйте WEBP в JPG бесплатно, прямо в браузере."
     },
     "/de": {
-      "title": "Tamirly — Der Führende Online-Dateikonverter",
-      "description": "Tamirly ist ein führender Online-Dateikonverter für schnelle und kostenlose Konvertierung."
+      "title": "Tamir.li — Kostenloser Online-Dateikonverter",
+      "description": "Tamir.li — kostenloser Konverter: JPG, PNG, PDF, MP4, MP3 u. a. Datei ziehen, Format wählen, herunterladen. 5 Gratis-Konvertierungen/Tag."
     },
     "/de/premium": {
       "title": "Premium Upgrade — Tamirly",
@@ -811,8 +803,8 @@
       "description": "Konvertieren Sie WEBP in JPG kostenlos, direkt im Browser."
     },
     "/fr": {
-      "title": "Tamirly — Le Convertisseur de Fichiers en Ligne Leader",
-      "description": "Tamirly est un convertisseur de fichiers en ligne pour une conversion rapide et gratuite."
+      "title": "Tamir.li — Convertisseur de Fichiers en Ligne Gratuit",
+      "description": "Tamir.li — convertisseur gratuit : JPG, PNG, PDF, MP4, MP3 et plus. Glissez, choisissez le format, téléchargez. 5 conversions/jour gratuites."
     },
     "/fr/premium": {
       "title": "Passer à Premium — Tamirly",
@@ -971,8 +963,8 @@
       "description": "Convertissez WEBP en JPG gratuitement, directement dans votre navigateur."
     },
     "/it": {
-      "title": "Tamirly — Il Convertitore di File Online Leader",
-      "description": "Tamirly è un convertitore di file online per conversione rapida e gratuita."
+      "title": "Tamir.li — Convertitore File Online Gratuito",
+      "description": "Tamir.li — convertitore gratuito: JPG, PNG, PDF, MP4, MP3 e altro. Trascina, scegli formato, scarica. 5 conversioni/giorno gratis."
     },
     "/it/premium": {
       "title": "Passa a Premium — Tamirly",
@@ -1133,6 +1125,38 @@
     "/blog": {
       "title": "בלוג — מדריכים וטיפים להמרת קבצים | תמיר לי",
       "description": "מדריכים, טיפים, והשוואות מקצועיות על המרת תמונות, וידאו, אודיו ומסמכים. הכל בעברית, חינם."
+    },
+    "/alternatives/freeconvert": {
+      "title": "תמיר לי מול FreeConvert — השוואה כנה 2026",
+      "description": "מחפשים חלופה ל-FreeConvert? השוואת תכונות כנה: מגבלות חינם, פרטיות, מחיר פרימיום וממשק בעברית — תמיר לי מול FreeConvert."
+    },
+    "/use-cases/whatsapp-image-compress": {
+      "title": "דחיסת תמונה לוואטסאפ — מדריך וכלים | תמיר לי",
+      "description": "איך לדחוס תמונה לשליחה בוואטסאפ בלי לאבד איכות? מדריך קצר וכלים חינמיים בעברית — דחיסה, המרת פורמט ושינוי גודל."
+    },
+    "/use-cases/email-pdf-attach": {
+      "title": "צירוף PDF למייל — המרה ומיזוג | תמיר לי",
+      "description": "איך להכין קובץ PDF לצירוף במייל? המרת Word ל-PDF, מיזוג מסמכים ודחיסה — כלים חינמיים בעברית בדפדפן."
+    },
+    "/widget": {
+      "title": "הטמעת ווידג'ט המרה | תמיר לי",
+      "description": "הטמיעו כלי המרת JPG ל-PNG של תמיר לי באתר שלכם עם קוד iframe פשוט. חינם, עם ייחוס ל-tamir.li."
+    },
+    "/en/alternatives/freeconvert": {
+      "title": "Tamir.li vs FreeConvert — Honest Comparison 2026",
+      "description": "Looking for a FreeConvert alternative? Honest feature comparison: free limits, privacy, premium pricing, and Hebrew UI — Tamir.li vs FreeConvert."
+    },
+    "/en/use-cases/whatsapp-image-compress": {
+      "title": "Compress Images for WhatsApp — Guide & Tools | Tamir.li",
+      "description": "How to compress an image for WhatsApp without losing quality? Short guide and free tools — compress, convert format, and resize."
+    },
+    "/en/use-cases/email-pdf-attach": {
+      "title": "Attach PDF to Email — Convert & Merge | Tamir.li",
+      "description": "How to prepare a PDF for email attachment? Word to PDF, merge documents, and compress — free browser tools."
+    },
+    "/en/widget": {
+      "title": "Embed Conversion Widget | Tamir.li",
+      "description": "Embed Tamir.li's JPG to PNG converter on your site with a simple iframe snippet. Free, with attribution to tamir.li."
     }
   }
 }

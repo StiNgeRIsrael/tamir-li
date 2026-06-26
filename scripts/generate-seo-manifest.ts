@@ -1,6 +1,6 @@
 /**
  * Build-time SEO manifest for bot prerender middleware.
- * All 7 locales × sitemap routes for crawlers.
+ * All 7 locales for home, premium, category hubs, and functional tools.
  */
 import { writeFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
@@ -21,8 +21,10 @@ import { ruTranslations } from "../src/lib/translations/ru";
 import { deTranslations } from "../src/lib/translations/de";
 import { frTranslations } from "../src/lib/translations/fr";
 import { itTranslations } from "../src/lib/translations/it";
-import { LOCALES, localePath, type Locale } from "../src/lib/i18n";
-import { getAlternativePath } from "../src/lib/alternative-pages-data";
+import { ALTERNATIVE_SLUGS, getAlternativePath } from "../src/lib/alternative-pages-data";
+import { USE_CASE_SLUGS, getUseCasePath } from "../src/lib/use-case-pages-data";
+import { localePath, LOCALES, type Locale } from "../src/lib/i18n";
+import type { TranslationDict } from "../src/lib/translations/types";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outPath = resolve(__dirname, "../public/seo-manifest.json");
@@ -30,20 +32,21 @@ const outPath = resolve(__dirname, "../public/seo-manifest.json");
 const origin = (process.env.VITE_SITE_ORIGIN || "https://tamir.li").replace(/\/$/, "");
 
 type ManifestEntry = { title: string; description: string };
-type TranslationDict = typeof heTranslations;
 
-const translationMap: Record<Locale, TranslationDict> = {
+const TRANSLATIONS: Record<Locale, TranslationDict> = {
   he: heTranslations,
   en: enTranslations,
-  es: esTranslations as TranslationDict,
-  ru: ruTranslations as TranslationDict,
-  de: deTranslations as TranslationDict,
-  fr: frTranslations as TranslationDict,
-  it: itTranslations as TranslationDict,
+  es: esTranslations,
+  ru: ruTranslations,
+  de: deTranslations,
+  fr: frTranslations,
+  it: itTranslations,
 };
 
+const HE_EN_LOCALES: Locale[] = ["he", "en"];
+
 function getTranslations(locale: Locale): TranslationDict {
-  return translationMap[locale] ?? heTranslations;
+  return TRANSLATIONS[locale];
 }
 
 function addRoute(routes: Record<string, ManifestEntry>, path: string, entry: ManifestEntry): void {
@@ -52,6 +55,12 @@ function addRoute(routes: Record<string, ManifestEntry>, path: string, entry: Ma
 
 function buildHomeEntry(locale: Locale): ManifestEntry {
   const t = getTranslations(locale);
+  if (locale === "en") {
+    return {
+      title: t.footer.seoTitle,
+      description: t.footer.seoText1,
+    };
+  }
   if (locale === "he") {
     return {
       title: `${t.brandName} | Tamir.li — המרת קבצים חינם בישראל`,
@@ -59,17 +68,19 @@ function buildHomeEntry(locale: Locale): ManifestEntry {
         "תמיר לי (Tamir.li) — ממיר קבצים חינמי בעברית: JPG, PNG, PDF, MP4, MP3 ועוד. גרור, בחר פורמט, הורד.",
     };
   }
+  const seo = (t as { seo?: { homeTitle?: string; homeDesc?: string } }).seo;
   return {
-    title: t.footer.seoTitle,
-    description: t.footer.seoText1,
+    title: seo?.homeTitle ?? `${t.brandName} — ${t.brandTagline}`,
+    description: seo?.homeDesc ?? t.footer.seoText1,
   };
 }
 
 function buildPremiumEntry(locale: Locale): ManifestEntry {
   const t = getTranslations(locale);
+  const upgrade = t.upgradePage ?? enTranslations.upgradePage;
   return {
-    title: t.upgradePage?.seoTitle ?? `${t.brandName} Premium`,
-    description: t.upgradePage?.seoDesc ?? "Premium — unlimited conversions",
+    title: upgrade?.seoTitle ?? `${t.brandName} Premium`,
+    description: upgrade?.seoDesc ?? "Premium — unlimited conversions",
   };
 }
 
@@ -84,19 +95,13 @@ function buildCategoryHubEntry(category: string, locale: Locale): ManifestEntry 
   const t = getTranslations(locale);
   const hub = t.categoryHub ?? enTranslations.categoryHub;
   const label = (t.categories as Record<string, string>)[category] ?? category;
-  const description =
-    hub.seoDescByCategory?.[category as keyof typeof hub.seoDescByCategory] ?? hub.seoDesc(label);
+  const metaDescription =
+    hub.seoDescByCategory?.[category as keyof typeof hub.seoDescByCategory] ??
+    hub.seoDesc(label);
   return {
     title: hub.seoTitle(label),
-    description,
+    description: metaDescription,
   };
-}
-
-function buildAlternativeEntry(locale: Locale): ManifestEntry | null {
-  const t = getTranslations(locale);
-  const alt = t.alternativePage?.freeconvert ?? enTranslations.alternativePage?.freeconvert;
-  if (!alt) return null;
-  return { title: alt.seoTitle, description: alt.seoDesc };
 }
 
 function buildToolEntry(slug: string, locale: Locale): ManifestEntry | null {
@@ -125,6 +130,25 @@ function buildToolEntry(slug: string, locale: Locale): ManifestEntry | null {
   };
 }
 
+function buildAlternativeEntry(slug: string, locale: Locale): ManifestEntry | null {
+  const t = getTranslations(locale);
+  const alt = t.alternativePage?.[slug as keyof typeof t.alternativePage];
+  if (!alt) return null;
+  return { title: alt.seoTitle, description: alt.seoDesc };
+}
+
+function buildUseCaseEntry(slug: string, locale: Locale): ManifestEntry | null {
+  const t = getTranslations(locale);
+  const page = t.useCasePage?.[slug as keyof typeof t.useCasePage];
+  if (!page) return null;
+  return { title: page.seoTitle, description: page.seoDesc };
+}
+
+function buildWidgetEntry(locale: Locale): ManifestEntry {
+  const w = getTranslations(locale).widgetPage ?? enTranslations.widgetPage;
+  return { title: w.seoTitle, description: w.seoDesc };
+}
+
 const routes: Record<string, ManifestEntry> = {};
 
 for (const locale of LOCALES) {
@@ -141,16 +165,25 @@ for (const locale of LOCALES) {
       addRoute(routes, localePath(`/${slug}`, locale), entry);
     }
   }
-
-  if (locale === "he" || locale === "en") {
-    const altEntry = buildAlternativeEntry(locale);
-    if (altEntry) {
-      addRoute(routes, localePath(getAlternativePath("freeconvert"), locale), altEntry);
-    }
-  }
 }
 
 addRoute(routes, "/blog", buildBlogEntry());
+
+for (const locale of HE_EN_LOCALES) {
+  for (const slug of ALTERNATIVE_SLUGS) {
+    const entry = buildAlternativeEntry(slug, locale);
+    if (entry) {
+      addRoute(routes, localePath(getAlternativePath(slug), locale), entry);
+    }
+  }
+  for (const slug of USE_CASE_SLUGS) {
+    const entry = buildUseCaseEntry(slug, locale);
+    if (entry) {
+      addRoute(routes, localePath(getUseCasePath(slug), locale), entry);
+    }
+  }
+  addRoute(routes, localePath("/widget", locale), buildWidgetEntry(locale));
+}
 
 const manifest = {
   generatedAt: new Date().toISOString(),

@@ -32,7 +32,6 @@ const CategoryHubPage = lazy(() => import("./pages/CategoryHubPage"));
 const AlternativePage = lazy(() => import("./pages/AlternativePage"));
 const UseCasePage = lazy(() => import("./pages/UseCasePage"));
 const WidgetPage = lazy(() => import("./pages/WidgetPage"));
-const AlternativePage = lazy(() => import("./pages/AlternativePage"));
 const AdminOverview = lazy(() => import("@/pages/admin/AdminOverview"));
 const AdminUsers = lazy(() => import("@/pages/admin/AdminUsers"));
 const AdminTools = lazy(() => import("@/pages/admin/AdminTools"));
@@ -87,7 +86,6 @@ const getAppRoutes = (explicitLocale?: Locale) => (
     <Route path="use-cases/:slug" element={<LazyPage><UseCasePage /></LazyPage>} />
     <Route path="widget" element={<LazyPage><WidgetPage /></LazyPage>} />
     <Route path="tools/:category" element={<LazyPage><CategoryHubPage /></LazyPage>} />
-    <Route path="alternatives/:slug" element={<LazyPage><AlternativePage /></LazyPage>} />
     <Route
       path="admin"
       element={

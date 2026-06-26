@@ -10,6 +10,8 @@ export interface BlogArticle {
   toolLinks: { text: string; href: string }[];
   content: string;
   author?: { name: string; role?: string };
+  /** Note shown when article is syndicated elsewhere (canonical stays on tamir.li). */
+  syndicationNote?: string;
 }
 
 export const DEFAULT_BLOG_AUTHOR = {
@@ -36,6 +38,8 @@ export const blogArticles: BlogArticle[] = [
       { text: "המרת PNG ל-JPG", href: "/png-to-jpg" },
       { text: "דחיסת תמונות", href: "/image-compressor" },
     ],
+    syndicationNote:
+      "מאמר זה פורסם גם ב-Medium. הגרסה המקורית והקנונית נמצאת ב-tamir.li — אנא צטטו את https://tamir.li/blog/how-to-convert-jpg-to-png כמקור.",
     content: `
 ## מבוא — למה בכלל להמיר JPG ל-PNG?
 
