@@ -6,21 +6,26 @@ import { enTranslations } from "@/lib/translations/en";
 import { siteUrl } from "@/lib/site";
 import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
 import {
-  ALTERNATIVE_SLUGS,
-  FREECONVERT_COMPARISON_ROWS,
+  ALTERNATIVE_COMPARISON_ROWS,
   getAlternativePath,
+  isAlternativeSlug,
   type AlternativeSlug,
 } from "@/lib/alternative-pages-data";
 
-function isAlternativeSlug(value: string | undefined): value is AlternativeSlug {
-  return !!value && (ALTERNATIVE_SLUGS as readonly string[]).includes(value);
+interface AlternativePageProps {
+  slugOverride?: AlternativeSlug;
 }
 
-export default function AlternativePage() {
-  const { slug } = useParams();
-  const { locale, t } = useLocale();
+function isAlternativeSlugValue(value: string | undefined): value is AlternativeSlug {
+  return isAlternativeSlug(value);
+}
 
-  if (!isAlternativeSlug(slug)) {
+export default function AlternativePage({ slugOverride }: AlternativePageProps = {}) {
+  const { slug: paramSlug } = useParams();
+  const { locale, t } = useLocale();
+  const slug = slugOverride ?? paramSlug;
+
+  if (!isAlternativeSlugValue(slug)) {
     return <Navigate to={localePath("/", locale)} replace />;
   }
 
@@ -32,6 +37,7 @@ export default function AlternativePage() {
   const pagePath = getAlternativePath(slug);
   const pageUrl = siteUrl(localePath(pagePath, locale));
   const homeUrl = siteUrl(localePath("/", locale));
+  const rows = ALTERNATIVE_COMPARISON_ROWS[slug];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -54,7 +60,7 @@ export default function AlternativePage() {
 
   return (
     <AppLayout>
-      <SEOHead title={alt.seoTitle} description={alt.seoDesc} jsonLd={jsonLd} />
+      <SEOHead title={alt.seoTitle} description={alt.seoDesc} canonical={pageUrl} jsonLd={jsonLd} />
       <article className="mx-auto max-w-3xl space-y-8 px-4 py-8 lg:py-12">
         <header className="space-y-3">
           <nav aria-label="breadcrumb" className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -80,7 +86,7 @@ export default function AlternativePage() {
                 </tr>
               </thead>
               <tbody>
-                {FREECONVERT_COMPARISON_ROWS.map((row) => (
+                {rows.map((row) => (
                   <tr key={row.featureKey} className="border-b border-border last:border-0">
                     <td className="px-4 py-3 font-medium text-foreground">{rowLabels[row.featureKey]}</td>
                     <td className="px-4 py-3 text-foreground">{cellLabels[row.tamir] ?? row.tamir}</td>

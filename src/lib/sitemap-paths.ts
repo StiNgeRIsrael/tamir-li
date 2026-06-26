@@ -8,8 +8,8 @@ import {
   getCategoryHubPath,
 } from "./tools-data";
 import { blogArticles } from "./blog-data";
-import { ALTERNATIVE_SLUGS, getAlternativePath } from "./alternative-pages-data";
-import { USE_CASE_SLUGS, getUseCasePath } from "./use-case-pages-data";
+import { ALTERNATIVE_SLUGS, getAlternativePath, collectRootAlternativePaths } from "./alternative-pages-data";
+import { USE_CASE_SLUGS, getUseCasePath, getUseCasePublicPath, collectRootUseCasePaths } from "./use-case-pages-data";
 import { LOCALES, localePath, type Locale } from "./i18n";
 import { SITE_ORIGIN } from "./site";
 import { isToolFunctional } from "./tool-availability";
@@ -70,6 +70,7 @@ export function getBasePaths(): SitemapPathEntry[] {
     { path: "/contact", kind: "static" },
     { path: "/blog", kind: "blog-index" },
     { path: "/widget", kind: "widget" },
+    { path: "/press", kind: "static" },
   ];
 
   for (const category of CATEGORY_HUB_CATEGORIES) {
@@ -84,8 +85,19 @@ export function getBasePaths(): SitemapPathEntry[] {
     paths.push({ path: getAlternativePath(slug), kind: "alternative" });
   }
 
+  for (const path of collectRootUseCasePaths()) {
+    paths.push({ path, kind: "use-case" });
+  }
+
+  for (const path of collectRootAlternativePaths()) {
+    paths.push({ path, kind: "alternative" });
+  }
+
   for (const slug of USE_CASE_SLUGS) {
-    paths.push({ path: getUseCasePath(slug), kind: "use-case" });
+    const publicPath = getUseCasePublicPath(slug);
+    if (publicPath.startsWith("/use-cases/")) {
+      paths.push({ path: publicPath, kind: "use-case" });
+    }
   }
 
   for (const article of blogArticles) {

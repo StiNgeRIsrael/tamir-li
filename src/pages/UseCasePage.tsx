@@ -7,28 +7,33 @@ import { siteUrl } from "@/lib/site";
 import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
 import {
   USE_CASE_TOOL_LINKS,
-  getUseCasePath,
+  getUseCasePublicPath,
   isUseCaseSlug,
   type UseCaseSlug,
 } from "@/lib/use-case-pages-data";
 
-export default function UseCasePage() {
-  const { slug } = useParams();
+interface UseCasePageProps {
+  slugOverride?: UseCaseSlug;
+}
+
+export default function UseCasePage({ slugOverride }: UseCasePageProps = {}) {
+  const { slug: paramSlug } = useParams();
   const { locale, t } = useLocale();
+  const slug = slugOverride ?? paramSlug;
 
   if (!isUseCaseSlug(slug)) {
     return <Navigate to={localePath("/", locale)} replace />;
   }
 
-  const page = t.useCasePage?.[slug as UseCaseSlug] ?? enTranslations.useCasePage?.[slug as UseCaseSlug];
+  const page = t.useCasePage?.[slug] ?? enTranslations.useCasePage?.[slug];
   if (!page) {
     return <Navigate to={localePath("/", locale)} replace />;
   }
 
-  const pagePath = getUseCasePath(slug as UseCaseSlug);
+  const pagePath = getUseCasePublicPath(slug);
   const pageUrl = siteUrl(localePath(pagePath, locale));
   const homeUrl = siteUrl(localePath("/", locale));
-  const toolHrefs = USE_CASE_TOOL_LINKS[slug as UseCaseSlug];
+  const toolHrefs = USE_CASE_TOOL_LINKS[slug];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -48,7 +53,7 @@ export default function UseCasePage() {
 
   return (
     <AppLayout>
-      <SEOHead title={page.seoTitle} description={page.seoDesc} jsonLd={jsonLd} />
+      <SEOHead title={page.seoTitle} description={page.seoDesc} canonical={pageUrl} jsonLd={jsonLd} />
       <article className="mx-auto max-w-3xl space-y-8 px-4 py-8 lg:py-12">
         <header className="space-y-3">
           <nav aria-label="breadcrumb" className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -90,6 +95,22 @@ export default function UseCasePage() {
             })}
           </ul>
         </section>
+
+        {"faqs" in page && Array.isArray(page.faqs) && page.faqs.length > 0 && (
+          <section className="space-y-3">
+            <h2 className="text-xl font-bold text-foreground">{page.faqTitle ?? "FAQ"}</h2>
+            <div className="divide-y divide-border rounded-md border border-border bg-card">
+              {(page.faqs as { q: string; a: string }[]).map((faq, i) => (
+                <details key={i} className="group">
+                  <summary className="cursor-pointer px-4 py-3 text-sm font-medium hover:bg-muted/30">
+                    {faq.q}
+                  </summary>
+                  <p className="px-4 pb-3 text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="rounded-xl border border-primary/20 bg-primary/5 p-6 space-y-3">
           <p className="text-sm text-foreground">{page.cta}</p>

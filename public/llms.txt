@@ -27,9 +27,18 @@
 ## Comparison & intent pages
 
 - [Tamir.li vs FreeConvert (Hebrew)](https://tamir.li/alternatives/freeconvert)
-- [Tamir.li vs FreeConvert (English)](https://tamir.li/en/alternatives/freeconvert)
+- [Tamir.li vs Convertio (Hebrew)](https://tamir.li/alternatives/convertio-hebrew)
+- [Tamir.li vs iLovePDF (Hebrew)](https://tamir.li/alternatives/ilovepdf-hebrew)
+- [Best free PDF converter Israel](https://tamir.li/best-free-pdf-converter-israel)
+- [Compress video for WhatsApp](https://tamir.li/compress-video-for-whatsapp)
+- [HEIC to JPG from iPhone](https://tamir.li/convert-heic-to-jpg-iphone)
+- [Scanned Hebrew PDF guide](https://tamir.li/convert-scanned-pdf-hebrew)
+- [Merge PDF invoices](https://tamir.li/merge-pdf-invoice)
+- [Compress PDF for email](https://tamir.li/compress-pdf-for-email)
+- [WhatsApp tools hub](https://tamir.li/use-cases/whatsapp)
 - [Compress images for WhatsApp](https://tamir.li/use-cases/whatsapp-image-compress)
 - [Prepare PDF for email](https://tamir.li/use-cases/email-pdf-attach)
+- [Press kit](https://tamir.li/press)
 
 ## Live conversion tools (functional today)
 

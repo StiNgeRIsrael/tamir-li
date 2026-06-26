@@ -1,30 +1,37 @@
-# Browser agent: URL Inspection → Request indexing (sc-domain:tamir.li)
-# Generated: 2026-06-26 from MCP batch_url_inspection (tier-1 batch 1)
-# Max ~15/day — stop after these unless quota remains
+# GSC URL Inspection queue — sc-domain:tamir.li
+# Daily cloud agent: request indexing until quota exceeded (~10–15/day)
 
-# Keyword Planner tier-1 (הקטנת קבצי pdf 5K/mo) — added 2026-06-26
-https://tamir.li/use-cases/pdf-compress
-https://tamir.li/en/use-cases/pdf-compress
-https://tamir.li/use-cases/convert-to-pdf
-https://tamir.li/en/use-cases/convert-to-pdf
-https://tamir.li/docx-to-pdf
+# Tier 1 — launch weekend (highest priority)
+https://tamir.li/hebrew-ocr
+https://tamir.li/compress-video-for-whatsapp
+https://tamir.li/convert-scanned-pdf-hebrew
+https://tamir.li/pdf-to-docx
+https://tamir.li/merge-pdf
 https://tamir.li/image-compressor
-https://tamir.li/widget
-https://tamir.li/en/widget
-https://tamir.li/alternatives/freeconvert
+https://tamir.li/alternatives/convertio-hebrew
+https://tamir.li/tools/document
+https://tamir.li/
+https://tamir.li/en/compress-video-for-whatsapp
+https://tamir.li/en/convert-scanned-pdf-hebrew
+https://tamir.li/en/tools/document
 
+# Tier 2 — hubs, comparisons, use-cases
 https://tamir.li/premium
-https://tamir.li/about
-https://tamir.li/en/premium
-https://tamir.li/en/about
-https://tamir.li/es
-https://tamir.li/ru
-https://tamir.li/de
-https://tamir.li/es/premium
-https://tamir.li/fr
-https://tamir.li/it
-https://tamir.li/de/premium
-https://tamir.li/es/about
-https://tamir.li/ru/about
-https://tamir.li/fr/about
-https://tamir.li/ru/premium
+https://tamir.li/tools/image
+https://tamir.li/tools/video
+https://tamir.li/use-cases/whatsapp
+https://tamir.li/alternatives/ilovepdf-hebrew
+https://tamir.li/best-free-pdf-converter-israel
+https://tamir.li/merge-pdf-invoice
+https://tamir.li/compress-pdf-for-email
+https://tamir.li/convert-heic-to-jpg-iphone
+https://tamir.li/press
+https://tamir.li/widget
+https://tamir.li/en/alternatives/convertio-hebrew
+
+# Tier 3 — existing pilots + locales
+https://tamir.li/use-cases/pdf-compress
+https://tamir.li/use-cases/convert-to-pdf
+https://tamir.li/alternatives/freeconvert
+https://tamir.li/en
+https://tamir.li/blog

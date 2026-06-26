@@ -8,6 +8,14 @@ import { ThemeProvider } from "next-themes";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { LocaleProvider, NON_HE_LOCALES, type Locale } from "@/lib/i18n";
 import Index from "./pages/Index";
+import {
+  ROOT_USE_CASE_PATHS,
+  type UseCaseSlug,
+} from "./lib/use-case-pages-data";
+import {
+  ROOT_ALTERNATIVE_PATHS,
+  type AlternativeSlug,
+} from "./lib/alternative-pages-data";
 import { AnalyticsPageTracker } from "@/components/AnalyticsPageTracker";
 import { CookieConsent } from "@/components/CookieConsent";
 import { PwaUpdatePrompt } from "@/components/PwaUpdatePrompt";
@@ -32,6 +40,7 @@ const CategoryHubPage = lazy(() => import("./pages/CategoryHubPage"));
 const AlternativePage = lazy(() => import("./pages/AlternativePage"));
 const UseCasePage = lazy(() => import("./pages/UseCasePage"));
 const WidgetPage = lazy(() => import("./pages/WidgetPage"));
+const PressPage = lazy(() => import("./pages/PressPage"));
 const AdminOverview = lazy(() => import("@/pages/admin/AdminOverview"));
 const AdminUsers = lazy(() => import("@/pages/admin/AdminUsers"));
 const AdminTools = lazy(() => import("@/pages/admin/AdminTools"));
@@ -85,7 +94,30 @@ const getAppRoutes = (explicitLocale?: Locale) => (
     <Route path="alternatives/:slug" element={<LazyPage><AlternativePage /></LazyPage>} />
     <Route path="use-cases/:slug" element={<LazyPage><UseCasePage /></LazyPage>} />
     <Route path="widget" element={<LazyPage><WidgetPage /></LazyPage>} />
+    <Route path="press" element={<LazyPage><PressPage /></LazyPage>} />
     <Route path="tools/:category" element={<LazyPage><CategoryHubPage /></LazyPage>} />
+    {Object.entries(ROOT_USE_CASE_PATHS).map(([path, slug]) => (
+      <Route
+        key={path}
+        path={path}
+        element={
+          <LazyPage>
+            <UseCasePage slugOverride={slug as UseCaseSlug} />
+          </LazyPage>
+        }
+      />
+    ))}
+    {Object.entries(ROOT_ALTERNATIVE_PATHS).map(([path, slug]) => (
+      <Route
+        key={path}
+        path={path}
+        element={
+          <LazyPage>
+            <AlternativePage slugOverride={slug as AlternativeSlug} />
+          </LazyPage>
+        }
+      />
+    ))}
     <Route
       path="admin"
       element={

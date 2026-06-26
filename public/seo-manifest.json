@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T07:55:49.718Z",
+  "generatedAt": "2026-06-26T22:52:15.358Z",
   "origin": "https://tamir.li",
   "routes": {
     "/": {
@@ -24,7 +24,7 @@
     },
     "/tools/document": {
       "title": "כלי מסמכים | תמיר לי",
-      "description": "PDF ל-Word, Word ל-PDF, מיזוג PDF ועריכת טקסט — כלי מסמכים ב-tamir.li, חינם בדפדפן."
+      "description": "PDF ל-Word, Word ל-PDF, מיזוג PDF, הקטנת PDF ועריכת טקסט — כלי מסמכים ב-tamir.li, חינם בדפדפן."
     },
     "/tools/ai": {
       "title": "כלי יצירה עם AI | תמיר לי",
@@ -1130,6 +1130,18 @@
       "title": "תמיר לי מול FreeConvert — השוואה כנה 2026",
       "description": "מחפשים חלופה ל-FreeConvert? השוואת תכונות כנה: מגבלות חינם, פרטיות, מחיר פרימיום וממשק בעברית — תמיר לי מול FreeConvert."
     },
+    "/alternatives/convertio-hebrew": {
+      "title": "חלופה ל-Convertio בעברית | תמיר לי",
+      "description": "מחפשים Convertio בעברית? תמיר לי — RTL, PayPal בשקלים, עיבוד בדפדפן."
+    },
+    "/alternatives/ilovepdf-hebrew": {
+      "title": "חלופה ל-iLovePDF בעברית | תמיר לי",
+      "description": "iLovePDF בעיקר באנגלית. תמיר לי — PDF, מיזוג, RTL, פרימיום בשקלים."
+    },
+    "/best-free-pdf-converter-israel": {
+      "title": "ממיר PDF חינמי בישראל 2026 | תמיר לי",
+      "description": "איזה ממיר PDF הכי טוב בישראל? השוואה: תמיר לי מול אתרים בינלאומיים."
+    },
     "/use-cases/whatsapp-image-compress": {
       "title": "דחיסת תמונה לוואטסאפ — מדריך וכלים | תמיר לי",
       "description": "איך לדחוס תמונה לשליחה בוואטסאפ בלי לאבד איכות? מדריך קצר וכלים חינמיים בעברית — דחיסה, המרת פורמט ושינוי גודל."
@@ -1137,6 +1149,38 @@
     "/use-cases/email-pdf-attach": {
       "title": "צירוף PDF למייל — המרה ומיזוג | תמיר לי",
       "description": "איך להכין קובץ PDF לצירוף במייל? המרת Word ל-PDF, מיזוג מסמכים ודחיסה — כלים חינמיים בעברית בדפדפן."
+    },
+    "/use-cases/pdf-compress": {
+      "title": "הקטנת קבצי PDF — מדריך וכלים חינם | תמיר לי",
+      "description": "איך להקטין קובץ PDF לפני שליחה במייל או העלאה? מדריך להקטנת קבצי PDF — דחיסת תמונות, מיזוג עמודים וכלים חינמיים בדפדפן."
+    },
+    "/use-cases/convert-to-pdf": {
+      "title": "המרת קבצים ל-PDF חינם — מדריך | תמיר לי",
+      "description": "איך להמיר קבצים ל-PDF בחינם? Word ל-PDF, מיזוג מסמכים וכלים בעברית — בדפדפן, בלי תוכנה ובלי הרשמה."
+    },
+    "/use-cases/video-whatsapp": {
+      "title": "דחיסת וידאו לוואטסאפ חינם | תמיר לי",
+      "description": "דחסו סרטון לפני שליחה בוואטסאפ — MP4 קטן, מתאים למגבלת 16MB. כלי חינמי בעברית."
+    },
+    "/use-cases/heic-iphone": {
+      "title": "המרת HEIC ל-JPG מאייפון | תמיר לי",
+      "description": "האייפון שומר HEIC — לא כל מחשב פותח. המירו ל-JPG אונליין, חינם, בלי אפל."
+    },
+    "/use-cases/scanned-pdf-hebrew": {
+      "title": "המרת PDF סרוק לעברית | תמיר לי",
+      "description": "PDF סרוק לא ניתן לעריכה? מדריך ל-OCR עברית, המרה ל-Word ומיזוג מסמכים."
+    },
+    "/use-cases/merge-invoices": {
+      "title": "מיזוג חשבוניות PDF | תמיר לי",
+      "description": "איחוד חשבוניות PDF לקובץ אחד — לרואה חשבון או גיבוי. בעברית, חינם."
+    },
+    "/use-cases/pdf-email-compress": {
+      "title": "דחיסת PDF למייל | תמיר לי",
+      "description": "PDF כבד מדי ל-Gmail? הקטינו לפני צירוף — מדריך וכלים חינמיים."
+    },
+    "/use-cases/whatsapp": {
+      "title": "כלים לוואטסאפ — דחיסת וידאו ותמונות | תמיר לי",
+      "description": "וידאו ותמונות גדולים מדי לוואטסאפ? דחיסה והמרה בעברית — חינם."
     },
     "/widget": {
       "title": "הטמעת ווידג'ט המרה | תמיר לי",
@@ -1146,6 +1190,18 @@
       "title": "Tamir.li vs FreeConvert — Honest Comparison 2026",
       "description": "Looking for a FreeConvert alternative? Honest feature comparison: free limits, privacy, premium pricing, and Hebrew UI — Tamir.li vs FreeConvert."
     },
+    "/en/alternatives/convertio-hebrew": {
+      "title": "Convertio Alternative in Hebrew | Tamir.li",
+      "description": "Looking for Convertio in Hebrew? RTL UI, local PayPal pricing."
+    },
+    "/en/alternatives/ilovepdf-hebrew": {
+      "title": "iLovePDF Alternative in Hebrew | Tamir.li",
+      "description": "iLovePDF is mostly English. Tamir.li — PDF tools, RTL, local pricing."
+    },
+    "/en/best-free-pdf-converter-israel": {
+      "title": "Best Free PDF Converter Israel 2026 | Tamir.li",
+      "description": "Which PDF converter works best in Israel? Tamir.li vs international sites."
+    },
     "/en/use-cases/whatsapp-image-compress": {
       "title": "Compress Images for WhatsApp — Guide & Tools | Tamir.li",
       "description": "How to compress an image for WhatsApp without losing quality? Short guide and free tools — compress, convert format, and resize."
@@ -1153,6 +1209,38 @@
     "/en/use-cases/email-pdf-attach": {
       "title": "Attach PDF to Email — Convert & Merge | Tamir.li",
       "description": "How to prepare a PDF for email attachment? Word to PDF, merge documents, and compress — free browser tools."
+    },
+    "/en/use-cases/pdf-compress": {
+      "title": "Compress PDF Files — Guide & Free Tools | Tamir.li",
+      "description": "How to reduce PDF file size before email or upload? Guide to compressing PDFs — image compression, page merge and free browser tools."
+    },
+    "/en/use-cases/convert-to-pdf": {
+      "title": "Convert Files to PDF Free — Guide | Tamir.li",
+      "description": "How to convert files to PDF for free? Word to PDF, merge documents and browser tools — no software, no signup."
+    },
+    "/en/use-cases/video-whatsapp": {
+      "title": "Compress Video for WhatsApp Free | Tamir.li",
+      "description": "Shrink videos before sending on WhatsApp — smaller MP4 under the size limit."
+    },
+    "/en/use-cases/heic-iphone": {
+      "title": "Convert HEIC to JPG from iPhone | Tamir.li",
+      "description": "iPhones save HEIC — convert to JPG online, free."
+    },
+    "/en/use-cases/scanned-pdf-hebrew": {
+      "title": "Scanned Hebrew PDF Guide | Tamir.li",
+      "description": "Uneditable scanned PDF? Guide to merge, Word conversion, and Hebrew OCR (coming)."
+    },
+    "/en/use-cases/merge-invoices": {
+      "title": "Merge PDF Invoices Online | Tamir.li",
+      "description": "Combine invoice PDFs into one file for accounting."
+    },
+    "/en/use-cases/pdf-email-compress": {
+      "title": "Compress PDF for Email | Tamir.li",
+      "description": "PDF too heavy for Gmail? Shrink before attaching."
+    },
+    "/en/use-cases/whatsapp": {
+      "title": "WhatsApp Tools — Compress Video & Images | Tamir.li",
+      "description": "Files too big for WhatsApp? Compress and convert in Hebrew — free."
     },
     "/en/widget": {
       "title": "Embed Conversion Widget | Tamir.li",

@@ -150,6 +150,11 @@ function AdGateLock({ slotId, onUnlock, icon, title, desc, unlockTitle, unlockDe
             {p.upgradeTo} — <PremiumPriceLabel />
           </Link>
         </Button>
+        <Button asChild variant="outline" className="font-bold border-primary/30" size="lg">
+          <Link to={localePath("/premium", locale)}>
+            {p.buyCredits}
+          </Link>
+        </Button>
       </div>
       {adAvailable && <p className="text-xs text-muted-foreground">{p.adDuration}</p>}
     </div>

@@ -662,6 +662,97 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://tamir.li/press</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/press" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/press" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/press" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/press" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/press" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/press" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/press" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/press" />
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/press</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/press" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/press" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/press" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/press" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/press" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/press" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/press" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/press" />
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/es/press</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/press" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/press" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/press" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/press" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/press" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/press" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/press" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/press" />
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/ru/press</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/press" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/press" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/press" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/press" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/press" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/press" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/press" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/press" />
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/de/press</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/press" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/press" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/press" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/press" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/press" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/press" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/press" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/press" />
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/fr/press</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/press" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/press" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/press" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/press" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/press" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/press" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/press" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/press" />
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/it/press</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/press" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/press" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://tamir.li/es/press" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://tamir.li/ru/press" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://tamir.li/de/press" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://tamir.li/fr/press" />
+    <xhtml:link rel="alternate" hreflang="it" href="https://tamir.li/it/press" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/press" />
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://tamir.li/tools/image</loc>
     <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/tools/image" />
     <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/tools/image" />
@@ -4136,6 +4227,150 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://tamir.li/alternatives/convertio-hebrew</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/alternatives/convertio-hebrew" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/alternatives/convertio-hebrew" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/alternatives/convertio-hebrew" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/alternatives/convertio-hebrew</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/alternatives/convertio-hebrew" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/alternatives/convertio-hebrew" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/alternatives/convertio-hebrew" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/alternatives/ilovepdf-hebrew</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/alternatives/ilovepdf-hebrew" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/alternatives/ilovepdf-hebrew" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/alternatives/ilovepdf-hebrew" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/alternatives/ilovepdf-hebrew</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/alternatives/ilovepdf-hebrew" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/alternatives/ilovepdf-hebrew" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/alternatives/ilovepdf-hebrew" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/best-free-pdf-converter-israel</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/best-free-pdf-converter-israel" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/best-free-pdf-converter-israel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/best-free-pdf-converter-israel" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/best-free-pdf-converter-israel</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/best-free-pdf-converter-israel" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/best-free-pdf-converter-israel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/best-free-pdf-converter-israel" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/compress-video-for-whatsapp</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/compress-video-for-whatsapp" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/compress-video-for-whatsapp" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/compress-video-for-whatsapp" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/compress-video-for-whatsapp</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/compress-video-for-whatsapp" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/compress-video-for-whatsapp" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/compress-video-for-whatsapp" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/convert-heic-to-jpg-iphone</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/convert-heic-to-jpg-iphone" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/convert-heic-to-jpg-iphone" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/convert-heic-to-jpg-iphone" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/convert-heic-to-jpg-iphone</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/convert-heic-to-jpg-iphone" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/convert-heic-to-jpg-iphone" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/convert-heic-to-jpg-iphone" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/convert-scanned-pdf-hebrew</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/convert-scanned-pdf-hebrew" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/convert-scanned-pdf-hebrew" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/convert-scanned-pdf-hebrew" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/convert-scanned-pdf-hebrew</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/convert-scanned-pdf-hebrew" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/convert-scanned-pdf-hebrew" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/convert-scanned-pdf-hebrew" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/merge-pdf-invoice</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/merge-pdf-invoice" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/merge-pdf-invoice" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/merge-pdf-invoice" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/merge-pdf-invoice</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/merge-pdf-invoice" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/merge-pdf-invoice" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/merge-pdf-invoice" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/compress-pdf-for-email</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/compress-pdf-for-email" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/compress-pdf-for-email" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/compress-pdf-for-email" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/compress-pdf-for-email</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/compress-pdf-for-email" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/compress-pdf-for-email" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/compress-pdf-for-email" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/best-free-pdf-converter-israel</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/best-free-pdf-converter-israel" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/best-free-pdf-converter-israel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/best-free-pdf-converter-israel" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/best-free-pdf-converter-israel</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/best-free-pdf-converter-israel" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/best-free-pdf-converter-israel" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/best-free-pdf-converter-israel" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://tamir.li/use-cases/whatsapp-image-compress</loc>
     <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/use-cases/whatsapp-image-compress" />
     <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/use-cases/whatsapp-image-compress" />
@@ -4196,6 +4431,22 @@
     <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/use-cases/convert-to-pdf" />
     <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/use-cases/convert-to-pdf" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/use-cases/convert-to-pdf" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/use-cases/whatsapp</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/use-cases/whatsapp" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/use-cases/whatsapp" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/use-cases/whatsapp" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/use-cases/whatsapp</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/use-cases/whatsapp" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/use-cases/whatsapp" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/use-cases/whatsapp" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
