@@ -27,6 +27,12 @@ export const ANALYTICS_EVENTS = {
   AI_GENERATE_START: "ai_generate_start",
   AI_GENERATE_SUCCESS: "ai_generate_success",
   SELECT_CONTENT: "select_content",
+  /** User abandoned PayPal / Play checkout */
+  CHECKOUT_CANCELED: "checkout_canceled",
+  CHECKOUT_ERROR: "checkout_error",
+  /** AdMob / display ad lifecycle */
+  AD_IMPRESSION: "ad_impression",
+  AD_REWARD: "ad_reward",
 } as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS] | string;

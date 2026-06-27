@@ -2,7 +2,9 @@ import { Crown, Sparkles, Zap, Package, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useT } from "@/lib/i18n";
 import { useSubscription, type CheckoutPlan } from "@/hooks/useSubscription";
+import { trackBeginCheckout, trackCheckoutError, trackUpgradeClick } from "@/lib/analytics/purchase-tracking";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 import { PremiumPriceLabel } from "@/components/PremiumPriceLabel";
 
 interface CreditPackage {
@@ -88,9 +90,12 @@ export function CreditPackages({ onClose }: { onClose?: () => void }) {
       toast.error(t.auth?.signInRequired ?? "Sign in to purchase credits");
       return;
     }
+    trackUpgradeClick(plan, "ai_credit_packages");
+    trackBeginCheckout({ plan, source: "ai_credit_packages" });
     try {
       await checkout(plan);
     } catch (e) {
+      trackCheckoutError(plan, e instanceof Error ? e.message : "Checkout failed");
       toast.error(e instanceof Error ? e.message : "Checkout failed");
     }
   };

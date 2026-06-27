@@ -9,6 +9,10 @@ interface ImportMetaEnv {
   readonly VITE_USE_MOCK_CONVERSION?: string;
   readonly VITE_GTM_ID?: string;
   readonly VITE_GA4_ID?: string;
+  /** Google Ads account ID (AW-…) for gtag config — optional. */
+  readonly VITE_GOOGLE_ADS_ID?: string;
+  /** Comma-separated conversion labels: AW-xxx/label — fires on purchase. */
+  readonly VITE_GOOGLE_ADS_CONVERSION_ID?: string;
   /** Adsterra zone keys — one unique key per dashboard ad unit (728×90, 300×250, etc.). */
   readonly VITE_ADSTERRA_ZONE_BANNER?: string;
   readonly VITE_ADSTERRA_ZONE_SIDEBAR?: string;

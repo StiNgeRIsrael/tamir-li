@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { trackPageView } from "@/lib/analytics/events";
+import { captureAdsClickIds } from "@/lib/analytics/google-ads";
 import { getStoredConsent } from "@/lib/ads/consent";
 const STATIC_PAGES = new Set(["install", "privacy", "terms", "about", "contact", "admin", "blog", "premium"]);
 
@@ -44,6 +45,7 @@ export function AnalyticsPageTracker() {  const { pathname, search } = useLocati
   const prevPath = useRef("");
 
   useEffect(() => {
+    captureAdsClickIds();
     const fullPath = pathname + search;
     if (prevPath.current === fullPath) return;
     prevPath.current = fullPath;

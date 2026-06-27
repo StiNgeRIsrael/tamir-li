@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getApiBaseUrl } from "@/lib/api/client";
 import { setPremiumUser } from "@/lib/ads/adsterra";
 import { useNativeBillingAvailable, usePlayBilling } from "@/hooks/usePlayBilling";
+import { trackPurchase } from "@/lib/analytics/purchase-tracking";
 
 export type CheckoutPlan =
   | "monthly"
@@ -138,13 +139,19 @@ export function useSubscription() {
       if (!api) throw new Error("API not configured");
       if (nativeBilling) {
         await playPurchase(plan);
-        return;
+        return { plan, native: true as const };
       }
       const url = await postCheckout(api, plan);
       window.location.href = url;
+      return { plan, native: false as const };
     },
-    onSuccess: () => {
-      if (nativeBilling) {
+    onSuccess: (result) => {
+      if (result.native) {
+        trackPurchase({
+          plan: result.plan,
+          source: "google_play_checkout",
+          provider: "google_play",
+        });
         queryClient.invalidateQueries({ queryKey: ["billing-status", api] });
       }
     },

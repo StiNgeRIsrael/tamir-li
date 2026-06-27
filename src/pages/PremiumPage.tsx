@@ -39,6 +39,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { trackEvent, ANALYTICS_EVENTS } from "@/lib/analytics/events";
 
 import { getPlanEcommerceParams } from "@/lib/analytics/purchase";
+import {
+  trackBeginCheckout,
+  trackCheckoutCanceled,
+  trackCheckoutError,
+  trackPurchase,
+  trackUpgradeClick,
+} from "@/lib/analytics/purchase-tracking";
+import { isCheckoutPlan } from "@/lib/analytics/purchase";
 
 import { useSubscription, type CheckoutPlan } from "@/hooks/useSubscription";
 
@@ -166,14 +174,11 @@ export default function PremiumPage() {
           }
         }
 
-        trackEvent(ANALYTICS_EVENTS.PURCHASE, {
-          plan: plan ?? undefined,
-
+        trackPurchase({
+          plan: isCheckoutPlan(plan) ? plan : isYearly ? "yearly" : "monthly",
           source: "paypal_return",
-
-          transaction_id: paypalToken ?? subscriptionId ?? undefined,
-
-          ...getPlanEcommerceParams(plan ?? undefined),
+          transactionId: paypalToken ?? subscriptionId ?? undefined,
+          provider: "paypal",
         });
 
         refetch();
@@ -182,6 +187,7 @@ export default function PremiumPage() {
 
         setSearchParams({}, { replace: true });
       } else if (checkoutResult === "canceled") {
+        trackCheckoutCanceled(isCheckoutPlan(plan) ? plan : undefined);
         setSearchParams({}, { replace: true });
       }
     };
@@ -229,17 +235,13 @@ export default function PremiumPage() {
   const startCheckout = async (source: string) => {
     const plan: CheckoutPlan = isYearly ? "yearly" : "monthly";
 
-    const ecommerce = getPlanEcommerceParams(plan);
-
-    trackEvent(ANALYTICS_EVENTS.UPGRADE_CLICK, { plan, source });
-
-    trackEvent(ANALYTICS_EVENTS.BEGIN_CHECKOUT, { plan, source, ...ecommerce });
-
     if (!user) {
       toast.error(auth?.signInRequired ?? "Sign in to continue");
-
       return;
     }
+
+    trackUpgradeClick(plan, source);
+    trackBeginCheckout({ plan, source });
 
     try {
       await checkout(plan);
@@ -248,6 +250,7 @@ export default function PremiumPage() {
         toast.success(u.checkoutSuccess ?? "Welcome to Premium!");
       }
     } catch (e) {
+      trackCheckoutError(plan, e instanceof Error ? e.message : "Checkout failed");
       toast.error(e instanceof Error ? e.message : "Checkout failed");
     }
   };

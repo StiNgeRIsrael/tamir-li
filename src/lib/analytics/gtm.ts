@@ -1,3 +1,5 @@
+import { initGoogleAdsTag } from "@/lib/analytics/google-ads";
+
 declare global {
   interface Window {
     dataLayer: Record<string, unknown>[];
@@ -143,6 +145,8 @@ export function initGA4(): void {
     cookie_flags: "SameSite=None;Secure",
     // Enhanced measurement toggles: GA4 Admin → Data stream → Enhanced measurement.
   });
+
+  initGoogleAdsTag();
 
   ga4Injected = true;
 }

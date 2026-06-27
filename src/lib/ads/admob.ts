@@ -1,4 +1,5 @@
 import { AdMob, BannerAdSize, BannerAdPosition } from "@capacitor-community/admob";
+import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
 import { isAndroidApp } from "@/lib/platform";
 
 let initialized = false;
@@ -56,6 +57,7 @@ export async function showAdMobBanner(): Promise<void> {
     margin: 0,
     isTesting: import.meta.env.DEV,
   });
+  trackEvent(ANALYTICS_EVENTS.AD_IMPRESSION, { ad_format: "banner", ad_platform: "admob" });
 }
 
 export async function hideAdMobBanner(): Promise<void> {
@@ -73,6 +75,7 @@ export async function showAdMobInterstitial(): Promise<void> {
   await initAdMob();
   await AdMob.prepareInterstitial({ adId, isTesting: import.meta.env.DEV });
   await AdMob.showInterstitial();
+  trackEvent(ANALYTICS_EVENTS.AD_IMPRESSION, { ad_format: "interstitial", ad_platform: "admob" });
 }
 
 /** Returns true if user earned the reward (watched full ad). */
@@ -94,6 +97,7 @@ export async function showAdMobRewarded(): Promise<boolean> {
     listeners.push(
       AdMob.addListener("onRewardedVideoAdRewarded", () => {
         rewarded = true;
+        trackEvent(ANALYTICS_EVENTS.AD_REWARD, { ad_format: "rewarded", ad_platform: "admob" });
       })
     );
     listeners.push(
