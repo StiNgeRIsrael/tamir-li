@@ -17,7 +17,7 @@ Track legal SEO growth tactics for tamir.li. **Deferred:** YouTube Shorts (see `
 | npm test + build pass | done | 142 tests; sitemap **345** URLs; manifest **289** routes |
 | Production verify after push | done | All new URLs **200**; Googlebot prerender has `<h1>` + page copy |
 | GSC inspect key new URLs | done | 5/5 inspected — all **unknown to Google** (new; expect discovery after sitemap refresh) |
-| IndexNow | done | Key file `public/4e1d51865e014efd90789545bd927b98.txt`; `npm run indexnow` submits **546** sitemap URLs; CI pings after deploy when `INDEXNOW_KEY` secret is set |
+| IndexNow | done | Key file `public/0411d0e0f603485ca957edff69e0e608.txt`; `npm run indexnow` submits **546** sitemap URLs; CI pings after deploy when `INDEXNOW_KEY` secret is set |
 
 **Checklist: 14/14 done (100%)** — deferred tactics (YouTube Shorts) excluded per scope.
 
