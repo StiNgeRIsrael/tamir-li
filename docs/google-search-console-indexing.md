@@ -113,6 +113,29 @@ Both together work best: sitemap for completeness, manual inspection for pages t
 
 ---
 
+## IndexNow (Bing / Yandex)
+
+IndexNow notifies participating engines when URLs change. tamir.li uses it for bulk discovery alongside the sitemap.
+
+| Item | Location |
+|------|----------|
+| Key file (public) | `public/{INDEXNOW_KEY}.txt` → `https://tamir.li/{key}.txt` |
+| Submit script | `npm run indexnow` (`scripts/indexnow-ping.ts`) |
+| URL source | Same list as sitemap — `getAllSitemapUrls()` in `src/lib/sitemap-paths.ts` |
+| CI | **Deploy to Plesk** workflow pings after Cloudflare purge when `INDEXNOW_KEY` GitHub secret is set |
+
+```bash
+# Local / one-off (after key file is live on production):
+INDEXNOW_KEY=your-key npm run indexnow
+
+# Preview count without submitting:
+INDEXNOW_KEY=your-key npm run indexnow -- --dry-run
+```
+
+Set **`INDEXNOW_KEY`** in GitHub → Settings → Secrets and variables → Actions (same value as the `.txt` filename body).
+
+---
+
 ## What we cannot automate (today)
 
 - **Search Console MCP** is configured locally in Cursor (gscServer); see section above. This repo does not contain OAuth secrets.
@@ -128,6 +151,7 @@ If Google exposes stable, general-purpose bulk indexing for standard sites in th
 | File | Purpose |
 |------|---------|
 | `scripts/gsc-priority-urls.ts` | Tiered URL generator |
+| `scripts/indexnow-ping.ts` | Post-deploy IndexNow bulk submit |
 | `scripts/generate-sitemap.ts` | Writes `public/sitemap.xml` |
 | `src/lib/sitemap-paths.ts` | Single source of truth for indexed paths |
 | `src/lib/tools-data.ts` | `popular: true` drives tier 2 |

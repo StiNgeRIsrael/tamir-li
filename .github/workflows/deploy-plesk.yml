@@ -288,12 +288,18 @@ jobs:
             exit 0
           fi
           ORIGIN="${SITE_ORIGIN%/}"
+          INDEXNOW_KEY="${{ secrets.INDEXNOW_KEY }}"
+          PURGE_FILES="[\"${ORIGIN}/\",\"${ORIGIN}/index.html\",\"${ORIGIN}/sw.js\",\"${ORIGIN}/registerSW.js\",\"${ORIGIN}/sitemap.xml\""
+          if [ -n "$INDEXNOW_KEY" ]; then
+            PURGE_FILES="${PURGE_FILES},\"${ORIGIN}/${INDEXNOW_KEY}.txt\""
+          fi
+          PURGE_FILES="${PURGE_FILES}]"
           echo "Purging Cloudflare edge cache for ${ORIGIN} (index.html, sw.js, registerSW.js, sitemap.xml)..."
           HTTP_CODE=$(curl -sS -o /tmp/cf-purge-response.json -w '%{http_code}' \
             -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
             -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
             -H "Content-Type: application/json" \
-            --data "{\"files\":[\"${ORIGIN}/\",\"${ORIGIN}/index.html\",\"${ORIGIN}/sw.js\",\"${ORIGIN}/registerSW.js\",\"${ORIGIN}/sitemap.xml\"]}")
+            --data "{\"files\":${PURGE_FILES}}")
           cat /tmp/cf-purge-response.json
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::error:: Cloudflare cache purge failed (HTTP ${HTTP_CODE})"
@@ -304,3 +310,12 @@ jobs:
             exit 1
           fi
           echo "Cloudflare cache purged successfully."
+
+      - name: Ping IndexNow (full sitemap)
+        if: success() && secrets.INDEXNOW_KEY
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+          VITE_SITE_ORIGIN: ${{ vars.VITE_SITE_ORIGIN || 'https://tamir.li' }}
+        run: |
+          sleep 5
+          npm run indexnow

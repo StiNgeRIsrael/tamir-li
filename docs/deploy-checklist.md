@@ -25,7 +25,7 @@ Triggers on push to `main` or manual **workflow_dispatch**.
 
 **CI build-time env** (baked into `dist/`): `VITE_SITE_ORIGIN`, `VITE_API_URL`, `VITE_GA4_ID` (vars; GA4 defaults to `G-EBE6D6BPZ0` in workflow); `VITE_GOOGLE_CLIENT_ID` (secret). Do **not** set `VITE_GTM_ID` when using direct GA4. Ad zone keys: **prefer `/admin/ads`** (runtime DB) — optional `VITE_ADSTERRA_ZONE_*` secrets as fallback when DB row is empty. Add other `VITE_*` to the workflow if needed (`VITE_PAYPAL_CLIENT_ID`, etc.).
 
-**CI secrets for deploy/restart:** `PLESK_SSH_HOST` / `PLESK_FTP_HOST`, `PLESK_SSH_USER`, `PLESK_SSH_PASSWORD` (FTP fallbacks OK). Optional vars: `PLESK_HTTPDOCS_DIR` (default `httpdocs/`), `PLESK_NODE_APP_DIR` (default `httpdocs/deploy`), `PLESK_DOMAIN` (default `tamir.li`).
+**CI secrets for deploy/restart:** `PLESK_SSH_HOST` / `PLESK_FTP_HOST`, `PLESK_SSH_USER`, `PLESK_SSH_PASSWORD` (FTP fallbacks OK). Optional: **`INDEXNOW_KEY`** — post-deploy bulk ping to Bing/Yandex (`npm run indexnow`; key file in `public/{key}.txt`). Optional vars: `PLESK_HTTPDOCS_DIR` (default `httpdocs/`), `PLESK_NODE_APP_DIR` (default `httpdocs/deploy`), `PLESK_DOMAIN` (default `tamir.li`).
 
 **Deploy cancelled / prod stale after rapid pushes:** `deploy-plesk.yml` no longer cancels an in-flight deploy when a newer commit lands (`cancel-in-progress: false`). If prod is still old, re-run **Deploy to Plesk** via Actions → workflow_dispatch.
 
