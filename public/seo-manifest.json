@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T23:18:57.470Z",
+  "generatedAt": "2026-06-27T05:41:28.185Z",
   "origin": "https://tamir.li",
   "routes": {
     "/": {
@@ -1814,6 +1814,10 @@
       "title": "ממיר PDF חינמי בישראל 2026 | תמיר לי",
       "description": "איזה ממיר PDF הכי טוב בישראל? השוואה: תמיר לי מול אתרים בינלאומיים."
     },
+    "/alternatives/kovetz-hebrew": {
+      "title": "תמיר לי מול קובץ — השוואה כנה 2026",
+      "description": "קובץ או תמיר לי? השוואה כנה: PDF מול תמונות/וידאו/אודיו, OCR חינם, מגבלות יומיות ומחיר פרימיום."
+    },
     "/use-cases/whatsapp-image-compress": {
       "title": "דחיסת תמונה לוואטסאפ — מדריך וכלים | תמיר לי",
       "description": "איך לדחוס תמונה לשליחה בוואטסאפ בלי לאבד איכות? מדריך קצר וכלים חינמיים בעברית — דחיסה, המרת פורמט ושינוי גודל."
@@ -1840,7 +1844,7 @@
     },
     "/use-cases/scanned-pdf-hebrew": {
       "title": "המרת PDF סרוק לעברית | תמיר לי",
-      "description": "PDF סרוק לא ניתן לעריכה? מדריך ל-OCR עברית, המרה ל-Word ומיזוג מסמכים."
+      "description": "PDF סרוק לא ניתן לעריכה? OCR עברית חינם, מיזוג PDF והמרה ל-Word — כלים בעברית."
     },
     "/use-cases/merge-invoices": {
       "title": "מיזוג חשבוניות PDF | תמיר לי",
@@ -1874,6 +1878,10 @@
       "title": "Best Free PDF Converter Israel 2026 | Tamir.li",
       "description": "Which PDF converter works best in Israel? Tamir.li vs international sites."
     },
+    "/en/alternatives/kovetz-hebrew": {
+      "title": "Tamir.li vs Kovetz — Honest Comparison 2026",
+      "description": "Kovetz or Tamir.li? Honest comparison: PDF depth vs multi-format, free Hebrew OCR, daily limits, and Premium pricing."
+    },
     "/en/use-cases/whatsapp-image-compress": {
       "title": "Compress Images for WhatsApp — Guide & Tools | Tamir.li",
       "description": "How to compress an image for WhatsApp without losing quality? Short guide and free tools — compress, convert format, and resize."
@@ -1900,7 +1908,7 @@
     },
     "/en/use-cases/scanned-pdf-hebrew": {
       "title": "Scanned Hebrew PDF Guide | Tamir.li",
-      "description": "Uneditable scanned PDF? Guide to merge, Word conversion, and Hebrew OCR (coming)."
+      "description": "Uneditable scanned PDF? Free Hebrew OCR, PDF merge, and Word conversion — tools in Hebrew."
     },
     "/en/use-cases/merge-invoices": {
       "title": "Merge PDF Invoices Online | Tamir.li",

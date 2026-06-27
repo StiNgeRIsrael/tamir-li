@@ -3,6 +3,7 @@
 
 # Tier 1 — launch weekend (highest priority)
 https://tamir.li/hebrew-ocr
+https://tamir.li/alternatives/kovetz-hebrew
 https://tamir.li/compress-video-for-whatsapp
 https://tamir.li/convert-scanned-pdf-hebrew
 https://tamir.li/pdf-to-docx

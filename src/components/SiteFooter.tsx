@@ -99,6 +99,16 @@ export function SiteFooter() {
             {(locale === "he" || locale === "en") && (
               <li>
                 <Link
+                  to={localePath(getAlternativePath("kovetz-hebrew"), locale)}
+                  className="hover:text-foreground transition-colors"
+                >
+                  {f.kovetzAlt ?? enTranslations.footer.kovetzAlt}
+                </Link>
+              </li>
+            )}
+            {(locale === "he" || locale === "en") && (
+              <li>
+                <Link
                   to={localePath(getAlternativePath("freeconvert"), locale)}
                   className="hover:text-foreground transition-colors"
                 >

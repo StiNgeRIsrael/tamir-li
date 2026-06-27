@@ -30,7 +30,7 @@ export const USE_CASE_TOOL_LINKS: Record<UseCaseSlug, string[]> = {
   "convert-to-pdf": ["/docx-to-pdf", "/merge-pdf", "/text-tools"],
   "video-whatsapp": ["/video-compressor", "/mp4-to-avi", "/mov-to-mp4"],
   "heic-iphone": ["/jpg-to-png", "/image-compressor", "/png-to-jpg"],
-  "scanned-pdf-hebrew": ["/merge-pdf", "/pdf-to-docx", "/text-tools"],
+  "scanned-pdf-hebrew": ["/hebrew-ocr", "/merge-pdf", "/pdf-to-docx"],
   "merge-invoices": ["/merge-pdf", "/docx-to-pdf", "/use-cases/pdf-compress"],
   "pdf-email-compress": ["/merge-pdf", "/docx-to-pdf", "/image-compressor"],
   whatsapp: [

@@ -6459,6 +6459,22 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://tamir.li/alternatives/kovetz-hebrew</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/alternatives/kovetz-hebrew" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/alternatives/kovetz-hebrew" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/alternatives/kovetz-hebrew" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tamir.li/en/alternatives/kovetz-hebrew</loc>
+    <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/alternatives/kovetz-hebrew" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/alternatives/kovetz-hebrew" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://tamir.li/alternatives/kovetz-hebrew" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://tamir.li/compress-video-for-whatsapp</loc>
     <xhtml:link rel="alternate" hreflang="he-IL" href="https://tamir.li/compress-video-for-whatsapp" />
     <xhtml:link rel="alternate" hreflang="en" href="https://tamir.li/en/compress-video-for-whatsapp" />

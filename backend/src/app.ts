@@ -124,16 +124,26 @@ if (isProduction) {
   const hasFileExtension = (urlPath: string) => /\.[a-zA-Z0-9]+$/.test(urlPath);
 
   if (fs.existsSync(frontendDist)) {
+    const seoContentTypes: Record<(typeof seoStaticFiles)[number], string> = {
+      'sitemap.xml': 'application/xml; charset=utf-8',
+      'robots.txt': 'text/plain; charset=utf-8',
+      'ads.txt': 'text/plain; charset=utf-8',
+      'llms.txt': 'text/plain; charset=utf-8',
+    };
     for (const file of seoStaticFiles) {
-      app.get(`/${file}`, (req: Request, res: Response, next: NextFunction) => {
+      app.get(`/${file}`, (_req: Request, res: Response, next: NextFunction) => {
         const filePath = path.join(frontendDist, file);
         if (!fs.existsSync(filePath)) {
           res.status(404).type('text/plain').send('Not Found');
           return;
         }
-        res.sendFile(filePath, (err) => {
-          if (err) next(err);
-        });
+        try {
+          const body = fs.readFileSync(filePath);
+          res.type(seoContentTypes[file]).send(body);
+        } catch (err) {
+          console.error(`Failed to read ${file} from ${filePath}:`, err);
+          next(err);
+        }
       });
     }
 
