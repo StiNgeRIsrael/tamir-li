@@ -42,6 +42,7 @@ import {
   ilsToAgorot,
   isPayPalConfigured,
   verifyPayPalWebhook,
+  probePayPalAuth,
 } from '../lib/paypal';
 
 const router = Router();
@@ -465,8 +466,9 @@ router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
   }
 });
 
-router.get('/readiness', (_req: Request, res: Response) => {
-  res.json(getPayPalBillingReadiness());
+router.get('/readiness', async (_req: Request, res: Response) => {
+  const auth = await probePayPalAuth();
+  res.json({ ...getPayPalBillingReadiness(), auth });
 });
 
 router.post('/paypal/activate-subscription', requireAuth, async (req: Request, res: Response) => {

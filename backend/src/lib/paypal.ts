@@ -7,21 +7,47 @@ const LIVE_BASE = 'https://api-m.paypal.com';
 type PayPalTokenCache = { token: string; expiresAt: number };
 let tokenCache: PayPalTokenCache | null = null;
 
+/** Strip whitespace and optional wrapping quotes (common Plesk paste mistake). */
+function readPayPalEnv(name: 'PAYPAL_CLIENT_ID' | 'PAYPAL_CLIENT_SECRET'): string {
+  let raw = process.env[name]?.trim() ?? '';
+  if (
+    (raw.startsWith('"') && raw.endsWith('"')) ||
+    (raw.startsWith("'") && raw.endsWith("'"))
+  ) {
+    raw = raw.slice(1, -1).trim();
+  }
+  return raw;
+}
+
+export function getPayPalMode(): 'live' | 'sandbox' {
+  return process.env.PAYPAL_MODE === 'live' ? 'live' : 'sandbox';
+}
+
 export function isPayPalConfigured(): boolean {
-  return !!(
-    process.env.PAYPAL_CLIENT_ID?.trim() &&
-    process.env.PAYPAL_CLIENT_SECRET?.trim()
-  );
+  return !!(readPayPalEnv('PAYPAL_CLIENT_ID') && readPayPalEnv('PAYPAL_CLIENT_SECRET'));
 }
 
 export function getPayPalBaseUrl(): string {
-  return process.env.PAYPAL_MODE === 'live' ? LIVE_BASE : SANDBOX_BASE;
+  return getPayPalMode() === 'live' ? LIVE_BASE : SANDBOX_BASE;
 }
 
 export function getPayPalManageUrl(): string {
-  return process.env.PAYPAL_MODE === 'live'
+  return getPayPalMode() === 'live'
     ? 'https://www.paypal.com/myaccount/autopay/'
     : 'https://www.sandbox.paypal.com/myaccount/autopay/';
+}
+
+function authFailureHint(status: number, body: string, mode: 'live' | 'sandbox'): string {
+  const lower = body.toLowerCase();
+  if (status === 401 || lower.includes('invalid_client')) {
+    return mode === 'live'
+      ? 'Use Client ID + Secret from the same PayPal Live REST app (developer.paypal.com → Live → Apps). Sandbox credentials fail when PAYPAL_MODE=live. Re-copy the Secret (Show) and restart Node — no quotes around values in Plesk.'
+      : 'Use Client ID + Secret from the same PayPal Sandbox REST app. Set PAYPAL_MODE=sandbox or switch to Live credentials with PAYPAL_MODE=live.';
+  }
+  if (status === 403) {
+    return 'PayPal rejected this app. Confirm the REST app is enabled for subscriptions in the PayPal dashboard.';
+  }
+  return 'Verify PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET on the server, then restart the Node app.';
 }
 
 async function getAccessToken(): Promise<string> {
@@ -30,8 +56,11 @@ async function getAccessToken(): Promise<string> {
     return tokenCache.token;
   }
 
-  const clientId = process.env.PAYPAL_CLIENT_ID!.trim();
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET!.trim();
+  const clientId = readPayPalEnv('PAYPAL_CLIENT_ID');
+  const clientSecret = readPayPalEnv('PAYPAL_CLIENT_SECRET');
+  if (!clientId || !clientSecret) {
+    throw new Error('PayPal auth failed: PAYPAL_CLIENT_ID or PAYPAL_CLIENT_SECRET is empty');
+  }
   const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
   const res = await fetch(`${getPayPalBaseUrl()}/v1/oauth2/token`, {
@@ -230,9 +259,11 @@ export function formatBillingCheckoutError(e: unknown): { message: string; statu
   const msg = e.message;
 
   if (msg.includes('PayPal auth failed')) {
+    const statusMatch = msg.match(/PayPal auth failed: (\d+)/);
+    const status = statusMatch ? Number(statusMatch[1]) : 401;
+    const body = msg.includes('{') ? msg.slice(msg.indexOf('{')) : '';
     return {
-      message:
-        'PayPal credentials are invalid. Check PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET on the server.',
+      message: authFailureHint(status, body, getPayPalMode()),
       status: 503,
     };
   }
@@ -281,14 +312,40 @@ export function getPayPalBillingReadiness(): {
   mode: 'sandbox' | 'live' | null;
   plans: { monthly: boolean; yearly: boolean };
   frontendOrigin: string;
+  clientIdPrefix: string | null;
+  secretLength: number;
 } {
+  const clientId = readPayPalEnv('PAYPAL_CLIENT_ID');
+  const secret = readPayPalEnv('PAYPAL_CLIENT_SECRET');
   return {
-    configured: isPayPalConfigured(),
-    mode: process.env.PAYPAL_MODE === 'live' ? 'live' : isPayPalConfigured() ? 'sandbox' : null,
+    configured: !!(clientId && secret),
+    mode: clientId ? getPayPalMode() : null,
     plans: {
       monthly: !!process.env.PAYPAL_PLAN_MONTHLY?.trim(),
       yearly: !!process.env.PAYPAL_PLAN_YEARLY?.trim(),
     },
     frontendOrigin: getFrontendOrigin(),
+    clientIdPrefix: clientId ? clientId.slice(0, 8) : null,
+    secretLength: secret.length,
   };
+}
+
+export async function probePayPalAuth(): Promise<{
+  ok: boolean;
+  hint?: string;
+}> {
+  if (!isPayPalConfigured()) {
+    return { ok: false, hint: 'PAYPAL_CLIENT_ID or PAYPAL_CLIENT_SECRET is missing or empty.' };
+  }
+  try {
+    tokenCache = null;
+    await getAccessToken();
+    return { ok: true };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    const statusMatch = msg.match(/PayPal auth failed: (\d+)/);
+    const status = statusMatch ? Number(statusMatch[1]) : 401;
+    const body = msg.includes('{') ? msg.slice(msg.indexOf('{')) : msg;
+    return { ok: false, hint: authFailureHint(status, body, getPayPalMode()) };
+  }
 }
