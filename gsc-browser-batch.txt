@@ -1,6 +1,10 @@
 # GSC URL Inspection queue — sc-domain:tamir.li
 # Daily cloud agent: request indexing until quota exceeded (~10–15/day)
 
+# Remaining from 2026-06-28 locale batch (quota hit after 11/13)
+https://tamir.li/ru/about
+https://tamir.li/de/about
+
 # Tier 1 — launch weekend (highest priority)
 https://tamir.li/hebrew-ocr
 https://tamir.li/alternatives/kovetz-hebrew
