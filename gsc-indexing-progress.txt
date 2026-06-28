@@ -25,3 +25,14 @@ https://tamir.li/en/premium
 https://tamir.li/en/about
 https://tamir.li/
 https://tamir.li/en
+https://tamir.li/es
+https://tamir.li/ru
+https://tamir.li/de
+https://tamir.li/fr
+https://tamir.li/it
+https://tamir.li/es/premium
+https://tamir.li/ru/premium
+https://tamir.li/de/premium
+https://tamir.li/fr/premium
+https://tamir.li/it/premium
+https://tamir.li/es/about

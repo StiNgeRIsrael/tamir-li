@@ -1,7 +1,7 @@
 # GSC priority URLs for https://tamir.li
-# Generated: 2026-06-26T07:56:33.819Z
-# Total: 345 (42 tier 1 + 21 tier 2 + 282 tier 3)
-# Sitemap has 345 URLs — submit https://tamir.li/sitemap.xml once in Search Console.
+# Generated: 2026-06-28T10:11:08.372Z
+# Total: 349 (42 tier 1 + 21 tier 2 + 286 tier 3)
+# Sitemap has 349 URLs — submit https://tamir.li/sitemap.xml once in Search Console.
 
 # Tier 1 — Core pages (homepage, premium, about, contact, privacy, terms)
 https://tamir.li/
@@ -336,8 +336,6 @@ https://tamir.li/use-cases/pdf-compress
 https://tamir.li/en/use-cases/pdf-compress
 https://tamir.li/use-cases/convert-to-pdf
 https://tamir.li/en/use-cases/convert-to-pdf
-https://tamir.li/docx-to-pdf
-https://tamir.li/image-compressor
 https://tamir.li/blog/how-to-convert-jpg-to-png
 https://tamir.li/blog/png-to-jpg-guide
 https://tamir.li/blog/webp-format-guide
