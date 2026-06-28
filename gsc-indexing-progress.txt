@@ -1,0 +1,27 @@
+# GSC indexing progress — one URL per line (submitted via URL Inspection)
+# Used by: npm run generate:gsc-priority -- --skip-indexed
+# Mark done after browser submits: npm run generate:gsc-priority -- <url> [<url>...]
+#
+# === MCP inspection 2026-06-26 (sc-domain:tamir.li, first 20 tier-1 URLs) ===
+# (see git history for details)
+#
+# === MCP inspection 2026-06-28 (sc-domain:tamir.li, daily batch 15) ===
+# Quota used: 15 URL Inspection API calls (10 + 5 batches)
+#
+# ALREADY INDEXED — marked done, skip manual request:
+#   https://tamir.li/          PASS | Submitted and indexed | crawled 2026-06-25
+#   https://tamir.li/en        PASS | Submitted and indexed | crawled 2026-06-22
+#
+# NEED BROWSER REQUEST — not indexed (13 of 15):
+#   Discovered-not-indexed: es, it, fr/premium, it/premium, ru/about, de/about
+#   Unknown to Google: ru, de, fr, es/premium, ru/premium, de/premium, es/about
+#
+# Browser batch → gsc-browser-batch.txt (13 URLs, within ~15/day UI quota)
+#
+# === SUBMITTED (plain lines below — appended by --mark-done or manual paste) ===
+https://tamir.li/premium
+https://tamir.li/about
+https://tamir.li/en/premium
+https://tamir.li/en/about
+https://tamir.li/
+https://tamir.li/en
