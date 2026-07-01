@@ -38,7 +38,9 @@ const EMPTY_AD_CONFIG: PublicAdConfigPayload = {
   hilltopSidebarScriptUrl: null,
   hilltopMobileBannerScriptUrl: null,
   hilltopPopunderUrl: null,
-  ...EMPTY_HILLTOP,
+  hilltopBannerInvocationCode: null,
+  hilltopSidebarInvocationCode: null,
+  hilltopMobileBannerInvocationCode: null,
 };
 
 async function buildPublicAdConfig(): Promise<PublicAdConfigPayload> {

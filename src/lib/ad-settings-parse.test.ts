@@ -38,7 +38,7 @@ describe("parseAdSettingsPatch", () => {
 
   it("rejects invalid nativeScriptUrl", () => {
     const { error } = parseAdSettingsPatch({ nativeScriptUrl: "not-a-url" });
-    expect(error).toMatch(/nativeScriptUrl must be a valid http\(s\) script URL/);
+    expect(error).toMatch(/nativeScriptUrl must be a valid http\(s\) or protocol-relative script URL/);
   });
 
   it("accepts valid nativeScriptUrl", () => {
