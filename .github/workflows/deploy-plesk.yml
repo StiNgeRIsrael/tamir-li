@@ -312,10 +312,14 @@ jobs:
           echo "Cloudflare cache purged successfully."
 
       - name: Ping IndexNow (full sitemap)
-        if: success() && secrets.INDEXNOW_KEY
+        if: success()
         env:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
           VITE_SITE_ORIGIN: ${{ vars.VITE_SITE_ORIGIN || 'https://tamir.li' }}
         run: |
+          if [ -z "$INDEXNOW_KEY" ]; then
+            echo "Skipping IndexNow (INDEXNOW_KEY not set)."
+            exit 0
+          fi
           sleep 5
           npm run indexnow
