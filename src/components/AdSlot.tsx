@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect, type CSSProperties } from "react";
+import { useMemo, useRef, useEffect, useState, type CSSProperties } from "react";
 import { useLocale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
@@ -7,9 +7,19 @@ import {
   getPlacementLayout,
   hasAdsterraZone,
   isAdsterraConfigured,
+  isAdsterraOnlyConfigured,
   triggerPopunderAd,
 } from "@/lib/ads/adsterra";
+import {
+  buildHilltopAdIframeSrcdoc,
+  getHilltopLayout,
+  getHilltopInvocationCode,
+  getHilltopScriptUrl,
+  hasHilltopAd,
+  type HilltopBannerSize,
+} from "@/lib/ads/hilltopads";
 import { hideAdMobBanner, shouldUseAdMob, showAdMobBanner, showAdMobInterstitial } from "@/lib/ads/admob";
+import { getNativeAdExperience, shouldShowNativeBanner, shouldUseNativeAdRamp } from "@/lib/ads/native-ad-ramp";
 import { useAdConfig } from "@/contexts/AdConfigContext";
 import { useAdsConsent } from "@/hooks/useAdsConsent";
 import { useAdIframeLoad } from "@/hooks/useAdIframeLoad";
@@ -25,6 +35,8 @@ interface AdSlotProps {
   slotId?: string;
   /** High-intent slots (processing, download) load immediately */
   eager?: boolean;
+  /** Mobile banner uses 300×100 Hilltop zone; desktop uses 728×90. */
+  bannerSize?: HilltopBannerSize;
 }
 
 const PLACEMENT_META: Record<
@@ -44,41 +56,100 @@ function adSlotAspectStyle(width: number, height: number, type: AdSlotProps["typ
   return style;
 }
 
-export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotProps) {
+type AdProvider = "hilltop" | "adsterra";
+
+export function AdSlot({
+  type,
+  className = "",
+  slotId,
+  eager = true,
+  bannerSize = "leaderboard",
+}: AdSlotProps) {
   const { t } = useLocale();
   const { isPremium } = useSubscription();
-  // Re-render when /api/ads/config settles so zone keys from DB replace env fallback.
   useAdConfig();
   const hasConsent = useAdsConsent();
   const meta = PLACEMENT_META[type];
   const label = t.adLabel || "Ad";
-  const dims = getPlacementLayout(type);
+
+  const resolvedBannerSize: HilltopBannerSize =
+    type === "banner" ? bannerSize : "leaderboard";
+  const hilltopInvocation = getHilltopInvocationCode(type, resolvedBannerSize);
+  const hilltopScript = getHilltopScriptUrl(type, resolvedBannerSize);
+  const hasHilltop = hasHilltopAd(type, resolvedBannerSize);
+  const zoneKey = getAdsterraZoneKey(type, slotId);
+  const hasAdsterra = hasAdsterraZone(type, slotId);
+
+  const adsterraDims = getPlacementLayout(type);
+  const hilltopDims = getHilltopLayout(type, resolvedBannerSize);
+
+  const [provider, setProvider] = useState<AdProvider>(() =>
+    hasHilltop ? "hilltop" : "adsterra"
+  );
+
+  useEffect(() => {
+    setProvider(hasHilltop ? "hilltop" : "adsterra");
+  }, [hasHilltop, slotId, type, bannerSize]);
+
+  const dims =
+    provider === "hilltop" && hasHilltop
+      ? hilltopDims
+      : adsterraDims;
+
   const aspectStyle = adSlotAspectStyle(dims.width, dims.height, type);
 
-  const zoneKey = getAdsterraZoneKey(type, slotId);
   const adsConfigured = isAdsterraConfigured();
   const clientReady = adsConfigured && hasConsent && !isPremium;
-  const showLiveAd = clientReady && hasAdsterraZone(type, slotId);
-  const pendingSlot = clientReady && !hasAdsterraZone(type, slotId);
+  const showLiveAd =
+    clientReady &&
+    ((provider === "hilltop" && hasHilltop) || (provider === "adsterra" && hasAdsterra));
+  const pendingSlot =
+    clientReady && !hasHilltop && !hasAdsterra && isAdsterraOnlyConfigured();
 
   const messageSlot = slotId ?? "";
-  const slotIdentity = `${messageSlot}:${zoneKey ?? ""}`;
+  const slotIdentity = `${messageSlot}:${provider}:${provider === "hilltop" ? (hilltopInvocation ? "api" : hilltopScript) : zoneKey}`;
   const { adStatus, retryKey, retry, showFailedOverlay, iframeHidden } = useAdIframeLoad(
     showLiveAd,
     messageSlot,
     slotIdentity
   );
 
+  useEffect(() => {
+    if (adStatus === "failed" && provider === "hilltop" && hasAdsterra) {
+      setProvider("adsterra");
+    }
+  }, [adStatus, provider, hasAdsterra]);
+
   const slotRef = useRef<HTMLElement>(null);
   const scale = useAdSlotScale(slotRef, dims.width, scaleModeForPlacement(type));
 
   const iframeSrcdoc = useMemo(() => {
-    if (!showLiveAd || !zoneKey) return undefined;
-    return buildAdIframeSrcdoc(zoneKey, dims.width, dims.height, slotId);
-  }, [showLiveAd, zoneKey, dims.width, dims.height, slotId]);
+    if (!showLiveAd) return undefined;
+    if (provider === "hilltop" && hasHilltop) {
+      return buildHilltopAdIframeSrcdoc(type, resolvedBannerSize, dims.width, dims.height, slotId);
+    }
+    if (provider === "adsterra" && zoneKey) {
+      return buildAdIframeSrcdoc(zoneKey, dims.width, dims.height, slotId);
+    }
+    return undefined;
+  }, [
+    showLiveAd,
+    provider,
+    hasHilltop,
+    type,
+    resolvedBannerSize,
+    zoneKey,
+    dims.width,
+    dims.height,
+    slotId,
+  ]);
 
   useEffect(() => {
     if (!shouldUseAdMob() || type !== "banner" || isPremium) return;
+    if (shouldUseNativeAdRamp() && !shouldShowNativeBanner()) {
+      void hideAdMobBanner();
+      return;
+    }
     void showAdMobBanner();
     return () => {
       void hideAdMobBanner();
@@ -93,6 +164,7 @@ export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotPro
   if (isPremium) return null;
 
   if (shouldUseAdMob() && type === "banner") {
+    if (shouldUseNativeAdRamp() && !shouldShowNativeBanner()) return null;
     return (
       <aside
         role="complementary"
@@ -125,10 +197,10 @@ export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotPro
         </span>
         {pendingSlot && import.meta.env.DEV && (
           <p className="px-2 pb-2 text-center text-[11px] leading-snug text-muted-foreground">
-            Adsterra is configured. Create a banner unit in the Adsterra dashboard (unique key per
-            placement), then set{" "}
+            Hilltopads is primary; Adsterra is fallback. Set Adsterra keys via{" "}
             <code className="rounded bg-muted px-1">{envHint}</code> in{" "}
-            <code className="rounded bg-muted px-1">.env.development.local</code>.
+            <code className="rounded bg-muted px-1">.env.development.local</code> or{" "}
+            <code className="rounded bg-muted px-1">/admin/ads</code>.
           </p>
         )}
       </aside>
@@ -142,6 +214,7 @@ export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotPro
       aria-label={label}
       data-ad-region={type}
       data-ad-slot-id={slotId}
+      data-ad-provider={provider}
       data-ad-load-status={adStatus}
       data-ad-retry-count={retryKey}
       data-ad-scale={scale.toFixed(3)}
@@ -169,6 +242,7 @@ export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotPro
           srcDoc={iframeSrcdoc}
           loading={eager ? "eager" : "lazy"}
           sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+          referrerPolicy="no-referrer-when-downgrade"
           className={cn(
             "absolute left-0 top-0 z-10 border-0 bg-transparent",
             iframeHidden && "pointer-events-none opacity-0"
@@ -188,7 +262,10 @@ export function AdSlot({ type, className = "", slotId, eager = true }: AdSlotPro
 /** Call after conversion milestones; shows vignette overlay (with optional popunder). */
 export function triggerInterstitial() {
   if (shouldUseAdMob()) {
-    void showAdMobInterstitial();
+    const exp = getNativeAdExperience();
+    if (exp.showInterstitialOnConvert) {
+      void showAdMobInterstitial();
+    }
     return;
   }
   void showAdVignette({ minMs: 4000, slotId: "convert-success-vignette" });

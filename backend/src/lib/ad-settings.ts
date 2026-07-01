@@ -15,6 +15,10 @@ export type AdSettingsPayload = {
   nativeScriptUrl: string | null;
   nativeContainerId: string | null;
   invokeHost: string | null;
+  hilltopBannerScriptUrl: string | null;
+  hilltopSidebarScriptUrl: string | null;
+  hilltopMobileBannerScriptUrl: string | null;
+  hilltopPopunderUrl: string | null;
 };
 
 export function serializeAdSettings(row: AdSettings): AdSettingsPayload {
@@ -27,6 +31,10 @@ export function serializeAdSettings(row: AdSettings): AdSettingsPayload {
     nativeScriptUrl: row.nativeScriptUrl,
     nativeContainerId: row.nativeContainerId,
     invokeHost: row.invokeHost,
+    hilltopBannerScriptUrl: row.hilltopBannerScriptUrl,
+    hilltopSidebarScriptUrl: row.hilltopSidebarScriptUrl,
+    hilltopMobileBannerScriptUrl: row.hilltopMobileBannerScriptUrl,
+    hilltopPopunderUrl: row.hilltopPopunderUrl,
   };
 }
 
@@ -101,6 +109,10 @@ CREATE TABLE IF NOT EXISTS \`AdSettings\` (
     \`nativeScriptUrl\` VARCHAR(512) NULL,
     \`nativeContainerId\` VARCHAR(128) NULL,
     \`invokeHost\` VARCHAR(128) NULL DEFAULT 'www.highperformanceformat.com',
+    \`hilltopBannerScriptUrl\` VARCHAR(512) NULL,
+    \`hilltopSidebarScriptUrl\` VARCHAR(512) NULL,
+    \`hilltopMobileBannerScriptUrl\` VARCHAR(512) NULL,
+    \`hilltopPopunderUrl\` VARCHAR(512) NULL,
     \`updatedAt\` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
     PRIMARY KEY (\`id\`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
@@ -141,11 +153,19 @@ function trimOrNull(value: unknown): string | null | undefined {
   return trimmed.length > 0 ? trimmed : null;
 }
 
-const SCRIPT_URL_FIELDS = new Set(['popunderScriptUrl', 'nativeScriptUrl']);
+const SCRIPT_URL_FIELDS = new Set([
+  'popunderScriptUrl',
+  'nativeScriptUrl',
+  'hilltopBannerScriptUrl',
+  'hilltopSidebarScriptUrl',
+  'hilltopMobileBannerScriptUrl',
+]);
 
 /** Extract script src when admin pastes a full `<script>` embed block. */
 export function cleanScriptUrl(value: string): string {
   const trimmed = value.trim();
+  const hilltopSrc = trimmed.match(/s\.src\s*=\s*["']([^"']+)["']/);
+  if (hilltopSrc) return hilltopSrc[1].replace(/\\\//g, '/').trim();
   const tagMatch = trimmed.match(/<script[^>]*\ssrc=["']([^"']+)["']/i);
   if (tagMatch) return tagMatch[1].trim();
   const urlMatch = trimmed.match(/(https?:\/\/[^\s"'<>]+\.js)/i);
@@ -176,6 +196,10 @@ export function parseAdSettingsPatch(body: Record<string, unknown>): {
     'nativeScriptUrl',
     'nativeContainerId',
     'invokeHost',
+    'hilltopBannerScriptUrl',
+    'hilltopSidebarScriptUrl',
+    'hilltopMobileBannerScriptUrl',
+    'hilltopPopunderUrl',
   ] as const;
 
   const data: Partial<AdSettingsPayload> = {};
@@ -187,8 +211,8 @@ export function parseAdSettingsPatch(body: Record<string, unknown>): {
     }
     if (parsed && SCRIPT_URL_FIELDS.has(key)) {
       parsed = cleanScriptUrl(parsed);
-      if (!isValidAdScriptUrl(parsed)) {
-        return { data: {}, error: `${key} must be a valid http(s) script URL` };
+      if (!isValidAdScriptUrl(parsed) && !parsed.startsWith('//')) {
+        return { data: {}, error: `${key} must be a valid http(s) or protocol-relative script URL` };
       }
     }
     data[key] = parsed;

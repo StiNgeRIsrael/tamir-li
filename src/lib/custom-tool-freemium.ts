@@ -1,12 +1,18 @@
 import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
 import { showAdVignette } from "@/components/ads/AdVignette";
 import { isAdsterraConfigured } from "@/lib/ads/adsterra";
+import { getWebPopupAdUrl } from "@/lib/ads/download-gate";
+import {
+  recordNativeConversionComplete,
+  runPostConvertAdFlow,
+  shouldUseNativeAdRamp,
+} from "@/lib/ads/native-ad-ramp";
 import { toast } from "sonner";
 import { maxFileSizeMb, type FileRejectReason } from "@/lib/freemium-limits";
 
-/** True when a real ad surface exists (Adsterra zones or click-through URL). */
+/** True when a real ad surface exists (Hilltopads, Adsterra zones, or click-through URL). */
 export function hasAdSurface(): boolean {
-  return isAdsterraConfigured() || !!import.meta.env.VITE_AD_CLICK_URL?.trim();
+  return isAdsterraConfigured() || !!getWebPopupAdUrl();
 }
 
 /**
@@ -16,7 +22,7 @@ export function hasAdSurface(): boolean {
 export async function requireAdViewForUnlock(slotId: string): Promise<boolean> {
   if (!hasAdSurface()) return false;
 
-  const adUrl = import.meta.env.VITE_AD_CLICK_URL?.trim();
+  const adUrl = getWebPopupAdUrl();
   const method = isAdsterraConfigured() ? "vignette" : adUrl ? "popup" : "vignette";
   trackEvent(ANALYTICS_EVENTS.AD_CLICK_DOWNLOAD, { method, source: slotId });
 
@@ -82,6 +88,12 @@ export async function onCustomToolSuccess(
     reveal();
     return;
   }
+  if (shouldUseNativeAdRamp()) {
+    await runPostConvertAdFlow(false);
+    recordNativeConversionComplete();
+    reveal();
+    return;
+  }
   await showAdVignette({ minMs: 4000, slotId: "custom-tool-success-vignette" });
   reveal();
 }
@@ -105,7 +117,7 @@ export async function runGatedDownload(
     return { triggered: true, gateOpen };
   }
 
-  const adUrl = import.meta.env.VITE_AD_CLICK_URL?.trim();
+  const adUrl = getWebPopupAdUrl();
   trackEvent(ANALYTICS_EVENTS.AD_CLICK_DOWNLOAD, {
     file_index: options?.fileIndex ?? 0,
     method: adUrl ? "popup" : "vignette",

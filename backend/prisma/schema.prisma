@@ -66,6 +66,10 @@ model AdSettings {
   nativeScriptUrl   String?  @db.VarChar(512)
   nativeContainerId String?  @db.VarChar(128)
   invokeHost        String?  @default("www.highperformanceformat.com") @db.VarChar(128)
+  hilltopBannerScriptUrl   String?  @db.VarChar(512)
+  hilltopSidebarScriptUrl  String?  @db.VarChar(512)
+  hilltopMobileBannerScriptUrl String? @db.VarChar(512)
+  hilltopPopunderUrl       String?  @db.VarChar(512)
   updatedAt         DateTime @default(now()) @updatedAt
 }
 

@@ -1,8 +1,16 @@
 import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
 import { showAdVignette } from "@/components/ads/AdVignette";
 import { showAdMobRewarded, shouldUseAdMob, allowWebPopupAds } from "@/lib/ads/admob";
+import { shouldGateNativeDownload } from "@/lib/ads/native-ad-ramp";
+import { getHilltopPopunderUrl } from "@/lib/ads/hilltopads";
 
 import { formatToExtension } from "@/lib/image-convert";
+
+/** Popup URL for download gate: Hilltopads primary, env fallback. */
+export function getWebPopupAdUrl(): string | undefined {
+  if (!allowWebPopupAds()) return undefined;
+  return getHilltopPopunderUrl() || import.meta.env.VITE_AD_CLICK_URL?.trim() || undefined;
+}
 
 /** Trigger browser download for a converted file (mock: re-exports source with new extension). */
 export function triggerFileDownload(file: File, outputFormat: string): void {
@@ -53,13 +61,17 @@ export async function handleGatedDownload(
     return { triggered: true, nextState: gateState };
   }
 
-  const adUrl = allowWebPopupAds() ? import.meta.env.VITE_AD_CLICK_URL?.trim() : undefined;
+  const adUrl = getWebPopupAdUrl();
   trackEvent(ANALYTICS_EVENTS.AD_CLICK_DOWNLOAD, {
     file_index: fileIndex,
     method: shouldUseAdMob() ? "admob_rewarded" : adUrl ? "popup" : "vignette",
   });
 
   if (shouldUseAdMob()) {
+    if (!shouldGateNativeDownload()) {
+      doDownload();
+      return { triggered: true, nextState: gateState };
+    }
     const rewarded = await showAdMobRewarded();
     if (rewarded) {
       doDownload();

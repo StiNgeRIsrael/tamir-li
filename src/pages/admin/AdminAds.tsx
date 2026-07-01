@@ -11,6 +11,10 @@ import { Loader2 } from "lucide-react";
 import type { AdRuntimeConfig } from "@/lib/ads/adsterra";
 
 type AdSettingsForm = {
+  hilltopBannerScriptUrl: string;
+  hilltopSidebarScriptUrl: string;
+  hilltopMobileBannerScriptUrl: string;
+  hilltopPopunderUrl: string;
   zoneBanner: string;
   zoneSidebar: string;
   zoneSidebar2: string;
@@ -21,7 +25,18 @@ type AdSettingsForm = {
   invokeHost: string;
 };
 
-const FIELDS: { key: keyof AdSettingsForm; labelKey: string; hintKey?: string }[] = [
+const HILLTOP_FIELDS: { key: keyof AdSettingsForm; labelKey: string; hintKey?: string }[] = [
+  { key: "hilltopBannerScriptUrl", labelKey: "adsFieldHilltopBanner", hintKey: "adsHintHilltopBanner" },
+  { key: "hilltopSidebarScriptUrl", labelKey: "adsFieldHilltopSidebar", hintKey: "adsHintHilltopSidebar" },
+  {
+    key: "hilltopMobileBannerScriptUrl",
+    labelKey: "adsFieldHilltopMobile",
+    hintKey: "adsHintHilltopMobile",
+  },
+  { key: "hilltopPopunderUrl", labelKey: "adsFieldHilltopPopunder", hintKey: "adsHintHilltopPopunder" },
+];
+
+const ADSTERRA_FIELDS: { key: keyof AdSettingsForm; labelKey: string; hintKey?: string }[] = [
   { key: "zoneBanner", labelKey: "adsFieldBanner", hintKey: "adsHintBanner" },
   { key: "zoneSidebar", labelKey: "adsFieldSidebar", hintKey: "adsHintSidebar" },
   { key: "zoneSidebar2", labelKey: "adsFieldSidebar2", hintKey: "adsHintSidebar2" },
@@ -32,8 +47,14 @@ const FIELDS: { key: keyof AdSettingsForm; labelKey: string; hintKey?: string }[
   { key: "invokeHost", labelKey: "adsFieldInvokeHost", hintKey: "adsHintInvokeHost" },
 ];
 
+const FIELDS = [...HILLTOP_FIELDS, ...ADSTERRA_FIELDS];
+
 function toForm(settings: AdRuntimeConfig | null | undefined): AdSettingsForm {
   return {
+    hilltopBannerScriptUrl: settings?.hilltopBannerScriptUrl ?? "",
+    hilltopSidebarScriptUrl: settings?.hilltopSidebarScriptUrl ?? "",
+    hilltopMobileBannerScriptUrl: settings?.hilltopMobileBannerScriptUrl ?? "",
+    hilltopPopunderUrl: settings?.hilltopPopunderUrl ?? "",
     zoneBanner: settings?.zoneBanner ?? "",
     zoneSidebar: settings?.zoneSidebar ?? "",
     zoneSidebar2: settings?.zoneSidebar2 ?? "",
@@ -108,8 +129,35 @@ export default function AdminAds() {
       )}
       <p className="text-sm text-muted-foreground">{admin.adsHint}</p>
 
+      <div className="space-y-2">
+        <h2 className="text-sm font-semibold">{admin.adsSectionHilltop ?? "Hilltopads (primary)"}</h2>
+        <p className="text-xs text-muted-foreground">{admin.adsSectionHilltopHint}</p>
+      </div>
       <div className="space-y-5">
-        {FIELDS.map(({ key, labelKey, hintKey }) => (
+        {HILLTOP_FIELDS.map(({ key, labelKey, hintKey }) => (
+          <div key={key} className="space-y-1.5">
+            <Label htmlFor={`ads-${key}`}>{admin[labelKey]}</Label>
+            {hintKey && admin[hintKey] && (
+              <p className="text-xs text-muted-foreground">{admin[hintKey]}</p>
+            )}
+            <Input
+              id={`ads-${key}`}
+              value={form[key]}
+              onChange={(e) => setForm((prev) => ({ ...prev, [key]: e.target.value }))}
+              className="font-mono text-xs"
+              dir="ltr"
+              spellCheck={false}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="space-y-2 pt-2">
+        <h2 className="text-sm font-semibold">{admin.adsSectionAdsterra ?? "Adsterra (fallback)"}</h2>
+        <p className="text-xs text-muted-foreground">{admin.adsSectionAdsterraHint}</p>
+      </div>
+      <div className="space-y-5">
+        {ADSTERRA_FIELDS.map(({ key, labelKey, hintKey }) => (
           <div key={key} className="space-y-1.5">
             <Label htmlFor={`ads-${key}`}>{admin[labelKey]}</Label>
             {hintKey && admin[hintKey] && (

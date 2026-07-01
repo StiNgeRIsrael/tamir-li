@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import {
   getAdsterraZoneKey,
-  isAdsterraConfigured,
+  isAdsterraOnlyConfigured,
   setAdRuntimeConfig,
   getNativeAdConfig,
 } from "@/lib/ads/adsterra";
@@ -29,7 +29,7 @@ describe("adsterra runtime config", () => {
 
   it("detects configured state from runtime config", () => {
     setAdRuntimeConfig({ zoneInline: "abc123" });
-    expect(isAdsterraConfigured()).toBe(true);
+    expect(isAdsterraOnlyConfigured()).toBe(true);
   });
 
   it("uses zoneSidebar2 for second sidebar rail", () => {

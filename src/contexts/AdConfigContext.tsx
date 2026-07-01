@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, type ReactNode } from "r
 import { useQuery } from "@tanstack/react-query";
 import { getApiBaseUrl } from "@/lib/api/client";
 import { setAdRuntimeConfig, prefetchAdZoneScripts, hasAdsConsent, type AdRuntimeConfig } from "@/lib/ads/adsterra";
+import { prefetchHilltopScripts } from "@/lib/ads/hilltopads";
 
 export type AdConfigContextValue = {
   loading: boolean;
@@ -25,7 +26,7 @@ export function AdConfigProvider({ children }: { children: ReactNode }) {
       return res.json() as Promise<AdRuntimeConfig>;
     },
     enabled: !!api,
-    staleTime: 60_000,
+    staleTime: 240_000,
     retry: 1,
   });
 
@@ -33,7 +34,10 @@ export function AdConfigProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (data) {
       setAdRuntimeConfig(data);
-      if (hasAdsConsent()) prefetchAdZoneScripts();
+      if (hasAdsConsent()) {
+        prefetchAdZoneScripts();
+        prefetchHilltopScripts();
+      }
     } else if (isError) {
       setAdRuntimeConfig(null);
     }

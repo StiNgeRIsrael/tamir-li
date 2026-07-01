@@ -1,5 +1,6 @@
 import { initGA4, initGTM, updateConsentMode } from "@/lib/analytics/gtm";
 import { loadPopunderScript, prefetchAdZoneScripts } from "@/lib/ads/adsterra";
+import { prefetchHilltopScripts } from "@/lib/ads/hilltopads";
 
 const CONSENT_STORAGE_KEY = "tamir_consent_v1";
 
@@ -37,6 +38,7 @@ function activateConsent(state: ConsentState): void {
   }
   if (state.ads) {
     prefetchAdZoneScripts();
+    prefetchHilltopScripts();
     loadPopunderScript();
   }
   window.dispatchEvent(new CustomEvent("tamir:consent", { detail: state }));

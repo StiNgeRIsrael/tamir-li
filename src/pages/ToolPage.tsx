@@ -7,6 +7,15 @@ import { AdNativeSlot } from "@/components/ads/AdNativeSlot";
 import { PremiumBanner, PremiumLock, DailyLimitLock, ConversionSuccessUsage, UsageLimitNotice, FreePremiumComparison, ConvertUrgencyHint } from "@/components/PremiumComponents";
 import { InternalToolLinks } from "@/components/InternalToolLinks";
 import { showAdVignette } from "@/components/ads/AdVignette";
+import { NativePremiumHint } from "@/components/ads/NativePremiumHint";
+import { showAdMobRewarded } from "@/lib/ads/admob";
+import {
+  recordNativeConversionComplete,
+  runPostConvertAdFlow,
+  shouldGateNativeDownload,
+  shouldUseNativeAdRamp,
+  type NativeAdExperience,
+} from "@/lib/ads/native-ad-ramp";
 import { handleGatedDownload, triggerFileDownload, triggerBlobDownload, type DownloadGateState } from "@/lib/ads/download-gate";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -113,6 +122,7 @@ export default function ToolPage() {
   const [usageUnlocked, setUsageUnlocked] = useState(false);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
   const [serverUnavailable, setServerUnavailable] = useState(false);
+  const [nativeAdHint, setNativeAdHint] = useState<NativeAdExperience | null>(null);
   const atUsageLimit = atLimit && !usageUnlocked && !isPremium;
   const showPremiumToolLock = tool?.premium && !isSubPremium && !premiumUnlocked;
   const convertSuccessHandled = useRef(false);
@@ -124,7 +134,7 @@ export default function ToolPage() {
 
     if (isPremium) return;
 
-    if (!hasAdSurface()) return;
+    if (!hasAdSurface() || shouldUseNativeAdRamp()) return;
 
     const key = `tamir_tool_vignette_${tool.id}`;
     if (sessionStorage.getItem(key)) return;
@@ -177,9 +187,13 @@ export default function ToolPage() {
       return;
     }
 
-    void showAdVignette({ minMs: 4000, slotId: "convert-success-vignette" }).then(() =>
-      revealSuccess(skipUsageRecord)
-    );
+    void runPostConvertAdFlow(false).then((exp) => {
+      setNativeAdHint(exp);
+      revealSuccess(skipUsageRecord);
+      if (shouldUseNativeAdRamp()) {
+        recordNativeConversionComplete();
+      }
+    });
   }, [converted, showSuccessPanel, tool, activeFrom, activeTo, fileItems.length, recordUsage, isPremium]);
 
   const changeFrom = (from: string) => {
@@ -479,6 +493,7 @@ export default function ToolPage() {
     setDownloadGate({});
     setAllDownloadGate(false);
     setServerUnavailable(false);
+    setNativeAdHint(null);
     usageRecordedOnServer.current = false;
   };
 
@@ -515,7 +530,13 @@ export default function ToolPage() {
 
     const adUrl = import.meta.env.VITE_AD_CLICK_URL?.trim();
     trackEvent(ANALYTICS_EVENTS.AD_CLICK_DOWNLOAD, { file_index: -1, method: adUrl ? "popup" : "vignette" });
-    if (adUrl) {
+
+    if (shouldUseNativeAdRamp()) {
+      if (shouldGateNativeDownload()) {
+        const rewarded = await showAdMobRewarded();
+        if (!rewarded) return;
+      }
+    } else if (adUrl) {
       window.open(adUrl, "_blank", "noopener,noreferrer");
     } else {
       await showAdVignette({ minMs: 3000, slotId: "download-all-vignette" });
@@ -823,16 +844,19 @@ export default function ToolPage() {
                   </div>
                 </div>
                 <ConversionSuccessUsage used={usedToday} max={maxDaily} />
-                {!isPremium && (
+                <NativePremiumHint experience={nativeAdHint} />
+                {!isPremium && !shouldUseNativeAdRamp() && (
                   <AdSlot type="inline" slotId="tool-download-area" className="mt-2" eager />
                 )}
-                <AdSlot type="inline" slotId="tool-after-success" className="mt-4" eager />
+                {!shouldUseNativeAdRamp() && (
+                  <AdSlot type="inline" slotId="tool-after-success" className="mt-4" eager />
+                )}
               </div>
             ) : converted ? (
               <div className="space-y-4 py-8 text-center">
                 <Loader2 className="mx-auto h-6 w-6 animate-spin text-primary" />
                 <p className="text-sm text-muted-foreground">{tt.preparingDownload ?? tt.convertingWait}</p>
-                {!isPremium && (
+                {!isPremium && !shouldUseNativeAdRamp() && (
                   <AdSlot type="inline" slotId="tool-preparing-inline" className="mx-auto max-w-lg" eager />
                 )}
               </div>
@@ -1011,14 +1035,14 @@ export default function ToolPage() {
                               </Link>
                             </p>
                             <AdSlot type="inline" slotId="tool-converting-inline" className="mx-auto max-w-lg" eager />
-                            <AdSlot type="banner" slotId="tool-converting-banner" className="xl:hidden" eager />
+                            <AdSlot type="banner" slotId="tool-converting-banner" className="xl:hidden" bannerSize="mobile" eager />
                           </>
                         )}
                       </div>
                     )}
                   </div>
                 )}
-                <AdSlot type="banner" slotId="tool-mobile-banner" className="xl:hidden" />
+                <AdSlot type="banner" slotId="tool-mobile-banner" className="xl:hidden" bannerSize="mobile" />
               </div>
             )}
           </div>

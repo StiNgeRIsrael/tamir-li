@@ -1,4 +1,5 @@
 import { getStoredConsent } from "@/lib/ads/consent";
+import { isHilltopAdsConfigured } from "@/lib/ads/hilltopads";
 
 export type AdPlacementType = "banner" | "sidebar" | "inline";
 
@@ -11,6 +12,14 @@ export type AdRuntimeConfig = {
   nativeScriptUrl?: string | null;
   nativeContainerId?: string | null;
   invokeHost?: string | null;
+  hilltopBannerScriptUrl?: string | null;
+  hilltopSidebarScriptUrl?: string | null;
+  hilltopMobileBannerScriptUrl?: string | null;
+  hilltopPopunderUrl?: string | null;
+  /** Fresh anti-adblock invocation code from Hilltopads API (server-side, ~4 min TTL). */
+  hilltopBannerInvocationCode?: string | null;
+  hilltopSidebarInvocationCode?: string | null;
+  hilltopMobileBannerInvocationCode?: string | null;
 };
 
 const PLACEMENT_LAYOUT: Record<
@@ -37,6 +46,10 @@ const ENV_MAP: Record<keyof AdRuntimeConfig, string> = {
   nativeScriptUrl: "VITE_ADSTERRA_NATIVE_SCRIPT_URL",
   nativeContainerId: "VITE_ADSTERRA_NATIVE_CONTAINER_ID",
   invokeHost: "VITE_ADSTERRA_INVOKE_HOST",
+  hilltopBannerScriptUrl: "VITE_HILLTOP_BANNER_SCRIPT_URL",
+  hilltopSidebarScriptUrl: "VITE_HILLTOP_SIDEBAR_SCRIPT_URL",
+  hilltopMobileBannerScriptUrl: "VITE_HILLTOP_MOBILE_BANNER_SCRIPT_URL",
+  hilltopPopunderUrl: "VITE_HILLTOP_POPUNDER_URL",
 };
 
 let premiumUser = false;
@@ -77,7 +90,7 @@ function resolveConfigValue(key: keyof AdRuntimeConfig): string | undefined {
 }
 
 /** True when at least one Adsterra zone key is configured. */
-export function isAdsterraConfigured(): boolean {
+export function isAdsterraOnlyConfigured(): boolean {
   return (
     !!resolveConfigValue("zoneBanner") ||
     !!resolveConfigValue("zoneSidebar") ||
@@ -86,6 +99,11 @@ export function isAdsterraConfigured(): boolean {
     !!resolveConfigValue("popunderScriptUrl") ||
     hasNativeAdConfigured()
   );
+}
+
+/** True when Hilltopads or Adsterra display ads are available. */
+export function isAdsterraConfigured(): boolean {
+  return isAdsterraOnlyConfigured() || isHilltopAdsConfigured();
 }
 
 export type NativeAdConfig = {
@@ -162,7 +180,7 @@ export function buildAdIframeSrcdoc(
   });
   const slotJson = JSON.stringify(slotId ?? "");
   const timeoutMs = AD_IFRAME_LOAD_TIMEOUT_MS;
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>${AD_IFRAME_STRETCH_CSS}</style></head><body><script type="text/javascript">atOptions = ${atOptions};</script><script type="text/javascript">${AD_IFRAME_STRETCH_SCRIPT}</script><script type="text/javascript">(function(){var slot=${slotJson};var loaded=false;function notify(status){if(loaded&&status!=='loaded')return;try{parent.postMessage({tamirAdSlot:slot,status:status},'*');}catch(e){}if(status==='loaded')loaded=true;}notify('loading');var s=document.createElement('script');s.type='text/javascript';s.src='https://${host}/${key}/invoke.js';s.onload=function(){notify('loaded');};s.onerror=function(){if(!loaded)notify('error');};document.body.appendChild(s);setTimeout(function(){if(!loaded)notify('timeout');},${timeoutMs});})();</script></body></html>`;
+  return `<!DOCTYPE html><html><head><meta name="referrer" content="no-referrer-when-downgrade"><meta charset="utf-8"><style>${AD_IFRAME_STRETCH_CSS}</style></head><body><script type="text/javascript">atOptions = ${atOptions};</script><script type="text/javascript">${AD_IFRAME_STRETCH_SCRIPT}</script><script type="text/javascript">(function(){var slot=${slotJson};var loaded=false;function notify(status){if(loaded&&status!=='loaded')return;try{parent.postMessage({tamirAdSlot:slot,status:status},'*');}catch(e){}if(status==='loaded')loaded=true;}notify('loading');var s=document.createElement('script');s.type='text/javascript';s.referrerPolicy='no-referrer-when-downgrade';s.src='https://${host}/${key}/invoke.js';s.onload=function(){notify('loaded');};s.onerror=function(){if(!loaded)notify('error');};document.body.appendChild(s);setTimeout(function(){if(!loaded)notify('timeout');},${timeoutMs});})();</script></body></html>`;
 }
 
 function scriptUrlForPrefetch(src: string): string {

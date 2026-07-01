@@ -26,6 +26,11 @@ interface ImportMetaEnv {
   readonly VITE_ADSTERRA_NATIVE_CONTAINER_ID?: string;
   /** Override invoke.js host if Adsterra assigns a different CDN domain. */
   readonly VITE_ADSTERRA_INVOKE_HOST?: string;
+  /** Hilltopads script URLs — primary network; built-in defaults when unset. */
+  readonly VITE_HILLTOP_BANNER_SCRIPT_URL?: string;
+  readonly VITE_HILLTOP_SIDEBAR_SCRIPT_URL?: string;
+  readonly VITE_HILLTOP_MOBILE_BANNER_SCRIPT_URL?: string;
+  readonly VITE_HILLTOP_POPUNDER_URL?: string;
   /** Popup URL opened on first download click (two-step download flow). Falls back to vignette if unset. */
   readonly VITE_AD_CLICK_URL?: string;
   /** AdMob Android app ID (ca-app-pub-…~…). */

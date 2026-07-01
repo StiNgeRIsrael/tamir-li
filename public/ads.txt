@@ -1,10 +1,12 @@
 # ads.txt for tamir.li
 #
-# Replace this file with the authorization line(s) from your Adsterra publisher dashboard
-# (Websites → your site → ads.txt, or Partner Care). See docs/adsterra-setup.md.
+# Add authorization lines from your ad networks (Hilltopads + Adsterra fallback).
+# See docs/adsterra-setup.md and Hilltopads publisher dashboard.
 #
 # Adsterra format (one line per authorized seller):
 # adsterra.com, PUBLISHER_ID, DIRECT
 #
-# Example only — do NOT deploy with a fake ID; paste your real line from Adsterra:
+# Hilltopads — paste your line from the Hilltopads dashboard.
+#
+# Example only — do NOT deploy with fake IDs:
 # adsterra.com, 00000000000000000000000000000000, DIRECT
