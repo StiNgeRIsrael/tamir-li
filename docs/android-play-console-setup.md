@@ -1,6 +1,23 @@
 # Android Play Console setup — Tamir.li
 
-Operator checklist for publishing the Capacitor app (`li.tamir.app`). Cursor implements code; you complete these console steps.
+Operator checklist for publishing the Capacitor app (`com.tamir.li`). Cursor implements code; you complete these console steps.
+
+## Technical compliance (code — verified)
+
+| Requirement | Status |
+|-------------|--------|
+| Package name `com.tamir.li` | Matches Play Console |
+| targetSdk **36** (Android 16) | Exceeds API 35 minimum (Aug 2025) |
+| Play Billing Library **8.3.0** | Via `@capgo/native-purchases` |
+| AD_ID + Ad Services permissions | Merged from Google Mobile Ads SDK |
+| HTTPS only (`usesCleartextTraffic=false`) | `AndroidManifest.xml` |
+| Backup / device-transfer rules | Excludes WebView prefs & cache |
+| Production AdMob App ID in native shell | `strings.xml` |
+| Digital Asset Links | `public/.well-known/assetlinks.json` — deploy after upload |
+
+After upload, open **App bundle explorer** → confirm **Memory page size: Supports 16 KB** (AGP 8.13).
+
+---
 
 ## Session A (~20 min) — Developer account + app
 
@@ -10,18 +27,19 @@ Operator checklist for publishing the Capacitor app (`li.tamir.app`). Cursor imp
    - Default language: **Hebrew**
    - App: **Free** (Premium is in-app subscription)
    - Category: **Tools** or **Productivity**
-3. Paste package name to Cursor: `li.tamir.app`
+3. Package name: **`com.tamir.li`** (immutable)
 
 ## Session B (~20 min) — AdMob
 
-1. [admob.google.com](https://admob.google.com) → **Apps** → Add app → Android → `li.tamir.app`
+1. [admob.google.com](https://admob.google.com) → **Apps** → Add app → Android → **`com.tamir.li`**
 2. Create ad units: **Banner**, **Interstitial**, **Rewarded**
-3. Paste into GitHub secrets / `.env.production.local` (see [`admob-setup.md`](./admob-setup.md)):
+3. Paste into GitHub secrets / `.env.production` (see [`admob-setup.md`](./admob-setup.md)):
    - `VITE_ADMOB_APP_ID`
    - `VITE_ADMOB_SLOT_BANNER`
    - `VITE_ADMOB_SLOT_INTERSTITIAL`
    - `VITE_ADMOB_SLOT_REWARDED`
 4. AdMob → **Blocking controls** → block sensitive categories
+5. Play Console → **Policy** → **App content** → **Advertising ID** → declare that the app **uses** the advertising ID (AdMob)
 
 ## Session C (~20 min) — Play Billing + API
 
@@ -35,15 +53,17 @@ Operator checklist for publishing the Capacitor app (`li.tamir.app`). Cursor imp
 
 ## Build & upload AAB
 
-1. Copy `android/keystore.properties.example` → `android/keystore.properties` and create release keystore (see file comments).
-2. Update [`public/.well-known/assetlinks.json`](../public/.well-known/assetlinks.json) with keystore SHA-256, deploy site.
+Signing backup: `E:\Documents\tamir-li-android-signing\` (keystore + passwords — keep offline).
 
-```bash
+```powershell
+$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
 npm run cap:sync
-cd android && ./gradlew bundleRelease
+npm run android:bundle
 ```
 
 Upload `android/app/build/outputs/bundle/release/app-release.aab` to **Internal testing**.
+
+On first upload, accept **Google Play App Signing** (recommended).
 
 ## Store listing (minimum)
 
@@ -53,21 +73,49 @@ Upload `android/app/build/outputs/bundle/release/app-release.aab` to **Internal 
 | Feature graphic | 1024×500 |
 | Screenshots | 2+ phone captures |
 | Short description | ≤80 chars — e.g. המרת קבצים מהירה — תמונות, PDF, וידאו |
+| Full description | Hebrew + mention free tier / Premium |
 | Privacy policy | https://tamir.li/privacy |
 
-## Data safety form
+## App content declarations (Play Console)
 
-Declare: Google Sign-In (email), GTM analytics, AdMob advertising ID, files processed locally/not stored.
+Complete every item under **Policy → App content**:
+
+| Declaration | Answer for Tamir.li |
+|-------------|---------------------|
+| **Privacy policy** | `https://tamir.li/privacy` |
+| **App access** | Parts of app require Google sign-in (Premium checkout); core converters work without account |
+| **Ads** | Yes — contains ads (AdMob, free tier only) |
+| **Advertising ID** | Yes — used for advertising / analytics (AdMob) |
+| **Content rating** | IARC questionnaire — Tools, no violence; not child-directed |
+| **Target audience** | 18+ or general audience (not designed for children) |
+| **News app** | No |
+| **COVID / health** | No |
+| **Data safety** | See table below |
+| **Government apps** | No |
+| **Financial features** | In-app purchases / subscriptions only (Play Billing) |
+
+## Data safety form (copy-paste guide)
+
+The app is a **WebView shell** loading `https://tamir.li`. Declare what the **combined** app + website collects:
+
+| Data type | Collected? | Purpose | Shared? |
+|-----------|------------|---------|---------|
+| Email address | Yes (optional) | Account / Premium | No (Google Sign-In) |
+| App interactions | Yes | Analytics (GTM/GA4, consent-gated) | Google |
+| Device or other IDs | Yes | Advertising (AdMob AAID) | Google |
+| Files you provide | Processed locally / in browser | Conversion | Not stored on servers by default |
+| Purchase history | Yes | Subscriptions | Google Play |
+| Crash logs | Optional | Stability | No |
+
+- **Encryption in transit:** Yes (HTTPS)
+- **Data deletion:** Users can contact support / delete account via site policy
+- **Committed to Play Families:** No
 
 ## Digital Asset Links
 
-After generating signing keystore, update [`public/.well-known/assetlinks.json`](../public/.well-known/assetlinks.json) with SHA-256 fingerprint:
+Upload keystore SHA-256 is in [`public/.well-known/assetlinks.json`](../public/.well-known/assetlinks.json). **Deploy the site** after any keystore change.
 
-```bash
-keytool -list -v -keystore your-release.keystore -alias your-alias
-```
-
-Deploy site, verify at [Digital Asset Links tool](https://developers.google.com/digital-asset-links/tools/generator).
+Verify: [Digital Asset Links tool](https://developers.google.com/digital-asset-links/tools/generator) — package `com.tamir.li`, domain `tamir.li`.
 
 ## Rollout
 
@@ -75,4 +123,4 @@ Deploy site, verify at [Digital Asset Links tool](https://developers.google.com/
 Internal testing → Closed testing → Production
 ```
 
-Play Store URL: https://play.google.com/store/apps/details?id=li.tamir.app
+Play Store URL: https://play.google.com/store/apps/details?id=com.tamir.li

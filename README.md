@@ -4,11 +4,22 @@ Hebrew-first online file conversion at [tamir.li](https://tamir.li). Vite/React 
 
 **Repo:** [github.com/StiNgeRIsrael/tamir-li](https://github.com/StiNgeRIsrael/tamir-li)
 
+## Goal, purpose & business model
+
+| | |
+|---|---|
+| **Goal** | Production-grade conversion hub: SEO traffic → reliable file conversion → revenue from ads + premium, on a lightweight queued backend. |
+| **Purpose** | Fast, browser-based file conversion without desktop software — Hebrew-first (RTL), 7 locales, honest about live vs coming-soon tools. |
+| **Business model** | **Freemium** (5 free conversions/day, premium unlimited + ad-free) · **Ads** (Adsterra web, AdMob Android) · **SEO** acquisition · **AI credit packs** add-on. |
+
+Full detail: [docs/product-vision.md](./docs/product-vision.md) · Agent guide: [AGENTS.md](./AGENTS.md)
+
 ## Documentation
 
 | Doc | Audience |
 |-----|----------|
-| [AGENTS.md](./AGENTS.md) | AI coding agents — stack, conventions, do/don't |
+| [AGENTS.md](./AGENTS.md) | AI coding agents — goal, purpose, business model, stack, conventions |
+| [docs/product-vision.md](./docs/product-vision.md) | Goal, purpose, business model, users, roadmap |
 | [docs/README.md](./docs/README.md) | Full internal doc index (deploy, Android, ads, SEO) |
 | [docs/tools-and-features.md](./docs/tools-and-features.md) | Tool catalog, SEO slugs, APIs |
 | [docs/local-dev.md](./docs/local-dev.md) | Local development |
@@ -46,7 +57,8 @@ Frontend: http://localhost:8080 · API: http://localhost:3001 (see [docs/local-d
 | `npm run build` | Production build (SPA + backend + sitemap + SEO manifest) |
 | `npm start` | Serve built app + API (production monolith) |
 | `npm run cap:sync` | Build frontend + sync Capacitor Android project |
-| `npm test` | Run test suite |
+| `npm run gsc:daily` | Next GSC browser indexing batch ([google-search-console-indexing.md](./docs/google-search-console-indexing.md)) |
+| `npm run site:check` | Autonomous health + conversion probes |
 
 ## Deploy
 

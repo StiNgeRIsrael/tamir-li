@@ -25,6 +25,8 @@ backend/.env
 
 # GSC manual indexing progress (local per machine)
 gsc-indexing-progress.txt
+gsc-request-indexed.txt
+gsc-daily-batch.txt
 
 # Editor directories and files
 .vscode/*

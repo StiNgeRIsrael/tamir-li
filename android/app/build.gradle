@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "li.tamir.app"
+    namespace = "com.tamir.li"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "li.tamir.app"
+        applicationId "com.tamir.li"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

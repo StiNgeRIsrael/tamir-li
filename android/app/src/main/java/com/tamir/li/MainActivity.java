@@ -1,4 +1,4 @@
-package li.tamir.app;
+package com.tamir.li;
 
 import com.getcapacitor.BridgeActivity;
 

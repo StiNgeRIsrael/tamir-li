@@ -2,7 +2,7 @@
 
 The Capacitor app loads **https://tamir.li** in a WebView. Ad unit IDs are baked into the **website build** (`VITE_ADMOB_*`). The **AdMob App ID** must also be in the native Android shell (`strings.xml`).
 
-## Configured IDs (Tamir.li Android — li.tamir.app)
+## Configured IDs (Tamir.li Android — com.tamir.li)
 
 | Variable | Value |
 |----------|-------|
@@ -42,7 +42,7 @@ Paste all four into this chat when done — Cursor will wire them in.
 2. **Add app** → **No** (app not published yet on Play Store)
 3. Platform: **Android**
 4. App name: **Tamir.li**
-5. Package name: **`li.tamir.app`** (must match exactly)
+5. Package name: **`com.tamir.li`** (must match exactly)
 
 Copy the **App ID** (`ca-app-pub-…~…`).
 

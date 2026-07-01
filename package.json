@@ -11,6 +11,7 @@
     "generate:seo-manifest": "tsx scripts/generate-seo-manifest.ts",
     "generate:favicons": "node scripts/generate-favicons.mjs",
     "generate:gsc-priority": "tsx scripts/gsc-priority-urls.ts",
+    "gsc:daily": "tsx scripts/gsc-daily-indexing.ts",
     "indexnow": "tsx scripts/indexnow-ping.ts",
     "setup:paypal-plans": "tsx scripts/setup-paypal-plans.ts",
     "postinstall": "npm ci --prefix backend --include=dev && npm run plesk:generate",
@@ -36,7 +37,8 @@
     "site:check:prod": "tsx scripts/autonomous-site-check.ts --prod",
     "cap:sync": "npm run build:frontend && node scripts/sync-admob-android.mjs && npx cap sync android",
     "cap:open": "npx cap open android",
-    "android:bundle": "cd android && ./gradlew bundleRelease"
+    "android:bundle": "cd android && gradlew.bat bundleRelease",
+    "android:release": "node scripts/android-release.mjs"
   },
   "engines": {
     "node": ">=22"

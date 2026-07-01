@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Tamir.li</string>
-    <string name="title_activity_main">Tamir.li</string>
-    <string name="package_name">li.tamir.app</string>
-    <string name="custom_url_scheme">li.tamir.app</string>
+    <string name="app_name">תמיר לי</string>
+    <string name="title_activity_main">תמיר לי</string>
+    <string name="package_name">com.tamir.li</string>
+    <string name="custom_url_scheme">com.tamir.li</string>
     <!-- Replaced by scripts/sync-admob-android.mjs from VITE_ADMOB_APP_ID; default = Google test App ID -->
     <string name="admob_app_id">ca-app-pub-9199955250327376~2471003243</string>
 </resources>

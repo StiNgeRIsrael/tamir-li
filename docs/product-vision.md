@@ -1,14 +1,110 @@
 # Product vision — tamir.li (תמיר לי)
 
-Practical reference for what we are building and why. Not a marketing page.
+Practical reference for what we are building, why, and how we make money. Not a marketing page.
 
-## Mission
+**Related:** [AGENTS.md](../AGENTS.md) (agent quick reference) · [implementation-status.md](./implementation-status.md) (what works today) · [monetization-readiness-plan.md](./monetization-readiness-plan.md) (launch checklist)
+
+---
+
+## Goal
+
+Ship and grow a **profitable, production-grade** online conversion hub that:
+
+- Captures organic search traffic for `{format}-to-{format}` queries in Hebrew and six other locales.
+- Delivers **real conversions** (client-side today for most image/PDF/text tools; server queue for audio and future heavy formats).
+- Monetizes free users through **consent-gated ads** and converts power users to **premium subscriptions** (and AI credit packs).
+- Runs lean on Plesk: API + SPA monolith, MySQL, queued server jobs — not synchronous heavy processing on the web thread.
+- Feels trustworthy: honest coming-soon badges, clear daily limits, no fake tool output on stub pages.
+
+**North star UX:** drag a file → pick a format → download. Every feature decision should move the product closer to that loop.
+
+---
+
+## Purpose
+
+### Why tamir.li exists
+
+People need quick file format changes — photos for a form, PDFs for email, audio for a phone — without installing desktop software or creating an account for basic use. Israeli users especially lack good **Hebrew-first, RTL-native** options; global users need the same tools with localized URLs and copy.
+
+### What we optimize for
+
+| Priority | Meaning |
+|----------|---------|
+| **Speed & simplicity** | Minimal steps from upload to download; PWA-installable for repeat use |
+| **Localization** | Hebrew default (no `/he` prefix); 6 translated locales; RTL where needed |
+| **Honesty** | Stub tools show coming-soon + links to working alternatives — never fake success |
+| **Sustainability** | Free tier is ad-supported and capped; premium funds ad-free unlimited use |
+
+### What we are not
+
+- A file storage or sharing platform
+- A desktop replacement with every codec and batch pipeline (yet)
+- An ad farm that blocks conversion before value is delivered
+
+**Domain:** [https://tamir.li](https://tamir.li)  
+**Positioning:** Lightweight alternative to bloated desktop converters and ad-heavy aggregator sites. PWA-installable, mobile-friendly, RTL-native.
+
+---
+
+## Business model
+
+Three reinforcing revenue streams. SEO brings users; the product converts them; ads and subscriptions capture value.
+
+```
+Search (SEO) → Land on tool page → Convert file (free tier)
+                                      ├── Hit daily limit → Premium upsell
+                                      ├── Download gate → Ad impression (web/Android)
+                                      └── Return visitor → PWA / subscription
+
+Premium subscriber → No ads, unlimited conversions, premium tools, AI credits
+AI power user → Credit packs (one-time) on top of or instead of subscription
+```
+
+### Revenue stream 1 — Display ads (free tier)
+
+**Web:** Adsterra zones (banner 728×90, sidebar 300×250, inline 468×60, optional popunder). Loaded only after cookie consent. Free downloads use a two-step gate (vignette/popup then download). See [adsterra-setup.md](./adsterra-setup.md).
+
+**Android app (`li.tamir.app`):** AdMob only — banner, interstitial, rewarded for download gate. Never Adsterra on native. See [admob-setup.md](./admob-setup.md).
+
+**Requirements for revenue:** real `ads.txt` / `app-ads.txt`, zone keys in `/admin/ads` or env, consent banner working, premium users fully suppressed.
+
+### Revenue stream 2 — Premium subscription (recurring)
+
+| Benefit | Free | Premium |
+|---------|------|---------|
+| Daily conversions | 5 | Unlimited |
+| Ads | Yes (consent) | None |
+| Video tools, AI generator | Locked | Full access |
+| AI credits | — | 6/month included |
+| File size (marketing) | 50 MB | 200 MB |
+
+**Pricing (approx.):** ~₪19.90/month or ~₪47/year on web (PayPal primary; Stripe optional). Android uses Google Play Billing for the same tier.
+
+**Checkout flow:** Google sign-in → `/premium` → PayPal (web) or Play purchase (Android) → webhook/verify → `GET /api/billing/status`.
+
+**Messaging:** value-first upsell, not hard sell — see [freemium-messaging.md](./freemium-messaging.md).
+
+### Revenue stream 3 — AI credit packs (one-time)
+
+Purchasable without subscription: 10 / 30 / 60 / 120 credits for the text-to-image tool. PayPal orders on web. Defined in `CREDIT_PLANS` in `backend/src/lib/billing-shared.ts`.
+
+### Acquisition — SEO (not direct revenue, enables the funnel)
+
+Long-tail landing pages (`/jpg-to-png`, `/en/pdf-to-word`, …), hreflang across 7 locales, sitemap ~850 URLs, blog articles, FAQ JSON-LD. Cloudflare DNS → Plesk origin. See [google-search-console-indexing.md](./google-search-console-indexing.md).
+
+### Conversion-push philosophy
+
+The product should **always nudge users toward completing a conversion**: homepage featured tools, nav usage remaining, post-limit upgrade panels, coming-soon alternative links, download gate before file delivery (free tier). Monetization follows value — user gets a converted file; we earn from ads or subscription.
+
+### Current maturity (honest)
+
+The site is **deployable but underdeveloped** relative to the goal: 9/13 catalog tools are fully functional; server video/PDF-word are stubs; ads and PayPal need production env verification. See [implementation-status.md](./implementation-status.md) and [production-readiness.md](./production-readiness.md).
+
+---
+
+## Mission (summary)
 
 Give people a fast, browser-based way to convert files between common formats — without installing software, without an account for basic use, and with Hebrew as the primary language and UX.
-
-**Domain:** [https://tamir.li](https://tamir.li)
-
-**Positioning:** Lightweight alternative to bloated desktop converters and ad-heavy aggregator sites. PWA-installable, mobile-friendly, RTL-native.
 
 ## Target users
 
@@ -73,75 +169,45 @@ Long-form Hebrew SEO articles in `src/lib/blog-data.ts`, linked to relevant tool
 
 ---
 
-## Freemium model
+## Monetization implementation reference
 
-### Free tier
-
-- **5 conversions per day** (UTC day on server; localStorage fallback when API unavailable)
-- **Ads** after cookie consent (**web:** Adsterra)
-- **Two-step download** on free tier: **web** — vignette or popup; **Android app** — AdMob rewarded ad
-- Access to non-premium tools only
-- Marketing copy: **50 MB** max file size
-
-### Premium tier
-
-Subscription via **PayPal** on **web** (default) or **Stripe** when `ENABLE_STRIPE=true`. **Android app** uses **Google Play Billing** for the same premium benefits.
-
-Benefits (from product copy and code):
-
-| Benefit | Detail |
-|---------|--------|
-| Unlimited conversions | No daily cap (`usage.routes.ts` skips limit for active subscribers) |
-| Ad-free | All ad components return null; no popunder |
-| AI images | **6 credits/month** included (`MONTHLY_AI_CREDITS` in billing-shared); resets each billing cycle |
-| Priority processing | `ConversionJob.priority` flag in schema (for future worker queue) |
-| Premium-only tools | Video converter/compressor, AI image generator |
-| Larger files | Comparison table: **200 MB**; FAQ copy mentions up to **500 MB** — verify enforcement before changing marketing |
-
-Pricing (Hebrew UI, approximate): ~₪4.90/month or ~₪47/year (~20% savings). English UI shows USD equivalents.
-
-### AI credit packs (one-time)
-
-Purchasable without subscription: 10 / 30 / 60 / 120 credits (ILS-priced via PayPal order). Defined in `CREDIT_PLANS` in `backend/src/lib/billing-shared.ts`.
+Summary of tiers and revenue streams is in [Business model](#business-model) above. Operational detail:
 
 ### Payment flow
 
-1. User signs in with Google
+1. User signs in with Google (required for checkout; optional for free conversions)
 2. **Web:** `/premium` → PayPal checkout → webhook sync
 3. **Android app:** `/premium` → Google Play purchase → `POST /api/billing/google/verify`
 4. `GET /api/billing/status` drives `useSubscription()` on the client
 
-Setup guides: [paypal-setup.md](./paypal-setup.md), [android-play-console-setup.md](./android-play-console-setup.md), [stripe-setup.md](./stripe-setup.md) (optional).
+Setup: [paypal-setup.md](./paypal-setup.md), [android-play-console-setup.md](./android-play-console-setup.md), [stripe-setup.md](./stripe-setup.md) (optional).
 
----
+### Premium benefits (code-enforced)
 
-## Ads monetization
+| Benefit | Detail |
+|---------|--------|
+| Unlimited conversions | `usage.routes.ts` skips daily cap for active subscribers |
+| Ad-free | All ad components return null; no popunder |
+| AI images | **6 credits/month** (`MONTHLY_AI_CREDITS` in billing-shared) |
+| Priority queue | `ConversionJob.priority` for premium jobs |
+| Premium-only tools | Video converter/compressor, AI image generator |
+| Larger files | Marketing: **200 MB**; FAQ mentions up to **500 MB** — verify enforcement before changing copy |
 
-**Web:** Adsterra (see [adsterra-setup.md](./adsterra-setup.md)).  
-**Android app:** AdMob only — never Adsterra on native ([admob-setup.md](./admob-setup.md)).
+**Pricing (UI):** ~₪19.90/month or ~₪47/year (~20% savings). Anchor ~~₪150~~ in upgrade page. Backend MRR: `SUBSCRIPTION_MRR_AGOROT` in `billing-shared.ts`.
 
-### Strategy
+### Ad placements (web)
 
-- Monetize free-tier traffic without blocking conversion UX
-- Premium subscription is the ad-free upsell
-- Respect consent (GDPR-style banner: analytics + ads toggles)
-
-### Placements
-
-| Type | Size | Typical location |
-|------|------|------------------|
-| Banner | 728×90 | Home, blog, tool page footers |
-| Sidebar | 300×250 ×2 | Desktop sticky rails (`DesktopAdRail`) |
+| Type | Size | Location |
+|------|------|----------|
+| Banner | 728×90 | Home, blog, tool footers |
+| Sidebar | 300×250 ×2 | `DesktopAdRail` |
 | Inline | 468×60 | Mid-content on tools/blog |
-| Popunder | Script URL | Optional; after consent + on some conversion milestones |
+| Popunder | Script URL | After consent; optional |
 | Download vignette | Inline slot | Free-tier download gate |
 
-### Technical notes
+**Technical:** Zone keys in `/admin/ads` or `VITE_ADSTERRA_ZONE_*` (not Publisher API key). `public/ads.txt` required for Adsterra approval. `setPremiumUser(true)` suppresses all ads.
 
-- Zone keys in `VITE_ADSTERRA_ZONE_*` — **not** the Publisher API key
-- `public/ads.txt` must list Adsterra authorization lines
-- If env vars unset: muted placeholders, no broken layout
-- `setPremiumUser(true)` suppresses all ad loading
+Launch checklist: [monetization-readiness-plan.md](./monetization-readiness-plan.md). Copy tone: [freemium-messaging.md](./freemium-messaging.md).
 
 ---
 

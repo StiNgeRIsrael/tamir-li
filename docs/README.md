@@ -1,20 +1,31 @@
 # Internal documentation — tamir.li
 
 **Canonical repo:** [github.com/StiNgeRIsrael/tamir-li](https://github.com/StiNgeRIsrael/tamir-li)  
-**Production:** [tamir.li](https://tamir.li) — Node.js monolith on Plesk (API + SPA on one host).  
-**Last doc review:** 2026-06-26 (Android / AdMob / Play Billing added).
+**Production:** [tamir.li](https://tamir.li) — Node.js monolith on Plesk (API + SPA on one host). DNS via Cloudflare.  
+**Last doc review:** 2026-06-28 (goal, purpose, business model defined in AGENTS.md + product-vision.md).
 
 ---
 
-## Start here
+## Strategy & product
 
 | Doc | When to read |
 |-----|----------------|
-| [../AGENTS.md](../AGENTS.md) | AI agents — stack, conventions, do/don't |
-| [tools-and-features.md](./tools-and-features.md) | Tool catalog, SEO slugs, API table |
+| [product-vision.md](./product-vision.md) | **Goal, purpose, business model**, users, roadmap |
+| [../AGENTS.md](../AGENTS.md) | AI agents — goal/purpose/revenue pillars, stack, conventions |
 | [implementation-status.md](./implementation-status.md) | Code audit: live / partial / stub |
+| [production-readiness.md](./production-readiness.md) | Prod feature matrix, probes |
+| [tools-and-features.md](./tools-and-features.md) | Tool catalog, SEO slugs, API table |
+
+---
+
+## Start here (engineering)
+
+| Doc | When to read |
+|-----|----------------|
 | [deploy-checklist.md](./deploy-checklist.md) | Pre/post deploy on `main` |
 | [plesk-node-deploy.md](./plesk-node-deploy.md) | **Primary** production deploy (Node monolith) |
+| [local-dev.md](./local-dev.md) | Split frontend + backend locally |
+| [autonomous-testing.md](./autonomous-testing.md) | `npm run site:check` — conversion probes (no premium checkout) |
 
 ---
 
@@ -52,9 +63,10 @@
 
 | Doc | Scope |
 |-----|--------|
-| [product-vision.md](./product-vision.md) | Mission, freemium, ads strategy |
+| [product-vision.md](./product-vision.md) | **Canonical** — goal, purpose, business model, funnel |
 | [monetization-readiness-plan.md](./monetization-readiness-plan.md) | Launch checklist (web) |
 | [monetization-implementation-plan.md](./monetization-implementation-plan.md) | Site-wide ad/checkout gaps |
+| [freemium-messaging.md](./freemium-messaging.md) | Upsell copy tone and cycles |
 | [adsterra-setup.md](./adsterra-setup.md) | **Web** display ads (admin `/admin/ads`) |
 | [admob-setup.md](./admob-setup.md) | **Android** ads |
 | [paypal-setup.md](./paypal-setup.md) | **Web** subscriptions (primary) |
@@ -69,7 +81,7 @@
 |-----|---------|
 | [seo-hacks-checklist.md](./seo-hacks-checklist.md) | SEO sprint tasks |
 | [seo-autonomous-log.md](./seo-autonomous-log.md) | Iteration log |
-| [google-search-console-indexing.md](./google-search-console-indexing.md) | GSC, sitemap, indexing |
+| [google-search-console-indexing.md](./google-search-console-indexing.md) | GSC, sitemap, `npm run gsc:daily`, daily automation |
 | [google-analytics-setup.md](./google-analytics-setup.md) | GTM / GA4 |
 | [gtm-setup-checklist.md](./gtm-setup-checklist.md) | GTM container |
 | [medium-syndication.md](./medium-syndication.md) | Content syndication |

@@ -38,7 +38,7 @@ export type GooglePlayRtdnMessage = {
 };
 
 function getPackageName(): string {
-  return process.env.GOOGLE_PLAY_PACKAGE_NAME?.trim() || 'li.tamir.app';
+  return process.env.GOOGLE_PLAY_PACKAGE_NAME?.trim() || 'com.tamir.li';
 }
 
 function getServiceAccountClient(): JWT | null {
