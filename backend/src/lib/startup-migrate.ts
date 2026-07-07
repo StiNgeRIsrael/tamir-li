@@ -38,6 +38,7 @@ export const PROACTIVE_MIGRATION_TABLES: ReadonlyArray<{ migration: string; tabl
 
   { migration: '20260624120000_ad_settings', table: 'AdSettings' },
   { migration: '20260624150000_ai_settings_and_generation_log', table: 'AiSettings' },
+  { migration: '20260707120000_app_settings_onboarding', table: 'AppSettings' },
 
 ];
 

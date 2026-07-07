@@ -27,6 +27,9 @@ backend/.env
 gsc-indexing-progress.txt
 gsc-request-indexed.txt
 gsc-daily-batch.txt
+.gsc-playwright-profile/
+gsc-debug-last.png
+gsc-run-output.txt
 
 # Editor directories and files
 .vscode/*

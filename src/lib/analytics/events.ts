@@ -33,6 +33,11 @@ export const ANALYTICS_EVENTS = {
   /** AdMob / display ad lifecycle */
   AD_IMPRESSION: "ad_impression",
   AD_REWARD: "ad_reward",
+  /** Onboarding quiz funnel */
+  ONBOARDING_START: "onboarding_start",
+  ONBOARDING_STEP: "onboarding_step",
+  ONBOARDING_DISMISS: "onboarding_dismiss",
+  ONBOARDING_COMPLETE: "onboarding_complete",
 } as const;
 
 export type AnalyticsEventName = (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS] | string;

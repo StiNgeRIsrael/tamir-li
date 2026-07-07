@@ -215,6 +215,28 @@
   .hero-gradient-text {
     @apply text-primary;
   }
+
+  /* Capacitor shell — app-like density and safe areas */
+  html[data-platform="native"] body {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  html[data-platform="native"] .native-app-shell {
+    @apply bg-background;
+    background-image: none;
+  }
+
+  html[data-platform="native"] .native-app-shell .utility-page-bg::before {
+    display: none;
+  }
+
+  html[data-platform="native"] .native-home-monetization {
+    @apply shadow-sm;
+  }
+
+  html[data-platform="native"] .native-app-footer {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  }
 }
 
 /* Prevent Radix scroll-lock from hiding scrollbar and shifting layout */

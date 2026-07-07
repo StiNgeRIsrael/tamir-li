@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Loader2, ArrowUpRight } from "lucide-react";
+import { AdminOnboardingCard } from "@/components/admin/AdminOnboardingCard";
 
 type AdminStats = {
   users: { total: number; blocked: number; newLast7Days: number };
@@ -136,6 +137,8 @@ export default function AdminOverview() {
         <StatLinkCard to={toolsPath} label={admin.statUsage7d} value={data.usage.last7Days} />
         <StatLinkCard to={toolsPath} label={admin.statUsage30d} value={data.usage.last30Days} />
       </div>
+
+      <AdminOnboardingCard />
 
       <Card>
         <CardHeader>

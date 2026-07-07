@@ -134,6 +134,19 @@ export const enTranslations = {
     aiRecentGenerations: "Recent generations",
     aiUserSpend: "Total AI spend: ${amount}",
     billingHint: "Payments and subscriptions from PayPal/Stripe. Pre-launch — data may be empty.",
+    onboardingTitle: "App welcome offer",
+    onboardingHint:
+      "Show the first-visit premium funnel again for all app users on their next open. Premium subscribers are skipped.",
+    onboardingGeneration: "Campaign #",
+    onboardingLastReprompt: "Last reprompt",
+    onboardingNever: "Never",
+    onboardingRepromptCta: "Reprompt welcome offer for all users",
+    onboardingReprompting: "Scheduling…",
+    onboardingRepromptSuccess: "Welcome offer will show again for all app users on their next visit.",
+    onboardingRepromptError: "Could not schedule reprompt.",
+    onboardingLoadError: "Could not load onboarding settings.",
+    onboardingRepromptNote:
+      "Each reprompt opens a fresh 24-hour offer window per device. Users already on Premium will not see the funnel.",
     billingPayments: "Recent payments",
     billingSubscriptions: "Subscriptions",
     noPaymentsYet: "No payments yet. When someone buys Premium or credits, they will appear here.",
@@ -1262,6 +1275,132 @@ export const enTranslations = {
     ],
     contactPrompt: "Have a question?",
     contactLink: "Contact us",
+  },
+
+  onboarding: {
+    back: "Back",
+    skipFree: "Continue free — skip offer",
+    progressAria: "Onboarding progress",
+    progressLabel: (pct: number) => `${pct}% complete`,
+    welcome: {
+      title: "Let's personalize Tamir.li for you",
+      subtitle: "3 quick questions — then we'll show your best plan.",
+      cta: "Get started",
+      bullets: [
+        "Convert in the browser — no install",
+        "5 free conversions every day",
+        "Welcome offer — 24 hours only",
+      ],
+      bulletsApp: [
+        "All your conversion tools in one fast app",
+        "5 free conversions every day",
+        "Welcome offer — 24 hours only",
+      ],
+    },
+    questions: {
+      hint: "Pick the closest answer",
+      category: {
+        question: "What files do you convert most?",
+        options: [
+          { id: "images" as const, label: "Images — JPG, PNG, WEBP" },
+          { id: "documents" as const, label: "Documents — PDF, Word" },
+          { id: "media" as const, label: "Video & audio" },
+          { id: "mixed" as const, label: "A bit of everything" },
+        ],
+      },
+      frequency: {
+        question: "How often do you need conversions?",
+        options: [
+          { id: "daily" as const, label: "Every day — work or study" },
+          { id: "weekly" as const, label: "A few times a week" },
+          { id: "occasional" as const, label: "Occasionally — when needed" },
+        ],
+      },
+      pain: {
+        question: "What's your biggest frustration today?",
+        options: [
+          { id: "limit" as const, label: "I hit the 5/day free limit" },
+          { id: "ads" as const, label: "Too many ads and interruptions" },
+          { id: "size" as const, label: "Large files get rejected" },
+          { id: "speed" as const, label: "Slow conversions or queues" },
+        ],
+      },
+    },
+    result: {
+      badge: "Your profile",
+      cta: "See my offer",
+    },
+    results: {
+      images: {
+        title: "Image power user — Premium saves time",
+        desc: "Compress, resize, and convert formats — no daily caps, no banner ads.",
+      },
+      documents: {
+        title: "PDF & Word workflow — at your pace",
+        desc: "Merge, convert, and edit — without stopping at 5 files per day.",
+      },
+      media: {
+        title: "Video & audio — more than free allows",
+        desc: "Premium unlocks advanced tools, larger files, and priority processing.",
+      },
+      mixed: {
+        title: "Everything in one place — fewer limits",
+        desc: "Images, PDF, audio, and more — unlimited conversions, zero ads.",
+      },
+    },
+    painBenefits: {
+      limit: "Premium = unlimited conversions — no waiting until tomorrow.",
+      ads: "Premium removes ads — just your work.",
+      size: "Files up to 500MB on Premium (vs 50MB free).",
+      speed: "Priority processing — your files jump the queue.",
+    },
+    frequencyBenefits: {
+      daily: "Daily use — Premium removes daily friction.",
+      weekly: "A few times a week — Premium pays off when you need more than 5/day.",
+      occasional: "Even occasionally — Premium means no limits when it matters.",
+    },
+    auth: {
+      title: "Save your offer — sign in with Google",
+      subtitle: "Required to activate your welcome deal and lock it for 24 hours.",
+      note: "Free to sign in. Cancel anytime.",
+    },
+    offer: {
+      badge: "Welcome offer — 24 hours",
+      title: "Premium launch pricing",
+      subtitle: "Personalized from your quiz — save 20% on yearly.",
+      countdownHint: "Price locked for 24 hours from your first view of this offer.",
+      expiredNote: "Offer window ended — you can still subscribe at regular pricing.",
+      yearlySave: "Save 20%",
+      monthlyLabel: "Monthly",
+      priceYearly: "₪191.04",
+      priceMonthly: "₪19.90",
+      perYear: "per year (was ₪1,800)",
+      perMonth: "per month",
+      benefits: [
+        "Unlimited conversions",
+        "No ads",
+        "6 AI image credits/month",
+        "Files up to 500MB",
+      ],
+      cta: "Activate Premium now",
+      ctaPlay: "Continue in Google Play",
+      ctaLoading: "Starting checkout...",
+      checkoutError: "Could not start checkout. Try again.",
+      guarantee: "Cancel anytime — no commitment.",
+      playYearlyLabel: "Yearly",
+      playMonthlyLabel: "Monthly",
+      playBillingNote: "Price shown in Google Play",
+    },
+  },
+
+  nativeHome: {
+    usageTitle: "Free conversions today",
+    usageRemaining: (n: number) =>
+      n === 0 ? "Daily limit reached — upgrade to Premium" : `${n} free conversions left today`,
+    upgradeTitle: "Premium — no limits",
+    upgradeSubtitle: "Unlimited conversions, no ads, larger files",
+    upgradeCta: "Upgrade",
+    premiumActive: "Premium active — unlimited conversions",
   },
 
   contactPage: {

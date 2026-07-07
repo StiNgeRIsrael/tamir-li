@@ -15,6 +15,7 @@ import aiRoutes from './routes/ai.routes';
 import adminRoutes from './routes/admin.routes';
 import usageRoutes from './routes/usage.routes';
 import statsRoutes from './routes/stats.routes';
+import appRoutes from './routes/app.routes';
 import billingRoutes, { paypalWebhookHandler } from './routes/billing.routes';
 import { stripeWebhookHandler } from './routes/billing-stripe.routes';
 import hebrewOcrRoutes from './routes/hebrew-ocr.routes';
@@ -85,6 +86,7 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/usage', usageRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/app', appRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/tools/hebrew-ocr', hebrewOcrRoutes);
 

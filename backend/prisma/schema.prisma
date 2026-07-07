@@ -178,6 +178,15 @@ model AiSettings {
   updatedAt    DateTime @default(now()) @updatedAt
 }
 
+/** הגדרות אפליקציה גלובליות — שורה יחידה (id = default) */
+model AppSettings {
+  id                        String    @id @default("default")
+  /** מוגדל בכל "הצג מבצע מחדש לכולם" — לקוחות עם generation נמוך יותר רואים שוב אונבורדינג */
+  onboardingOfferGeneration Int       @default(0)
+  onboardingRepromptedAt    DateTime?
+  updatedAt                 DateTime  @default(now()) @updatedAt
+}
+
 enum AiGenerationStatus {
   SUCCESS
   FAILED

@@ -35,6 +35,11 @@ import {
   saveAiSettings,
   serializeAiSettingsAdmin,
 } from '../lib/ai-settings';
+import {
+  ensureAppSettings,
+  repromptOnboardingForAllUsers,
+  serializeAppSettings,
+} from '../lib/app-settings';
 import { CONFIG_CACHE_KEYS, invalidateConfigCache } from '../lib/config-cache';
 
 const router = Router();
@@ -775,6 +780,29 @@ router.patch('/ai/settings', async (req: Request, res: Response) => {
     res.json({ settings: serializeAiSettingsAdmin(updated) });
   } catch (e) {
     respondAiSettingsDbError(res, e, 'admin/ai/settings PATCH', 'save');
+  }
+});
+
+router.get('/onboarding', async (_req: Request, res: Response) => {
+  try {
+    const row = await ensureAppSettings();
+    res.json({ settings: serializeAppSettings(row) });
+  } catch (e) {
+    console.error('[admin/onboarding GET]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not load onboarding settings' });
+  }
+});
+
+router.post('/onboarding/reprompt-all', async (_req: Request, res: Response) => {
+  try {
+    const updated = await repromptOnboardingForAllUsers();
+    res.json({
+      settings: serializeAppSettings(updated),
+      message: 'Onboarding offer will be shown again for all app users on their next visit.',
+    });
+  } catch (e) {
+    console.error('[admin/onboarding reprompt-all]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not reprompt onboarding' });
   }
 });
 

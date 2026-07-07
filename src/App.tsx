@@ -20,6 +20,7 @@ import { AnalyticsPageTracker } from "@/components/AnalyticsPageTracker";
 import { CookieConsent } from "@/components/CookieConsent";
 import { PwaUpdatePrompt } from "@/components/PwaUpdatePrompt";
 import { AdVignetteHost } from "@/components/ads/AdVignette";
+import { OnboardingHost } from "@/components/OnboardingHost";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ToolConfigProvider } from "@/contexts/ToolConfigContext";
 import { AdConfigProvider } from "@/contexts/AdConfigContext";
@@ -152,6 +153,7 @@ const App = () => (
           <AnalyticsPageTracker />
           <CookieConsent />
           <PwaUpdatePrompt />
+          <OnboardingHost />
           <AdVignetteHost />
           <Routes>
             {/* Explicitly map over supported locales so it doesn't swallow `:slug` */}

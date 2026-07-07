@@ -1,42 +1,35 @@
 # GSC URL Inspection queue — sc-domain:tamir.li
-# Daily cloud agent: request indexing until quota exceeded (~10–15/day)
+# Daily: npm run gsc:daily → browser Request indexing (~10–15/day UI quota)
+# Last MCP run: 2026-07-05 — sitemap resubmitted; 13 URLs need UI request (see gsc-daily-batch.txt)
 
-# Remaining from 2026-06-28 locale batch (quota hit after 11/13)
-https://tamir.li/ru/about
-https://tamir.li/de/about
+# Tier 1 gaps (MCP 2026-07-05 — not indexed)
+https://tamir.li/privacy
+https://tamir.li/terms
+https://tamir.li/en/privacy
+https://tamir.li/en/terms
 
-# Tier 1 — launch weekend (highest priority)
-https://tamir.li/hebrew-ocr
-https://tamir.li/alternatives/kovetz-hebrew
-https://tamir.li/compress-video-for-whatsapp
-https://tamir.li/convert-scanned-pdf-hebrew
-https://tamir.li/pdf-to-docx
-https://tamir.li/merge-pdf
-https://tamir.li/image-compressor
-https://tamir.li/alternatives/convertio-hebrew
-https://tamir.li/tools/document
-https://tamir.li/
-https://tamir.li/en/compress-video-for-whatsapp
-https://tamir.li/en/convert-scanned-pdf-hebrew
+# Tier 2 — popular tools (unknown / not indexed)
+https://tamir.li/pdf-to-word
+https://tamir.li/mp3-to-wav
+https://tamir.li/png-to-jpg
+https://tamir.li/webp-to-jpg
+https://tamir.li/en/jpg-to-png
+https://tamir.li/en/pdf-to-word
+https://tamir.li/en/mp3-to-wav
+
+# Tier 2 — hubs, comparisons, use-cases (pending UI — in gsc-daily-batch.txt)
 https://tamir.li/en/tools/document
-
-# Tier 2 — hubs, comparisons, use-cases
-https://tamir.li/premium
-https://tamir.li/tools/image
 https://tamir.li/tools/video
 https://tamir.li/use-cases/whatsapp
 https://tamir.li/alternatives/ilovepdf-hebrew
 https://tamir.li/best-free-pdf-converter-israel
-https://tamir.li/merge-pdf-invoice
 https://tamir.li/compress-pdf-for-email
 https://tamir.li/convert-heic-to-jpg-iphone
 https://tamir.li/press
 https://tamir.li/widget
 https://tamir.li/en/alternatives/convertio-hebrew
-
-# Tier 3 — existing pilots + locales
 https://tamir.li/use-cases/pdf-compress
-https://tamir.li/use-cases/convert-to-pdf
 https://tamir.li/alternatives/freeconvert
-https://tamir.li/en
 https://tamir.li/blog
+
+# Already indexed (skip): /, /en, /about, /contact, /premium, /tools/image, /jpg-to-png, /install, /es, /de, /merge-pdf-invoice

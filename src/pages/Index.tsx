@@ -26,6 +26,8 @@ import { cn } from "@/lib/utils";
 
 import { getFunctionalToolIds } from "@/lib/tool-availability";
 import { ToolIconGrid } from "@/components/ToolIconGrid";
+import { NativeHomeMonetization } from "@/components/NativeHomeMonetization";
+import { isNativeApp } from "@/lib/platform";
 
 const TOOL_CATEGORIES: ToolCategory[] = ["image", "video", "audio", "document", "ai"];
 
@@ -106,7 +108,7 @@ const Index = () => {
   const { filterTools } = useToolConfig();
 
   const isRtl = dir === "rtl";
-
+  const nativeApp = isNativeApp();
   const Arrow = isRtl ? ArrowLeft : ArrowRight;
 
   const [search, setSearch] = useState(() => searchParams.get("q") ?? "");
@@ -281,7 +283,10 @@ const Index = () => {
 
         {/* Hero */}
 
-        <section className="border-b border-border/80 bg-card/75 px-4 py-7 backdrop-blur-sm sm:px-6 sm:py-8 lg:py-10">
+        <section className={cn(
+          "border-b border-border/80 bg-card/75 px-4 backdrop-blur-sm sm:px-6",
+          nativeApp ? "py-5" : "py-7 sm:py-8 lg:py-10"
+        )}>
 
           <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
 
@@ -311,35 +316,23 @@ const Index = () => {
 
 
 
+              {!nativeApp && (
               <div className="grid w-full shrink-0 grid-cols-2 gap-2 sm:w-auto sm:grid-cols-4 sm:gap-1.5">
-
                 {homeStats.map((s, i) => {
-
                   const SIcon = statIcons[i];
-
                   return (
-
                     <div
-
                       key={i}
-
                       className="flex flex-col items-center rounded border border-border bg-background px-2.5 py-2.5 text-center sm:px-2 sm:py-2"
-
                     >
-
                       <SIcon className="mb-0.5 h-3.5 w-3.5 text-primary" />
-
                       <p className="text-base font-bold leading-none text-foreground">{s.value}</p>
-
                       <p className="mt-0.5 text-[10px] leading-tight text-muted-foreground">{s.label}</p>
-
                     </div>
-
                   );
-
                 })}
-
               </div>
+              )}
 
             </div>
 
@@ -409,9 +402,12 @@ const Index = () => {
 
         {/* Main content */}
 
-        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 pb-8 lg:pb-12 space-y-5 lg:space-y-6">
+        <div className={cn(
+          "max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 space-y-5",
+          nativeApp ? "pb-6" : "pb-8 lg:pb-12 lg:space-y-6"
+        )}>
 
-
+          {nativeApp && <NativeHomeMonetization className="native-home-monetization" />}
 
           {/* Search + filter */}
 
@@ -539,11 +535,11 @@ const Index = () => {
             tools={gridTools}
             locale={locale}
             toolNames={toolNames}
-            title={homePicker.familyTitle}
+            title={nativeApp ? homePicker.title : homePicker.familyTitle}
             className="pt-2"
           />
 
-          <AdSlot type="banner" slotId="home-top-banner" />
+          {!nativeApp && <AdSlot type="banner" slotId="home-top-banner" />}
 
           {totalShown === 0 && (
 
@@ -553,22 +549,18 @@ const Index = () => {
 
 
 
+          {!nativeApp && (
           <Suspense fallback={null}>
-
             <InternalToolLinks />
-
           </Suspense>
-
-
+          )}
 
           <Suspense fallback={null}>
-
             <PremiumBanner />
-
           </Suspense>
 
-
-
+          {!nativeApp && (
+          <>
           {/* Why choose us */}
 
           <section className="space-y-3">
@@ -722,6 +714,9 @@ const Index = () => {
             </div>
 
           </section>
+
+          </>
+          )}
 
         </div>
 

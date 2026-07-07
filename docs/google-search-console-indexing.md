@@ -77,18 +77,54 @@ npm run generate:gsc-priority -- https://tamir.li/ https://tamir.li/en/
 
 Google’s UI limits how often you can **Request indexing** per property (commonly cited as **~10–20 successful requests per day**; exact limits are not published and can vary).
 
+### One command (recommended)
+
+```bash
+npm run gsc:daily
+```
+
+**Daily automation:** Cursor Automation spec at `.cursor/automations/gsc-daily-indexing.md` (cron 06:00 UTC). Local loop: `/loop 1d` with `.cursor/loops/gsc-daily-indexing.md`.
+
+Prints the next **15 URLs** from `gsc-browser-batch.txt` that still need a browser **Request indexing** submit (skips URLs in `gsc-request-indexed.txt`). Writes `gsc-daily-batch.txt` for copy-paste.
+
+```bash
+# After submitting in GSC UI:
+npm run gsc:daily -- --mark-done https://tamir.li/ru/about https://tamir.li/hebrew-ocr
+
+# API inspection batch (when browser queue is empty):
+npm run gsc:daily -- --inspect
+
+# Smaller batch:
+npm run gsc:daily -- --limit=10
+```
+
+**Cursor agents:** use gscServer `batch_url_inspection` on today's `gsc-daily-batch.txt` URLs to see verdict before burning UI quota — skip `PASS` / already indexed.
+
+**Cursor browser automation:** with GSC already open and logged in (`search.google.com/search-console/inspect`, property `tamir.li`), an agent can:
+1. Read `gsc-daily-batch.txt` (or `npm run gsc:daily` output)
+2. For each URL: fill **Inspect any URL** → Enter → **Request indexing** → wait ~90s for live test → **Dismiss**
+3. `npm run gsc:daily -- <url>` to mark done in `gsc-request-indexed.txt`
+
+Each request takes ~1–2 minutes (live URL test). Stop at ~12–15/day if Google shows quota limits.
+
 ### Recommended routine (~10–15 minutes/day)
 
-1. **Morning** — open [URL Inspection](https://search.google.com/search-console/inspect).
-2. Run `npm run generate:gsc-priority -- --daily=15 --skip-indexed` (skips URLs in `gsc-indexing-progress.txt`).
-3. For each URL:
-   - Paste the full URL → **Enter**.
-   - Wait for “URL is on Google” or “URL is not on Google”.
-   - If not indexed (or you changed the page recently) → **Request indexing**.
-   - Skip if Google already shows a recent successful crawl and the page is indexed.
-4. **Stop at ~10–15 requests** even if you have time — additional requests are usually ignored until the next day.
-5. **Mark done** — `npm run generate:gsc-priority -- <url> [<url>...]` appends to `gsc-indexing-progress.txt`.
+1. Run `npm run gsc:daily` (or ask an agent to run it + MCP inspect).
+2. Open [URL Inspection](https://search.google.com/search-console/inspect).
+3. For each URL in the batch:
+   - If MCP shows **PASS** / Submitted and indexed → skip UI request; `--mark-done` anyway.
+   - If **unknown** or **discovered-not-indexed** → paste URL → **Request indexing**.
+4. **Stop at ~10–15 requests** even if the batch has more — additional requests are usually ignored until the next day.
+5. **Mark done** — `npm run gsc:daily -- --mark-done <url> [<url>...]`
 6. **Weekly** — check **Pages** / **Indexing** for errors; fix 404s, redirects, and `noindex` mistakes before requesting more URLs.
+
+### Legacy / full sitemap queue
+
+```bash
+npm run generate:gsc-priority -- --daily=15 --skip-indexed
+```
+
+Track API inspections in `gsc-indexing-progress.txt` (gitignored). The browser queue (`gsc-browser-batch.txt`) is for high-priority landing pages and locale gaps.
 
 ### Suggested schedule
 
@@ -150,7 +186,8 @@ If Google exposes stable, general-purpose bulk indexing for standard sites in th
 
 | File | Purpose |
 |------|---------|
-| `scripts/gsc-priority-urls.ts` | Tiered URL generator |
+| `scripts/gsc-daily-indexing.ts` | **Daily command** — browser request batch + mark-done |
+| `scripts/gsc-priority-urls.ts` | Tiered URL generator (full sitemap queue) |
 | `scripts/indexnow-ping.ts` | Post-deploy IndexNow bulk submit |
 | `scripts/generate-sitemap.ts` | Writes `public/sitemap.xml` |
 | `src/lib/sitemap-paths.ts` | Single source of truth for indexed paths |

@@ -527,7 +527,7 @@ All 6 sitemap image pairs now have `directAnswer` + FAQs × 7 locales (shipped i
 
 ---
 
-## Iteration 9 ? Untried SEO hacks (comparison pages, manifest �7, internal links) ? 2026-06-26T10:55+03:00
+## Iteration 9 ? Untried SEO hacks (comparison pages, manifest �7, internal links) ? 2026-06-26T10:55+03:00
 
 ### GSC browser agent (`8afd50a2`)
 
@@ -570,7 +570,7 @@ All 6 sitemap image pairs now have `directAnswer` + FAQs × 7 locales (shipped i
 ### Production impact (post-deploy)
 
 - Googlebot on `/es/jpg-to-png`, `/ru/tools/image`, etc. gets locale-specific title/description (was Hebrew/English only).
-- New indexable comparison URL targets �freeconvert alternative� long-tail (he+en).
+- New indexable comparison URL targets �freeconvert alternative� long-tail (he+en).
 - Stronger internal link graph: footer ? category hubs; tool pages ? blog guides.
 - Category hubs gain `SoftwareApplication` structured data for rich-result eligibility.
 
@@ -580,4 +580,140 @@ All 6 sitemap image pairs now have `directAnswer` + FAQs × 7 locales (shipped i
 2. Use-case pilot: `/compress-image-for-whatsapp` ? image-compressor.
 3. llms.txt full tool catalog with honest coming-soon flags.
 4. Re-inspect `/alternatives/freeconvert`, `/tools/image` in GSC 48h post-deploy.
+
+---
+
+## Daily indexing ? 2026-06-30
+
+### Command
+
+`npm run gsc:daily` ? 15 URLs from `gsc-browser-batch.txt` ? `gsc-daily-batch.txt`
+
+### MCP inspection (`sc-domain:tamir.li`)
+
+| URL | Verdict | Coverage | Browser action |
+|-----|---------|----------|----------------|
+| `https://tamir.li/de/about` | PASS | Submitted and indexed | Skip ? mark done |
+| `https://tamir.li/alternatives/kovetz-hebrew` | PASS | Submitted and indexed | Skip ? mark done |
+| `https://tamir.li/` | PASS | Submitted and indexed | Skip ? mark done |
+| `https://tamir.li/ru/about` | NEUTRAL | Unknown to Google | **Request indexing** |
+| `https://tamir.li/hebrew-ocr` | NEUTRAL | Unknown to Google | **Request indexing** |
+| `https://tamir.li/compress-video-for-whatsapp` | NEUTRAL | Unknown to Google | **Request indexing** |
+| `https://tamir.li/convert-scanned-pdf-hebrew` | NEUTRAL | Discovered ? not indexed | **Request indexing** |
+| `https://tamir.li/pdf-to-docx` | NEUTRAL | Unknown to Google | **Request indexing** |
+| `https://tamir.li/merge-pdf` | NEUTRAL | Discovered ? not indexed | **Request indexing** |
+| `https://tamir.li/image-compressor` | NEUTRAL | Unknown to Google | **Request indexing** |
+| `https://tamir.li/alternatives/convertio-hebrew` | NEUTRAL | Discovered ? not indexed | **Request indexing** |
+| `https://tamir.li/tools/document` | NEUTRAL | Discovered ? not indexed | **Request indexing** |
+| `https://tamir.li/en/compress-video-for-whatsapp` | NEUTRAL | Discovered ? not indexed | **Request indexing** |
+| `https://tamir.li/en/convert-scanned-pdf-hebrew` | NEUTRAL | Unknown to Google | **Request indexing** |
+| `https://tamir.li/en/tools/document` | NEUTRAL | Discovered ? not indexed | **Request indexing** |
+
+**UI quota today:** request **12** URLs (skip 3 already indexed).
+
+After browser submit:
+
+```bash
+npm run gsc:daily -- --mark-done https://tamir.li/de/about https://tamir.li/alternatives/kovetz-hebrew https://tamir.li/
+# ?then each URL you requested in GSC UI
+```
+
+**~17 URLs** remain in browser queue for tomorrow.
+
+---
+
+## Daily indexing — 2026-07-05 (gscServer MCP)
+
+### Actions via `gscServer`
+
+| Action | Result |
+|--------|--------|
+| `submit_sitemap` | **Resubmitted** `https://tamir.li/sitemap.xml` — processed, 546 URLs, 0 errors |
+| `batch_url_inspection` | 13 browser-batch URLs + 10 tier-1/popular URLs |
+| `check_indexing_issues` | 10/10 not indexed; 9 fetch-state unspecified (never crawled) |
+
+### Browser batch (`gsc-daily-batch.txt`) — all need UI **Request indexing**
+
+| URL | Verdict | Coverage |
+|-----|---------|----------|
+| `/en/tools/document` | NEUTRAL | Unknown to Google |
+| `/tools/video` | NEUTRAL | Discovered — not indexed |
+| `/use-cases/whatsapp` | NEUTRAL | Unknown to Google |
+| `/alternatives/ilovepdf-hebrew` | NEUTRAL | Discovered — not indexed |
+| `/best-free-pdf-converter-israel` | NEUTRAL | Discovered — not indexed |
+| `/compress-pdf-for-email` | NEUTRAL | Crawled — not indexed (2026-07-04) |
+| `/convert-heic-to-jpg-iphone` | NEUTRAL | Discovered — not indexed |
+| `/press` | NEUTRAL | Unknown to Google |
+| `/widget` | NEUTRAL | Unknown to Google |
+| `/en/alternatives/convertio-hebrew` | NEUTRAL | Discovered — not indexed |
+| `/use-cases/pdf-compress` | NEUTRAL | Unknown to Google |
+| `/alternatives/freeconvert` | NEUTRAL | Unknown to Google |
+| `/blog` | NEUTRAL | Unknown to Google |
+
+### Tier-1 spot check (new gaps for next queue)
+
+| URL | Verdict |
+|-----|---------|
+| `/privacy`, `/terms` | NEUTRAL — not indexed |
+| `/pdf-to-word`, `/mp3-to-wav` | NEUTRAL — unknown |
+| `/about`, `/contact`, `/jpg-to-png`, `/install`, `/es`, `/de` | PASS — indexed |
+
+### Limitation
+
+**gscServer cannot call “Request indexing”** — only inspect + sitemap submit. The 13 URLs above still need GSC UI (or wait for post-sitemap crawl). Sitemap last submitted **2026-07-05 18:52 UTC**.
+
+After UI submit:
+
+```bash
+npm run gsc:daily -- --mark-done <url> [<url>...]
+```
+
+Next queue refreshed in `gsc-browser-batch.txt` (+ tier-1 `/privacy`/`/terms`, popular tools).
+
+---
+
+## Daily indexing — 2026-07-05 (Playwright until quota)
+
+### Run: `node scripts/gsc-run-until-quota.mjs`
+
+| Result | Count |
+|--------|-------|
+| **Requested** | **9** |
+| **Quota declined** | URL #10 (`/en/alternatives/convertio-hebrew`) |
+| Skipped | 0 |
+
+**Submitted (marked done):**
+
+1. `https://tamir.li/en/tools/document`
+2. `https://tamir.li/tools/video`
+3. `https://tamir.li/use-cases/whatsapp`
+4. `https://tamir.li/alternatives/ilovepdf-hebrew`
+5. `https://tamir.li/best-free-pdf-converter-israel`
+6. `https://tamir.li/compress-pdf-for-email`
+7. `https://tamir.li/convert-heic-to-jpg-iphone`
+8. `https://tamir.li/press`
+9. `https://tamir.li/widget`
+
+**Stopped at quota** — remaining for tomorrow: `/en/alternatives/convertio-hebrew`, `/use-cases/pdf-compress`, `/alternatives/freeconvert`, `/blog`, tier-1 `/privacy`/`/terms`, popular tools.
+
+---
+
+## Daily indexing — 2026-07-06
+
+### Run: `npm run gsc:until-quota`
+
+| Result | Count |
+|--------|-------|
+| **Requested** | **0** |
+| **Quota declined** | First URL (`/privacy`) — daily limit still active (~24h rolling from 2026-07-05 run) |
+| **Marked done (API PASS)** | 2 |
+
+**Already indexed (skipped via MCP):**
+
+- `https://tamir.li/png-to-jpg` — PASS
+- `https://tamir.li/en/jpg-to-png` — PASS
+
+**Still pending (13 URLs):** `/privacy`, `/terms`, `/en/privacy`, `/en/terms`, `/pdf-to-word`, `/mp3-to-wav`, `/webp-to-jpg`, `/en/pdf-to-word`, `/en/mp3-to-wav`, `/en/alternatives/convertio-hebrew`, `/use-cases/pdf-compress`, `/alternatives/freeconvert`, `/blog`
+
+**Retry:** after ~24h from yesterday's last request (~22:00 Israel 2026-07-05) → run `npm run gsc:until-quota` again.
 

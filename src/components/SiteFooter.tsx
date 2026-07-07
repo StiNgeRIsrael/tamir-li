@@ -11,6 +11,25 @@ export function SiteFooter() {
   const { locale, t } = useLocale();
   const f = t.footer;
   const catLabels = t.categories as Record<string, string>;
+  const nativeApp = isNativeApp();
+
+  if (nativeApp) {
+    return (
+      <footer className="native-app-footer border-t border-border bg-muted/20 px-4 py-4">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3">
+          <BrandWordmark locale={locale} size="sm" />
+          <nav className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+            <Link to={localePath("/premium", locale)} className="font-medium text-premium hover:underline">
+              {t.premium.upgradeTo}
+            </Link>
+            <Link to={localePath("/terms", locale)} className="hover:text-foreground transition-colors">{f.terms}</Link>
+            <Link to={localePath("/privacy", locale)} className="hover:text-foreground transition-colors">{f.privacy}</Link>
+            <Link to={localePath("/contact", locale)} className="hover:text-foreground transition-colors">{f.contact}</Link>
+          </nav>
+        </div>
+      </footer>
+    );
+  }
 
   return (
     <footer className="relative border-t border-transparent bg-gradient-to-b from-transparent to-muted/30 pt-10 pb-8 space-y-8 max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 dark:to-muted/10">

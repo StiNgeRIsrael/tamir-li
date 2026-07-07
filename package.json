@@ -12,6 +12,7 @@
     "generate:favicons": "node scripts/generate-favicons.mjs",
     "generate:gsc-priority": "tsx scripts/gsc-priority-urls.ts",
     "gsc:daily": "tsx scripts/gsc-daily-indexing.ts",
+    "gsc:until-quota": "node scripts/gsc-run-until-quota.mjs",
     "indexnow": "tsx scripts/indexnow-ping.ts",
     "setup:paypal-plans": "tsx scripts/setup-paypal-plans.ts",
     "postinstall": "npm ci --prefix backend --include=dev && npm run plesk:generate",

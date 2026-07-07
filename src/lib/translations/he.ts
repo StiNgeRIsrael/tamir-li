@@ -137,6 +137,19 @@ export const heTranslations = {
     aiRecentGenerations: "יצירות אחרונות",
     aiUserSpend: "עלות AI כוללת: ${amount}",
     billingHint: "תשלומים ומנויים מ-PayPal/Stripe. לפני השקה — ייתכן שאין עדיין נתונים.",
+    onboardingTitle: "מבצע ברוכים הבאים (אפליקציה)",
+    onboardingHint:
+      "הצג שוב את משפך האונבורדינג והמבצע לכל משתמשי האפליקציה בפתיחה הבאה. לא משפיע על מנויי פרימיום.",
+    onboardingGeneration: "מספר קמפיין",
+    onboardingLastReprompt: "הצגה מחדש אחרונה",
+    onboardingNever: "מעולם לא",
+    onboardingRepromptCta: "הצג מבצע מחדש לכל המשתמשים",
+    onboardingReprompting: "מעדכן…",
+    onboardingRepromptSuccess: "מבצע ברוכים הבאים יוצג שוב לכל משתמשי האפליקציה בפתיחה הבאה.",
+    onboardingRepromptError: "לא ניתן להפעיל הצגה מחדש.",
+    onboardingLoadError: "לא ניתן לטעון הגדרות אונבורדינג.",
+    onboardingRepromptNote:
+      "כל הצגה מחדש פותחת חלון מבצע 24 שעות חדש בכל מכשיר. משתמשים שכבר בפרימיום לא יראו את המשפך.",
     billingPayments: "תשלומים אחרונים",
     billingSubscriptions: "מנויים",
     noPaymentsYet: "אין עדיין תשלומים במערכת. ברגע שמישהו ירכוש פרימיום או קרדיטים — זה יופיע כאן.",
@@ -1283,6 +1296,131 @@ export const heTranslations = {
     ],
     contactPrompt: "יש שאלה?",
     contactLink: "צרו קשר",
+  },
+
+  onboarding: {
+    back: "חזרה",
+    skipFree: "להמשיך בחינם — בלי מבצע",
+    progressAria: "התקדמות באונבורדינג",
+    progressLabel: (pct: number) => `${pct}% הושלמו`,
+    welcome: {
+      title: "בואו נתאים את תמיר לי בשבילכם",
+      subtitle: "3 שאלות קצרות — ונציג לכם את התוכנית המתאימה ביותר.",
+      cta: "מתחילים",
+      bullets: [
+        "המרות בדפדפן — בלי התקנה",
+        "5 המרות חינם בכל יום",
+        "מבצע ברוכים הבאים ל-24 שעות בלבד",
+      ],
+      bulletsApp: [
+        "כל כלי ההמרה באפליקציה אחת מהירה",
+        "5 המרות חינם בכל יום",
+        "מבצע ברוכים הבאים ל-24 שעות בלבד",
+      ],
+    },
+    questions: {
+      hint: "בחרו את התשובה הכי קרובה",
+      category: {
+        question: "איזה סוג קבצים אתם ממירים הכי הרבה?",
+        options: [
+          { id: "images" as const, label: "תמונות — JPG, PNG, WEBP" },
+          { id: "documents" as const, label: "מסמכים — PDF, Word" },
+          { id: "media" as const, label: "וידאו ואודיו" },
+          { id: "mixed" as const, label: "הכל — קצת מכל דבר" },
+        ],
+      },
+      frequency: {
+        question: "כמה פעמים בשבוע אתם צריכים המרות?",
+        options: [
+          { id: "daily" as const, label: "כל יום — עבודה או לימודים" },
+          { id: "weekly" as const, label: "כמה פעמים בשבוע" },
+          { id: "occasional" as const, label: "לפעמים — כשצריך" },
+        ],
+      },
+      pain: {
+        question: "מה הכי מפריע לכם היום?",
+        options: [
+          { id: "limit" as const, label: "נגמרו לי 5 ההמרות היומיות" },
+          { id: "ads" as const, label: "יותר מדי פרסומות והפרעות" },
+          { id: "size" as const, label: "קבצים גדולים נדחים" },
+          { id: "speed" as const, label: "המרות איטיות או תור" },
+        ],
+      },
+    },
+    result: {
+      badge: "הפרופיל שלכם",
+      cta: "לראות את המבצע שלי",
+    },
+    results: {
+      images: {
+        title: "ממירי תמונות — פרימיום יחסוך לכם זמן",
+        desc: "דחיסה, שינוי גודל והמרת פורמטים — בלי לספור המרות ובלי באנרים באמצע.",
+      },
+      documents: {
+        title: "עבודה עם PDF ו-Word — בקצב שלכם",
+        desc: "מיזוג, המרה ועריכה — בלי להיתקע על מגבלת 5 קבצים ביום.",
+      },
+      media: {
+        title: "וידאו ואודיו — כשצריך יותר מחינם",
+        desc: "פרימיום פותח כלים מתקדמים, קבצים גדולים יותר ועיבוד בעדיפות.",
+      },
+      mixed: {
+        title: "הכל במקום אחד — בלי הגבלות מעצבנות",
+        desc: "תמונות, PDF, אודיו ועוד — פרימיום נותן המרות ללא הגבלה ובלי פרסומות.",
+      },
+    },
+    painBenefits: {
+      limit: "פרימיום = המרות ללא הגבלה — בלי לחכות למחר.",
+      ads: "בפרימיום אין פרסומות — רק העבודה שלכם.",
+      size: "קבצים עד 500MB בפרימיום (לעומת 50MB בחינם).",
+      speed: "עיבוד בעדיפות — הקבצים שלכם קודם בתור.",
+    },
+    frequencyBenefits: {
+      daily: "שימוש יומיומי — פרימיום חוסך לכם עצירות כל יום.",
+      weekly: "כמה פעמים בשבוע — פרימיום שווה את זה כשצריך יותר מ-5 ביום.",
+      occasional: "גם לפעמים — פרימיום נותן שקט נפשי בלי מגבלות.",
+    },
+    auth: {
+      title: "שמרו את המבצע — התחברו עם Google",
+      subtitle: "נדרש כדי להפעיל את מבצע ברוכים הבאים ולשמור את ההטבה ל-24 שעות.",
+      note: "התחברות חינמית. אפשר לבטל מנוי בכל עת.",
+    },
+    offer: {
+      badge: "מבצע ברוכים הבאים — 24 שעות",
+      title: "פרימיום במחיר השקה",
+      subtitle: "הטבה אישית מהשאלון — חוסכת 20% בתוכנית השנתית.",
+      countdownHint: "המחיר נשמר ל-24 שעות מהרגע הראשון שראיתם את המבצע.",
+      expiredNote: "חלון המבצע הסתיים — אפשר עדיין להירשם במחיר הרגיל.",
+      yearlySave: "חוסכים 20%",
+      monthlyLabel: "חודשי",
+      priceYearly: "₪191.04",
+      priceMonthly: "₪19.90",
+      perYear: "לשנה (במקום ₪1,800)",
+      perMonth: "לחודש",
+      benefits: [
+        "המרות ללא הגבלה",
+        "בלי פרסומות",
+        "6 יצירות AI בחודש",
+        "קבצים עד 500MB",
+      ],
+      cta: "להפעיל פרימיום עכשיו",
+      ctaPlay: "להמשיך ב-Google Play",
+      ctaLoading: "מעביר לתשלום...",
+      checkoutError: "לא הצלחנו להתחיל תשלום. נסו שוב.",
+      guarantee: "ביטול בכל עת — ללא התחייבות.",
+      playYearlyLabel: "שנתי",
+      playMonthlyLabel: "חודשי",
+      playBillingNote: "המחיר יוצג ב-Google Play",
+    },
+  },
+
+  nativeHome: {
+    usageTitle: "המרות חינם היום",
+    usageRemaining: (n: number) => (n === 0 ? "נגמרו ההמרות להיום — שדרגו לפרימיום" : `נשארו ${n} המרות חינם היום`),
+    upgradeTitle: "פרימיום — בלי מגבלות",
+    upgradeSubtitle: "המרות ללא הגבלה, בלי פרסומות, קבצים גדולים יותר",
+    upgradeCta: "לשדרג",
+    premiumActive: "פרימיום פעיל — המרות ללא הגבלה",
   },
 
   contactPage: {
