@@ -537,6 +537,7 @@ const Index = () => {
             toolNames={toolNames}
             title={nativeApp ? homePicker.title : homePicker.familyTitle}
             className="pt-2"
+            variant={nativeApp ? "launcher" : "web"}
           />
 
           {!nativeApp && <AdSlot type="banner" slotId="home-top-banner" />}

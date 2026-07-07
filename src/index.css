@@ -237,6 +237,171 @@
   html[data-platform="native"] .native-app-footer {
     padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
   }
+
+  /* App launcher grid (native home) — larger, app-like tool tiles */
+  html[data-platform="native"] .native-launcher-tile {
+    @apply min-h-[7.5rem];
+  }
+}
+
+/* ===== Onboarding funnel (native premium flow) ===== */
+:root {
+  --onboarding-urgency: 0 72% 51%;
+  --onboarding-radius: 24px;
+  --onboarding-card-radius: 16px;
+  --onboarding-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --onboarding-glass: 255 255 255 / 0.1;
+  --onboarding-glass-border: 255 255 255 / 0.18;
+  --onboarding-glass-solid: 255 255 255 / 0.92;
+}
+
+.dark {
+  --onboarding-glass: 255 255 255 / 0.06;
+  --onboarding-glass-border: 255 255 255 / 0.1;
+  --onboarding-glass-solid: 17 22 34 / 0.9;
+}
+
+@layer components {
+  .onboarding-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    touch-action: manipulation;
+    overscroll-behavior: contain;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background:
+      radial-gradient(ellipse 80% 55% at 12% -6%, hsl(var(--primary) / 0.28) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 92% 4%, hsl(var(--accent) / 0.22) 0%, transparent 55%),
+      radial-gradient(ellipse 90% 60% at 50% 108%, hsl(var(--premium) / 0.16) 0%, transparent 60%),
+      linear-gradient(160deg, hsl(220 45% 96%) 0%, hsl(220 30% 92%) 55%, hsl(217 40% 88%) 100%);
+  }
+
+  .dark .onboarding-overlay {
+    background:
+      radial-gradient(ellipse 80% 55% at 12% -6%, hsl(var(--primary) / 0.3) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 92% 4%, hsl(var(--accent) / 0.22) 0%, transparent 55%),
+      radial-gradient(ellipse 90% 60% at 50% 108%, hsl(var(--premium) / 0.14) 0%, transparent 60%),
+      linear-gradient(160deg, hsl(224 40% 12%) 0%, hsl(230 38% 8%) 55%, hsl(234 40% 6%) 100%);
+  }
+
+  /* Ambient drifting blobs behind the glass panel */
+  .onboarding-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(48px);
+    opacity: 0.5;
+    will-change: transform;
+    pointer-events: none;
+  }
+
+  .onboarding-blob--1 {
+    width: 18rem;
+    height: 18rem;
+    background: hsl(var(--primary) / 0.55);
+    top: -4rem;
+    inset-inline-start: -4rem;
+    animation: onboarding-drift 14s ease-in-out infinite;
+  }
+
+  .onboarding-blob--2 {
+    width: 15rem;
+    height: 15rem;
+    background: hsl(var(--accent) / 0.5);
+    bottom: -3rem;
+    inset-inline-end: -3rem;
+    animation: onboarding-drift 18s ease-in-out infinite reverse;
+  }
+
+  .onboarding-glass-card {
+    background: rgba(var(--onboarding-glass));
+    border: 1px solid rgba(var(--onboarding-glass-border));
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border-radius: var(--onboarding-card-radius);
+  }
+
+  /* Solid panel for body copy — keeps text contrast readable (not full glass) */
+  .onboarding-panel {
+    background: rgba(var(--onboarding-glass-solid));
+    border: 1px solid rgba(var(--onboarding-glass-border));
+    backdrop-filter: blur(24px) saturate(1.3);
+    -webkit-backdrop-filter: blur(24px) saturate(1.3);
+    border-radius: var(--onboarding-radius);
+  }
+
+  .onboarding-countdown {
+    color: hsl(var(--onboarding-urgency));
+    text-shadow: 0 0 18px hsl(var(--onboarding-urgency) / 0.45);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.12em;
+  }
+
+  .onboarding-countdown--urgent {
+    animation: onboarding-pulse 1s ease-in-out infinite;
+  }
+
+  .onboarding-step-enter {
+    animation: onboarding-step-in 320ms var(--onboarding-ease) both;
+  }
+
+  .onboarding-reveal {
+    animation: onboarding-reveal 460ms var(--onboarding-ease) both;
+  }
+}
+
+@keyframes onboarding-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2rem, 1.5rem, 0) scale(1.08);
+  }
+}
+
+@keyframes onboarding-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes onboarding-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes onboarding-reveal {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onboarding-blob,
+  .onboarding-countdown--urgent,
+  .onboarding-step-enter,
+  .onboarding-reveal {
+    animation: none !important;
+  }
 }
 
 /* Prevent Radix scroll-lock from hiding scrollbar and shifting layout */

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Loader2, ArrowUpRight } from "lucide-react";
 import { AdminOnboardingCard } from "@/components/admin/AdminOnboardingCard";
+import { AdminOnboardingResponses } from "@/components/admin/AdminOnboardingResponses";
 
 type AdminStats = {
   users: { total: number; blocked: number; newLast7Days: number };
@@ -139,6 +140,8 @@ export default function AdminOverview() {
       </div>
 
       <AdminOnboardingCard />
+
+      <AdminOnboardingResponses />
 
       <Card>
         <CardHeader>
