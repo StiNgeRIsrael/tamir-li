@@ -806,6 +806,63 @@ router.post('/onboarding/reprompt-all', async (_req: Request, res: Response) => 
   }
 });
 
+router.get('/onboarding/responses', async (req: Request, res: Response) => {
+  try {
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const pageSize = Math.min(100, Math.max(1, Number(req.query.pageSize) || 25));
+    const skip = (page - 1) * pageSize;
+    const attribution =
+      typeof req.query.attribution === 'string' ? req.query.attribution.trim() : '';
+
+    const where: Prisma.OnboardingResponseWhereInput = {};
+    if (attribution) where.attribution = attribution;
+
+    const [rows, total, attributionGroups, decisionGroups] = await Promise.all([
+      prisma.onboardingResponse.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: pageSize,
+        include: { user: { select: { email: true } } },
+      }),
+      prisma.onboardingResponse.count({ where }),
+      prisma.onboardingResponse.groupBy({ by: ['attribution'], _count: { _all: true } }),
+      prisma.onboardingResponse.groupBy({ by: ['offerDecision'], _count: { _all: true } }),
+    ]);
+
+    res.json({
+      page,
+      pageSize,
+      total,
+      responses: rows.map((r) => ({
+        id: r.id,
+        email: r.user?.email ?? null,
+        category: r.category,
+        frequency: r.frequency,
+        pain: r.pain,
+        attribution: r.attribution,
+        offerDecision: r.offerDecision,
+        selectedPlan: r.selectedPlan,
+        offerGeneration: r.offerGeneration,
+        createdAt: r.createdAt,
+      })),
+      summary: {
+        attribution: attributionGroups.map((g) => ({
+          key: g.attribution,
+          count: g._count._all,
+        })),
+        decision: decisionGroups.map((g) => ({
+          key: g.offerDecision,
+          count: g._count._all,
+        })),
+      },
+    });
+  } catch (e) {
+    console.error('[admin/onboarding/responses]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not load onboarding responses' });
+  }
+});
+
 router.get('/ai/generations', async (req: Request, res: Response) => {
   try {
     const page = Math.max(1, Number(req.query.page) || 1);

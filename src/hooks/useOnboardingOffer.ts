@@ -25,10 +25,13 @@ export function useOnboardingOffer(active: boolean) {
     return () => window.clearInterval(id);
   }, [active, deadline]);
 
+  const expired = active && deadline > 0 ? remainingMs <= 0 : false;
+
   return {
     deadline,
     remainingMs,
-    expired: active && deadline > 0 ? remainingMs <= 0 : false,
+    expired,
+    urgent: !expired && remainingMs > 0 && remainingMs < 60 * 60 * 1000,
     countdown: formatCountdown(remainingMs),
   };
 }

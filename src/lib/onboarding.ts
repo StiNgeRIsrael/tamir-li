@@ -10,31 +10,58 @@ export const ONBOARDING_OFFER_MS = 24 * 60 * 60 * 1000;
 export type QuizCategory = "images" | "documents" | "media" | "mixed";
 export type QuizFrequency = "daily" | "weekly" | "occasional";
 export type QuizPain = "limit" | "ads" | "size" | "speed";
+export type QuizAttribution =
+  | "play_store"
+  | "google_search"
+  | "friend"
+  | "social"
+  | "other";
 
 export type QuizAnswers = {
   category: QuizCategory;
   frequency: QuizFrequency;
   pain: QuizPain;
+  attribution: QuizAttribution;
 };
 
+export type OfferDecision = "accepted" | "declined";
+
 export type OnboardingStepId =
-  | "welcome"
+  | "hook"
   | "quiz_category"
   | "quiz_frequency"
   | "quiz_pain"
+  | "quiz_attribution"
+  | "analyzing"
   | "result"
-  | "auth"
-  | "offer";
+  | "offer"
+  | "auth";
 
+/** Steps shown before the offer — user cannot skip/close until they reach the offer. */
 export const ONBOARDING_STEPS: OnboardingStepId[] = [
-  "welcome",
+  "hook",
   "quiz_category",
   "quiz_frequency",
   "quiz_pain",
+  "quiz_attribution",
+  "analyzing",
   "result",
-  "auth",
   "offer",
+  "auth",
 ];
+
+/** Quiz steps only — used for step-dot progress (hides funnel mechanics). */
+export const ONBOARDING_QUIZ_STEPS: OnboardingStepId[] = [
+  "quiz_category",
+  "quiz_frequency",
+  "quiz_pain",
+  "quiz_attribution",
+];
+
+/** The offer is the first step where the user may decline/skip. */
+export function canDismissAtStep(step: OnboardingStepId): boolean {
+  return step === "offer" || step === "auth";
+}
 
 export function getLocalSeenGeneration(): number {
   try {
@@ -118,9 +145,9 @@ export function stepIndex(step: OnboardingStepId): number {
   return ONBOARDING_STEPS.indexOf(step);
 }
 
-export function progressPercent(step: OnboardingStepId, skipAuth: boolean): number {
-  const steps = skipAuth ? ONBOARDING_STEPS.filter((s) => s !== "auth") : ONBOARDING_STEPS;
-  const idx = steps.indexOf(step);
-  if (idx < 0) return 0;
-  return Math.round(((idx + 1) / steps.length) * 100);
+/** 1-based quiz position for step dots (e.g. 2 of 4). Returns null outside the quiz. */
+export function quizStepPosition(step: OnboardingStepId): { index: number; total: number } | null {
+  const idx = ONBOARDING_QUIZ_STEPS.indexOf(step);
+  if (idx < 0) return null;
+  return { index: idx, total: ONBOARDING_QUIZ_STEPS.length };
 }
