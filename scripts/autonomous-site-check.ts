@@ -242,8 +242,8 @@ function checkDocumentConvertHelpers(): void {
     pass("document helper usesClientDocumentConversion(word-to-pdf)");
   }
 
-  if (usesClientDocumentConversion("pdf-to-word")) {
-    fail("document helper usesClientDocumentConversion(pdf-to-word)", "Expected false");
+  if (!usesClientDocumentConversion("pdf-to-word")) {
+    fail("document helper usesClientDocumentConversion(pdf-to-word)", "Expected true");
   } else {
     pass("document helper usesClientDocumentConversion(pdf-to-word)");
   }
@@ -260,8 +260,14 @@ function checkToolAvailabilityCatalog(): void {
     }
   }
 
-  const stubIds = ["pdf-to-word", "video-converter"];
-  for (const id of stubIds) {
+  for (const tool of tools) {
+    if (!functional.includes(tool.id)) {
+      fail(`catalog tool ${tool.id}`, "Every tools-data entry must be marked functional");
+    }
+  }
+
+  const unknownIds = ["__not_a_tool__", "pdf-compressor"];
+  for (const id of unknownIds) {
     if (functional.includes(id)) {
       fail(`coming-soon guard ${id}`, "Should not be marked functional");
     } else {
@@ -503,7 +509,7 @@ async function run(): Promise<void> {
   await checkPage("/image-compressor", "client tool image-compressor");
   await checkPage("/merge-pdf", "client tool merge-pdf");
   await checkPage("/docx-to-pdf", "client tool word-to-pdf");
-  await checkPage("/pdf-to-docx", "coming-soon stub pdf-to-docx");
+  await checkPage("/pdf-to-docx", "client tool pdf-to-word");
   await checkPage("/blog", "blog index");
 
   // Static SEO files
