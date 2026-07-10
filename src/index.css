@@ -242,6 +242,15 @@
   html[data-platform="native"] .native-launcher-tile {
     @apply min-h-[7.5rem];
   }
+
+  /* Native tool success — app-like cards and CTAs */
+  html[data-platform="native"] .conversion-success-panel--native {
+    @apply -mx-1;
+  }
+
+  html[data-platform="native"] .conversion-success-file {
+    @apply shadow-md;
+  }
 }
 
 /* ===== Onboarding funnel (native premium flow) ===== */
@@ -399,7 +408,10 @@
   .onboarding-blob,
   .onboarding-countdown--urgent,
   .onboarding-step-enter,
-  .onboarding-reveal {
+  .onboarding-reveal,
+  .animate-success-pop,
+  .animate-success-ring,
+  .animate-success-slide-up {
     animation: none !important;
   }
 }

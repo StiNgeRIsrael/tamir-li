@@ -1,5 +1,6 @@
 import { showAdVignette } from "@/components/ads/AdVignette";
 import { shouldUseAdMob, showAdMobInterstitial } from "@/lib/ads/admob";
+import { markPostConvertAdSatisfied } from "@/lib/ads/post-convert-ad-session";
 
 const STORAGE_KEY = "tamir_native_conversions_v1";
 
@@ -112,12 +113,17 @@ export async function runNativePostConvertAdFlow(): Promise<NativeAdExperience> 
   return exp;
 }
 
-/** Post-convert ad moment — native ramp or web vignette. */
+/** Post-convert ad moment — native ramp or web vignette. Marks session so download gate is skipped. */
 export async function runPostConvertAdFlow(isPremium: boolean): Promise<NativeAdExperience | null> {
   if (isPremium) return null;
   if (shouldUseNativeAdRamp()) {
-    return runNativePostConvertAdFlow();
+    const exp = await runNativePostConvertAdFlow();
+    if (exp.showInterstitialOnConvert) {
+      markPostConvertAdSatisfied();
+    }
+    return exp;
   }
-  await showAdVignette({ minMs: 4000, slotId: "convert-success-vignette" });
+  await showAdVignette({ minMs: 3500, slotId: "convert-success-vignette" });
+  markPostConvertAdSatisfied();
   return null;
 }

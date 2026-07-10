@@ -1,6 +1,7 @@
 import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
 import { showAdVignette } from "@/components/ads/AdVignette";
 import { showAdMobRewarded, shouldUseAdMob, allowWebPopupAds } from "@/lib/ads/admob";
+import { isPostConvertAdSatisfied } from "@/lib/ads/post-convert-ad-session";
 import { shouldGateNativeDownload } from "@/lib/ads/native-ad-ramp";
 import { getHilltopPopunderUrl } from "@/lib/ads/hilltopads";
 
@@ -56,7 +57,7 @@ export async function handleGatedDownload(
     }
   };
 
-  if (isPremium || gateState[fileIndex]) {
+  if (isPremium || gateState[fileIndex] || isPostConvertAdSatisfied()) {
     doDownload();
     return { triggered: true, nextState: gateState };
   }

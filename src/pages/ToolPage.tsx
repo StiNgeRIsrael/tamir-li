@@ -4,10 +4,9 @@ import { AppLayout } from "@/components/AppLayout";
 import { FileDropZone } from "@/components/FileDropZone";
 import { AdSlot } from "@/components/AdSlot";
 import { AdNativeSlot } from "@/components/ads/AdNativeSlot";
-import { PremiumBanner, PremiumLock, DailyLimitLock, ConversionSuccessUsage, UsageLimitNotice, FreePremiumComparison, ConvertUrgencyHint } from "@/components/PremiumComponents";
+import { PremiumBanner, PremiumLock, DailyLimitLock, UsageLimitNotice, FreePremiumComparison, ConvertUrgencyHint } from "@/components/PremiumComponents";
 import { InternalToolLinks } from "@/components/InternalToolLinks";
 import { showAdVignette } from "@/components/ads/AdVignette";
-import { NativePremiumHint } from "@/components/ads/NativePremiumHint";
 import { showAdMobRewarded } from "@/lib/ads/admob";
 import {
   recordNativeConversionComplete,
@@ -16,7 +15,22 @@ import {
   shouldUseNativeAdRamp,
   type NativeAdExperience,
 } from "@/lib/ads/native-ad-ramp";
-import { handleGatedDownload, triggerFileDownload, triggerBlobDownload, type DownloadGateState } from "@/lib/ads/download-gate";
+import {
+  clearPostConvertAdSession,
+  isPostConvertAdSatisfied,
+} from "@/lib/ads/post-convert-ad-session";
+import {
+  handleGatedDownload,
+  triggerFileDownload,
+  triggerBlobDownload,
+  type DownloadGateState,
+} from "@/lib/ads/download-gate";
+import {
+  ConversionSuccessPanel,
+  ConversionSuccessPreparing,
+} from "@/components/tools/ConversionSuccessPanel";
+import { isNativeApp } from "@/lib/platform";
+import { notifyFileRejected } from "@/lib/custom-tool-freemium";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -45,7 +59,6 @@ import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
 import { useUsage } from "@/hooks/useUsage";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useConversionJob } from "@/hooks/useConversionJob";
-import { hasAdSurface, notifyFileRejected } from "@/lib/custom-tool-freemium";
 import { isToolFunctional } from "@/lib/tool-availability";
 import { convertImageFile, isOutputFormatSupported, usesClientImageConversion } from "@/lib/image-convert";
 import { usesClientDocumentConversion } from "@/lib/document-convert";
@@ -119,6 +132,7 @@ export default function ToolPage() {
   const { startJob: startConversionJob, polling: jobPolling } = useConversionJob();
   const isPremium = isSubPremium || usageIsPremium;
   const isProcessing = converting || jobPolling;
+  const nativeApp = isNativeApp();
   const [usageUnlocked, setUsageUnlocked] = useState(false);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
   const [serverUnavailable, setServerUnavailable] = useState(false);
@@ -131,21 +145,7 @@ export default function ToolPage() {
   useEffect(() => {
     if (!tool) return;
     trackEvent(ANALYTICS_EVENTS.TOOL_VIEW, { tool_id: tool.id, slug: slug ?? "" });
-
-    if (isPremium) return;
-
-    if (!hasAdSurface() || shouldUseNativeAdRamp()) return;
-
-    const key = `tamir_tool_vignette_${tool.id}`;
-    if (sessionStorage.getItem(key)) return;
-    sessionStorage.setItem(key, "1");
-
-    // Defer until after first paint so SPA navigations don't show a blank overlay.
-    const timer = window.setTimeout(() => {
-      void showAdVignette({ minMs: 3500, slotId: "tool-first-visit-vignette" });
-    }, 600);
-    return () => window.clearTimeout(timer);
-  }, [tool, slug, isPremium]);
+  }, [tool, slug]);
 
   useEffect(() => {
     if (!tool?.premium || premiumUnlocked || isSubPremium) return;
@@ -189,6 +189,14 @@ export default function ToolPage() {
 
     void runPostConvertAdFlow(false).then((exp) => {
       setNativeAdHint(exp);
+      if (isPostConvertAdSatisfied()) {
+        const openAll: DownloadGateState = {};
+        fileItems.forEach((_, i) => {
+          openAll[i] = true;
+        });
+        setDownloadGate(openAll);
+        setAllDownloadGate(true);
+      }
       revealSuccess(skipUsageRecord);
       if (shouldUseNativeAdRamp()) {
         recordNativeConversionComplete();
@@ -495,6 +503,7 @@ export default function ToolPage() {
     setServerUnavailable(false);
     setNativeAdHint(null);
     usageRecordedOnServer.current = false;
+    clearPostConvertAdSession();
   };
 
   const onDownloadFile = async (index: number) => {
@@ -515,7 +524,7 @@ export default function ToolPage() {
   };
 
   const onDownloadAll = async () => {
-    if (isPremium || allDownloadGate) {
+    if (isPremium || allDownloadGate || isPostConvertAdSatisfied()) {
       fileItems.forEach((item, index) => {
         const baseName = item.file.name.replace(/\.[^.]+$/, "");
         if (item.resultBlob) {
@@ -795,71 +804,32 @@ export default function ToolPage() {
             ) : tool.customComponent === "heb-ocr" ? (
               <HebOcrTool />
             ) : showSuccessPanel ? (
-              <div className="space-y-3 animate-fade-in">
-                <div className="flex items-center gap-3 mb-4">
-                  <CheckCircle2 className="w-6 h-6 text-success" />
-                  <h2 className="text-xl font-bold">{tt.conversionDone}</h2>
-                </div>
-                {fileItems.map((item, index) => {
-                  const Icon = getFileIcon(item.file);
-                  return (
-                    <div key={index} className="flex items-center gap-4 bg-card border border-success/30 rounded-xl px-4 py-3 animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
-                      {item.thumbnail ? (
-                        <img src={item.thumbnail} alt={item.file.name} className="w-12 h-12 rounded-lg object-cover border border-border" />
-                      ) : (
-                        <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center shrink-0">
-                          <Icon className="w-5 h-5 text-success" />
-                        </div>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{item.file.name.replace(/\.[^.]+$/, '')}.{item.outputFormat.toLowerCase()}</p>
-                        <p className="text-xs text-muted-foreground">{formatFileSize(item.file.size)} → {item.outputFormat}</p>
-                        {item.errorMessage && (
-                          <p className="text-xs text-destructive">{item.errorMessage}</p>
-                        )}
-                      </div>
-                      <CheckCircle2 className="w-5 h-5 text-success shrink-0" />
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className={`shrink-0 ${downloadGate[index] ? "text-success border-success/30 hover:bg-success/10" : "text-primary border-primary/30 hover:bg-primary/5"}`}
-                        onClick={() => onDownloadFile(index)}
-                      >
-                        <Download className="w-3.5 h-3.5 ml-1" />
-                        {tt.download}
-                      </Button>
-                    </div>
-                  );
-                })}
-                <div className="flex flex-col gap-2 pt-3 sm:flex-row sm:items-center sm:justify-between">
-                  <Button variant="outline" onClick={handleReset}>{tt.moreConversion}</Button>
-                  <div className="flex flex-col items-stretch gap-2 sm:items-end">
-                    <Button
-                      className={allDownloadGate ? "bg-success text-success-foreground hover:bg-success/90" : "bg-primary text-primary-foreground hover:bg-primary/90"}
-                      onClick={onDownloadAll}
-                    >
-                      <Download className="w-4 h-4 ml-2" />
-                      {tt.downloadAll}
-                    </Button>
-                  </div>
-                </div>
-                <ConversionSuccessUsage used={usedToday} max={maxDaily} />
-                <NativePremiumHint experience={nativeAdHint} />
-                {!isPremium && !shouldUseNativeAdRamp() && (
-                  <AdSlot type="inline" slotId="tool-download-area" className="mt-2" eager />
-                )}
-                {!shouldUseNativeAdRamp() && (
-                  <AdSlot type="inline" slotId="tool-after-success" className="mt-4" eager />
-                )}
-              </div>
-            ) : converted ? (
-              <div className="space-y-4 py-8 text-center">
-                <Loader2 className="mx-auto h-6 w-6 animate-spin text-primary" />
-                <p className="text-sm text-muted-foreground">{tt.preparingDownload ?? tt.convertingWait}</p>
-                {!isPremium && !shouldUseNativeAdRamp() && (
-                  <AdSlot type="inline" slotId="tool-preparing-inline" className="mx-auto max-w-lg" eager />
-                )}
-              </div>
+              <ConversionSuccessPanel
+                fileItems={fileItems}
+                copy={{
+                  conversionDone: tt.conversionDone,
+                  download: tt.download,
+                  downloadAll: tt.downloadAll,
+                  moreConversion: tt.moreConversion,
+                }}
+                isPremium={isPremium}
+                isNativeApp={nativeApp}
+                usedToday={usedToday}
+                maxDaily={maxDaily}
+                nativeAdHint={nativeAdHint}
+                allDownloadGate={allDownloadGate}
+                downloadGate={downloadGate}
+                onDownloadFile={(index) => void onDownloadFile(index)}
+                onDownloadAll={() => void onDownloadAll()}
+                onReset={handleReset}
+                getFileIcon={getFileIcon}
+                formatFileSize={formatFileSize}
+              />
+            ) : converted && !showSuccessPanel && !isPremium ? (
+              <ConversionSuccessPreparing
+                message={tt.preparingDownload ?? tt.convertingWait}
+                isNativeApp={nativeApp}
+              />
             ) : (
               <div className="space-y-5">
                 {!isPremium && <UsageLimitNotice used={usedToday} max={maxDaily} />}

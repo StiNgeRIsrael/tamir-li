@@ -7,6 +7,7 @@ import {
   runPostConvertAdFlow,
   shouldUseNativeAdRamp,
 } from "@/lib/ads/native-ad-ramp";
+import { isPostConvertAdSatisfied } from "@/lib/ads/post-convert-ad-session";
 import { toast } from "sonner";
 import { maxFileSizeMb, type FileRejectReason } from "@/lib/freemium-limits";
 
@@ -94,7 +95,7 @@ export async function onCustomToolSuccess(
     reveal();
     return;
   }
-  await showAdVignette({ minMs: 4000, slotId: "custom-tool-success-vignette" });
+  await runPostConvertAdFlow(false);
   reveal();
 }
 
@@ -105,7 +106,7 @@ export async function runGatedDownload(
   downloadFn: () => void,
   options?: { toolId?: string; fileIndex?: number }
 ): Promise<{ triggered: boolean; gateOpen: boolean }> {
-  if (isPremium || gateOpen) {
+  if (isPremium || gateOpen || isPostConvertAdSatisfied()) {
     downloadFn();
     if (options?.toolId) {
       trackEvent(ANALYTICS_EVENTS.FILE_DOWNLOAD, {
