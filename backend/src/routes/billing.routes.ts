@@ -30,6 +30,7 @@ import {
   subscriptionIdToPlan,
   verifyGooglePlayProduct,
   verifyGooglePlaySubscription,
+  verifyRtdnToken,
 } from '../lib/google-play';
 import {
   capturePayPalOrder,
@@ -664,6 +665,16 @@ router.post('/google/verify', requireAuth, async (req: Request, res: Response) =
 router.post('/google/rtdn', async (req: Request, res: Response) => {
   if (!isGooglePlayConfigured()) {
     res.status(503).json({ error: 'GOOGLE_PLAY_UNAVAILABLE' });
+    return;
+  }
+
+  const providedToken =
+    (typeof req.query.token === 'string' ? req.query.token : undefined) ??
+    (typeof req.headers['x-rtdn-secret'] === 'string'
+      ? (req.headers['x-rtdn-secret'] as string)
+      : undefined);
+  if (!verifyRtdnToken(providedToken)) {
+    res.status(403).json({ error: 'FORBIDDEN', message: 'Invalid RTDN token' });
     return;
   }
 

@@ -51,7 +51,7 @@ After upload, open **App bundle explorer** → confirm **Memory page size: Suppo
 4. **Setup** → **API access** → link Google Cloud project → create **service account**
 5. Download JSON → store as `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` on API server (Plesk)
 6. Invite the service account email in Play Console → **Users and permissions** (view app + monetization; testing tracks if uploading)
-7. Enable **Real-time developer notifications** (Pub/Sub) → point to `https://tamir.li/api/billing/google/rtdn`
+7. Enable **Real-time developer notifications** (Pub/Sub) → point to `https://tamir.li/api/billing/google/rtdn?token=<secret>` and set the same value as `GOOGLE_PLAY_RTDN_SECRET` on the API server. This webhook is public (no user JWT); the token stops third parties from spoofing purchase notifications. Leaving `GOOGLE_PLAY_RTDN_SECRET` unset disables the check (not recommended in production).
 8. **Cursor MCP (optional):** wire the same service account for agents — [play-console-mcp-setup.md](./play-console-mcp-setup.md)
 
 ## Build & upload AAB

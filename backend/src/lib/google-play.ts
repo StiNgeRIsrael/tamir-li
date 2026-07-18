@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { createHash, timingSafeEqual } from 'crypto';
 import { JWT } from 'google-auth-library';
 
 const ANDROID_PUBLISHER_SCOPE = 'https://www.googleapis.com/auth/androidpublisher';
@@ -83,12 +84,41 @@ export function isGooglePlayConfigured(): boolean {
   return getServiceAccountClient() !== null;
 }
 
+function getRtdnSecret(): string | null {
+  return process.env.GOOGLE_PLAY_RTDN_SECRET?.trim() || null;
+}
+
+/** Whether a shared secret is configured to authenticate the RTDN (Pub/Sub push) webhook. */
+export function isRtdnAuthConfigured(): boolean {
+  return getRtdnSecret() !== null;
+}
+
+/**
+ * Authorize an incoming Real-time Developer Notification (Pub/Sub push) request.
+ *
+ * Google Pub/Sub push subscriptions can carry a shared secret via a query param
+ * (`?token=…`) or a custom header on the push endpoint URL. The `/api/billing/google/rtdn`
+ * route is public (no user JWT), so without this check anyone could POST a crafted body.
+ *
+ * When `GOOGLE_PLAY_RTDN_SECRET` is unset the check is skipped for backward compatibility,
+ * but a secret is strongly recommended in production. Comparison is constant-time.
+ */
+export function verifyRtdnToken(provided: string | null | undefined): boolean {
+  const expected = getRtdnSecret();
+  if (!expected) return true;
+  if (!provided) return false;
+  const providedHash = createHash('sha256').update(provided).digest();
+  const expectedHash = createHash('sha256').update(expected).digest();
+  return timingSafeEqual(providedHash, expectedHash);
+}
+
 /** Safe /health probe — never exposes the service account JSON. */
 export function getGooglePlayBillingReadiness(): {
   configured: boolean;
   packageName: string;
   products: { monthly: boolean; yearly: boolean };
   serviceAccountEmailPrefix: string | null;
+  rtdnAuthConfigured: boolean;
 } {
   const creds = loadServiceAccountJson();
   const email = creds?.client_email;
@@ -100,6 +130,7 @@ export function getGooglePlayBillingReadiness(): {
       yearly: !!(process.env.GOOGLE_PLAY_PRODUCT_YEARLY?.trim() || 'tamir_premium_yearly'),
     },
     serviceAccountEmailPrefix: email ? email.split('@')[0] || null : null,
+    rtdnAuthConfigured: isRtdnAuthConfigured(),
   };
 }
 
