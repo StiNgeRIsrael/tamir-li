@@ -31,9 +31,12 @@ Repo → **Settings → Secrets and variables → Actions** → New repository s
 
 | Name | Value |
 |------|--------|
-| `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` | Full service account JSON (one line or pretty — both OK) |
+| `GOOGLE_APPLICATION_CREDENTIALS` | **Full service account JSON** (preferred — what you already set) |
+| *or* `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` | Same JSON (either name works) |
 
-Optional (defaults exist in code):
+⚠️ The secret value must be the **JSON contents** (`{"type":"service_account",...}`), **not** a local file path. Paths only work on a machine that has the file.
+
+Optional:
 
 | Name | Value |
 |------|--------|
@@ -52,7 +55,7 @@ This run had `environment: null` — no persistent credentials.
 
 1. Cursor → **Cloud / Environments** → create (or edit) an environment for `StiNgeRIsrael/tamir-li`
 2. Add secrets / env:
-   - `GOOGLE_APPLICATION_CREDENTIALS` — path **or** prefer `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` = full JSON
+   - `GOOGLE_APPLICATION_CREDENTIALS` = full SA JSON (or a path that exists in the Cloud VM image)
    - (optional) install `uv` in setup so `uvx play-store-mcp` works
 3. Attach that environment to future agent runs
 

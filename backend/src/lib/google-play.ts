@@ -43,30 +43,46 @@ function getPackageName(): string {
   return process.env.GOOGLE_PLAY_PACKAGE_NAME?.trim() || 'com.tamir.li';
 }
 
-function loadServiceAccountJson(): { client_email?: string; private_key?: string } | null {
-  const raw = process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON?.trim();
-  if (raw) {
-    try {
-      return JSON.parse(raw) as { client_email?: string; private_key?: string };
-    } catch {
-      return null;
-    }
-  }
-
-  const filePath =
-    process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_FILE?.trim() ||
-    // Deploy sync writes here (see .github/workflows/deploy-plesk.yml)
-    `${process.cwd()}/backend/.google-play-sa.json`;
-
+function parseServiceAccountObject(
+  raw: string
+): { client_email?: string; private_key?: string } | null {
   try {
-    if (!fs.existsSync(filePath)) return null;
-    return JSON.parse(fs.readFileSync(filePath, 'utf8')) as {
-      client_email?: string;
-      private_key?: string;
-    };
+    return JSON.parse(raw) as { client_email?: string; private_key?: string };
   } catch {
     return null;
   }
+}
+
+function loadServiceAccountJson(): { client_email?: string; private_key?: string } | null {
+  // 1) Inline JSON (Play-specific or standard GCP name used as secret value)
+  for (const key of ['GOOGLE_PLAY_SERVICE_ACCOUNT_JSON', 'GOOGLE_APPLICATION_CREDENTIALS'] as const) {
+    const raw = process.env[key]?.trim();
+    if (!raw) continue;
+    if (raw.startsWith('{')) {
+      const parsed = parseServiceAccountObject(raw);
+      if (parsed?.client_email && parsed.private_key) return parsed;
+    }
+  }
+
+  // 2) File path — GOOGLE_APPLICATION_CREDENTIALS (GCP convention), deploy sync file, or explicit file env
+  const fileCandidates = [
+    process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_FILE?.trim(),
+    process.env.GOOGLE_APPLICATION_CREDENTIALS?.trim(),
+    // Deploy sync writes here (see .github/workflows/deploy-plesk.yml)
+    `${process.cwd()}/backend/.google-play-sa.json`,
+  ].filter((p): p is string => !!p && !p.startsWith('{'));
+
+  for (const filePath of fileCandidates) {
+    try {
+      if (!fs.existsSync(filePath)) continue;
+      const parsed = parseServiceAccountObject(fs.readFileSync(filePath, 'utf8'));
+      if (parsed?.client_email && parsed.private_key) return parsed;
+    } catch {
+      /* try next */
+    }
+  }
+
+  return null;
 }
 
 function getServiceAccountClient(): JWT | null {

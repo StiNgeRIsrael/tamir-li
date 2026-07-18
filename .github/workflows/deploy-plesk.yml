@@ -130,27 +130,41 @@ jobs:
           rsyncArgs: "-avz --omit-dir-times"
           sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"
 
-      # Sync Google Play SA into backend/.env when the Actions secret is set (agents cannot set secrets).
-      # App loads backend/.env via dotenv — enables POST /api/billing/google/verify without Plesk UI paste.
+      # Sync Google Play SA into backend/.google-play-sa.json when a secret is set.
+      # Accepts GOOGLE_PLAY_SERVICE_ACCOUNT_JSON or GOOGLE_APPLICATION_CREDENTIALS (JSON content).
       - name: Sync Google Play env on Plesk
         if: success()
         uses: appleboy/ssh-action@v1.2.0
         env:
           GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
-          GOOGLE_PLAY_PACKAGE_NAME: ${{ secrets.GOOGLE_PLAY_PACKAGE_NAME || 'com.tamir.li' }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          GOOGLE_PLAY_PACKAGE_NAME: ${{ secrets.GOOGLE_PLAY_PACKAGE_NAME }}
         with:
           host: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}
           username: ${{ secrets.PLESK_SSH_USER || secrets.PLESK_FTP_USER }}
           password: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
           port: ${{ vars.PLESK_SSH_PORT || 22 }}
           command_timeout: 5m
-          envs: GOOGLE_PLAY_SERVICE_ACCOUNT_JSON,GOOGLE_PLAY_PACKAGE_NAME
+          envs: GOOGLE_PLAY_SERVICE_ACCOUNT_JSON,GOOGLE_APPLICATION_CREDENTIALS,GOOGLE_PLAY_PACKAGE_NAME
           script: |
             set -e
-            if [ -z "${GOOGLE_PLAY_SERVICE_ACCOUNT_JSON:-}" ]; then
-              echo "Skip Play sync — Actions secret GOOGLE_PLAY_SERVICE_ACCOUNT_JSON not set (see docs/agent-autonomy.md)"
+            PLAY_JSON="${GOOGLE_PLAY_SERVICE_ACCOUNT_JSON:-}"
+            if [ -z "$PLAY_JSON" ]; then
+              PLAY_JSON="${GOOGLE_APPLICATION_CREDENTIALS:-}"
+            fi
+            if [ -z "$PLAY_JSON" ]; then
+              echo "Skip Play sync — set Actions secret GOOGLE_APPLICATION_CREDENTIALS or GOOGLE_PLAY_SERVICE_ACCOUNT_JSON (JSON content, not a file path)"
               exit 0
             fi
+            # Must be service-account JSON, not a local path string.
+            case "$PLAY_JSON" in
+              '{'*) ;;
+              *)
+                echo "::error:: Play secret looks like a path, not JSON. Paste the full service-account JSON into the secret value."
+                exit 1
+                ;;
+            esac
+            PACKAGE_NAME="${GOOGLE_PLAY_PACKAGE_NAME:-com.tamir.li}"
             APP_DIR="${{ vars.PLESK_NODE_APP_DIR || 'httpdocs/deploy' }}"
             APP_DIR="${APP_DIR%/}"
             cd "$APP_DIR" || { echo "Cannot cd to $APP_DIR"; exit 1; }
@@ -160,17 +174,16 @@ jobs:
             mkdir -p "$APP_DIR/backend"
             touch "$ENV_FILE"
             chmod 600 "$ENV_FILE"
-            # Write SA JSON as a file (avoids dotenv escaping issues with private keys).
-            printf '%s' "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" > "$SA_FILE"
+            printf '%s' "$PLAY_JSON" > "$SA_FILE"
             chmod 600 "$SA_FILE"
-            # Upsert package name + file pointer in backend/.env (preserves DATABASE_URL etc.).
-            grep -vE '^(GOOGLE_PLAY_SERVICE_ACCOUNT_JSON|GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_FILE|GOOGLE_PLAY_PACKAGE_NAME)=' "$ENV_FILE" > "$ENV_FILE.tmp" || true
+            grep -vE '^(GOOGLE_PLAY_SERVICE_ACCOUNT_JSON|GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_FILE|GOOGLE_PLAY_PACKAGE_NAME|GOOGLE_APPLICATION_CREDENTIALS)=' "$ENV_FILE" > "$ENV_FILE.tmp" || true
             mv "$ENV_FILE.tmp" "$ENV_FILE"
-            printf 'GOOGLE_PLAY_PACKAGE_NAME=%s\n' "$GOOGLE_PLAY_PACKAGE_NAME" >> "$ENV_FILE"
+            printf 'GOOGLE_PLAY_PACKAGE_NAME=%s\n' "$PACKAGE_NAME" >> "$ENV_FILE"
             printf 'GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_FILE=%s\n' "$SA_FILE" >> "$ENV_FILE"
+            printf 'GOOGLE_APPLICATION_CREDENTIALS=%s\n' "$SA_FILE" >> "$ENV_FILE"
             echo "Synced Google Play SA file + env pointers (values redacted)"
             ls -la "$SA_FILE"
-            grep -E '^GOOGLE_PLAY_' "$ENV_FILE" | sed 's/=.*/=***/'
+            grep -E '^(GOOGLE_PLAY_|GOOGLE_APPLICATION_CREDENTIALS)' "$ENV_FILE" | sed 's/=.*/=***/'
 
       # Runs only after SFTP succeeds. No npm install unless workflow_dispatch run_server_setup=true.
       # Migrations: never via GitHub DATABASE_URL (often wrong / out of sync with Plesk custom env).

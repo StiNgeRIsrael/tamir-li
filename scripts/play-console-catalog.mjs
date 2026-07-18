@@ -45,18 +45,25 @@ const CATALOG = [
 ];
 
 function loadCredentials() {
-  const inline = process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON?.trim();
-  if (inline) return JSON.parse(inline);
-
-  const path =
-    process.env.GOOGLE_APPLICATION_CREDENTIALS?.trim() ||
-    join(homedir(), ".config/tamir-li/play-console-sa.json");
-  if (!existsSync(path)) {
-    throw new Error(
-      `No Play credentials. Set GOOGLE_APPLICATION_CREDENTIALS or GOOGLE_PLAY_SERVICE_ACCOUNT_JSON (tried ${path}).`
-    );
+  for (const key of ["GOOGLE_PLAY_SERVICE_ACCOUNT_JSON", "GOOGLE_APPLICATION_CREDENTIALS"]) {
+    const raw = process.env[key]?.trim();
+    if (!raw) continue;
+    if (raw.startsWith("{")) return JSON.parse(raw);
   }
-  return JSON.parse(readFileSync(path, "utf8"));
+
+  const pathCandidates = [
+    process.env.GOOGLE_APPLICATION_CREDENTIALS?.trim(),
+    process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_FILE?.trim(),
+    join(homedir(), ".config/tamir-li/play-console-sa.json"),
+  ].filter((p) => p && !p.startsWith("{"));
+
+  for (const path of pathCandidates) {
+    if (existsSync(path)) return JSON.parse(readFileSync(path, "utf8"));
+  }
+
+  throw new Error(
+    "No Play credentials. Set GOOGLE_APPLICATION_CREDENTIALS or GOOGLE_PLAY_SERVICE_ACCOUNT_JSON to the SA JSON (or a file path)."
+  );
 }
 
 async function getAccessToken(creds) {
