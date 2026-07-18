@@ -232,6 +232,7 @@ Details: [docs/android-play-console-setup.md](docs/android-play-console-setup.md
 | Ad placement | `AdSlot.tsx`, `DesktopAdRail.tsx`, `AppLayout.tsx` |
 | Deploy | [docs/plesk-node-deploy.md](docs/plesk-node-deploy.md) · [docs/deploy-checklist.md](docs/deploy-checklist.md) |
 | Android / Play / IAP | [docs/android-play-console-setup.md](docs/android-play-console-setup.md) — subscriptions, service account, AAB |
+| Play Console MCP | [docs/play-console-mcp-setup.md](docs/play-console-mcp-setup.md) — Cursor agents ↔ Android Publisher API |
 | Android ads (future) | [docs/admob-setup.md](docs/admob-setup.md) — only after AdMob account exists |
 | Local dev | [docs/local-dev.md](docs/local-dev.md) |
 | PayPal / Stripe (web) | [docs/paypal-setup.md](docs/paypal-setup.md), [docs/stripe-setup.md](docs/stripe-setup.md) |
