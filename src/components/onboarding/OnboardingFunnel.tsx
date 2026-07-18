@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Check, Loader2, Sparkles, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { GoogleLoginButton } from "@/components/GoogleLoginButton";
 import { OnboardingShell } from "@/components/onboarding/OnboardingShell";
 import { OnboardingProfileCard } from "@/components/onboarding/OnboardingProfileCard";
@@ -22,6 +23,7 @@ import {
   type QuizAnswers,
 } from "@/lib/onboarding";
 import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
+import { quizCategoryToToolCategory } from "@/lib/profile-category";
 import {
   trackBeginCheckout,
   trackCheckoutError,
@@ -55,12 +57,13 @@ function getCopy(t: { onboarding?: OnboardingCopy }): OnboardingCopy {
 export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props) {
   const { t } = useLocale();
   const copy = getCopy(t);
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, updateProfile } = useAuth();
   const { checkout, checkoutLoading, isPremium, nativeBilling } = useSubscription();
 
   const [step, setStep] = useState<OnboardingStepId>("hook");
   const [answers, setAnswers] = useState<Partial<QuizAnswers>>({});
   const [plan, setPlan] = useState<"yearly" | "monthly">("yearly");
+  const [displayName, setDisplayName] = useState("");
   const [offerDecision, setOfferDecision] = useState<OfferDecision | null>(null);
   const [analyzeIndex, setAnalyzeIndex] = useState(0);
   const submittedRef = useRef(false);
@@ -83,6 +86,7 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
     setStep("hook");
     setAnswers({});
     setPlan("yearly");
+    setDisplayName("");
     setOfferDecision(null);
     setAnalyzeIndex(0);
     submittedRef.current = false;
@@ -113,6 +117,23 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
     }
   }, [isPremium, open, onOpenChange, offerGeneration]);
 
+  const syncProfile = useCallback(async () => {
+    const preferredCategory = quizCategoryToToolCategory(answers.category ?? "mixed");
+    const patch: Parameters<typeof updateProfile>[0] = {
+      onboardingCompletedAt: true,
+    };
+    if (preferredCategory) patch.preferredCategory = preferredCategory;
+    const trimmedName = displayName.trim();
+    if (trimmedName) patch.displayName = trimmedName;
+    if (user) {
+      try {
+        await updateProfile(patch);
+      } catch {
+        /* profile sync is best-effort */
+      }
+    }
+  }, [answers.category, displayName, updateProfile, user]);
+
   const finalize = useCallback(async () => {
     if (submittedRef.current) return;
     submittedRef.current = true;
@@ -127,6 +148,8 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
       selectedPlan: decision === "accepted" ? plan : null,
       offerGeneration,
     });
+
+    await syncProfile();
 
     if (decision === "accepted") {
       trackUpgradeClick(plan, "onboarding_offer");
@@ -152,7 +175,19 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
       offerGeneration,
     });
     onOpenChange(false);
-  }, [answers, offerDecision, plan, offerGeneration, checkout, copy.offer.checkoutError, onOpenChange]);
+  }, [answers, offerDecision, plan, offerGeneration, checkout, copy.offer.checkoutError, onOpenChange, syncProfile]);
+
+  const skipAuth = () => {
+    void syncProfile().finally(() => {
+      markOnboardingDone(offerGeneration);
+      trackEvent(ANALYTICS_EVENTS.ONBOARDING_DISMISS, {
+        step: "auth",
+        reason: "skipped_auth",
+        offerGeneration,
+      });
+      onOpenChange(false);
+    });
+  };
 
   // Auth finale — proceed once the user is signed in
   useEffect(() => {
@@ -415,6 +450,20 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
                 ))}
               </div>
             )}
+            <div className="mx-auto w-full max-w-sm space-y-2 text-start">
+              <label htmlFor="onboarding-display-name" className="text-xs font-medium text-foreground/70">
+                {copy.auth.displayNameLabel}
+              </label>
+              <Input
+                id="onboarding-display-name"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder={copy.auth.displayNamePlaceholder}
+                className="h-11 rounded-xl border-border bg-card"
+                maxLength={80}
+                autoComplete="nickname"
+              />
+            </div>
             {user ? (
               <div className="flex items-center justify-center gap-2 text-sm text-foreground/70">
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -423,6 +472,13 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
             ) : (
               <GoogleLoginButton fullWidth />
             )}
+            <button
+              type="button"
+              onClick={skipAuth}
+              className="mx-auto block cursor-pointer text-xs font-medium text-foreground/60 underline-offset-4 transition-colors hover:text-foreground hover:underline"
+            >
+              {copy.auth.skip}
+            </button>
             <p className="text-xs text-foreground/60">{copy.auth.note}</p>
           </div>
         );

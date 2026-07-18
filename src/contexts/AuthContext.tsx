@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { getApiBaseUrl, probeApiReachable, responseLooksLikeJson } from "@/lib/api/client";
+import { patchAuthProfile, type ProfilePatch } from "@/lib/profile-api";
 import { ANALYTICS_EVENTS, setAnalyticsUserId, trackEvent } from "@/lib/analytics/events";
 
 const STORAGE_KEY = "tamir_auth_token";
@@ -18,6 +19,8 @@ export type AuthUser = {
   displayName: string | null;
   avatarUrl: string | null;
   locale: string;
+  preferredCategory?: string | null;
+  onboardingCompletedAt?: string | null;
   roles: string[];
   blocked?: boolean;
 };
@@ -30,6 +33,7 @@ type AuthContextValue = {
   dbAvailable: boolean | null;
   googleConfigured: boolean;
   signInWithGoogleCredential: (credential: string) => Promise<void>;
+  updateProfile: (patch: import("@/lib/profile-api").ProfilePatch) => Promise<AuthUser>;
   signOut: () => void;
 };
 
@@ -162,6 +166,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [apiBase, persistToken]
   );
 
+  const updateProfile = useCallback(
+    async (patch: ProfilePatch) => {
+      if (!token) throw new Error("NOT_AUTHENTICATED");
+      const updated = await patchAuthProfile(token, patch);
+      setUser(updated);
+      return updated;
+    },
+    [token]
+  );
+
   const signOut = useCallback(() => {
     trackEvent(ANALYTICS_EVENTS.SIGN_OUT, { method: "google" });
     setAnalyticsUserId(null);
@@ -179,9 +193,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         dbAvailable,
         googleConfigured,
         signInWithGoogleCredential,
+        updateProfile,
         signOut,
       }) satisfies AuthContextValue,
-    [user, token, loading, apiAvailable, dbAvailable, googleConfigured, signInWithGoogleCredential, signOut]
+    [user, token, loading, apiAvailable, dbAvailable, googleConfigured, signInWithGoogleCredential, updateProfile, signOut]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

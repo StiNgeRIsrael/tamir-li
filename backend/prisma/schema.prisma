@@ -32,13 +32,16 @@ model User {
 }
 
 model Profile {
-  id          String   @id
-  user        User     @relation(fields: [id], references: [id], onDelete: Cascade)
-  displayName String?
-  avatarUrl   String?
-  locale      String   @default("he")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                    String    @id
+  user                  User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  displayName           String?
+  avatarUrl             String?
+  locale                String    @default("he")
+  /** Preferred tool category from native onboarding (image, video, audio, document, ai). */
+  preferredCategory     String?   @db.VarChar(32)
+  onboardingCompletedAt DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 }
 
 enum RoleType {

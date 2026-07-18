@@ -17,6 +17,8 @@ export const heTranslations = {
     signInDbUnavailable: "ההתחברות אינה זמינה כרגע (מסד הנתונים לא מחובר). נסו שוב מאוחר יותר.",
     signInMisconfigured: "ההתחברות לא מוגדרת בשרת. צרו קשר עם התמיכה.",
     signInRequired: "יש להתחבר כדי להמשיך",
+    signInLoading: "טוען התחברות…",
+    signInRetry: "נסו שוב",
   },
 
   siteBanner: {
@@ -1443,6 +1445,9 @@ export const heTranslations = {
       title: "שמרו את ההגדרות שלכם",
       subtitle: "התחברו עם Google כדי לשמור את הפרופיל ולהמשיך.",
       subtitleAccepted: "התחברו עם Google כדי להפעיל את מחיר ההשקה ולהמשיך.",
+      displayNameLabel: "איך לקרוא לכם?",
+      displayNamePlaceholder: "השם שלכם (אופציונלי)",
+      skip: "דלגו — המשיכו בלי התחברות",
       note: "התחברות חינמית. אפשר לבטל מנוי בכל עת.",
     },
     offer: {
@@ -1477,12 +1482,21 @@ export const heTranslations = {
   },
 
   nativeHome: {
+    greeting: (name: string) => `שלום, ${name}`,
+    greetingAnonymous: "שלום!",
+    subtitle: "בחרו כלי והתחילו להמיר",
     usageTitle: "המרות חינם היום",
     usageRemaining: (n: number) => (n === 0 ? "נגמרו ההמרות להיום — שדרגו לפרימיום" : `נשארו ${n} המרות חינם היום`),
     upgradeTitle: "פרימיום — בלי מגבלות",
     upgradeSubtitle: "המרות ללא הגבלה, בלי פרסומות, קבצים גדולים יותר",
     upgradeCta: "לשדרג",
     premiumActive: "פרימיום פעיל — המרות ללא הגבלה",
+  },
+
+  nativeDailyLimit: {
+    desc: "ניצלתם את 5 ההמרות החינמיות להיום. צפו בפרסומת לקבלת המרה נוספת, או שדרגו לפרימיום.",
+    resetsIn: "המכסה מתאפסת בעוד",
+    adHint: "פרסומת מתגמלת — המרה אחת נוספת להיום",
   },
 
   contactPage: {

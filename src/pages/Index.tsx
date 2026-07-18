@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 
 import { getFunctionalToolIds } from "@/lib/tool-availability";
 import { ToolIconGrid } from "@/components/ToolIconGrid";
+import { NativeHomeView } from "@/components/NativeHomeView";
 import { NativeHomeMonetization } from "@/components/NativeHomeMonetization";
 import { isNativeApp } from "@/lib/platform";
 
@@ -260,6 +261,20 @@ const Index = () => {
       }),
     [locale, t],
   );
+
+  if (nativeApp) {
+    return (
+      <AppLayout>
+        <SEOHead
+          title={t.seo?.homeTitle ?? ""}
+          description={t.seo?.homeDesc ?? ""}
+          siteName={t.brandName}
+          jsonLd={homeJsonLd}
+        />
+        <NativeHomeView />
+      </AppLayout>
+    );
+  }
 
   return (
 

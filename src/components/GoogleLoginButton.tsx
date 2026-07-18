@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import { Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { getGoogleClientId, loadGoogleGsiScript } from "@/lib/google-gsi";
+import { isNativeApp } from "@/lib/platform";
 import { cn } from "@/lib/utils";
 
 function GoogleIcon({ className }: { className?: string }) {
@@ -33,7 +35,7 @@ type GoogleLoginButtonProps = {
   compact?: boolean;
   fullWidth?: boolean;
   className?: string;
-  /** Use Google's native rendered button (compact navbar). Default: app-styled custom button. */
+  /** Use Google's native rendered button. Default: true in Capacitor WebView. */
   native?: boolean;
 };
 
@@ -41,7 +43,7 @@ export function GoogleLoginButton({
   compact,
   fullWidth,
   className,
-  native = false,
+  native,
 }: GoogleLoginButtonProps) {
   const { apiAvailable, googleConfigured, signInWithGoogleCredential } = useAuth();
   const { t, locale } = useLocale();
@@ -51,20 +53,27 @@ export function GoogleLoginButton({
         signInFailed?: string;
         signInDbUnavailable?: string;
         signInMisconfigured?: string;
+        signInLoading?: string;
+        signInRetry?: string;
       }
     | undefined;
 
   const hostRef = useRef<HTMLDivElement>(null);
   const hiddenGsiRef = useRef<HTMLDivElement>(null);
   const [gsiReady, setGsiReady] = useState(false);
+  const [gsiFailed, setGsiFailed] = useState(false);
+  const [mountKey, setMountKey] = useState(0);
 
   const clientId = getGoogleClientId();
   const label = auth?.signInWithGoogle ?? "Login with Google";
+  const useNativeButton = native ?? isNativeApp();
 
   useEffect(() => {
     if (!apiAvailable || !googleConfigured || !clientId) return;
 
     let cancelled = false;
+    setGsiFailed(false);
+    setGsiReady(false);
 
     const mount = () => {
       if (cancelled || !window.google?.accounts?.id) return;
@@ -96,7 +105,7 @@ export function GoogleLoginButton({
         locale: locale === "he" ? "he" : "en",
       });
 
-      if (native) {
+      if (useNativeButton) {
         const host = hostRef.current;
         if (!host) return;
         host.innerHTML = "";
@@ -107,6 +116,7 @@ export function GoogleLoginButton({
           text: "signin_with",
           shape: compact ? "circle" : "pill",
           logo_alignment: "left",
+          width: fullWidth ? 320 : undefined,
         });
       } else {
         const hidden = hiddenGsiRef.current;
@@ -124,9 +134,14 @@ export function GoogleLoginButton({
       if (!cancelled) setGsiReady(true);
     };
 
-    loadGoogleGsiScript().then(mount).catch(() => {
-      if (!cancelled) setGsiReady(false);
-    });
+    loadGoogleGsiScript()
+      .then(mount)
+      .catch(() => {
+        if (!cancelled) {
+          setGsiReady(false);
+          setGsiFailed(true);
+        }
+      });
 
     return () => {
       cancelled = true;
@@ -138,7 +153,9 @@ export function GoogleLoginButton({
     signInWithGoogleCredential,
     locale,
     compact,
-    native,
+    useNativeButton,
+    fullWidth,
+    mountKey,
     auth?.signInFailed,
     auth?.signInDbUnavailable,
     auth?.signInMisconfigured,
@@ -146,12 +163,36 @@ export function GoogleLoginButton({
 
   if (!apiAvailable || !googleConfigured) return null;
 
-  if (native) {
+  if (useNativeButton) {
     return (
-      <div
-        className={cn("flex shrink-0 items-center justify-end", className)}
-        ref={hostRef}
-      />
+      <div className={cn("flex flex-col items-center gap-3", fullWidth && "w-full", className)}>
+        <div
+          className={cn(
+            "flex min-h-[44px] shrink-0 items-center justify-center",
+            fullWidth && "w-full [&>div]:w-full [&_iframe]:w-full"
+          )}
+          ref={hostRef}
+          aria-busy={!gsiReady && !gsiFailed}
+        />
+        {!gsiReady && !gsiFailed && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+            {auth?.signInLoading ?? "Loading sign-in…"}
+          </div>
+        )}
+        {gsiFailed && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => setMountKey((k) => k + 1)}
+          >
+            <RefreshCw className="h-4 w-4" aria-hidden />
+            {auth?.signInRetry ?? "Retry sign-in"}
+          </Button>
+        )}
+      </div>
     );
   }
 
@@ -181,6 +222,23 @@ export function GoogleLoginButton({
         )}
         aria-label={label}
       />
+      {!gsiReady && !gsiFailed && (
+        <div className="absolute inset-0 z-0 flex items-center justify-center rounded-full bg-card/80">
+          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" aria-hidden />
+        </div>
+      )}
+      {gsiFailed && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="absolute inset-0 z-20 gap-2"
+          onClick={() => setMountKey((k) => k + 1)}
+        >
+          <RefreshCw className="h-4 w-4" aria-hidden />
+          {auth?.signInRetry ?? "Retry"}
+        </Button>
+      )}
     </div>
   );
 }

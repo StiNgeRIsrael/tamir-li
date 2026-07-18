@@ -37,6 +37,123 @@ const userWithRelations = Prisma.validator<Prisma.UserDefaultArgs>()({
 
 type UserWithRelations = Prisma.UserGetPayload<typeof userWithRelations>;
 
+function serializeUser(user: UserWithRelations) {
+  return {
+    id: user.id,
+    email: user.email,
+    displayName: user.profile?.displayName ?? null,
+    avatarUrl: user.profile?.avatarUrl ?? null,
+    locale: user.profile?.locale ?? 'he',
+    preferredCategory: user.profile?.preferredCategory ?? null,
+    onboardingCompletedAt: user.profile?.onboardingCompletedAt?.toISOString() ?? null,
+    roles: user.roles.map((r) => r.role),
+    blocked: user.blocked,
+  };
+}
+
+const PROFILE_PATCH_FIELDS = ['displayName', 'locale', 'preferredCategory', 'onboardingCompletedAt'] as const;
+
+router.patch('/profile', requireAuth, async (req: Request, res: Response) => {
+  try {
+    const body = req.body as Record<string, unknown>;
+    const data: Prisma.ProfileUpdateInput = {};
+
+    if ('displayName' in body) {
+      const name = body.displayName;
+      if (name !== null && typeof name !== 'string') {
+        res.status(400).json({ error: 'INVALID_BODY', message: 'displayName must be a string or null' });
+        return;
+      }
+      const trimmed = typeof name === 'string' ? name.trim().slice(0, 80) : null;
+      data.displayName = trimmed || null;
+    }
+
+    if ('locale' in body) {
+      const loc = body.locale;
+      if (typeof loc !== 'string' || !loc.trim()) {
+        res.status(400).json({ error: 'INVALID_BODY', message: 'locale must be a non-empty string' });
+        return;
+      }
+      data.locale = loc.trim().slice(0, 8);
+    }
+
+    if ('preferredCategory' in body) {
+      const cat = body.preferredCategory;
+      if (cat !== null && typeof cat !== 'string') {
+        res.status(400).json({ error: 'INVALID_BODY', message: 'preferredCategory must be a string or null' });
+        return;
+      }
+      const allowed = new Set(['image', 'video', 'audio', 'document', 'ai']);
+      if (cat !== null && !allowed.has(cat)) {
+        res.status(400).json({ error: 'INVALID_BODY', message: 'preferredCategory is invalid' });
+        return;
+      }
+      data.preferredCategory = cat;
+    }
+
+    if ('onboardingCompletedAt' in body) {
+      const raw = body.onboardingCompletedAt;
+      if (raw === null) {
+        data.onboardingCompletedAt = null;
+      } else if (typeof raw === 'string') {
+        const parsed = new Date(raw);
+        if (Number.isNaN(parsed.getTime())) {
+          res.status(400).json({ error: 'INVALID_BODY', message: 'onboardingCompletedAt must be ISO date or null' });
+          return;
+        }
+        data.onboardingCompletedAt = parsed;
+      } else if (raw === true) {
+        data.onboardingCompletedAt = new Date();
+      } else {
+        res.status(400).json({ error: 'INVALID_BODY', message: 'onboardingCompletedAt must be ISO date, true, or null' });
+        return;
+      }
+    }
+
+    const hasUpdate = Object.keys(data).length > 0;
+    if (!hasUpdate) {
+      res.status(400).json({
+        error: 'INVALID_BODY',
+        message: `At least one of ${PROFILE_PATCH_FIELDS.join(', ')} is required`,
+      });
+      return;
+    }
+
+    const userId = req.userId!;
+    const createData: Prisma.ProfileCreateWithoutUserInput = {
+      locale: typeof data.locale === 'string' ? data.locale : 'he',
+    };
+    if (typeof data.displayName === 'string' || data.displayName === null) {
+      createData.displayName = data.displayName;
+    }
+    if (typeof data.preferredCategory === 'string' || data.preferredCategory === null) {
+      createData.preferredCategory = data.preferredCategory;
+    }
+    if (data.onboardingCompletedAt instanceof Date || data.onboardingCompletedAt === null) {
+      createData.onboardingCompletedAt = data.onboardingCompletedAt;
+    }
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        profile: {
+          upsert: {
+            where: { id: userId },
+            create: createData,
+            update: data,
+          },
+        },
+      },
+      include: { profile: true, roles: true },
+    });
+
+    res.json({ user: serializeUser(user) });
+  } catch (e) {
+    console.error('[auth/profile]', e);
+    res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not update profile' });
+  }
+});
+
 router.post('/google', async (req: Request, res: Response) => {
   try {
     if (!process.env.GOOGLE_CLIENT_ID?.trim()) {
@@ -166,15 +283,7 @@ router.post('/google', async (req: Request, res: Response) => {
     res.json({
       token,
       isNewUser: !existing,
-      user: {
-        id: user.id,
-        email: user.email,
-        displayName: user.profile?.displayName ?? displayName,
-        avatarUrl: user.profile?.avatarUrl ?? avatarUrl,
-        locale: user.profile?.locale ?? 'he',
-        roles: user.roles.map((r) => r.role),
-        blocked: user.blocked,
-      },
+      user: serializeUser(user),
     });
   } catch (e) {
     console.error('[auth/google]', e);
@@ -200,17 +309,7 @@ router.get('/me', requireAuth, async (req: Request, res: Response) => {
       res.status(404).json({ error: 'NOT_FOUND', message: 'User not found' });
       return;
     }
-    res.json({
-      user: {
-        id: user.id,
-        email: user.email,
-        displayName: user.profile?.displayName,
-        avatarUrl: user.profile?.avatarUrl,
-        locale: user.profile?.locale ?? 'he',
-        roles: user.roles.map((r) => r.role),
-        blocked: user.blocked,
-      },
-    });
+    res.json({ user: serializeUser(user) });
   } catch (e) {
     console.error('[auth/me]', e);
     res.status(500).json({ error: 'SERVER_ERROR', message: 'Could not load user' });

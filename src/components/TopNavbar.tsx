@@ -13,6 +13,8 @@ import { useToolConfig } from "@/contexts/ToolConfigContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { isToolFunctional } from "@/lib/tool-availability";
 import { ToolSoonBadge } from "@/components/ToolSoonBadge";
+import { isNativeApp } from "@/lib/platform";
+import { shouldShowInstallCta } from "@/lib/install-cta";
 import { cn } from "@/lib/utils";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -79,12 +81,20 @@ export function TopNavbar() {
   const catLabels = t.categories as Record<ToolCategory, string>;
   const toolNames = t.toolNames as Record<string, string>;
   const toolDescs = t.toolDescriptions as Record<string, string>;
+  const nativeApp = isNativeApp();
+  const showInstallCta = shouldShowInstallCta();
 
   return (
     <>
-      <nav className="sticky top-0 z-50 border-b border-border bg-card">
+      <nav className={cn(
+        "sticky top-0 z-50 border-b border-border bg-card",
+        nativeApp && "native-top-navbar"
+      )}>
         <div className="mx-auto max-w-[1920px] px-4 xl:px-6">
-          <div className="flex h-12 items-center justify-between gap-4">
+          <div className={cn(
+            "flex items-center justify-between gap-4",
+            nativeApp ? "h-14 min-h-[56px]" : "h-12"
+          )}>
             <Link
               to={localePath("/", locale)}
               className="shrink-0 py-1 transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -185,6 +195,7 @@ export function TopNavbar() {
               <UserAuthSection compact />
               <LanguageSwitcher />
               <ThemeToggle className="hidden sm:inline-flex" />
+              {showInstallCta && (
               <Button
                 variant="outline"
                 size="sm"
@@ -194,10 +205,11 @@ export function TopNavbar() {
                 <Download className="w-3.5 h-3.5" />
                 {t.downloadApp}
               </Button>
+              )}
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden h-8 w-8"
+                className={cn("lg:hidden", nativeApp ? "h-11 w-11" : "h-8 w-8")}
                 onClick={() => setMenuOpen(!menuOpen)}
                 aria-label={menuOpen ? t.closeMenu : t.openMenu}
                 aria-expanded={menuOpen}
@@ -268,6 +280,7 @@ export function TopNavbar() {
               <ThemeToggle />
             </div>
 
+            {showInstallCta && (
             <Button
               className="w-full bg-primary text-primary-foreground rounded-md"
               onClick={handleInstall}
@@ -275,6 +288,7 @@ export function TopNavbar() {
               <Download className="w-4 h-4 ml-2" />
               {t.downloadApp}
             </Button>
+            )}
           </div>
         </div>
       )}

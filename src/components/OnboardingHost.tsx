@@ -20,19 +20,20 @@ function shouldSkipPath(pathname: string): boolean {
 /** First-visit premium funnel — Android/iOS app only. */
 export function OnboardingHost() {
   const { pathname } = useLocation();
-  const { loading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { isPremium, loading: billingLoading } = useSubscription();
   const { generation, ready, isDone, isLoading: genLoading } = useOnboardingGeneration();
   const [open, setOpen] = useState(false);
+  const serverOnboardingDone = !!user?.onboardingCompletedAt;
 
   useEffect(() => {
     if (!isNativeApp()) return;
     if (!ready || authLoading || billingLoading || genLoading) return;
-    if (isPremium || isDone || shouldSkipPath(pathname)) return;
+    if (isPremium || isDone || serverOnboardingDone || shouldSkipPath(pathname)) return;
 
     const timer = window.setTimeout(() => setOpen(true), 1200);
     return () => window.clearTimeout(timer);
-  }, [ready, authLoading, billingLoading, genLoading, isPremium, isDone, pathname]);
+  }, [ready, authLoading, billingLoading, genLoading, isPremium, isDone, serverOnboardingDone, pathname]);
 
   if (!open) return null;
 

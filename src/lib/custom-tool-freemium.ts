@@ -1,6 +1,7 @@
 import { ANALYTICS_EVENTS, trackEvent } from "@/lib/analytics/events";
 import { showAdVignette } from "@/components/ads/AdVignette";
 import { isAdsterraConfigured } from "@/lib/ads/adsterra";
+import { shouldUseAdMob, showAdMobRewarded } from "@/lib/ads/admob";
 import { getWebPopupAdUrl } from "@/lib/ads/download-gate";
 import {
   recordNativeConversionComplete,
@@ -11,9 +12,9 @@ import { isPostConvertAdSatisfied } from "@/lib/ads/post-convert-ad-session";
 import { toast } from "sonner";
 import { maxFileSizeMb, type FileRejectReason } from "@/lib/freemium-limits";
 
-/** True when a real ad surface exists (Hilltopads, Adsterra zones, or click-through URL). */
+/** True when a real ad surface exists (web zones, popup URL, or AdMob on Android). */
 export function hasAdSurface(): boolean {
-  return isAdsterraConfigured() || !!getWebPopupAdUrl();
+  return isAdsterraConfigured() || !!getWebPopupAdUrl() || shouldUseAdMob();
 }
 
 /**
@@ -22,6 +23,11 @@ export function hasAdSurface(): boolean {
  */
 export async function requireAdViewForUnlock(slotId: string): Promise<boolean> {
   if (!hasAdSurface()) return false;
+
+  if (shouldUseAdMob()) {
+    trackEvent(ANALYTICS_EVENTS.AD_CLICK_DOWNLOAD, { method: "rewarded", source: slotId });
+    return showAdMobRewarded();
+  }
 
   const adUrl = getWebPopupAdUrl();
   const method = isAdsterraConfigured() ? "vignette" : adUrl ? "popup" : "vignette";

@@ -243,6 +243,19 @@
     @apply min-h-[7.5rem];
   }
 
+  html[data-platform="native"] .native-top-navbar {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  html[data-platform="native"] .native-top-navbar button,
+  html[data-platform="native"] .native-top-navbar a {
+    min-height: 44px;
+  }
+
+  html[data-platform="native"] body {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--admob-banner-height, 0px));
+  }
+
   /* Native tool success — app-like cards and CTAs */
   html[data-platform="native"] .conversion-success-panel--native {
     @apply -mx-1;

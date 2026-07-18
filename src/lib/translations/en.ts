@@ -16,6 +16,8 @@ export const enTranslations = {
     signInDbUnavailable: "Sign-in is temporarily unavailable (database offline). Try again later.",
     signInMisconfigured: "Sign-in is misconfigured on the server. Contact support.",
     signInRequired: "Sign in to continue",
+    signInLoading: "Loading sign-in…",
+    signInRetry: "Retry sign-in",
   },
   siteBanner: {
     dbUnavailable: "Sign-in and server-side conversions are temporarily unavailable.",
@@ -1422,6 +1424,9 @@ export const enTranslations = {
       title: "Save your settings",
       subtitle: "Sign in with Google to save your profile and continue.",
       subtitleAccepted: "Sign in with Google to activate your launch price and continue.",
+      displayNameLabel: "What should we call you?",
+      displayNamePlaceholder: "Your name (optional)",
+      skip: "Skip — continue without signing in",
       note: "Free to sign in. Cancel anytime.",
     },
     offer: {
@@ -1456,6 +1461,9 @@ export const enTranslations = {
   },
 
   nativeHome: {
+    greeting: (name: string) => `Hi, ${name}`,
+    greetingAnonymous: "Hi there!",
+    subtitle: "Pick a tool and start converting",
     usageTitle: "Free conversions today",
     usageRemaining: (n: number) =>
       n === 0 ? "Daily limit reached — upgrade to Premium" : `${n} free conversions left today`,
@@ -1463,6 +1471,12 @@ export const enTranslations = {
     upgradeSubtitle: "Unlimited conversions, no ads, larger files",
     upgradeCta: "Upgrade",
     premiumActive: "Premium active — unlimited conversions",
+  },
+
+  nativeDailyLimit: {
+    desc: "You've used all 5 free conversions today. Watch a rewarded ad for one more, or upgrade to Premium.",
+    resetsIn: "Quota resets in",
+    adHint: "Rewarded ad — unlocks one more conversion today",
   },
 
   contactPage: {

@@ -29,6 +29,7 @@ import {
   ConversionSuccessPanel,
   ConversionSuccessPreparing,
 } from "@/components/tools/ConversionSuccessPanel";
+import { isUsageUnlockedThisSession } from "@/lib/usage-unlock-session";
 import { isNativeApp } from "@/lib/platform";
 import { notifyFileRejected } from "@/lib/custom-tool-freemium";
 import { Button } from "@/components/ui/button";
@@ -133,7 +134,7 @@ export default function ToolPage() {
   const isPremium = isSubPremium || usageIsPremium;
   const isProcessing = converting || jobPolling;
   const nativeApp = isNativeApp();
-  const [usageUnlocked, setUsageUnlocked] = useState(false);
+  const [usageUnlocked, setUsageUnlocked] = useState(() => isUsageUnlockedThisSession());
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
   const [serverUnavailable, setServerUnavailable] = useState(false);
   const [nativeAdHint, setNativeAdHint] = useState<NativeAdExperience | null>(null);
