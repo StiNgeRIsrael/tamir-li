@@ -43,9 +43,9 @@ After upload, open **App bundle explorer** → confirm **Memory page size: Suppo
 
 ## Session C (~20 min) — Play Billing + API
 
-1. Play Console → **Monetize** → **Subscriptions**:
-   - `tamir_premium_monthly` — ₪19.90/month
-   - `tamir_premium_yearly` — ₪191.04/year
+1. Play Console → **Monetize** → **Subscriptions** (created via API — verify ACTIVE):
+   - `tamir_premium_monthly` → base plan `monthly` — ₪19.90/month (IL)
+   - `tamir_premium_yearly` → base plan `yearly` — ₪191.04/year (IL)
 2. **In-app products** (optional): `credits_10`, `credits_30`, `credits_60`, `credits_120`
 3. **GCP:** enable **Google Play Android Developer API** (`androidpublisher.googleapis.com`) — **not** Android Management API (that is EMM/device management only)
 4. **Setup** → **API access** → link Google Cloud project → create **service account**

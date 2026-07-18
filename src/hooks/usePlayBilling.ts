@@ -1,7 +1,11 @@
 import { useCallback } from "react";
 import { NativePurchases, PURCHASE_TYPE } from "@capgo/native-purchases";
 import { getApiBaseUrl } from "@/lib/api/client";
-import { GOOGLE_PLAY_PRODUCTS, isAndroidApp } from "@/lib/platform";
+import {
+  GOOGLE_PLAY_BASE_PLANS,
+  GOOGLE_PLAY_PRODUCTS,
+  isAndroidApp,
+} from "@/lib/platform";
 import type { CheckoutPlan } from "@/hooks/useSubscription";
 
 function getAuthHeaders(): HeadersInit {
@@ -18,6 +22,12 @@ function planToProductId(plan: CheckoutPlan): string {
   if (plan === "monthly") return GOOGLE_PLAY_PRODUCTS.monthly;
   if (plan === "yearly") return GOOGLE_PLAY_PRODUCTS.yearly;
   return GOOGLE_PLAY_PRODUCTS[plan];
+}
+
+function planToBasePlanId(plan: CheckoutPlan): string | undefined {
+  if (plan === "monthly") return GOOGLE_PLAY_BASE_PLANS.monthly;
+  if (plan === "yearly") return GOOGLE_PLAY_BASE_PLANS.yearly;
+  return undefined;
 }
 
 function planToPurchaseType(plan: CheckoutPlan): PURCHASE_TYPE {
@@ -40,6 +50,7 @@ export function usePlayBilling() {
 
       const productId = planToProductId(plan);
       const productType = planToPurchaseType(plan);
+      const basePlanId = planToBasePlanId(plan);
 
       const supported = await NativePurchases.isBillingSupported();
       if (!supported.isBillingSupported) {
@@ -49,7 +60,7 @@ export function usePlayBilling() {
       const transaction = await NativePurchases.purchaseProduct({
         productIdentifier: productId,
         productType,
-        planIdentifier: productType === PURCHASE_TYPE.SUBS ? productId : undefined,
+        planIdentifier: productType === PURCHASE_TYPE.SUBS ? basePlanId : undefined,
       });
 
       if (transaction.purchaseState && transaction.purchaseState !== "1") {

@@ -12,7 +12,7 @@ export function isAndroidApp(): boolean {
 export const PLAY_STORE_URL =
   "https://play.google.com/store/apps/details?id=com.tamir.li";
 
-/** Google Play product IDs — must match Play Console. */
+/** Google Play subscription product IDs — must match Play Console. */
 export const GOOGLE_PLAY_PRODUCTS = {
   monthly: "tamir_premium_monthly",
   yearly: "tamir_premium_yearly",
@@ -20,4 +20,13 @@ export const GOOGLE_PLAY_PRODUCTS = {
   credits_30: "credits_30",
   credits_60: "credits_60",
   credits_120: "credits_120",
+} as const;
+
+/**
+ * Base plan IDs under each subscription product (Play monetization API).
+ * Capgo `planIdentifier` must match these, not the product id.
+ */
+export const GOOGLE_PLAY_BASE_PLANS = {
+  monthly: "monthly",
+  yearly: "yearly",
 } as const;

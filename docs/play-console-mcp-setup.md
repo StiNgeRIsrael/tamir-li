@@ -156,11 +156,26 @@ Product IDs this app expects (must match Play Console):
 
 ---
 
+## Live catalog (as of API setup)
+
+Created via Android Publisher API for `com.tamir.li` (service account invited):
+
+| Product ID | Base plan | IL price | State |
+|------------|-----------|----------|-------|
+| `tamir_premium_monthly` | `monthly` | ₪19.90 | ACTIVE |
+| `tamir_premium_yearly` | `yearly` | ₪191.04 | ACTIVE |
+
+Client: `GOOGLE_PLAY_PRODUCTS` + `GOOGLE_PLAY_BASE_PLANS` in `src/lib/platform.ts` (`planIdentifier` = base plan id).
+
+**Still operator:** set Plesk Node.js env `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` (full JSON, one line) + `GOOGLE_PLAY_PACKAGE_NAME=com.tamir.li`, then restart the app so `/api/billing/google/verify` works.
+
+---
+
 ## Troubleshooting
 
 | Symptom | Fix |
 |---------|-----|
-| Tools missing / server red | Restart Cursor; confirm `uvx` is on PATH |
+| Tools missing / server red | Restart Cursor; confirm `uvx` is on PATH; set `GOOGLE_APPLICATION_CREDENTIALS` |
 | Permission denied / 403 | Invite SA email in Play Console; enable **Android Publisher** API; wait ~15 min |
 | Package not found | App `com.tamir.li` must exist; SA must have app access |
 | Confused with Android Management API | That API cannot manage Play subscriptions — enable Publisher API instead |

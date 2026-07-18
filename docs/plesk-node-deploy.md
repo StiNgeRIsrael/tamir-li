@@ -332,6 +332,21 @@ Set **backend** secrets here (never commit `.env` files). See [`backend/.env.exa
 | `CORS_ORIGIN` | Optional | Omit for same-origin monolith; or `https://tamir.li,https://www.tamir.li` |
 | `ADMIN_EMAILS` | Recommended | Comma-separated emails for admin panel access |
 
+### Google Play Billing (Android app)
+
+Required for Capacitor app purchase verification (`POST /api/billing/google/verify`).
+
+| Variable | Required | Example / notes |
+|----------|----------|-----------------|
+| `GOOGLE_PLAY_PACKAGE_NAME` | Yes (Android) | `com.tamir.li` |
+| `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` | Yes (Android) | Full service account JSON as **one line** (same SA invited in Play Console → Users and permissions) |
+| `GOOGLE_PLAY_PRODUCT_MONTHLY` | Optional | Default `tamir_premium_monthly` |
+| `GOOGLE_PLAY_PRODUCT_YEARLY` | Optional | Default `tamir_premium_yearly` |
+
+Play Console products (ACTIVE): `tamir_premium_monthly` / base plan `monthly` (₪19.90), `tamir_premium_yearly` / base plan `yearly` (₪191.04). See [play-console-mcp-setup.md](./play-console-mcp-setup.md).
+
+After setting these, **Restart Node.js** in Plesk. Confirm `/health` or a verify call no longer returns Play-not-configured errors.
+
 ### PayPal billing (primary — default)
 
 Billing uses PayPal unless `ENABLE_STRIPE=true`. For **production**, set `PAYPAL_MODE=live` and use live app credentials from PayPal Developer Dashboard.
