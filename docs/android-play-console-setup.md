@@ -117,6 +117,19 @@ Upload keystore SHA-256 is in [`public/.well-known/assetlinks.json`](../public/.
 
 Verify: [Digital Asset Links tool](https://developers.google.com/digital-asset-links/tools/generator) — package `com.tamir.li`, domain `tamir.li`.
 
+## Google Sign-In (native — required for Premium checkout)
+
+The WebView GIS button is unreliable. The app uses **`@capgo/capacitor-social-login`** (native Google account sheet), then opens **Play Billing**.
+
+1. [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials
+2. Keep the existing **Web client ID** (same as `VITE_GOOGLE_CLIENT_ID` / server `GOOGLE_CLIENT_ID`) — used as `webClientId` for SocialLogin
+3. Create an **Android** OAuth client (if missing):
+   - Package: `com.tamir.li`
+   - SHA-1: from your upload/signing keystore **and** Play App Signing certificate
+4. Rebuild & upload AAB after adding the SocialLogin plugin (`versionCode` 2+)
+
+Purchase funnel (onboarding / Premium): **tap CTA → Google account sheet → Play purchase sheet**. No intermediate “save settings” screen.
+
 ## Rollout
 
 ```

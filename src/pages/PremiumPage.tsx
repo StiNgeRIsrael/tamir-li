@@ -49,7 +49,7 @@ import {
 import { isCheckoutPlan } from "@/lib/analytics/purchase";
 
 import { useSubscription, type CheckoutPlan } from "@/hooks/useSubscription";
-
+import { useEnsureGoogleSignIn } from "@/hooks/useEnsureGoogleSignIn";
 import { useAuth } from "@/contexts/AuthContext";
 
 import { toast } from "sonner";
@@ -89,6 +89,7 @@ export default function PremiumPage() {
 
   const { checkout, checkoutLoading, refetch, captureOrder, activateSubscription, isPremium, nativeBilling } =
     useSubscription();
+  const { ensureSignedIn, canNativeSignIn } = useEnsureGoogleSignIn();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -235,23 +236,29 @@ export default function PremiumPage() {
   const startCheckout = async (source: string) => {
     const plan: CheckoutPlan = isYearly ? "yearly" : "monthly";
 
-    if (!user) {
-      toast.error(auth?.signInRequired ?? "Sign in to continue");
-      return;
-    }
-
-    trackUpgradeClick(plan, source);
-    trackBeginCheckout({ plan, source });
-
     try {
+      if (!user) {
+        if (nativeBilling && canNativeSignIn) {
+          await ensureSignedIn();
+        } else {
+          toast.error(auth?.signInRequired ?? "Sign in to continue");
+          return;
+        }
+      }
+
+      trackUpgradeClick(plan, source);
+      trackBeginCheckout({ plan, source });
+
       await checkout(plan);
       if (nativeBilling) {
         await refetch();
         toast.success(u.checkoutSuccess ?? "Welcome to Premium!");
       }
     } catch (e) {
-      trackCheckoutError(plan, e instanceof Error ? e.message : "Checkout failed");
-      toast.error(e instanceof Error ? e.message : "Checkout failed");
+      const msg = e instanceof Error ? e.message : "Checkout failed";
+      if (/cancel|dismiss|USER_CANCELED/i.test(msg)) return;
+      trackCheckoutError(plan, msg);
+      toast.error(msg);
     }
   };
 

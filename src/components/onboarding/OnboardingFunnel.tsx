@@ -2,12 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Check, Loader2, Sparkles, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { GoogleLoginButton } from "@/components/GoogleLoginButton";
 import { OnboardingShell } from "@/components/onboarding/OnboardingShell";
 import { OnboardingProfileCard } from "@/components/onboarding/OnboardingProfileCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useEnsureGoogleSignIn } from "@/hooks/useEnsureGoogleSignIn";
 import { useOnboardingOffer } from "@/hooks/useOnboardingOffer";
 import { useLocale } from "@/lib/i18n";
 import { enTranslations } from "@/lib/translations/en";
@@ -59,17 +59,19 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
   const copy = getCopy(t);
   const { user, loading: authLoading, updateProfile } = useAuth();
   const { checkout, checkoutLoading, isPremium, nativeBilling } = useSubscription();
+  const { ensureSignedIn, canNativeSignIn } = useEnsureGoogleSignIn();
 
   const [step, setStep] = useState<OnboardingStepId>("hook");
   const [answers, setAnswers] = useState<Partial<QuizAnswers>>({});
   const [plan, setPlan] = useState<"yearly" | "monthly">("yearly");
-  const [displayName, setDisplayName] = useState("");
   const [offerDecision, setOfferDecision] = useState<OfferDecision | null>(null);
   const [analyzeIndex, setAnalyzeIndex] = useState(0);
+  const [purchaseBusy, setPurchaseBusy] = useState(false);
   const submittedRef = useRef(false);
 
   const onOffer = step === "offer";
   const { countdown, expired, urgent } = useOnboardingOffer(onOffer && open);
+  const busy = checkoutLoading || purchaseBusy;
 
   const goTo = useCallback((next: OnboardingStepId, via?: string) => {
     setStep(next);
@@ -77,23 +79,23 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
   }, []);
 
   const goBack = useCallback(() => {
+    if (busy) return;
     const prev = BACK_MAP[step];
     if (prev) setStep(prev);
-  }, [step]);
+  }, [step, busy]);
 
   useEffect(() => {
     if (!open) return;
     setStep("hook");
     setAnswers({});
     setPlan("yearly");
-    setDisplayName("");
     setOfferDecision(null);
     setAnalyzeIndex(0);
+    setPurchaseBusy(false);
     submittedRef.current = false;
     trackEvent(ANALYTICS_EVENTS.ONBOARDING_START, {});
   }, [open]);
 
-  // Analyzing loader: staged micro-labels then reveal profile
   useEffect(() => {
     if (step !== "analyzing") return;
     setAnalyzeIndex(0);
@@ -109,7 +111,6 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
     };
   }, [step, copy.analyzing.steps.length, goTo]);
 
-  // Premium already active — no need to onboard
   useEffect(() => {
     if (isPremium && open) {
       markOnboardingDone(offerGeneration);
@@ -123,61 +124,105 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
       onboardingCompletedAt: true,
     };
     if (preferredCategory) patch.preferredCategory = preferredCategory;
-    const trimmedName = displayName.trim();
-    if (trimmedName) patch.displayName = trimmedName;
     if (user) {
       try {
         await updateProfile(patch);
       } catch {
-        /* profile sync is best-effort */
+        /* best-effort */
       }
     }
-  }, [answers.category, displayName, updateProfile, user]);
+  }, [answers.category, updateProfile, user]);
 
-  const finalize = useCallback(async () => {
-    if (submittedRef.current) return;
-    submittedRef.current = true;
-    const decision: OfferDecision = offerDecision ?? "declined";
+  const persistAnalytics = useCallback(
+    (decision: OfferDecision) => {
+      void submitOnboardingResponse({
+        category: answers.category ?? "mixed",
+        frequency: answers.frequency ?? "occasional",
+        goal: answers.goal ?? "convert",
+        attribution: answers.attribution ?? "other",
+        offerDecision: decision,
+        selectedPlan: decision === "accepted" ? plan : null,
+        offerGeneration,
+      });
+    },
+    [answers, plan, offerGeneration]
+  );
 
-    void submitOnboardingResponse({
-      category: answers.category ?? "mixed",
-      frequency: answers.frequency ?? "occasional",
-      goal: answers.goal ?? "convert",
-      attribution: answers.attribution ?? "other",
-      offerDecision: decision,
-      selectedPlan: decision === "accepted" ? plan : null,
-      offerGeneration,
-    });
+  /** High-converting path: Google account sheet → Play purchase sheet. */
+  const purchasePremium = useCallback(async () => {
+    if (purchaseBusy || checkoutLoading) return;
+    setPurchaseBusy(true);
+    setOfferDecision("accepted");
+    hapticSuccess();
 
-    await syncProfile();
+    trackUpgradeClick(plan, "onboarding_offer");
+    trackBeginCheckout({ plan, source: "onboarding_offer" });
+    persistAnalytics("accepted");
 
-    if (decision === "accepted") {
-      trackUpgradeClick(plan, "onboarding_offer");
-      trackBeginCheckout({ plan, source: "onboarding_offer" });
-      try {
-        await checkout(plan);
-        markOnboardingDone(offerGeneration);
-        trackEvent(ANALYTICS_EVENTS.ONBOARDING_COMPLETE, { plan, offerGeneration });
-        onOpenChange(false);
-      } catch (e) {
-        submittedRef.current = false;
-        const msg = e instanceof Error ? e.message : copy.offer.checkoutError;
+    try {
+      if (!user) {
+        if (nativeBilling && canNativeSignIn) {
+          await ensureSignedIn();
+        } else {
+          setPurchaseBusy(false);
+          goTo("auth", "offer_accept_need_login");
+          return;
+        }
+      }
+
+      await checkout(plan);
+      await syncProfile();
+      markOnboardingDone(offerGeneration);
+      trackEvent(ANALYTICS_EVENTS.ONBOARDING_COMPLETE, { plan, offerGeneration });
+      onOpenChange(false);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : copy.offer.checkoutError;
+      const cancelled =
+        /cancel|dismiss|USER_CANCELED|BillingResponse/i.test(msg) ||
+        msg === "SIGN_IN_REQUIRED";
+      if (!cancelled) {
         trackCheckoutError(plan, msg);
-        toast.error(msg);
+        toast.error(
+          msg === "SIGN_IN_REQUIRED"
+            ? (copy.auth as { signInRequired?: string }).signInRequired ?? copy.offer.checkoutError
+            : msg
+        );
       }
-      return;
+    } finally {
+      setPurchaseBusy(false);
     }
+  }, [
+    purchaseBusy,
+    checkoutLoading,
+    plan,
+    persistAnalytics,
+    user,
+    nativeBilling,
+    canNativeSignIn,
+    ensureSignedIn,
+    checkout,
+    syncProfile,
+    offerGeneration,
+    onOpenChange,
+    goTo,
+    copy.offer.checkoutError,
+    copy.auth,
+  ]);
 
+  const declineOffer = useCallback(() => {
+    persistAnalytics("declined");
+    void syncProfile();
     markOnboardingDone(offerGeneration);
     trackEvent(ANALYTICS_EVENTS.ONBOARDING_DISMISS, {
-      step: "auth",
+      step: "offer",
       reason: "declined",
       offerGeneration,
     });
     onOpenChange(false);
-  }, [answers, offerDecision, plan, offerGeneration, checkout, copy.offer.checkoutError, onOpenChange, syncProfile]);
+  }, [persistAnalytics, syncProfile, offerGeneration, onOpenChange]);
 
   const skipAuth = () => {
+    persistAnalytics(offerDecision ?? "declined");
     void syncProfile().finally(() => {
       markOnboardingDone(offerGeneration);
       trackEvent(ANALYTICS_EVENTS.ONBOARDING_DISMISS, {
@@ -189,11 +234,40 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
     });
   };
 
-  // Auth finale — proceed once the user is signed in
+  // Auth fallback: after login, open Play / checkout immediately.
   useEffect(() => {
-    if (step !== "auth" || authLoading || !user) return;
-    void finalize();
-  }, [step, user, authLoading, finalize]);
+    if (step !== "auth" || authLoading || !user || offerDecision !== "accepted") return;
+    if (submittedRef.current) return;
+    submittedRef.current = true;
+    void (async () => {
+      setPurchaseBusy(true);
+      try {
+        await checkout(plan);
+        await syncProfile();
+        markOnboardingDone(offerGeneration);
+        trackEvent(ANALYTICS_EVENTS.ONBOARDING_COMPLETE, { plan, offerGeneration });
+        onOpenChange(false);
+      } catch (e) {
+        submittedRef.current = false;
+        const msg = e instanceof Error ? e.message : copy.offer.checkoutError;
+        trackCheckoutError(plan, msg);
+        toast.error(msg);
+      } finally {
+        setPurchaseBusy(false);
+      }
+    })();
+  }, [
+    step,
+    user,
+    authLoading,
+    offerDecision,
+    checkout,
+    plan,
+    syncProfile,
+    offerGeneration,
+    onOpenChange,
+    copy.offer.checkoutError,
+  ]);
 
   const resultProfile = useMemo(() => {
     const category = answers.category ?? "mixed";
@@ -226,17 +300,6 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
     setAnswers((prev) => ({ ...prev, [key]: value }));
     trackEvent(ANALYTICS_EVENTS.ONBOARDING_STEP, { step, answer: key, value });
     window.setTimeout(() => goTo(nextStep), 240);
-  };
-
-  const acceptOffer = () => {
-    hapticSuccess();
-    setOfferDecision("accepted");
-    goTo("auth", "offer_accept");
-  };
-
-  const declineOffer = () => {
-    setOfferDecision("declined");
-    goTo("auth", "offer_decline");
   };
 
   const renderQuizOptions = <K extends keyof QuizAnswers>(
@@ -282,8 +345,8 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
             <ul className="mx-auto max-w-xs space-y-2.5 text-start">
               {copy.hook.bullets.map((b) => (
                 <li key={b} className="flex items-start gap-2.5 text-sm font-medium text-foreground/80">
-                  <Check className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
-                  <span>{b}</span>
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+                  {b}
                 </li>
               ))}
             </ul>
@@ -322,25 +385,12 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
         return (
           <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
             <Loader2 className="h-12 w-12 animate-spin text-primary" aria-hidden />
-            <h2 className="text-xl font-extrabold text-foreground">{copy.analyzing.title}</h2>
-            <ul className="space-y-2" aria-live="polite">
-              {copy.analyzing.steps.map((label, i) => (
-                <li
-                  key={label}
-                  className={cn(
-                    "flex items-center justify-center gap-2 text-sm font-medium transition-opacity duration-300",
-                    i <= analyzeIndex ? "text-foreground opacity-100" : "text-foreground/40 opacity-60"
-                  )}
-                >
-                  {i < analyzeIndex ? (
-                    <Check className="h-4 w-4 text-primary" aria-hidden />
-                  ) : (
-                    <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
-                  )}
-                  {label}
-                </li>
-              ))}
-            </ul>
+            <div className="space-y-2">
+              <h2 className="text-xl font-bold text-foreground">{copy.analyzing.title}</h2>
+              <p className="text-sm text-foreground/70">
+                {copy.analyzing.steps[analyzeIndex] ?? copy.analyzing.steps[0]}
+              </p>
+            </div>
           </div>
         );
 
@@ -426,45 +476,13 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
         return (
           <div className="flex flex-1 flex-col justify-center gap-6 text-center">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-xl">
-              {offerDecision === "accepted" ? (
-                <Zap className="h-8 w-8 text-white" aria-hidden />
-              ) : (
-                <Check className="h-8 w-8 text-white" aria-hidden />
-              )}
+              <Zap className="h-8 w-8 text-white" aria-hidden />
             </div>
             <div className="space-y-2">
-              <h2 className="text-2xl font-extrabold text-foreground">{copy.auth.title}</h2>
-              <p className="text-sm text-foreground/70">
-                {offerDecision === "accepted" ? copy.auth.subtitleAccepted : copy.auth.subtitle}
-              </p>
+              <h2 className="text-2xl font-extrabold text-foreground">{copy.auth.titlePurchase}</h2>
+              <p className="text-sm text-foreground/70">{copy.auth.subtitlePurchase}</p>
             </div>
-            {profileTraits.length > 0 && (
-              <div className="flex flex-wrap justify-center gap-2">
-                {profileTraits.map((trait) => (
-                  <span
-                    key={trait.key}
-                    className="onboarding-glass-card px-3 py-1 text-xs font-semibold text-foreground"
-                  >
-                    {trait.label}
-                  </span>
-                ))}
-              </div>
-            )}
-            <div className="mx-auto w-full max-w-sm space-y-2 text-start">
-              <label htmlFor="onboarding-display-name" className="text-xs font-medium text-foreground/70">
-                {copy.auth.displayNameLabel}
-              </label>
-              <Input
-                id="onboarding-display-name"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                placeholder={copy.auth.displayNamePlaceholder}
-                className="h-11 rounded-xl border-border bg-card"
-                maxLength={80}
-                autoComplete="nickname"
-              />
-            </div>
-            {user ? (
+            {user || busy ? (
               <div className="flex items-center justify-center gap-2 text-sm text-foreground/70">
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
                 {copy.offer.ctaLoading}
@@ -516,14 +534,25 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
             <Button
               size="lg"
               className="h-14 w-full rounded-2xl text-base font-bold shadow-lg"
-              onClick={acceptOffer}
+              onClick={() => void purchasePremium()}
+              disabled={busy}
             >
-              {nativeBilling ? copy.offer.ctaPlay : copy.offer.cta}
+              {busy ? (
+                <>
+                  <Loader2 className="me-2 h-5 w-5 animate-spin" aria-hidden />
+                  {copy.offer.ctaLoading}
+                </>
+              ) : nativeBilling ? (
+                copy.offer.ctaPlay
+              ) : (
+                copy.offer.cta
+              )}
             </Button>
             <button
               type="button"
               onClick={declineOffer}
-              className="mx-auto block cursor-pointer text-xs font-medium text-foreground/60 underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              disabled={busy}
+              className="mx-auto block cursor-pointer text-xs font-medium text-foreground/60 underline-offset-4 transition-colors hover:text-foreground hover:underline disabled:opacity-50"
             >
               {copy.offer.decline}
             </button>
@@ -538,7 +567,7 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
   if (!open) return null;
 
   const quizProgress = quizStepPosition(step);
-  const showBack = !!BACK_MAP[step] && step !== "analyzing" && !checkoutLoading;
+  const showBack = !!BACK_MAP[step] && step !== "analyzing" && !busy;
   const footer = renderFooter();
 
   return (

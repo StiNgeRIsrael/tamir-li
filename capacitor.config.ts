@@ -15,6 +15,14 @@ const config: CapacitorConfig = {
     AdMob: {
       initializeForTesting: process.env.CAPACITOR_ADMOB_TEST === "true",
     },
+    SocialLogin: {
+      providers: {
+        google: true,
+        facebook: false,
+        apple: false,
+        twitter: false,
+      },
+    },
   },
 };
 

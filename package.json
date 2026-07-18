@@ -49,6 +49,7 @@
     "@capacitor/android": "^8.4.1",
     "@capacitor/cli": "^8.4.1",
     "@capacitor/core": "^8.4.1",
+    "@capgo/capacitor-social-login": "^8.3.37",
     "@capgo/native-purchases": "^8.5.0",
     "@hookform/resolvers": "^3.10.0",
     "@pdf-lib/fontkit": "^1.1.1",

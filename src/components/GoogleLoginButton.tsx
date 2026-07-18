@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { getGoogleClientId, loadGoogleGsiScript } from "@/lib/google-gsi";
+import { canUseNativeGoogleAuth, getNativeGoogleIdToken } from "@/lib/native-google-auth";
 import { isNativeApp } from "@/lib/platform";
 import { cn } from "@/lib/utils";
 
@@ -35,19 +36,15 @@ type GoogleLoginButtonProps = {
   compact?: boolean;
   fullWidth?: boolean;
   className?: string;
-  /** Use Google's native rendered button. Default: true in Capacitor WebView. */
+  /** Prefer Google's rendered GIS button on web. Ignored on native (always custom + SocialLogin). */
   native?: boolean;
+  /** Called after a successful sign-in (native or web). */
+  onSignedIn?: () => void;
 };
 
-export function GoogleLoginButton({
-  compact,
-  fullWidth,
-  className,
-  native,
-}: GoogleLoginButtonProps) {
-  const { apiAvailable, googleConfigured, signInWithGoogleCredential } = useAuth();
-  const { t, locale } = useLocale();
-  const auth = t.auth as
+function useAuthCopy() {
+  const { t } = useLocale();
+  return t.auth as
     | {
         signInWithGoogle?: string;
         signInFailed?: string;
@@ -57,6 +54,90 @@ export function GoogleLoginButton({
         signInRetry?: string;
       }
     | undefined;
+}
+
+function toastSignInError(code: string, auth: ReturnType<typeof useAuthCopy>) {
+  if (code === "DATABASE_UNAVAILABLE") {
+    toast.error(
+      auth?.signInDbUnavailable ??
+        "Sign-in is temporarily unavailable (database offline). Try again later."
+    );
+  } else if (code === "AUTH_MISCONFIGURED") {
+    toast.error(
+      auth?.signInMisconfigured ?? "Sign-in is misconfigured on the server. Contact support."
+    );
+  } else if (code !== "NATIVE_GOOGLE_CANCELLED" && !code.toLowerCase().includes("cancel")) {
+    toast.error(auth?.signInFailed ?? "Sign-in failed");
+  }
+}
+
+/** Capacitor: one tap → native Google account sheet → app JWT. */
+function NativeGoogleLoginButton({
+  compact,
+  fullWidth,
+  className,
+  onSignedIn,
+}: GoogleLoginButtonProps) {
+  const { apiAvailable, googleConfigured, signInWithGoogleCredential } = useAuth();
+  const auth = useAuthCopy();
+  const [busy, setBusy] = useState(false);
+  const label = auth?.signInWithGoogle ?? "Login with Google";
+
+  if (!apiAvailable || !googleConfigured) return null;
+
+  const handleClick = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      if (!canUseNativeGoogleAuth()) {
+        throw new Error("NATIVE_GOOGLE_UNAVAILABLE");
+      }
+      const idToken = await getNativeGoogleIdToken();
+      await signInWithGoogleCredential(idToken);
+      onSignedIn?.();
+    } catch (e) {
+      const code = e instanceof Error ? e.message : "";
+      toastSignInError(code, auth);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      size={compact ? "sm" : "lg"}
+      className={cn(
+        "gap-2 rounded-full border-border bg-card font-semibold shadow-sm hover:bg-muted/60",
+        fullWidth && "w-full",
+        compact ? "h-9 px-3 text-sm" : "h-12 px-4 text-base",
+        className
+      )}
+      disabled={busy}
+      onClick={handleClick}
+    >
+      {busy ? (
+        <Loader2 className={cn("animate-spin", compact ? "h-4 w-4" : "h-5 w-5")} aria-hidden />
+      ) : (
+        <GoogleIcon className={cn(compact ? "h-4 w-4" : "h-5 w-5")} />
+      )}
+      {busy ? (auth?.signInLoading ?? "Loading…") : label}
+    </Button>
+  );
+}
+
+/** Web: styled button with invisible GIS overlay (or Google's rendered button when native=true). */
+function WebGoogleLoginButton({
+  compact,
+  fullWidth,
+  className,
+  native = false,
+  onSignedIn,
+}: GoogleLoginButtonProps) {
+  const { apiAvailable, googleConfigured, signInWithGoogleCredential } = useAuth();
+  const { locale } = useLocale();
+  const auth = useAuthCopy();
 
   const hostRef = useRef<HTMLDivElement>(null);
   const hiddenGsiRef = useRef<HTMLDivElement>(null);
@@ -66,7 +147,6 @@ export function GoogleLoginButton({
 
   const clientId = getGoogleClientId();
   const label = auth?.signInWithGoogle ?? "Login with Google";
-  const useNativeButton = native ?? isNativeApp();
 
   useEffect(() => {
     if (!apiAvailable || !googleConfigured || !clientId) return;
@@ -84,28 +164,16 @@ export function GoogleLoginButton({
           if (!resp.credential) return;
           try {
             await signInWithGoogleCredential(resp.credential);
+            onSignedIn?.();
           } catch (e) {
-            const code = e instanceof Error ? e.message : "";
-            if (code === "DATABASE_UNAVAILABLE") {
-              toast.error(
-                auth?.signInDbUnavailable ??
-                  "Sign-in is temporarily unavailable (database offline). Try again later."
-              );
-            } else if (code === "AUTH_MISCONFIGURED") {
-              toast.error(
-                auth?.signInMisconfigured ??
-                  "Sign-in is misconfigured on the server. Contact support."
-              );
-            } else {
-              toast.error(auth?.signInFailed ?? "Sign-in failed");
-            }
+            toastSignInError(e instanceof Error ? e.message : "", auth);
           }
         },
         ux_mode: "popup",
         locale: locale === "he" ? "he" : "en",
       });
 
-      if (useNativeButton) {
+      if (native) {
         const host = hostRef.current;
         if (!host) return;
         host.innerHTML = "";
@@ -153,17 +221,16 @@ export function GoogleLoginButton({
     signInWithGoogleCredential,
     locale,
     compact,
-    useNativeButton,
+    native,
     fullWidth,
     mountKey,
-    auth?.signInFailed,
-    auth?.signInDbUnavailable,
-    auth?.signInMisconfigured,
+    onSignedIn,
+    auth,
   ]);
 
   if (!apiAvailable || !googleConfigured) return null;
 
-  if (useNativeButton) {
+  if (native) {
     return (
       <div className={cn("flex flex-col items-center gap-3", fullWidth && "w-full", className)}>
         <div
@@ -241,4 +308,12 @@ export function GoogleLoginButton({
       )}
     </div>
   );
+}
+
+export function GoogleLoginButton(props: GoogleLoginButtonProps) {
+  // Prefer native account sheet; fall back to GIS if the plugin isn't in this AAB yet.
+  if (isNativeApp() && canUseNativeGoogleAuth()) {
+    return <NativeGoogleLoginButton {...props} />;
+  }
+  return <WebGoogleLoginButton {...props} native={props.native ?? isNativeApp()} />;
 }
