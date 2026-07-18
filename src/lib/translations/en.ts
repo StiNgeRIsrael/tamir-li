@@ -18,6 +18,8 @@ export const enTranslations = {
     signInRequired: "Sign in to continue",
     signInLoading: "Loading sign-in…",
     signInRetry: "Retry sign-in",
+    signInUpdateApp:
+      "Update the app from Google Play to sign in with Google and buy Premium.",
   },
   siteBanner: {
     dbUnavailable: "Sign-in and server-side conversions are temporarily unavailable.",
@@ -1431,6 +1433,8 @@ export const enTranslations = {
       skip: "Skip — continue without signing in",
       note: "Free to sign in. Cancel anytime.",
       signInRequired: "Sign in with Google to continue",
+      signInUpdateApp:
+        "Update the app from Google Play to sign in with Google and buy Premium.",
     },
     offer: {
       badge: "One-time launch price — 24 hours",

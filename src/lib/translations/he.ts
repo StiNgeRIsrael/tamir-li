@@ -19,6 +19,7 @@ export const heTranslations = {
     signInRequired: "יש להתחבר כדי להמשיך",
     signInLoading: "טוען התחברות…",
     signInRetry: "נסו שוב",
+    signInUpdateApp: "עדכנו את האפליקציה מ-Google Play כדי להתחבר עם Google ולרכוש פרימיום.",
   },
 
   siteBanner: {
@@ -1452,6 +1453,7 @@ export const heTranslations = {
       skip: "דלגו — המשיכו בלי התחברות",
       note: "התחברות חינמית. אפשר לבטל מנוי בכל עת.",
       signInRequired: "יש להתחבר עם Google כדי להמשיך",
+      signInUpdateApp: "עדכנו את האפליקציה מ-Google Play כדי להתחבר עם Google ולרכוש פרימיום.",
     },
     offer: {
       badge: "מחיר השקה חד-פעמי — 24 שעות",

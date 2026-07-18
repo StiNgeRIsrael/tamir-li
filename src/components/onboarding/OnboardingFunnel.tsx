@@ -59,7 +59,7 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
   const copy = getCopy(t);
   const { user, loading: authLoading, updateProfile } = useAuth();
   const { checkout, checkoutLoading, isPremium, nativeBilling } = useSubscription();
-  const { ensureSignedIn, canNativeSignIn } = useEnsureGoogleSignIn();
+  const { ensureSignedIn, canNativeSignIn, nativePluginReady } = useEnsureGoogleSignIn();
 
   const [step, setStep] = useState<OnboardingStepId>("hook");
   const [answers, setAnswers] = useState<Partial<QuizAnswers>>({});
@@ -162,7 +162,20 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
     try {
       if (!user) {
         if (nativeBilling && canNativeSignIn) {
-          await ensureSignedIn();
+          try {
+            await ensureSignedIn();
+          } catch (signInErr) {
+            const code = signInErr instanceof Error ? signInErr.message : "";
+            const cancelled = /cancel|NATIVE_GOOGLE_CANCELLED/i.test(code);
+            if (cancelled) {
+              setPurchaseBusy(false);
+              return;
+            }
+            // Show auth step with Google button (never GIS). Update-app hint if plugin missing.
+            setPurchaseBusy(false);
+            goTo("auth", "offer_accept_need_login");
+            return;
+          }
         } else {
           setPurchaseBusy(false);
           goTo("auth", "offer_accept_need_login");
@@ -178,13 +191,16 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
     } catch (e) {
       const msg = e instanceof Error ? e.message : copy.offer.checkoutError;
       const cancelled =
-        /cancel|dismiss|USER_CANCELED|BillingResponse/i.test(msg) ||
+        /cancel|dismiss|USER_CANCELED|BillingResponse|NATIVE_GOOGLE_CANCELLED/i.test(msg) ||
         msg === "SIGN_IN_REQUIRED";
       if (!cancelled) {
         trackCheckoutError(plan, msg);
+        const authCopy = copy.auth as { signInRequired?: string; signInUpdateApp?: string };
         toast.error(
-          msg === "SIGN_IN_REQUIRED"
-            ? (copy.auth as { signInRequired?: string }).signInRequired ?? copy.offer.checkoutError
+          msg === "SIGN_IN_REQUIRED" || msg === "NATIVE_GOOGLE_UPDATE_REQUIRED"
+            ? (msg === "NATIVE_GOOGLE_UPDATE_REQUIRED"
+                ? authCopy.signInUpdateApp
+                : authCopy.signInRequired) ?? copy.offer.checkoutError
             : msg
         );
       }
@@ -445,7 +461,7 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
                   setPlan("yearly");
                 }}
                 badge={copy.offer.yearlySave}
-                price={nativeBilling ? copy.offer.playYearlyLabel : copy.offer.priceYearly}
+                price={copy.offer.priceYearly}
                 sub={nativeBilling ? copy.offer.playBillingNote : copy.offer.perYear}
                 highlight
               />
@@ -456,7 +472,7 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
                   setPlan("monthly");
                 }}
                 badge={copy.offer.monthlyLabel}
-                price={nativeBilling ? copy.offer.playMonthlyLabel : copy.offer.priceMonthly}
+                price={copy.offer.priceMonthly}
                 sub={nativeBilling ? copy.offer.playBillingNote : copy.offer.perMonth}
               />
             </div>
@@ -474,13 +490,18 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
 
       case "auth":
         return (
-          <div className="flex flex-1 flex-col justify-center gap-6 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-xl">
-              <Zap className="h-8 w-8 text-white" aria-hidden />
+          <div className="flex flex-1 flex-col justify-center gap-4 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-xl">
+              <Zap className="h-7 w-7 text-white" aria-hidden />
             </div>
-            <div className="space-y-2">
-              <h2 className="text-2xl font-extrabold text-foreground">{copy.auth.titlePurchase}</h2>
-              <p className="text-sm text-foreground/70">{copy.auth.subtitlePurchase}</p>
+            <div className="space-y-1.5">
+              <h2 className="text-xl font-extrabold text-foreground">{copy.auth.titlePurchase}</h2>
+              <p className="text-sm text-foreground/70">
+                {nativeBilling && !nativePluginReady
+                  ? ((copy.auth as { signInUpdateApp?: string }).signInUpdateApp ??
+                    copy.auth.subtitlePurchase)
+                  : copy.auth.subtitlePurchase}
+              </p>
             </div>
             {user || busy ? (
               <div className="flex items-center justify-center gap-2 text-sm text-foreground/70">
