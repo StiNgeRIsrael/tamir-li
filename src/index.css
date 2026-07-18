@@ -361,6 +361,22 @@
     animation: onboarding-pulse 1s ease-in-out infinite;
   }
 
+  .onboarding-plan-card--selected {
+    animation: onboarding-plan-pop 0.35s var(--onboarding-ease);
+  }
+
+  @keyframes onboarding-plan-pop {
+    0% {
+      transform: scale(0.98);
+    }
+    60% {
+      transform: scale(1.03);
+    }
+    100% {
+      transform: scale(1.02);
+    }
+  }
+
   .onboarding-step-enter {
     animation: onboarding-step-in 320ms var(--onboarding-ease) both;
   }
