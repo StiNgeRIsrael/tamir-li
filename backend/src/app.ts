@@ -6,7 +6,7 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
-import { trySeoPrerender } from './lib/seo-prerender.js';
+import { trySeoPrerender } from './lib/seo-prerender';
 import authRoutes from './routes/auth.routes';
 import conversionsRoutes from './routes/conversions.routes';
 import toolsRoutes from './routes/tools.routes';
