@@ -133,7 +133,7 @@ jobs:
       # Sync Google Play SA into backend/.env when the Actions secret is set (agents cannot set secrets).
       # App loads backend/.env via dotenv — enables POST /api/billing/google/verify without Plesk UI paste.
       - name: Sync Google Play env on Plesk
-        if: success() && secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON != ''
+        if: success()
         uses: appleboy/ssh-action@v1.2.0
         env:
           GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
@@ -147,6 +147,10 @@ jobs:
           envs: GOOGLE_PLAY_SERVICE_ACCOUNT_JSON,GOOGLE_PLAY_PACKAGE_NAME
           script: |
             set -e
+            if [ -z "${GOOGLE_PLAY_SERVICE_ACCOUNT_JSON:-}" ]; then
+              echo "Skip Play sync — Actions secret GOOGLE_PLAY_SERVICE_ACCOUNT_JSON not set (see docs/agent-autonomy.md)"
+              exit 0
+            fi
             APP_DIR="${{ vars.PLESK_NODE_APP_DIR || 'httpdocs/deploy' }}"
             APP_DIR="${APP_DIR%/}"
             cd "$APP_DIR" || { echo "Cannot cd to $APP_DIR"; exit 1; }
