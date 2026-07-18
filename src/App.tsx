@@ -22,11 +22,15 @@ import { PwaUpdatePrompt } from "@/components/PwaUpdatePrompt";
 import { AdVignetteHost } from "@/components/ads/AdVignette";
 import { OnboardingHost } from "@/components/OnboardingHost";
 import { NativeDailyLimitHost } from "@/components/NativeDailyLimitHost";
+import { NativeAppShell } from "@/app-shell/NativeAppShell";
+import { AppCatalogScreen } from "@/app-shell/AppCatalogScreen";
+import { AppAccountScreen } from "@/app-shell/AppAccountScreen";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ToolConfigProvider } from "@/contexts/ToolConfigContext";
 import { AdConfigProvider } from "@/contexts/AdConfigContext";
 import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { isNativeApp } from "@/lib/platform";
 
 const ToolPage = lazy(() => import("./pages/ToolPage"));
 const InstallPage = lazy(() => import("./pages/InstallPage"));
@@ -60,7 +64,6 @@ function RouteFallback() {
   );
 }
 
-/** Remount tool page when slug changes so SPA navigations reset local state. */
 function ToolPageRoute() {
   const { slug } = useParams();
   return (
@@ -82,7 +85,44 @@ function LocaleLayout({ explicitLocale }: { explicitLocale?: Locale }) {
   );
 }
 
-const getAppRoutes = (explicitLocale?: Locale) => (
+const adminRoutes = (
+  <Route
+    path="admin"
+    element={
+      <AdminGuard>
+        <AdminLayout />
+      </AdminGuard>
+    }
+  >
+    <Route index element={<LazyPage><AdminOverview /></LazyPage>} />
+    <Route path="users" element={<LazyPage><AdminUsers /></LazyPage>} />
+    <Route path="tools" element={<LazyPage><AdminTools /></LazyPage>} />
+    <Route path="billing" element={<LazyPage><AdminBilling /></LazyPage>} />
+    <Route path="ads" element={<LazyPage><AdminAds /></LazyPage>} />
+    <Route path="ai" element={<LazyPage><AdminAi /></LazyPage>} />
+  </Route>
+);
+
+/** Capacitor: tabbed app shell — same deploy as web, different chrome. */
+const getNativeRoutes = (explicitLocale?: Locale) => (
+  <Route element={<LocaleLayout explicitLocale={explicitLocale} />}>
+    <Route element={<NativeAppShell />}>
+      <Route index element={<Index />} />
+      <Route path="catalog" element={<AppCatalogScreen />} />
+      <Route path="premium" element={<LazyPage><PremiumPage /></LazyPage>} />
+      <Route path="account" element={<AppAccountScreen />} />
+      <Route path="privacy" element={<LazyPage><PrivacyPage /></LazyPage>} />
+      <Route path="terms" element={<LazyPage><TermsPage /></LazyPage>} />
+      <Route path="contact" element={<LazyPage><ContactPage /></LazyPage>} />
+      <Route path=":slug" element={<ToolPageRoute />} />
+      <Route path="*" element={<LazyPage><NotFound /></LazyPage>} />
+    </Route>
+    {adminRoutes}
+  </Route>
+);
+
+/** Browser: full marketing / SEO site. */
+const getWebRoutes = (explicitLocale?: Locale) => (
   <Route element={<LocaleLayout explicitLocale={explicitLocale} />}>
     <Route index element={<Index />} />
     <Route path="install" element={<LazyPage><InstallPage /></LazyPage>} />
@@ -120,63 +160,57 @@ const getAppRoutes = (explicitLocale?: Locale) => (
         }
       />
     ))}
-    <Route
-      path="admin"
-      element={
-        <AdminGuard>
-          <AdminLayout />
-        </AdminGuard>
-      }
-    >
-      <Route index element={<LazyPage><AdminOverview /></LazyPage>} />
-      <Route path="users" element={<LazyPage><AdminUsers /></LazyPage>} />
-      <Route path="tools" element={<LazyPage><AdminTools /></LazyPage>} />
-      <Route path="billing" element={<LazyPage><AdminBilling /></LazyPage>} />
-      <Route path="ads" element={<LazyPage><AdminAds /></LazyPage>} />
-      <Route path="ai" element={<LazyPage><AdminAi /></LazyPage>} />
-    </Route>
+    {adminRoutes}
     <Route path=":slug" element={<ToolPageRoute />} />
     <Route path="*" element={<LazyPage><NotFound /></LazyPage>} />
   </Route>
 );
 
-const App = () => (
-  <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-          <ToolConfigProvider>
-          <AdConfigProvider>
-          <ScrollToTop />
-          <AnalyticsPageTracker />
-          <CookieConsent />
-          <PwaUpdatePrompt />
-          <OnboardingHost />
-          <NativeDailyLimitHost />
-          <AdVignetteHost />
-          <Routes>
-            {/* Explicitly map over supported locales so it doesn't swallow `:slug` */}
-            {NON_HE_LOCALES.map((loc) => (
-              <Route key={loc} path={`/${loc}`}>
-                {getAppRoutes(loc)}
-              </Route>
-            ))}
+function AppRoutes() {
+  const native = isNativeApp();
+  const getRoutes = native ? getNativeRoutes : getWebRoutes;
 
-            {/* Hebrew (default, no prefix) */}
-            <Route path="/">
-              {getAppRoutes("he")}
-            </Route>
-          </Routes>
-          </AdConfigProvider>
-          </ToolConfigProvider>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </ThemeProvider>
-);
+  return (
+    <Routes>
+      {NON_HE_LOCALES.map((loc) => (
+        <Route key={loc} path={`/${loc}`}>
+          {getRoutes(loc)}
+        </Route>
+      ))}
+      <Route path="/">{getRoutes("he")}</Route>
+    </Routes>
+  );
+}
+
+const App = () => {
+  const native = isNativeApp();
+
+  return (
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+              <ToolConfigProvider>
+                <AdConfigProvider>
+                  <ScrollToTop />
+                  <AnalyticsPageTracker />
+                  {!native && <CookieConsent />}
+                  {!native && <PwaUpdatePrompt />}
+                  <OnboardingHost />
+                  <NativeDailyLimitHost />
+                  {!native && <AdVignetteHost />}
+                  <AppRoutes />
+                </AdConfigProvider>
+              </ToolConfigProvider>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
+  );
+};
 
 export default App;

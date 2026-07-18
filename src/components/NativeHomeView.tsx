@@ -29,7 +29,7 @@ function sortToolsByPreference(list: Tool[], preferred: ToolCategory | null): To
 }
 
 /** Tools-first native home — search, category pills, personalized greeting. */
-export function NativeHomeView() {
+export function NativeHomeView({ variant = "home" }: { variant?: "home" | "catalog" }) {
   const { locale, t } = useLocale();
   const { user } = useAuth();
   const { filterTools } = useToolConfig();
@@ -37,6 +37,10 @@ export function NativeHomeView() {
 
   const nativeCopy =
     (t as { nativeHome?: typeof enTranslations.nativeHome }).nativeHome ?? enTranslations.nativeHome;
+  const appShell =
+    (t as { appShell?: typeof enTranslations.appShell }).appShell ?? enTranslations.appShell;
+
+  const isCatalog = variant === "catalog";
 
   const [search, setSearch] = useState(() => searchParams.get("q") ?? "");
   const [activeCategory, setActiveCategory] = useState<ToolCategory | "all">(() =>
@@ -93,20 +97,24 @@ export function NativeHomeView() {
 
   return (
     <div className="w-full pb-6">
-      <section className="border-b border-border/80 bg-card/75 px-4 py-5 backdrop-blur-sm sm:px-6">
-        <div className="mx-auto max-w-7xl space-y-1">
-          <p className="text-sm font-semibold text-foreground">
-            {greetingName ? nativeCopy.greeting(greetingName) : nativeCopy.greetingAnonymous}
-          </p>
-          <p className="text-xs text-muted-foreground">{nativeCopy.subtitle}</p>
-        </div>
-      </section>
+      {!isCatalog && (
+        <section className="border-b border-border/80 bg-card/75 px-4 py-5 backdrop-blur-sm sm:px-6">
+          <div className="mx-auto max-w-7xl space-y-1">
+            <p className="text-sm font-semibold text-foreground">
+              {greetingName ? nativeCopy.greeting(greetingName) : nativeCopy.greetingAnonymous}
+            </p>
+            <p className="text-xs text-muted-foreground">{nativeCopy.subtitle}</p>
+          </div>
+        </section>
+      )}
 
       <div className="mx-auto max-w-7xl space-y-5 px-4 pt-4 sm:px-6 lg:px-8">
-        <NativeHomeMonetization className="native-home-monetization" />
+        {!isCatalog && <NativeHomeMonetization className="native-home-monetization" />}
 
         <div id="home-tools" className="scroll-mt-16 space-y-2.5">
-          <h2 className="text-sm font-bold text-foreground">{homePicker.title}</h2>
+          <h2 className="text-sm font-bold text-foreground">
+            {isCatalog ? appShell.catalogTitle : homePicker.title}
+          </h2>
 
           <div className="relative">
             <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -174,7 +182,7 @@ export function NativeHomeView() {
           tools={gridTools}
           locale={locale}
           toolNames={toolNames}
-          title={homePicker.title}
+          title={isCatalog ? appShell.catalogTitle : homePicker.title}
           className="pt-2"
         />
 

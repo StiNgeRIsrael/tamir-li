@@ -13,21 +13,32 @@ function isPremiumSalesPath(pathname: string): boolean {
   return segments[segments.length - 1] === "premium";
 }
 
+/**
+ * Web chrome (navbar, footer, ad rails).
+ * On Capacitor, NativeAppShell owns chrome — this becomes a content passthrough
+ * so one deploy serves both web and app without double headers.
+ */
 export function AppLayout({ children, hideSideAds }: { children: ReactNode; hideSideAds?: boolean }) {
   const { dir } = useLocale();
   const { pathname } = useLocation();
   const nativeApp = isNativeApp();
   const suppressSideAds = hideSideAds || isPremiumSalesPath(pathname) || nativeApp;
 
+  if (nativeApp) {
+    return (
+      <div className="native-app-content w-full" dir={dir}>
+        {children}
+      </div>
+    );
+  }
+
   return (
-    <div className={cn("min-h-screen w-full flex flex-col utility-page-bg", nativeApp && "native-app-shell")} dir={dir}>
+    <div className={cn("flex min-h-screen w-full flex-col utility-page-bg")} dir={dir}>
       <DbUnavailableBanner />
       <TopNavbar />
       <div className="relative flex flex-1 justify-center">
         {!suppressSideAds && <DesktopAdRail side="start" />}
-        <main className="relative w-full min-w-0 flex-1">
-          {children}
-        </main>
+        <main className="relative w-full min-w-0 flex-1">{children}</main>
         {!suppressSideAds && <DesktopAdRail side="end" />}
       </div>
       <SiteFooter />

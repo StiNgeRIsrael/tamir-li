@@ -1482,6 +1482,23 @@ export const enTranslations = {
     adHint: "Rewarded ad — unlocks one more conversion today",
   },
 
+  appShell: {
+    tabsLabel: "Main navigation",
+    back: "Back",
+    catalogTitle: "All tools",
+    accountTitle: "Account",
+    accountSubtitle: "Sign-in, usage, and legal",
+    signedInAs: "Signed in as",
+    notSignedIn: "Not signed in",
+    versionHint: "Tamir.li app — same tools as the website",
+    tabs: {
+      home: "Home",
+      catalog: "Tools",
+      premium: "Premium",
+      account: "Account",
+    },
+  },
+
   contactPage: {
     seoTitle: "Contact | Tamir.li",
     seoDesc: "Contact the Tamir.li team — support, feedback, and business inquiries.",

@@ -1502,6 +1502,23 @@ export const heTranslations = {
     adHint: "פרסומת מתגמלת — המרה אחת נוספת להיום",
   },
 
+  appShell: {
+    tabsLabel: "ניווט ראשי",
+    back: "חזרה",
+    catalogTitle: "כל הכלים",
+    accountTitle: "חשבון",
+    accountSubtitle: "התחברות, שימוש ותנאים",
+    signedInAs: "מחוברים כ־",
+    notSignedIn: "לא מחוברים",
+    versionHint: "אפליקציית תמיר לי — אותם כלים כמו באתר",
+    tabs: {
+      home: "בית",
+      catalog: "כלים",
+      premium: "פרימיום",
+      account: "חשבון",
+    },
+  },
+
   contactPage: {
     seoTitle: "צור קשר | תמיר לי",
     seoDesc: "צרו קשר עם צוות תמיר לי — תמיכה, משוב ובקשות עסקיות.",

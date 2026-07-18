@@ -218,7 +218,7 @@
 
   /* Capacitor shell — app-like density and safe areas */
   html[data-platform="native"] body {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-bottom: 0;
   }
 
   html[data-platform="native"] .native-app-shell {
@@ -243,17 +243,12 @@
     @apply min-h-[7.5rem];
   }
 
-  html[data-platform="native"] .native-top-navbar {
+  html[data-platform="native"] .app-shell-header {
     padding-top: env(safe-area-inset-top, 0px);
   }
 
-  html[data-platform="native"] .native-top-navbar button,
-  html[data-platform="native"] .native-top-navbar a {
-    min-height: 44px;
-  }
-
-  html[data-platform="native"] body {
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--admob-banner-height, 0px));
+  html[data-platform="native"] .app-tab-bar {
+    padding-bottom: max(0.35rem, env(safe-area-inset-bottom, 0px));
   }
 
   /* Native tool success — app-like cards and CTAs */
