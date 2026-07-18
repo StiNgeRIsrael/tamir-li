@@ -3,6 +3,10 @@
     "paypal": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://mcp.paypal.com/sse"]
+    },
+    "google-play": {
+      "command": "uvx",
+      "args": ["play-store-mcp"]
     }
   }
 }

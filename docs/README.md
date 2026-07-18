@@ -51,6 +51,7 @@
 | Doc | Purpose |
 |-----|---------|
 | [android-play-console-setup.md](./android-play-console-setup.md) | Operator checklist — Play Console, signing, AAB |
+| [play-console-mcp-setup.md](./play-console-mcp-setup.md) | Cursor MCP → Google Play Android Developer API |
 | [admob-setup.md](./admob-setup.md) | AdMob app/units, `.env.production`, `app-ads.txt` |
 
 **Package:** `li.tamir.app` · **WebView URL:** `https://tamir.li`  
@@ -70,6 +71,8 @@
 | [adsterra-setup.md](./adsterra-setup.md) | **Web** display ads (admin `/admin/ads`) |
 | [admob-setup.md](./admob-setup.md) | **Android** ads |
 | [paypal-setup.md](./paypal-setup.md) | **Web** subscriptions (primary) |
+| [paypal-mcp-setup.md](./paypal-mcp-setup.md) | Cursor MCP → PayPal (live catalog / webhooks) |
+| [play-console-mcp-setup.md](./play-console-mcp-setup.md) | Cursor MCP → Play Console (subscriptions, releases) |
 | [stripe-setup.md](./stripe-setup.md) | Optional second rail (`ENABLE_STRIPE=true`) |
 | [adsense-setup.md](./adsense-setup.md) | AdSense (pending / optional on web) |
 
