@@ -240,6 +240,16 @@ Details: [docs/android-play-console-setup.md](docs/android-play-console-setup.md
 | PayPal / Stripe (web) | [docs/paypal-setup.md](docs/paypal-setup.md), [docs/stripe-setup.md](docs/stripe-setup.md) |
 | GSC / indexing | [docs/google-search-console-indexing.md](docs/google-search-console-indexing.md) · `npm run gsc:daily` · `.cursor/automations/gsc-daily-indexing.md` |
 
+## Cursor Cloud specific instructions
+
+Full local dev flow lives in [docs/local-dev.md](docs/local-dev.md). The update script runs `npm install` on startup (installs root + `backend/` deps and generates the Prisma client via `postinstall`). Only the non-obvious cloud caveats are below.
+
+- **MySQL runs locally, not via Docker.** MySQL 8 is installed on the VM (Docker is not available here). It does not auto-start — run `sudo service mysql start` at the start of a session before the backend. Root creds are `root`/`root`; database `tamirly_db` already exists with all Prisma migrations applied (data persists in the VM snapshot). Prisma connects over TCP, so `DATABASE_URL` must use `127.0.0.1` (not `localhost`, whose socket dir is root-only here).
+- **Env files are gitignored and pre-created** for local dev: `backend/.env` and `.env.development.local` (see `.env.example` / `backend/.env.example` to recreate). `VITE_USE_MOCK_CONVERSION=false` is set so the UI hits the real API.
+- **Run the app:** `npm run dev:all` (Vite on `:8080`, Express API on `:5000`). Verify with `curl http://localhost:5000/health`. Lint `npm run lint`; tests `npm run test`; backend typecheck `cd backend && npx tsc --noEmit`.
+- **Prisma migrations in dev are manual.** The backend only auto-runs `migrate deploy` when `NODE_ENV=production` (skipped in dev). After adding a migration, apply it with the env loaded: `node --env-file=backend/.env backend/node_modules/prisma/build/index.js migrate deploy --schema=backend/prisma/schema.prisma` (the Prisma CLI does not read `backend/.env` on its own).
+- **ffmpeg is installed**, so `audio-converter` server jobs (`POST /api/conversions`) transcode for real; video / PDF-Word remain stubs (see "What NOT to do").
+
 ## Deeper docs
 
 - [docs/README.md](docs/README.md) — internal doc index (what's current vs deprecated)
