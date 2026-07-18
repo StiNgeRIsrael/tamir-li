@@ -233,6 +233,8 @@ Details: [docs/android-play-console-setup.md](docs/android-play-console-setup.md
 | Deploy | [docs/plesk-node-deploy.md](docs/plesk-node-deploy.md) · [docs/deploy-checklist.md](docs/deploy-checklist.md) |
 | Android / Play / IAP | [docs/android-play-console-setup.md](docs/android-play-console-setup.md) — subscriptions, service account, AAB |
 | Play Console MCP | [docs/play-console-mcp-setup.md](docs/play-console-mcp-setup.md) — Cursor agents ↔ Android Publisher API |
+| Agent autonomy | [docs/agent-autonomy.md](docs/agent-autonomy.md) — what agents can wire; GH secret + Cloud Environment bootstrap |
+| Play catalog | `npm run play:catalog` / `play:catalog:ensure` — verify/create Play subscriptions via SA |
 | Android ads (future) | [docs/admob-setup.md](docs/admob-setup.md) — only after AdMob account exists |
 | Local dev | [docs/local-dev.md](docs/local-dev.md) |
 | PayPal / Stripe (web) | [docs/paypal-setup.md](docs/paypal-setup.md), [docs/stripe-setup.md](docs/stripe-setup.md) |

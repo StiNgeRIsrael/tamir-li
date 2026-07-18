@@ -24,8 +24,11 @@ import { pingAiSettingsTable } from './lib/ai-settings';
 import { getStartupMigrateStatus } from './lib/startup-migrate';
 import { isDatabaseUrlSet, parseDatabaseUrlSafe, pingDatabase } from './lib/db-health';
 import { getPayPalBillingReadiness } from './lib/paypal';
+import { getGooglePlayBillingReadiness } from './lib/google-play';
 
+// cwd `.env` (Plesk app root) + `backend/.env` (migrations / Play sync target)
 dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 
 const app: Express = express();
 
@@ -116,6 +119,7 @@ app.get('/health', async (_req: Request, res: Response) => {
       ? { ok: true }
       : { ok: false, error: aiSettingsTable.error },
     billing: getPayPalBillingReadiness(),
+    googlePlay: getGooglePlayBillingReadiness(),
   });
 });
 

@@ -15,6 +15,7 @@ dist-ssr
 # Secrets (never commit)
 .env
 backend/.env
+backend/.google-play-sa.json
 
 # Local Android SDK (cap:sync / android:bundle)
 .android-sdk/

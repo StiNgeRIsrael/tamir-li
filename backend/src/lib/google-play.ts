@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { JWT } from 'google-auth-library';
 
 const ANDROID_PUBLISHER_SCOPE = 'https://www.googleapis.com/auth/androidpublisher';
@@ -41,26 +42,65 @@ function getPackageName(): string {
   return process.env.GOOGLE_PLAY_PACKAGE_NAME?.trim() || 'com.tamir.li';
 }
 
-function getServiceAccountClient(): JWT | null {
+function loadServiceAccountJson(): { client_email?: string; private_key?: string } | null {
   const raw = process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON?.trim();
-  if (!raw) return null;
+  if (raw) {
+    try {
+      return JSON.parse(raw) as { client_email?: string; private_key?: string };
+    } catch {
+      return null;
+    }
+  }
+
+  const filePath =
+    process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_FILE?.trim() ||
+    // Deploy sync writes here (see .github/workflows/deploy-plesk.yml)
+    `${process.cwd()}/backend/.google-play-sa.json`;
 
   try {
-    const creds = JSON.parse(raw) as { client_email?: string; private_key?: string };
-    if (!creds.client_email || !creds.private_key) return null;
-
-    return new JWT({
-      email: creds.client_email,
-      key: creds.private_key,
-      scopes: [ANDROID_PUBLISHER_SCOPE],
-    });
+    if (!fs.existsSync(filePath)) return null;
+    return JSON.parse(fs.readFileSync(filePath, 'utf8')) as {
+      client_email?: string;
+      private_key?: string;
+    };
   } catch {
     return null;
   }
 }
 
+function getServiceAccountClient(): JWT | null {
+  const creds = loadServiceAccountJson();
+  if (!creds?.client_email || !creds.private_key) return null;
+
+  return new JWT({
+    email: creds.client_email,
+    key: creds.private_key,
+    scopes: [ANDROID_PUBLISHER_SCOPE],
+  });
+}
+
 export function isGooglePlayConfigured(): boolean {
   return getServiceAccountClient() !== null;
+}
+
+/** Safe /health probe — never exposes the service account JSON. */
+export function getGooglePlayBillingReadiness(): {
+  configured: boolean;
+  packageName: string;
+  products: { monthly: boolean; yearly: boolean };
+  serviceAccountEmailPrefix: string | null;
+} {
+  const creds = loadServiceAccountJson();
+  const email = creds?.client_email;
+  return {
+    configured: isGooglePlayConfigured(),
+    packageName: getPackageName(),
+    products: {
+      monthly: !!(process.env.GOOGLE_PLAY_PRODUCT_MONTHLY?.trim() || 'tamir_premium_monthly'),
+      yearly: !!(process.env.GOOGLE_PLAY_PRODUCT_YEARLY?.trim() || 'tamir_premium_yearly'),
+    },
+    serviceAccountEmailPrefix: email ? email.split('@')[0] || null : null,
+  };
 }
 
 async function publisherFetch<T>(path: string): Promise<T> {

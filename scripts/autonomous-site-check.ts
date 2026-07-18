@@ -526,7 +526,13 @@ async function run(): Promise<void> {
 
   await checkApiJson("GET", "/health", {
     validate: (data) => {
-      const d = data as { status?: string; uptime?: number; db?: { ok?: boolean; error?: string } };
+      const d = data as {
+        status?: string;
+        uptime?: number;
+        db?: { ok?: boolean; error?: string };
+        billing?: { configured?: boolean };
+        googlePlay?: { configured?: boolean; packageName?: string };
+      };
       if (d.status !== "OK") return `Expected status OK, got ${d.status}`;
       if (typeof d.uptime !== "number") {
         warn("api GET /health uptime", "Missing uptime — redeploy backend for enhanced probe");
@@ -542,6 +548,27 @@ async function run(): Promise<void> {
               : " Check DATABASE_URL, migrations, and Plesk Node env.";
           warn("api GET /health database", `db.ok is false — MySQL/Prisma unreachable.${codeHint}`);
         }
+      }
+      if (d.billing?.configured === true) {
+        pass("api GET /health billing", "PayPal configured");
+      } else if (d.billing) {
+        warn("api GET /health billing", "PayPal not fully configured");
+      }
+      if (d.googlePlay?.configured === true) {
+        pass(
+          "api GET /health googlePlay",
+          `configured (${d.googlePlay.packageName || "com.tamir.li"})`
+        );
+      } else if (d.googlePlay) {
+        warn(
+          "api GET /health googlePlay",
+          "GOOGLE_PLAY_SERVICE_ACCOUNT_JSON missing on server — add GH secret or Plesk env (docs/agent-autonomy.md)"
+        );
+      } else {
+        warn(
+          "api GET /health googlePlay",
+          "Missing googlePlay field — redeploy backend for Play readiness probe"
+        );
       }
       return null;
     },

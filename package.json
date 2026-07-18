@@ -36,6 +36,8 @@
     "test:watch": "vitest",
     "site:check": "tsx scripts/autonomous-site-check.ts",
     "site:check:prod": "tsx scripts/autonomous-site-check.ts --prod",
+    "play:catalog": "node scripts/play-console-catalog.mjs",
+    "play:catalog:ensure": "node scripts/play-console-catalog.mjs --ensure",
     "cap:sync": "npm run build:frontend && node scripts/sync-admob-android.mjs && npx cap sync android",
     "cap:open": "npx cap open android",
     "android:bundle": "cd android && gradlew.bat bundleRelease",

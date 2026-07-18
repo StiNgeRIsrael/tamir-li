@@ -130,6 +130,44 @@ jobs:
           rsyncArgs: "-avz --omit-dir-times"
           sftpArgs: "-o ConnectTimeout=30 -o StrictHostKeyChecking=accept-new"
 
+      # Sync Google Play SA into backend/.env when the Actions secret is set (agents cannot set secrets).
+      # App loads backend/.env via dotenv — enables POST /api/billing/google/verify without Plesk UI paste.
+      - name: Sync Google Play env on Plesk
+        if: success() && secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON != ''
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          GOOGLE_PLAY_PACKAGE_NAME: ${{ secrets.GOOGLE_PLAY_PACKAGE_NAME || 'com.tamir.li' }}
+        with:
+          host: ${{ secrets.PLESK_SSH_HOST || secrets.PLESK_FTP_HOST }}
+          username: ${{ secrets.PLESK_SSH_USER || secrets.PLESK_FTP_USER }}
+          password: ${{ secrets.PLESK_SSH_PASSWORD || secrets.PLESK_FTP_PASSWORD }}
+          port: ${{ vars.PLESK_SSH_PORT || 22 }}
+          command_timeout: 5m
+          envs: GOOGLE_PLAY_SERVICE_ACCOUNT_JSON,GOOGLE_PLAY_PACKAGE_NAME
+          script: |
+            set -e
+            APP_DIR="${{ vars.PLESK_NODE_APP_DIR || 'httpdocs/deploy' }}"
+            APP_DIR="${APP_DIR%/}"
+            cd "$APP_DIR" || { echo "Cannot cd to $APP_DIR"; exit 1; }
+            APP_DIR="$(pwd)"
+            ENV_FILE="$APP_DIR/backend/.env"
+            SA_FILE="$APP_DIR/backend/.google-play-sa.json"
+            mkdir -p "$APP_DIR/backend"
+            touch "$ENV_FILE"
+            chmod 600 "$ENV_FILE"
+            # Write SA JSON as a file (avoids dotenv escaping issues with private keys).
+            printf '%s' "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON" > "$SA_FILE"
+            chmod 600 "$SA_FILE"
+            # Upsert package name + file pointer in backend/.env (preserves DATABASE_URL etc.).
+            grep -vE '^(GOOGLE_PLAY_SERVICE_ACCOUNT_JSON|GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_FILE|GOOGLE_PLAY_PACKAGE_NAME)=' "$ENV_FILE" > "$ENV_FILE.tmp" || true
+            mv "$ENV_FILE.tmp" "$ENV_FILE"
+            printf 'GOOGLE_PLAY_PACKAGE_NAME=%s\n' "$GOOGLE_PLAY_PACKAGE_NAME" >> "$ENV_FILE"
+            printf 'GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_FILE=%s\n' "$SA_FILE" >> "$ENV_FILE"
+            echo "Synced Google Play SA file + env pointers (values redacted)"
+            ls -la "$SA_FILE"
+            grep -E '^GOOGLE_PLAY_' "$ENV_FILE" | sed 's/=.*/=***/'
+
       # Runs only after SFTP succeeds. No npm install unless workflow_dispatch run_server_setup=true.
       # Migrations: never via GitHub DATABASE_URL (often wrong / out of sync with Plesk custom env).
       # After restart, startup-migrate.ts runs prisma migrate deploy using Plesk-injected DATABASE_URL.
@@ -250,6 +288,11 @@ jobs:
           fi
           if grep -q '"adSettingsTable"[[:space:]]*:[[:space:]]*{[^}]*"ok"[[:space:]]*:[[:space:]]*false' /tmp/health-body; then
             echo "::warning:: GET /health reports adSettingsTable.ok=false — check Plesk logs for [startup-migrate] and /health migrations.state (restart applies pending migrations)."
+          fi
+          if grep -q '"googlePlay"[[:space:]]*:[[:space:]]*{[^}]*"configured"[[:space:]]*:[[:space:]]*false' /tmp/health-body; then
+            echo "::warning:: GET /health googlePlay.configured=false — add Actions secret GOOGLE_PLAY_SERVICE_ACCOUNT_JSON (see docs/agent-autonomy.md) or set Plesk env, then redeploy."
+          elif grep -q '"googlePlay"[[:space:]]*:[[:space:]]*{[^}]*"configured"[[:space:]]*:[[:space:]]*true' /tmp/health-body; then
+            echo "Google Play billing env configured on server."
           fi
           ICON_CT=$(curl -sS -o /tmp/icon-body -w '%{content_type}' https://tamir.li/tool-icons/pdf-to-png.svg || echo "failed")
           if echo "$ICON_CT" | grep -qi 'text/html'; then

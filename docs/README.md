@@ -52,6 +52,7 @@
 |-----|---------|
 | [android-play-console-setup.md](./android-play-console-setup.md) | Operator checklist — Play Console, signing, AAB |
 | [play-console-mcp-setup.md](./play-console-mcp-setup.md) | Cursor MCP → Google Play Android Developer API |
+| [agent-autonomy.md](./agent-autonomy.md) | What agents can wire alone + one-time bootstrap |
 | [admob-setup.md](./admob-setup.md) | AdMob app/units, `.env.production`, `app-ads.txt` |
 
 **Package:** `li.tamir.app` · **WebView URL:** `https://tamir.li`  
