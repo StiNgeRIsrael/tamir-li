@@ -231,16 +231,16 @@
   }
 
   html[data-platform="native"] .native-home-monetization {
-    @apply shadow-sm;
+    @apply shadow-none;
   }
 
   html[data-platform="native"] .native-app-footer {
-    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
   }
 
-  /* App launcher grid (native home) — larger, app-like tool tiles */
+  /* App launcher grid (native home) — dense, slim tiles */
   html[data-platform="native"] .native-launcher-tile {
-    @apply min-h-[7.5rem];
+    @apply min-h-[5.75rem];
   }
 
   html[data-platform="native"] .app-shell-header {
@@ -359,6 +359,22 @@
 
   .onboarding-countdown--urgent {
     animation: onboarding-pulse 1s ease-in-out infinite;
+  }
+
+  .onboarding-plan-card--selected {
+    animation: onboarding-plan-pop 0.35s var(--onboarding-ease);
+  }
+
+  @keyframes onboarding-plan-pop {
+    0% {
+      transform: scale(0.98);
+    }
+    60% {
+      transform: scale(1.03);
+    }
+    100% {
+      transform: scale(1.02);
+    }
   }
 
   .onboarding-step-enter {

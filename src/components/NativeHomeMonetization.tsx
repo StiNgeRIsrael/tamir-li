@@ -8,7 +8,7 @@ import { useLocale, localePath } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { enTranslations } from "@/lib/translations/en";
 
-/** Usage + premium upsell strip for the native app home screen. */
+/** Compact usage + premium upsell strip for the native app home screen. */
 export function NativeHomeMonetization({ className }: { className?: string }) {
   const { locale, t } = useLocale();
   const { used, max, remaining, loading: usageLoading } = useUsage();
@@ -22,12 +22,12 @@ export function NativeHomeMonetization({ className }: { className?: string }) {
     return (
       <div
         className={cn(
-          "flex items-center gap-3 rounded-xl border border-premium/30 bg-premium/10 px-4 py-3",
+          "flex items-center gap-2 rounded-lg border border-premium/30 bg-premium/10 px-3 py-2",
           className
         )}
       >
-        <Crown className="h-5 w-5 shrink-0 text-premium" aria-hidden />
-        <p className="text-sm font-semibold text-foreground">{copy.premiumActive}</p>
+        <Crown className="h-4 w-4 shrink-0 text-premium" aria-hidden />
+        <p className="text-xs font-semibold text-foreground">{copy.premiumActive}</p>
       </div>
     );
   }
@@ -38,32 +38,41 @@ export function NativeHomeMonetization({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "space-y-3 rounded-xl border p-4",
+        "space-y-2 rounded-lg border px-3 py-2.5",
         isLow ? "border-amber-500/40 bg-amber-500/5" : "border-border bg-card",
         className
       )}
     >
-      <div className="space-y-2">
+      <div className="space-y-1">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-foreground">{copy.usageTitle}</p>
-          <span className="text-xs font-medium text-muted-foreground" dir="ltr">
+          <p className="text-xs font-semibold text-foreground">{copy.usageTitle}</p>
+          <span className="text-[11px] font-medium text-muted-foreground" dir="ltr">
             {used}/{max}
           </span>
         </div>
-        <Progress value={pct} className="h-2" aria-label={copy.usageRemaining(remaining)} />
-        <p className={cn("text-xs", isLow ? "font-medium text-amber-700 dark:text-amber-400" : "text-muted-foreground")}>
+        <Progress value={pct} className="h-1.5" aria-label={copy.usageRemaining(remaining)} />
+        <p
+          className={cn(
+            "text-[11px] leading-snug",
+            isLow ? "font-medium text-amber-700 dark:text-amber-400" : "text-muted-foreground"
+          )}
+        >
           {copy.usageRemaining(remaining)}
         </p>
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between rounded-lg bg-premium/10 border border-premium/25 px-3 py-2.5">
+      <div className="flex items-center justify-between gap-2 rounded-md border border-premium/25 bg-premium/10 px-2.5 py-1.5">
         <div className="min-w-0">
-          <p className="text-sm font-bold text-foreground">{copy.upgradeTitle}</p>
-          <p className="text-xs text-muted-foreground">{copy.upgradeSubtitle}</p>
+          <p className="text-xs font-bold leading-tight text-foreground">{copy.upgradeTitle}</p>
+          <p className="text-[10px] leading-snug text-muted-foreground">{copy.upgradeSubtitle}</p>
         </div>
-        <Button asChild size="sm" className="shrink-0 bg-premium text-premium-foreground hover:bg-premium/90 font-bold">
+        <Button
+          asChild
+          size="sm"
+          className="h-8 shrink-0 bg-premium px-2.5 text-xs font-bold text-premium-foreground hover:bg-premium/90"
+        >
           <Link to={localePath("/premium", locale)}>
-            <Zap className="h-3.5 w-3.5 me-1" aria-hidden />
+            <Zap className="me-1 h-3 w-3" aria-hidden />
             {copy.upgradeCta}
           </Link>
         </Button>

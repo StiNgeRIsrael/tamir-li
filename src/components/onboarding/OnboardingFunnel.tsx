@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Check, Loader2, Sparkles, Zap } from "lucide-react";
+import { Check, Loader2, ShieldCheck, Sparkles, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { GoogleLoginButton } from "@/components/GoogleLoginButton";
@@ -59,7 +59,7 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
   const copy = getCopy(t);
   const { user, loading: authLoading, updateProfile } = useAuth();
   const { checkout, checkoutLoading, isPremium, nativeBilling } = useSubscription();
-  const { ensureSignedIn, canNativeSignIn } = useEnsureGoogleSignIn();
+  const { ensureSignedIn, canNativeSignIn, nativePluginReady } = useEnsureGoogleSignIn();
 
   const [step, setStep] = useState<OnboardingStepId>("hook");
   const [answers, setAnswers] = useState<Partial<QuizAnswers>>({});
@@ -162,7 +162,20 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
     try {
       if (!user) {
         if (nativeBilling && canNativeSignIn) {
-          await ensureSignedIn();
+          try {
+            await ensureSignedIn();
+          } catch (signInErr) {
+            const code = signInErr instanceof Error ? signInErr.message : "";
+            const cancelled = /cancel|NATIVE_GOOGLE_CANCELLED/i.test(code);
+            if (cancelled) {
+              setPurchaseBusy(false);
+              return;
+            }
+            // Show auth step with Google button (never GIS). Update-app hint if plugin missing.
+            setPurchaseBusy(false);
+            goTo("auth", "offer_accept_need_login");
+            return;
+          }
         } else {
           setPurchaseBusy(false);
           goTo("auth", "offer_accept_need_login");
@@ -178,13 +191,16 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
     } catch (e) {
       const msg = e instanceof Error ? e.message : copy.offer.checkoutError;
       const cancelled =
-        /cancel|dismiss|USER_CANCELED|BillingResponse/i.test(msg) ||
+        /cancel|dismiss|USER_CANCELED|BillingResponse|NATIVE_GOOGLE_CANCELLED/i.test(msg) ||
         msg === "SIGN_IN_REQUIRED";
       if (!cancelled) {
         trackCheckoutError(plan, msg);
+        const authCopy = copy.auth as { signInRequired?: string; signInUpdateApp?: string };
         toast.error(
-          msg === "SIGN_IN_REQUIRED"
-            ? (copy.auth as { signInRequired?: string }).signInRequired ?? copy.offer.checkoutError
+          msg === "SIGN_IN_REQUIRED" || msg === "NATIVE_GOOGLE_UPDATE_REQUIRED"
+            ? (msg === "NATIVE_GOOGLE_UPDATE_REQUIRED"
+                ? authCopy.signInUpdateApp
+                : authCopy.signInRequired) ?? copy.offer.checkoutError
             : msg
         );
       }
@@ -411,21 +427,21 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
 
       case "offer":
         return (
-          <div className="space-y-4">
-            <div className="onboarding-panel p-5 text-center">
-              <p className="text-xs font-bold uppercase tracking-wider text-primary">
+          <div className="space-y-3">
+            <div className="onboarding-panel px-4 py-3.5 text-center">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
                 {copy.offer.badge}
               </p>
-              <h2 className="mt-1 text-2xl font-extrabold text-foreground">{copy.offer.title}</h2>
-              <p className="mt-1 text-sm text-foreground/70">{copy.offer.subtitle}</p>
+              <h2 className="mt-0.5 text-xl font-extrabold text-foreground">{copy.offer.title}</h2>
+              <p className="mt-0.5 text-xs text-foreground/70">{copy.offer.subtitle}</p>
 
-              <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-foreground/60">
+              <p className="mt-2.5 text-[11px] font-semibold uppercase tracking-wide text-foreground/60">
                 {copy.offer.timerLabel}
               </p>
               {!expired ? (
                 <div
                   className={cn(
-                    "onboarding-countdown mt-1 font-mono text-4xl font-extrabold",
+                    "onboarding-countdown mt-0.5 font-mono text-3xl font-extrabold",
                     urgent && "onboarding-countdown--urgent"
                   )}
                   aria-live="polite"
@@ -433,20 +449,24 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
                   {countdown}
                 </div>
               ) : (
-                <p className="mt-2 text-sm font-medium text-foreground/70">{copy.offer.expiredNote}</p>
+                <p className="mt-1.5 text-sm font-medium text-foreground/70">{copy.offer.expiredNote}</p>
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2.5">
               <PlanCard
                 selected={plan === "yearly"}
                 onClick={() => {
                   hapticLight();
                   setPlan("yearly");
                 }}
-                badge={copy.offer.yearlySave}
-                price={nativeBilling ? copy.offer.playYearlyLabel : copy.offer.priceYearly}
-                sub={nativeBilling ? copy.offer.playBillingNote : copy.offer.perYear}
+                planLabel={copy.offer.yearlyLabel}
+                saveBadge={copy.offer.yearlySave}
+                bestValueBadge={copy.offer.bestValue}
+                price={copy.offer.priceYearly}
+                anchor={copy.offer.anchorYearly}
+                period={copy.offer.perYear}
+                equiv={copy.offer.perMonthEquiv}
                 highlight
               />
               <PlanCard
@@ -455,16 +475,29 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
                   hapticLight();
                   setPlan("monthly");
                 }}
-                badge={copy.offer.monthlyLabel}
-                price={nativeBilling ? copy.offer.playMonthlyLabel : copy.offer.priceMonthly}
-                sub={nativeBilling ? copy.offer.playBillingNote : copy.offer.perMonth}
+                planLabel={copy.offer.monthlyLabel}
+                price={copy.offer.priceMonthly}
+                anchor={copy.offer.anchorMonthly}
+                period={copy.offer.perMonth}
               />
             </div>
 
-            <ul className="onboarding-glass-card space-y-2 p-4 text-sm">
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
+              {copy.offer.trustBadges.map((label) => (
+                <span
+                  key={label}
+                  className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300"
+                >
+                  <ShieldCheck className="h-3 w-3 shrink-0" aria-hidden />
+                  {label}
+                </span>
+              ))}
+            </div>
+
+            <ul className="onboarding-glass-card space-y-1.5 px-3 py-2.5 text-[13px]">
               {copy.offer.benefits.map((b) => (
                 <li key={b} className="flex items-center gap-2 font-medium text-foreground">
-                  <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+                  <Check className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
                   {b}
                 </li>
               ))}
@@ -474,13 +507,18 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
 
       case "auth":
         return (
-          <div className="flex flex-1 flex-col justify-center gap-6 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-xl">
-              <Zap className="h-8 w-8 text-white" aria-hidden />
+          <div className="flex flex-1 flex-col justify-center gap-4 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-xl">
+              <Zap className="h-7 w-7 text-white" aria-hidden />
             </div>
-            <div className="space-y-2">
-              <h2 className="text-2xl font-extrabold text-foreground">{copy.auth.titlePurchase}</h2>
-              <p className="text-sm text-foreground/70">{copy.auth.subtitlePurchase}</p>
+            <div className="space-y-1.5">
+              <h2 className="text-xl font-extrabold text-foreground">{copy.auth.titlePurchase}</h2>
+              <p className="text-sm text-foreground/70">
+                {nativeBilling && !nativePluginReady
+                  ? ((copy.auth as { signInUpdateApp?: string }).signInUpdateApp ??
+                    copy.auth.subtitlePurchase)
+                  : copy.auth.subtitlePurchase}
+              </p>
             </div>
             {user || busy ? (
               <div className="flex items-center justify-center gap-2 text-sm text-foreground/70">
@@ -556,7 +594,10 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
             >
               {copy.offer.decline}
             </button>
-            <p className="text-center text-xs text-foreground/60">{copy.offer.guarantee}</p>
+            <p className="flex items-center justify-center gap-1.5 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              {copy.offer.guarantee}
+            </p>
           </div>
         );
       default:
@@ -607,16 +648,24 @@ function QuizLayout({
 function PlanCard({
   selected,
   onClick,
-  badge,
+  planLabel,
+  saveBadge,
+  bestValueBadge,
   price,
-  sub,
+  anchor,
+  period,
+  equiv,
   highlight,
 }: {
   selected: boolean;
   onClick: () => void;
-  badge: string;
+  planLabel: string;
+  saveBadge?: string;
+  bestValueBadge?: string;
   price: string;
-  sub: string;
+  anchor: string;
+  period: string;
+  equiv?: string;
   highlight?: boolean;
 }) {
   return (
@@ -624,20 +673,56 @@ function PlanCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "onboarding-glass-card flex flex-col items-center gap-0.5 p-4 text-center transition-transform active:scale-[0.98]",
-        selected ? "ring-2 ring-primary" : "opacity-90"
+        "relative flex flex-col items-center gap-0.5 rounded-2xl border px-2.5 pb-3 pt-4 text-center transition-all active:scale-[0.98]",
+        highlight
+          ? "border-primary/40 bg-gradient-to-b from-primary/15 via-card to-card shadow-md"
+          : "onboarding-glass-card",
+        selected
+          ? "onboarding-plan-card--selected ring-2 ring-primary shadow-lg scale-[1.02]"
+          : "opacity-95 hover:opacity-100"
       )}
     >
+      {(bestValueBadge || saveBadge) && (
+        <span className="absolute -top-2.5 inline-flex max-w-[95%] items-center gap-1 truncate rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground shadow-sm">
+          {bestValueBadge ?? saveBadge}
+        </span>
+      )}
       <span
         className={cn(
-          "text-xs font-bold",
-          highlight ? "text-primary" : "text-foreground/60"
+          "text-[11px] font-bold uppercase tracking-wide",
+          highlight ? "text-primary" : "text-foreground/55"
         )}
       >
-        {badge}
+        {planLabel}
       </span>
-      <span className="text-lg font-extrabold text-foreground">{price}</span>
-      <span className="text-xs text-foreground/60">{sub}</span>
+      <span className="text-[11px] font-medium text-foreground/45 line-through decoration-foreground/35">
+        {anchor}
+      </span>
+      <span
+        className={cn(
+          "text-[1.35rem] font-black leading-none tracking-tight text-foreground",
+          highlight && "text-primary"
+        )}
+        dir="ltr"
+      >
+        {price}
+      </span>
+      <span className="text-[10px] font-medium text-foreground/60">{period}</span>
+      {equiv && (
+        <span className="mt-0.5 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
+          {equiv}
+        </span>
+      )}
+      {highlight && saveBadge && bestValueBadge && (
+        <span className="mt-1 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
+          {saveBadge}
+        </span>
+      )}
+      {selected && (
+        <span className="mt-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <Check className="h-3 w-3" strokeWidth={3} aria-hidden />
+        </span>
+      )}
     </button>
   );
 }

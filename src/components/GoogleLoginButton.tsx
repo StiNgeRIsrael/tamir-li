@@ -5,7 +5,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { getGoogleClientId, loadGoogleGsiScript } from "@/lib/google-gsi";
-import { canUseNativeGoogleAuth, getNativeGoogleIdToken } from "@/lib/native-google-auth";
+import {
+  canUseNativeGoogleAuth,
+  getNativeGoogleIdToken,
+  isNativeGooglePluginAvailable,
+} from "@/lib/native-google-auth";
 import { isNativeApp } from "@/lib/platform";
 import { cn } from "@/lib/utils";
 
@@ -52,6 +56,7 @@ function useAuthCopy() {
         signInMisconfigured?: string;
         signInLoading?: string;
         signInRetry?: string;
+        signInUpdateApp?: string;
       }
     | undefined;
 }
@@ -66,12 +71,16 @@ function toastSignInError(code: string, auth: ReturnType<typeof useAuthCopy>) {
     toast.error(
       auth?.signInMisconfigured ?? "Sign-in is misconfigured on the server. Contact support."
     );
+  } else if (code === "NATIVE_GOOGLE_UPDATE_REQUIRED" || code === "NATIVE_GOOGLE_UNAVAILABLE") {
+    toast.error(
+      auth?.signInUpdateApp ?? "Update the app from Google Play to sign in with Google."
+    );
   } else if (code !== "NATIVE_GOOGLE_CANCELLED" && !code.toLowerCase().includes("cancel")) {
     toast.error(auth?.signInFailed ?? "Sign-in failed");
   }
 }
 
-/** Capacitor: one tap → native Google account sheet → app JWT. */
+/** Capacitor: one tap → native Google account sheet → app JWT. Never GIS / “Retry”. */
 function NativeGoogleLoginButton({
   compact,
   fullWidth,
@@ -82,6 +91,7 @@ function NativeGoogleLoginButton({
   const auth = useAuthCopy();
   const [busy, setBusy] = useState(false);
   const label = auth?.signInWithGoogle ?? "Login with Google";
+  const pluginReady = isNativeGooglePluginAvailable();
 
   if (!apiAvailable || !googleConfigured) return null;
 
@@ -104,26 +114,34 @@ function NativeGoogleLoginButton({
   };
 
   return (
-    <Button
-      type="button"
-      variant="outline"
-      size={compact ? "sm" : "lg"}
-      className={cn(
-        "gap-2 rounded-full border-border bg-card font-semibold shadow-sm hover:bg-muted/60",
-        fullWidth && "w-full",
-        compact ? "h-9 px-3 text-sm" : "h-12 px-4 text-base",
-        className
+    <div className={cn("flex flex-col gap-2", fullWidth && "w-full")}>
+      <Button
+        type="button"
+        variant="outline"
+        size={compact ? "sm" : "lg"}
+        className={cn(
+          "gap-2 rounded-full border-[#dadce0] bg-white font-semibold text-[#3c4043] shadow-sm hover:bg-[#f8f9fa]",
+          fullWidth && "w-full",
+          compact ? "h-9 px-3 text-sm" : "h-12 px-4 text-base",
+          className
+        )}
+        disabled={busy}
+        onClick={handleClick}
+      >
+        {busy ? (
+          <Loader2 className={cn("animate-spin", compact ? "h-4 w-4" : "h-5 w-5")} aria-hidden />
+        ) : (
+          <GoogleIcon className={cn(compact ? "h-4 w-4" : "h-5 w-5")} />
+        )}
+        {busy ? (auth?.signInLoading ?? "Loading…") : label}
+      </Button>
+      {!pluginReady && (
+        <p className="text-center text-xs text-muted-foreground">
+          {auth?.signInUpdateApp ??
+            "Update the app from Google Play to sign in with Google."}
+        </p>
       )}
-      disabled={busy}
-      onClick={handleClick}
-    >
-      {busy ? (
-        <Loader2 className={cn("animate-spin", compact ? "h-4 w-4" : "h-5 w-5")} aria-hidden />
-      ) : (
-        <GoogleIcon className={cn(compact ? "h-4 w-4" : "h-5 w-5")} />
-      )}
-      {busy ? (auth?.signInLoading ?? "Loading…") : label}
-    </Button>
+    </div>
   );
 }
 
@@ -311,9 +329,9 @@ function WebGoogleLoginButton({
 }
 
 export function GoogleLoginButton(props: GoogleLoginButtonProps) {
-  // Prefer native account sheet; fall back to GIS if the plugin isn't in this AAB yet.
-  if (isNativeApp() && canUseNativeGoogleAuth()) {
+  // Native shell: always the Google-branded button + SocialLogin — never GIS “Retry”.
+  if (isNativeApp()) {
     return <NativeGoogleLoginButton {...props} />;
   }
-  return <WebGoogleLoginButton {...props} native={props.native ?? isNativeApp()} />;
+  return <WebGoogleLoginButton {...props} native={props.native ?? false} />;
 }

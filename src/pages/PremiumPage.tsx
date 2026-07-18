@@ -85,7 +85,7 @@ export default function PremiumPage() {
 
   const { user } = useAuth();
 
-  const auth = t.auth as { signInRequired?: string } | undefined;
+  const auth = t.auth as { signInRequired?: string; signInUpdateApp?: string } | undefined;
 
   const { checkout, checkoutLoading, refetch, captureOrder, activateSubscription, isPremium, nativeBilling } =
     useSubscription();
@@ -239,7 +239,18 @@ export default function PremiumPage() {
     try {
       if (!user) {
         if (nativeBilling && canNativeSignIn) {
-          await ensureSignedIn();
+          try {
+            await ensureSignedIn();
+          } catch (signInErr) {
+            const code = signInErr instanceof Error ? signInErr.message : "";
+            if (/cancel|NATIVE_GOOGLE_CANCELLED/i.test(code)) return;
+            toast.error(
+              code === "NATIVE_GOOGLE_UPDATE_REQUIRED" || code === "NATIVE_GOOGLE_UNAVAILABLE"
+                ? (auth?.signInUpdateApp ?? auth?.signInRequired ?? "Sign in to continue")
+                : (auth?.signInRequired ?? "Sign in to continue")
+            );
+            return;
+          }
         } else {
           toast.error(auth?.signInRequired ?? "Sign in to continue");
           return;

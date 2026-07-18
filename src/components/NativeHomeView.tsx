@@ -28,7 +28,7 @@ function sortToolsByPreference(list: Tool[], preferred: ToolCategory | null): To
   return [...preferredTools, ...rest];
 }
 
-/** Tools-first native home — search, category pills, personalized greeting. */
+/** Tools-first native home — slim search, category pills, personalized greeting. */
 export function NativeHomeView({ variant = "home" }: { variant?: "home" | "catalog" }) {
   const { locale, t } = useLocale();
   const { user } = useAuth();
@@ -94,55 +94,56 @@ export function NativeHomeView({ variant = "home" }: { variant?: "home" | "catal
   }, [filteredBySearch, activeCategory, preferredCategory]);
 
   const greetingName = user?.displayName?.trim() || null;
+  const sectionTitle = isCatalog ? appShell.catalogTitle : homePicker.title;
 
   return (
-    <div className="w-full pb-6">
+    <div className="w-full pb-4">
       {!isCatalog && (
-        <section className="border-b border-border/80 bg-card/75 px-4 py-5 backdrop-blur-sm sm:px-6">
-          <div className="mx-auto max-w-7xl space-y-1">
-            <p className="text-sm font-semibold text-foreground">
+        <section className="border-b border-border/70 bg-card/70 px-3 py-2.5 sm:px-4">
+          <div className="mx-auto max-w-7xl">
+            <p className="text-[15px] font-semibold leading-tight text-foreground">
               {greetingName ? nativeCopy.greeting(greetingName) : nativeCopy.greetingAnonymous}
             </p>
-            <p className="text-xs text-muted-foreground">{nativeCopy.subtitle}</p>
+            <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
+              {nativeCopy.subtitle}
+            </p>
           </div>
         </section>
       )}
 
-      <div className="mx-auto max-w-7xl space-y-5 px-4 pt-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl space-y-2.5 px-3 pt-2.5 sm:px-4">
         {!isCatalog && <NativeHomeMonetization className="native-home-monetization" />}
 
-        <div id="home-tools" className="scroll-mt-16 space-y-2.5">
-          <h2 className="text-sm font-bold text-foreground">
-            {isCatalog ? appShell.catalogTitle : homePicker.title}
-          </h2>
+        <div id="home-tools" className="scroll-mt-14 space-y-1.5">
+          <h2 className="text-[13px] font-bold text-foreground">{sectionTitle}</h2>
 
           <div className="relative">
-            <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute start-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={homeSearch.placeholder}
-              className="h-11 rounded-md border-border bg-card ps-9 pe-9 text-sm"
+              className="h-9 rounded-md border-border bg-card ps-8 pe-8 text-[13px]"
             />
             {search && (
               <button
                 type="button"
                 onClick={() => setSearch("")}
-                className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                className="absolute end-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 aria-label="Clear"
               >
-                <X className="h-4 w-4" />
+                <X className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             <button
               type="button"
               onClick={() => setActiveCategory("all")}
               className={cn(
-                "min-h-[40px] rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                "min-h-[30px] rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
                 activeCategory === "all"
                   ? "border-primary bg-primary/10 text-primary"
                   : "border-border bg-card text-muted-foreground hover:text-foreground"
@@ -159,14 +160,14 @@ export function NativeHomeView({ variant = "home" }: { variant?: "home" | "catal
                   type="button"
                   onClick={() => setActiveCategory(cat)}
                   className={cn(
-                    "inline-flex min-h-[40px] items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                    "inline-flex min-h-[30px] items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors",
                     activeCategory === cat
                       ? "border-primary bg-primary/10 text-primary"
                       : "border-border bg-card text-muted-foreground hover:text-foreground",
                     isPreferred && activeCategory !== cat && "ring-1 ring-primary/30"
                   )}
                 >
-                  <Icon className="h-3.5 w-3.5" />
+                  <Icon className="h-3 w-3" />
                   {catLabels[cat]}
                 </button>
               );
@@ -174,7 +175,7 @@ export function NativeHomeView({ variant = "home" }: { variant?: "home" | "catal
           </div>
 
           {(search || activeCategory !== "all") && (
-            <p className="text-xs text-muted-foreground">{homeSearch.results(gridTools.length)}</p>
+            <p className="text-[11px] text-muted-foreground">{homeSearch.results(gridTools.length)}</p>
           )}
         </div>
 
@@ -182,12 +183,13 @@ export function NativeHomeView({ variant = "home" }: { variant?: "home" | "catal
           tools={gridTools}
           locale={locale}
           toolNames={toolNames}
-          title={isCatalog ? appShell.catalogTitle : homePicker.title}
-          className="pt-2"
+          title={sectionTitle}
+          hideTitle
+          className="pt-0.5"
         />
 
         {gridTools.length === 0 && (
-          <p className="py-8 text-center text-sm text-muted-foreground">{homeSearch.noResults}</p>
+          <p className="py-6 text-center text-sm text-muted-foreground">{homeSearch.noResults}</p>
         )}
       </div>
     </div>

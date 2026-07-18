@@ -8,10 +8,19 @@ type NativeToolGridProps = {
   toolNames: Record<string, string>;
   title: string;
   className?: string;
+  /** Hide the section title when the parent already renders one. */
+  hideTitle?: boolean;
 };
 
-/** Native app launcher grid — large icons, 2-column tiles. */
-export function NativeToolGrid({ tools, locale, toolNames, title, className }: NativeToolGridProps) {
+/** Native app launcher grid — compact 2-column tiles. */
+export function NativeToolGrid({
+  tools,
+  locale,
+  toolNames,
+  title,
+  className,
+  hideTitle = false,
+}: NativeToolGridProps) {
   return (
     <ToolIconGrid
       tools={tools}
@@ -20,6 +29,7 @@ export function NativeToolGrid({ tools, locale, toolNames, title, className }: N
       title={title}
       className={className}
       variant="launcher"
+      hideTitle={hideTitle}
     />
   );
 }
