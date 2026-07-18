@@ -18,7 +18,7 @@ router.get('/onboarding', async (_req: Request, res: Response) => {
 
 const CATEGORIES = new Set(['images', 'documents', 'media', 'mixed']);
 const FREQUENCIES = new Set(['daily', 'weekly', 'occasional']);
-const PAINS = new Set(['limit', 'ads', 'size', 'speed']);
+const GOALS = new Set(['convert', 'compress', 'pdf', 'browse']);
 const ATTRIBUTIONS = new Set(['play_store', 'google_search', 'friend', 'social', 'other']);
 const DECISIONS = new Set(['accepted', 'declined']);
 const PLANS = new Set(['yearly', 'monthly']);
@@ -36,6 +36,12 @@ router.post('/onboarding/submit', optionalAuth, async (req: Request, res: Respon
       ? body.selectedPlan
       : null;
 
+    const goal = pick(
+      typeof body.goal === 'string' ? body.goal : body.pain,
+      GOALS,
+      'convert',
+    );
+
     await prisma.onboardingResponse.create({
       data: {
         userId: req.userId ?? null,
@@ -45,7 +51,7 @@ router.post('/onboarding/submit', optionalAuth, async (req: Request, res: Respon
           : 0,
         category: pick(body.category, CATEGORIES, 'mixed'),
         frequency: pick(body.frequency, FREQUENCIES, 'occasional'),
-        pain: pick(body.pain, PAINS, 'limit'),
+        pain: goal,
         attribution: pick(body.attribution, ATTRIBUTIONS, 'other'),
         offerDecision,
         selectedPlan: offerDecision === 'accepted' ? rawPlan : null,

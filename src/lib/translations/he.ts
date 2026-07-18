@@ -158,7 +158,7 @@ export const heTranslations = {
     onboardingResponsesEmpty: "עדיין לא נאספו תשובות.",
     onboardingColCategory: "קטגוריה",
     onboardingColFrequency: "תדירות",
-    onboardingColPain: "כאב",
+    onboardingColGoal: "מטרה ראשונה",
     onboardingColAttribution: "מקור",
     onboardingColDecision: "החלטה",
     onboardingColPlan: "תוכנית",
@@ -1359,13 +1359,13 @@ export const heTranslations = {
           { id: "occasional" as const, label: "לפעמים — כשצריך" },
         ],
       },
-      pain: {
-        question: "מה הכי מפריע לכם היום?",
+      goal: {
+        question: "מה תרצו לעשות קודם?",
         options: [
-          { id: "limit" as const, label: "נגמרו לי 5 ההמרות היומיות" },
-          { id: "ads" as const, label: "יותר מדי פרסומות והפרעות" },
-          { id: "size" as const, label: "קבצים גדולים נדחים" },
-          { id: "speed" as const, label: "המרות איטיות או תור" },
+          { id: "convert" as const, label: "להמיר לפורמט אחר" },
+          { id: "compress" as const, label: "לכווץ או לשנות גודל קובץ" },
+          { id: "pdf" as const, label: "לעבוד עם PDF" },
+          { id: "browse" as const, label: "לעיין בכלים — עדיין לא בטוחים" },
         ],
       },
       attribution: {
@@ -1400,11 +1400,11 @@ export const heTranslations = {
           weekly: "שבועי",
           occasional: "לפעמים",
         },
-        pain: {
-          limit: "בלי מגבלת 5",
-          ads: "בלי פרסומות",
-          size: "קבצים גדולים",
-          speed: "מהיר יותר",
+        goal: {
+          convert: "המרת פורמט",
+          compress: "כיווץ / שינוי גודל",
+          pdf: "כלי PDF",
+          browse: "עיון בכלים",
         },
       },
     },
@@ -1430,11 +1430,11 @@ export const heTranslations = {
         desc: "תמונות, PDF, אודיו ועוד — פרימיום נותן המרות ללא הגבלה ובלי פרסומות.",
       },
     },
-    painBenefits: {
-      limit: "פרימיום = המרות ללא הגבלה — בלי לחכות למחר.",
-      ads: "בפרימיום אין פרסומות — רק העבודה שלכם.",
-      size: "קבצים עד 500MB בפרימיום (לעומת 50MB בחינם).",
-      speed: "עיבוד בעדיפות — הקבצים שלכם קודם בתור.",
+    goalBenefits: {
+      convert: "גררו קובץ, בחרו פורמט, הורידו — תוך שניות.",
+      compress: "כיווץ תמונות ווידאו בלי לצאת מהאפליקציה.",
+      pdf: "מיזוג, פיצול והמרת PDF במקום אחד.",
+      browse: "כל הכלים במסך הבית — מוצאים מה שצריך מהר.",
     },
     frequencyBenefits: {
       daily: "שימוש יומיומי — פרימיום חוסך לכם עצירות כל יום.",

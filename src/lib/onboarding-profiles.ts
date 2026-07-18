@@ -46,12 +46,12 @@ export function getProfileTheme(category: QuizCategory | undefined): ProfileThem
 export type ProfileTraitLabels = {
   category: Record<QuizCategory, string>;
   frequency: Record<string, string>;
-  pain: Record<string, string>;
+  goal: Record<string, string>;
 };
 
 export type ProfileTrait = { key: string; label: string };
 
-/** Build the 3 trait chips (category, frequency, pain) shown on the profile card. */
+/** Build the 3 trait chips (category, frequency, goal) shown on the profile card. */
 export function buildProfileTraits(
   answers: Partial<QuizAnswers>,
   labels: ProfileTraitLabels
@@ -63,8 +63,8 @@ export function buildProfileTraits(
   if (answers.frequency) {
     traits.push({ key: "frequency", label: labels.frequency[answers.frequency] });
   }
-  if (answers.pain) {
-    traits.push({ key: "pain", label: labels.pain[answers.pain] });
+  if (answers.goal) {
+    traits.push({ key: "goal", label: labels.goal[answers.goal] });
   }
   return traits;
 }

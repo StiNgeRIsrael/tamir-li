@@ -9,7 +9,7 @@ export const ONBOARDING_OFFER_MS = 24 * 60 * 60 * 1000;
 
 export type QuizCategory = "images" | "documents" | "media" | "mixed";
 export type QuizFrequency = "daily" | "weekly" | "occasional";
-export type QuizPain = "limit" | "ads" | "size" | "speed";
+export type QuizGoal = "convert" | "compress" | "pdf" | "browse";
 export type QuizAttribution =
   | "play_store"
   | "google_search"
@@ -20,7 +20,7 @@ export type QuizAttribution =
 export type QuizAnswers = {
   category: QuizCategory;
   frequency: QuizFrequency;
-  pain: QuizPain;
+  goal: QuizGoal;
   attribution: QuizAttribution;
 };
 
@@ -30,7 +30,7 @@ export type OnboardingStepId =
   | "hook"
   | "quiz_category"
   | "quiz_frequency"
-  | "quiz_pain"
+  | "quiz_goal"
   | "quiz_attribution"
   | "analyzing"
   | "result"
@@ -42,7 +42,7 @@ export const ONBOARDING_STEPS: OnboardingStepId[] = [
   "hook",
   "quiz_category",
   "quiz_frequency",
-  "quiz_pain",
+  "quiz_goal",
   "quiz_attribution",
   "analyzing",
   "result",
@@ -54,7 +54,7 @@ export const ONBOARDING_STEPS: OnboardingStepId[] = [
 export const ONBOARDING_QUIZ_STEPS: OnboardingStepId[] = [
   "quiz_category",
   "quiz_frequency",
-  "quiz_pain",
+  "quiz_goal",
   "quiz_attribution",
 ];
 

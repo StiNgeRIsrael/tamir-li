@@ -43,8 +43,8 @@ const ANALYZING_MS = 2600;
 const BACK_MAP: Partial<Record<OnboardingStepId, OnboardingStepId>> = {
   quiz_category: "hook",
   quiz_frequency: "quiz_category",
-  quiz_pain: "quiz_frequency",
-  quiz_attribution: "quiz_pain",
+  quiz_goal: "quiz_frequency",
+  quiz_attribution: "quiz_goal",
   result: "quiz_attribution",
   offer: "result",
   auth: "offer",
@@ -142,7 +142,7 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
     void submitOnboardingResponse({
       category: answers.category ?? "mixed",
       frequency: answers.frequency ?? "occasional",
-      pain: answers.pain ?? "limit",
+      goal: answers.goal ?? "convert",
       attribution: answers.attribution ?? "other",
       offerDecision: decision,
       selectedPlan: decision === "accepted" ? plan : null,
@@ -197,22 +197,22 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
 
   const resultProfile = useMemo(() => {
     const category = answers.category ?? "mixed";
-    const pain = answers.pain ?? "limit";
+    const goal = answers.goal ?? "convert";
     const frequency = answers.frequency ?? "occasional";
     const base = copy.results[category] ?? copy.results.mixed;
     const insightLines = [
       copy.frequencyBenefits[frequency],
-      copy.painBenefits[pain],
+      copy.goalBenefits[goal],
     ].filter(Boolean) as string[];
     return { ...base, insightLines };
-  }, [answers.category, answers.pain, answers.frequency, copy]);
+  }, [answers.category, answers.goal, answers.frequency, copy]);
 
   const profileTraits = useMemo(
     () =>
       buildProfileTraits(answers, {
         category: copy.profile.traits.category,
         frequency: copy.profile.traits.frequency,
-        pain: copy.profile.traits.pain,
+        goal: copy.profile.traits.goal,
       }),
     [answers, copy.profile.traits]
   );
@@ -300,14 +300,14 @@ export function OnboardingFunnel({ open, onOpenChange, offerGeneration }: Props)
       case "quiz_frequency":
         return (
           <QuizLayout question={copy.questions.frequency.question} hint={copy.questions.hint}>
-            {renderQuizOptions("frequency", copy.questions.frequency.options, "quiz_pain")}
+            {renderQuizOptions("frequency", copy.questions.frequency.options, "quiz_goal")}
           </QuizLayout>
         );
 
-      case "quiz_pain":
+      case "quiz_goal":
         return (
-          <QuizLayout question={copy.questions.pain.question} hint={copy.questions.hint}>
-            {renderQuizOptions("pain", copy.questions.pain.options, "quiz_attribution")}
+          <QuizLayout question={copy.questions.goal.question} hint={copy.questions.hint}>
+            {renderQuizOptions("goal", copy.questions.goal.options, "quiz_attribution")}
           </QuizLayout>
         );
 

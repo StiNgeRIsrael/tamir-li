@@ -34,6 +34,18 @@ type OnboardingResponsesPayload = {
   };
 };
 
+const GOAL_LABELS: Record<string, string> = {
+  convert: "Convert format",
+  compress: "Compress / resize",
+  pdf: "PDF tools",
+  browse: "Browse tools",
+  // legacy values (pre-goal question)
+  limit: "Hit daily limit",
+  ads: "Too many ads",
+  size: "Large files",
+  speed: "Slow conversions",
+};
+
 const ATTRIBUTION_LABELS: Record<string, string> = {
   play_store: "Play Store",
   google_search: "Google",
@@ -101,7 +113,7 @@ export function AdminOnboardingResponses() {
                     <TableHead>{admin.colUser ?? "User"}</TableHead>
                     <TableHead>{admin.onboardingColCategory ?? "Category"}</TableHead>
                     <TableHead>{admin.onboardingColFrequency ?? "Frequency"}</TableHead>
-                    <TableHead>{admin.onboardingColPain ?? "Pain"}</TableHead>
+                    <TableHead>{admin.onboardingColGoal ?? "First goal"}</TableHead>
                     <TableHead>{admin.onboardingColAttribution ?? "Source"}</TableHead>
                     <TableHead>{admin.onboardingColDecision ?? "Decision"}</TableHead>
                     <TableHead>{admin.onboardingColPlan ?? "Plan"}</TableHead>
@@ -116,7 +128,9 @@ export function AdminOnboardingResponses() {
                       <TableCell className="text-xs">{row.email ?? "—"}</TableCell>
                       <TableCell className="text-xs">{row.category}</TableCell>
                       <TableCell className="text-xs">{row.frequency}</TableCell>
-                      <TableCell className="text-xs">{row.pain}</TableCell>
+                      <TableCell className="text-xs">
+                        {GOAL_LABELS[row.pain] ?? row.pain}
+                      </TableCell>
                       <TableCell className="text-xs">
                         {ATTRIBUTION_LABELS[row.attribution] ?? row.attribution}
                       </TableCell>

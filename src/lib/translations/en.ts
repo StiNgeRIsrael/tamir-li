@@ -155,7 +155,7 @@ export const enTranslations = {
     onboardingResponsesEmpty: "No responses collected yet.",
     onboardingColCategory: "Category",
     onboardingColFrequency: "Frequency",
-    onboardingColPain: "Pain",
+    onboardingColGoal: "First goal",
     onboardingColAttribution: "Source",
     onboardingColDecision: "Decision",
     onboardingColPlan: "Plan",
@@ -1338,13 +1338,13 @@ export const enTranslations = {
           { id: "occasional" as const, label: "Occasionally — when needed" },
         ],
       },
-      pain: {
-        question: "What's your biggest frustration today?",
+      goal: {
+        question: "What do you want to do first?",
         options: [
-          { id: "limit" as const, label: "I hit the 5/day free limit" },
-          { id: "ads" as const, label: "Too many ads and interruptions" },
-          { id: "size" as const, label: "Large files get rejected" },
-          { id: "speed" as const, label: "Slow conversions or queues" },
+          { id: "convert" as const, label: "Convert to another format" },
+          { id: "compress" as const, label: "Compress or resize a file" },
+          { id: "pdf" as const, label: "Work with a PDF" },
+          { id: "browse" as const, label: "Browse tools — not sure yet" },
         ],
       },
       attribution: {
@@ -1379,11 +1379,11 @@ export const enTranslations = {
           weekly: "Weekly",
           occasional: "Occasionally",
         },
-        pain: {
-          limit: "No 5/day limit",
-          ads: "No ads",
-          size: "Large files",
-          speed: "Faster",
+        goal: {
+          convert: "Convert format",
+          compress: "Compress / resize",
+          pdf: "PDF tools",
+          browse: "Explore tools",
         },
       },
     },
@@ -1409,11 +1409,11 @@ export const enTranslations = {
         desc: "Images, PDF, audio, and more — unlimited conversions, zero ads.",
       },
     },
-    painBenefits: {
-      limit: "Premium = unlimited conversions — no waiting until tomorrow.",
-      ads: "Premium removes ads — just your work.",
-      size: "Files up to 500MB on Premium (vs 50MB free).",
-      speed: "Priority processing — your files jump the queue.",
+    goalBenefits: {
+      convert: "Drag a file, pick a format, download — done in seconds.",
+      compress: "Shrink images and videos without leaving the app.",
+      pdf: "Merge, split, and convert PDFs in one place.",
+      browse: "All tools on the home screen — find what you need fast.",
     },
     frequencyBenefits: {
       daily: "Daily use — Premium removes daily friction.",

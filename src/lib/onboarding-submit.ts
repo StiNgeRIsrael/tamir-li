@@ -4,13 +4,13 @@ import type {
   QuizAttribution,
   QuizCategory,
   QuizFrequency,
-  QuizPain,
+  QuizGoal,
 } from "@/lib/onboarding";
 
 export type OnboardingSubmitPayload = {
   category: QuizCategory;
   frequency: QuizFrequency;
-  pain: QuizPain;
+  goal: QuizGoal;
   attribution: QuizAttribution;
   offerDecision: OfferDecision;
   selectedPlan: "yearly" | "monthly" | null;
